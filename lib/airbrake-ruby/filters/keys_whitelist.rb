@@ -1,0 +1,37 @@
+module Airbrake
+  module Filters
+    ##
+    # A default Airbrake notice filter. Filters everything in the modifiable
+    # payload of a notice, but specified keys.
+    #
+    # @example
+    #   filter = Airbrake::Filters::KeysWhitelist.new(:email, /user/i, 'account_id')
+    #   airbrake.add_filter(filter)
+    #   airbrake.notify(StandardError.new('App crashed!'), {
+    #     user: 'John',
+    #     password: 's3kr3t',
+    #     email: 'john@example.com',
+    #     account_id: 42
+    #   })
+    #
+    #   # The dashboard will display this parameters as filtered, but other
+    #   # values won't be affected:
+    #   #   { user: 'John',
+    #   #     password: '[Filtered]',
+    #   #     email: 'john@example.com',
+    #   #     account_id: 42 }
+    #
+    # @see KeysBlacklist
+    # @see KeysFilter
+    class KeysWhitelist
+      include KeysFilter
+
+      ##
+      # @return [Boolean] true if the key doesn't match any pattern, false
+      #   otherwise.
+      def should_filter?(key)
+        @patterns.none? { |pattern| key.to_s.match(pattern) }
+      end
+    end
+  end
+end
