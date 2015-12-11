@@ -23,7 +23,7 @@ dependencies:
             rvm-exec rbx-2.5.2 bundle install --path=vendor
             ;;
           5)
-            rvm-exec jruby-1.7.19 bundle install --path=vendor
+            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-1.7.19 bundle install --path=vendor
             ;;
         esac
       :
@@ -52,7 +52,7 @@ test:
             rvm-exec rbx-2.5.2 bundle exec rake
             ;;
           5)
-            rvm-exec jruby-1.7.19 bundle exec rake
+            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-1.7.19 bundle exec rake
             ;;
         esac
       :
