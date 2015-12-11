@@ -1,7 +1,7 @@
 Airbrake Ruby
 =============
 
-[![Build Status](https://circleci.com/gh/airbrake/airbrake-ruby.png?circle-token=b910cfdc764977173c941c4c60ef6b15981001af&style=shield)](https://circleci.com/gh/airbrake/airbrake-ruby)
+[![Build Status](https://circleci.com/gh/airbrake/airbrake-ruby.svg?style=shield)](https://circleci.com/gh/airbrake/airbrake-ruby)
 [![semver]](http://semver.org)
 
 <img src="http://f.cl.ly/items/3Q163w1r2K1J1b030k0g/ruby%2009.19.32.jpg" width=800px>
