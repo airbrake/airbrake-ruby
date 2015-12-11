@@ -7,16 +7,22 @@ dependencies:
         case $CIRCLE_NODE_INDEX in
           0)
             rvm-exec 1.9.2-p330 bundle install --path=vendor
-            rvm-exec 2.1.6 bundle install --path=vendor
-            rvm-exec rbx-2.2.10 bundle install --path=vendor
+            rvm-exec 1.9.3-p551 bundle install --path=vendor
             ;;
           1)
-            rvm-exec 1.9.3-p551 bundle install --path=vendor
-            rvm-exec 2.2.3 bundle install --path=vendor
-            rvm-exec rbx-2.5.2 bundle install --path=vendor
+            rvm-exec 2.0.0-p645 bundle install --path=vendor
+            rvm-exec 2.1.6 bundle install --path=vendor
             ;;
           2)
-            rvm-exec 2.0.0-p645 bundle install --path=vendor
+            rvm-exec 2.2.3 bundle install --path=vendor
+            ;;
+          3)
+            rvm-exec rbx-2.2.10 bundle install --path=vendor
+            ;;
+          4)
+            rvm-exec rbx-2.5.2 bundle install --path=vendor
+            ;;
+          5)
             rvm-exec jruby-1.7.19 bundle install --path=vendor
             ;;
         esac
@@ -30,16 +36,22 @@ test:
         case $CIRCLE_NODE_INDEX in
           0)
             rvm-exec 1.9.2-p330 bundle exec rake
-            rvm-exec 2.1.6 bundle exec rake
-            rvm-exec rbx-2.2.10 bundle exec rake
+            rvm-exec 1.9.3-p551 bundle exec rake
             ;;
           1)
-            rvm-exec 1.9.3-p551 bundle exec rake
-            rvm-exec 2.2.2 bundle exec rake
-            rvm-exec rbx-2.5.2 bundle exec rake
+            rvm-exec 2.0.0-p645 bundle exec rake
+            rvm-exec 2.1.6 bundle exec rake
             ;;
           2)
-            rvm-exec 2.0.0-p645 bundle exec rake
+            rvm-exec 2.2.3 bundle exec rake
+            ;;
+          3)
+            rvm-exec rbx-2.2.10 bundle exec rake
+            ;;
+          4)
+            rvm-exec rbx-2.5.2 bundle exec rake
+            ;;
+          5)
             rvm-exec jruby-1.7.19 bundle exec rake
             ;;
         esac
