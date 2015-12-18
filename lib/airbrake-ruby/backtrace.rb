@@ -14,7 +14,7 @@ module Airbrake
     ##
     # @return [Regexp] the pattern that matches standard Ruby stack frames,
     #   such as ./spec/notice_spec.rb:43:in `block (3 levels) in <top (required)>'
-    STACKFRAME_REGEXP = %r{\A
+    RUBY_STACKFRAME_REGEXP = %r{\A
       (?<file>.+)       # Matches './spec/notice_spec.rb'
       :
       (?<line>\d+)      # Matches '43'
@@ -35,6 +35,16 @@ module Airbrake
     \z/x
 
     ##
+    # @return [Regexp] the template that tries to assume what a generic stack
+    #   frame might look like, when exception's backtrace is set manually.
+    GENERIC_STACKFRAME_REGEXP = %r{\A
+      (?<file>.+)   # Matches '/foo/bar/baz.ext'
+      :
+      (?<line>\d+)  # Matches '43'
+      (?<function>) # No-op
+    \z}x
+
+    ##
     # Parses an exception's backtrace.
     #
     # @param [Exception] exception The exception, which contains a backtrace to
@@ -44,11 +54,11 @@ module Airbrake
       regexp = if java_exception?(exception)
                  JAVA_STACKFRAME_REGEXP
                else
-                 STACKFRAME_REGEXP
+                 RUBY_STACKFRAME_REGEXP
                end
 
       (exception.backtrace || []).map do |stackframe|
-        stack_frame(regexp.match(stackframe))
+        stack_frame(match_frame(regexp, stackframe))
       end
     end
 
@@ -70,6 +80,16 @@ module Airbrake
           line: (Integer(match[:line]) if match[:line]),
           function: match[:function] }
       end
+    end
+
+    def self.match_frame(regexp, stackframe)
+      match = regexp.match(stackframe)
+      return match if match
+
+      match = GENERIC_STACKFRAME_REGEXP.match(stackframe)
+      return match if match
+
+      raise Airbrake::Error, "can't parse '#{stackframe}'"
     end
   end
 end
