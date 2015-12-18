@@ -105,7 +105,7 @@ RSpec.describe Airbrake::Backtrace do
 
       it "raises error" do
         expect { described_class.parse(ex) }.
-          to raise_error(Airbrake::Error, /failed parsing/)
+          to raise_error(Airbrake::Error, /can't parse/)
       end
     end
   end

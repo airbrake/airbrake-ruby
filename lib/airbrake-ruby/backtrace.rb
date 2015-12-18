@@ -86,11 +86,10 @@ module Airbrake
       match = regexp.match(stackframe)
       return match if match
 
-      unless (matched_frame = GENERIC_STACKFRAME_REGEXP.match(stackframe))
-        raise Airbrake::Error, "failed parsing '#{stackframe}'"
-      end
+      match = GENERIC_STACKFRAME_REGEXP.match(stackframe)
+      return match if match
 
-      matched_frame
+      raise Airbrake::Error, "can't parse '#{stackframe}'"
     end
   end
 end
