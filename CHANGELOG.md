@@ -1,7 +1,7 @@
 Airbrake Ruby Changelog
 =======================
 
-### [v1.0.0][v1.0.0] (December 17, 2015)
+### [v1.0.0][v1.0.0] (December 18, 2015)
 
 * Improved backtrace parsing support ([#4](https://github.com/airbrake/airbrake-ruby/pull/4))
 
