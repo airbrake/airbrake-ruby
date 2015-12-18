@@ -53,7 +53,7 @@ Installation
 Add the Airbrake Ruby gem to your Gemfile:
 
 ```ruby
-gem 'airbrake-ruby', '~> 1.0.0.rc.1'
+gem 'airbrake-ruby', '~> 1.0.0'
 ```
 
 ### Manual
@@ -61,7 +61,7 @@ gem 'airbrake-ruby', '~> 1.0.0.rc.1'
 Invoke the following command from your terminal:
 
 ```ruby
-gem install airbrake-ruby --pre
+gem install airbrake-ruby
 ```
 
 Examples
@@ -548,5 +548,5 @@ The project uses the MIT License. See LICENSE.md for details.
 [keysblacklist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_blacklist.rb
 [keyswhitelist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_whitelist.rb
 [golang]: https://golang.org/
-[semver]: https://img.shields.io/:semver-1.0.0.rc.1-brightgreen.svg?style=flat
+[semver]: https://img.shields.io/:semver-1.0.0-brightgreen.svg?style=flat
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
