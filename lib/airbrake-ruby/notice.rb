@@ -15,7 +15,7 @@ module Airbrake
     #   Context tab in the dashboard
     CONTEXT = {
       os: RUBY_PLATFORM,
-      language: RUBY_VERSION,
+      language: "#{RUBY_ENGINE}/#{RUBY_VERSION}".freeze,
       notifier: NOTIFIER
     }.freeze
 
