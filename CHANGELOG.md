@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.0.1][v1.0.1] (December 22, 2015)
+
 * Fixed the `Airbrake.add_filter` block API
   ([#10](https://github.com/airbrake/airbrake-ruby/pull/10))
 
@@ -17,3 +19,4 @@ Airbrake Ruby Changelog
 
 [v1.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0.rc.1
 [v1.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0
+[v1.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.1
