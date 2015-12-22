@@ -5,12 +5,14 @@ RSpec.describe Airbrake do
     'https://airbrake.io/api/v3/projects/113743/notices?key=fd04e13d806a90f96614ad8e529b2822'
   end
 
-  before do
-    @notifier = described_class.configure do |c|
+  let!(:notifier) do
+    described_class.configure do |c|
       c.project_id = 113743
       c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
     end
+  end
 
+  before do
     stub_request(:post, endpoint).to_return(status: 201, body: '{}')
   end
 
@@ -163,7 +165,7 @@ RSpec.describe Airbrake do
     include_examples 'error handling', :add_filter
 
     it "adds filters with help of blocks" do
-      filter_chain = @notifier.instance_variable_get(:@filter_chain)
+      filter_chain = notifier.instance_variable_get(:@filter_chain)
       filters = filter_chain.instance_variable_get(:@filters)
 
       expect(filters.size).to eq(2)
