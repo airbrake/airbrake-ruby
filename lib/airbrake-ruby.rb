@@ -275,9 +275,9 @@ module Airbrake
     # Calls +method+ on +notifier+ with provided +args+.
     #
     # @raise [Airbrake::Error] if none of the notifiers exist
-    def call_notifier(notifier, method, *args)
+    def call_notifier(notifier, method, *args, &block)
       if @notifiers.key?(notifier)
-        @notifiers[notifier].__send__(method, *args)
+        @notifiers[notifier].__send__(method, *args, &block)
       else
         raise Airbrake::Error,
               "the '#{notifier}' notifier isn't configured"

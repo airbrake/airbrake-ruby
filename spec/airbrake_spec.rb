@@ -6,7 +6,7 @@ RSpec.describe Airbrake do
   end
 
   before do
-    described_class.configure do |c|
+    @notifier = described_class.configure do |c|
       c.project_id = 113743
       c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
     end
@@ -161,6 +161,18 @@ RSpec.describe Airbrake do
 
   describe ".add_filter" do
     include_examples 'error handling', :add_filter
+
+    it "adds filters with help of blocks" do
+      filter_chain = @notifier.instance_variable_get(:@filter_chain)
+      filters = filter_chain.instance_variable_get(:@filters)
+
+      expect(filters.size).to eq(2)
+
+      described_class.add_filter {}
+
+      expect(filters.size).to eq(3)
+      expect(filters.last).to be_a(Proc)
+    end
   end
 
   describe ".whitelist_keys" do
