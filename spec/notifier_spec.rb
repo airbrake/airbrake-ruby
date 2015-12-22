@@ -120,7 +120,7 @@ RSpec.describe Airbrake::Notifier do
         end
 
         it "features 'context'" do
-          expect_a_request_with_body(/"context":{.*"os":"[\w-]+"/)
+          expect_a_request_with_body(/"context":{.*"os":"[\.\w-]+"/)
         end
 
         it "features 'errors'" do
