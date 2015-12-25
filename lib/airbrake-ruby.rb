@@ -286,7 +286,9 @@ module Airbrake
   end
 end
 
-# Notify of unhandled exceptions, if there were any.
+# Notify of unhandled exceptions, if there were any, but ignore SystemExit.
 at_exit do
-  Airbrake.notify_sync($ERROR_INFO) if $ERROR_INFO
+  if $ERROR_INFO && $ERROR_INFO.class != SystemExit
+    Airbrake.notify_sync($ERROR_INFO)
+  end
 end
