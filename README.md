@@ -550,5 +550,5 @@ The project uses the MIT License. See LICENSE.md for details.
 [keysblacklist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_blacklist.rb
 [keyswhitelist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_whitelist.rb
 [golang]: https://golang.org/
-[semver]: https://img.shields.io/:semver-1.0.1-brightgreen.svg?style=flat
+[semver]: https://img.shields.io/:semver-1.0.2-brightgreen.svg?style=flat
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
