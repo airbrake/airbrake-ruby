@@ -337,7 +337,9 @@ Instead, you can ignore notices based on some condition.
 
 ```ruby
 Airbrake.add_filter do |notice|
-  notice.ignore! if notice[:error_class] == 'StandardError'
+  if notice[:errors].any? { |error| error[:type] == 'StandardError' }
+    notice.ignore!
+  end
 end
 ```
 
