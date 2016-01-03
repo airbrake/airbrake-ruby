@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.0.2][v1.0.2] (January 3, 2016)
+
 * Ignored `SystemExit` in the `at_exit` hook, which has fixed the Rake
   integration for the [airbrake gem][airbrake-gem] gem
   ([#14](https://github.com/airbrake/airbrake-ruby/pull/14))
@@ -25,3 +27,4 @@ Airbrake Ruby Changelog
 [v1.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0.rc.1
 [v1.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0
 [v1.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.1
+[v1.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.2
