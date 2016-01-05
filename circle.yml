@@ -11,10 +11,11 @@ dependencies:
             ;;
           1)
             rvm-exec 2.0.0-p645 bundle install --path=vendor
-            rvm-exec 2.1.6 bundle install --path=vendor
+            rvm-exec 2.1.8 bundle install --path=vendor
             ;;
           2)
-            rvm-exec 2.2.3 bundle install --path=vendor
+            rvm-exec 2.2.4 bundle install --path=vendor
+            rvm-exec 2.3.0 bundle install --path=vendor
             ;;
           3)
             rvm-exec rbx-2.2.10 bundle install --path=vendor
@@ -40,10 +41,11 @@ test:
             ;;
           1)
             rvm-exec 2.0.0-p645 bundle exec rake
-            rvm-exec 2.1.6 bundle exec rake
+            rvm-exec 2.1.8 bundle exec rake
             ;;
           2)
-            rvm-exec 2.2.3 bundle exec rake
+            rvm-exec 2.2.4 bundle exec rake
+            rvm-exec 2.3.0 bundle exec rake
             ;;
           3)
             rvm-exec rbx-2.2.10 bundle exec rake
