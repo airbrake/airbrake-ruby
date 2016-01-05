@@ -429,7 +429,7 @@ modify a value only for a specific notice. When you're done modifying the
 notice, send it with `Airbrake.notify` or `Airbrake.notify_sync`.
 
 ```ruby
-notice = airbrake.build_notice('App crashed!')
+notice = Airbrake.build_notice('App crashed!')
 notice[:params][:username] = user.name
 airbrake.notify_sync(notice)
 ```
