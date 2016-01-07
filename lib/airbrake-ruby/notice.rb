@@ -24,11 +24,6 @@ module Airbrake
     MAX_NOTICE_SIZE = 64000
 
     ##
-    # @return [Integer] the maximum number of nested exceptions that a notice
-    #   can unwrap. Exceptions that have a longer cause chain will be ignored
-    MAX_NESTED_EXCEPTIONS = 3
-
-    ##
     # @return [Integer] the maximum size of hashes, arrays and strings in the
     #   notice.
     PAYLOAD_MAX_SIZE = 10000
@@ -61,7 +56,7 @@ module Airbrake
       }.freeze
 
       @modifiable_payload = {
-        errors: errors(exception),
+        errors: NestedException.new(exception).as_json,
         context: context(params),
         environment: {},
         session: {},
@@ -172,24 +167,6 @@ module Airbrake
 
     def payload
       @modifiable_payload.merge(@private_payload)
-    end
-
-    def errors(exception)
-      exception_list = []
-
-      while exception && exception_list.size < MAX_NESTED_EXCEPTIONS
-        exception_list << exception
-
-        exception = if exception.respond_to?(:cause) && exception.cause
-                      exception.cause
-                    end
-      end
-
-      exception_list.map do |e|
-        { type: e.class.name,
-          message: e.message,
-          backtrace: Backtrace.parse(e) }
-      end
     end
 
     def truncate_payload

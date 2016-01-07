@@ -5,51 +5,6 @@ RSpec.describe Airbrake::Notice do
     described_class.new(Airbrake::Config.new, AirbrakeTestError.new, bingo: '1')
   end
 
-  describe "#new" do
-    context "nested exceptions" do
-      it "unwinds nested exceptions" do
-        begin
-          begin
-            raise AirbrakeTestError
-          rescue AirbrakeTestError
-            Ruby21Error.raise_error('bingo')
-          end
-        rescue Ruby21Error => ex
-          notice = described_class.new(Airbrake::Config.new, ex)
-
-          expect(notice[:errors].size).to eq(2)
-          expect(notice[:errors][0][:message]).to eq('bingo')
-          expect(notice[:errors][1][:message]).to eq('App crashed!')
-        end
-      end
-
-      it "unwinds no more than 3 nested exceptions" do
-        begin
-          begin
-            raise AirbrakeTestError
-          rescue AirbrakeTestError
-            begin
-              Ruby21Error.raise_error('bongo')
-            rescue Ruby21Error
-              begin
-                Ruby21Error.raise_error('bango')
-              rescue Ruby21Error
-                Ruby21Error.raise_error('bingo')
-              end
-            end
-          end
-        rescue Ruby21Error => ex
-          notice = described_class.new(Airbrake::Config.new, ex)
-
-          expect(notice[:errors].size).to eq(3)
-          expect(notice[:errors][0][:message]).to eq('bingo')
-          expect(notice[:errors][1][:message]).to eq('bango')
-          expect(notice[:errors][2][:message]).to eq('bongo')
-        end
-      end
-    end
-  end
-
   describe "#to_json" do
     context "app_version" do
       context "when missing" do
