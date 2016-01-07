@@ -645,6 +645,29 @@ RSpec.describe Airbrake::Notifier do
     it "builds a notice from exception" do
       expect(@airbrake.build_notice(ex)).to be_an Airbrake::Notice
     end
+
+    context "given a non-exception with calculated internal frames only" do
+      it "returns the internal frames nevertheless" do
+        backtrace = [
+          "/airbrake-ruby/lib/airbrake-ruby/notifier.rb:84:in `build_notice'",
+          "/airbrake-ruby/lib/airbrake-ruby/notifier.rb:124:in `send_notice'",
+          "/airbrake-ruby/lib/airbrake-ruby/notifier.rb:52:in `notify_sync'"
+        ]
+
+        # rubocop:disable Metrics/LineLength
+        parsed_backtrace = [
+          { file: '/airbrake-ruby/lib/airbrake-ruby/notifier.rb', line: 84, function: 'build_notice' },
+          { file: '/airbrake-ruby/lib/airbrake-ruby/notifier.rb', line: 124, function: 'send_notice' },
+          { file: '/airbrake-ruby/lib/airbrake-ruby/notifier.rb', line: 52, function: 'notify_sync' }
+        ]
+        # rubocop:enable Metrics/LineLength
+
+        allow(Kernel).to receive(:caller).and_return(backtrace)
+
+        notice = @airbrake.build_notice('bingo')
+        expect(notice[:errors][0][:backtrace]).to eq(parsed_backtrace)
+      end
+    end
   end
 
   describe "#close" do
