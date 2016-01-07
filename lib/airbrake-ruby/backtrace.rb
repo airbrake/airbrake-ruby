@@ -57,7 +57,7 @@ module Airbrake
                  RUBY_STACKFRAME_REGEXP
                end
 
-      (exception.backtrace || []).map do |stackframe|
+      exception.backtrace.map do |stackframe|
         stack_frame(match_frame(regexp, stackframe))
       end
     end
@@ -80,16 +80,16 @@ module Airbrake
           line: (Integer(match[:line]) if match[:line]),
           function: match[:function] }
       end
-    end
 
-    def self.match_frame(regexp, stackframe)
-      match = regexp.match(stackframe)
-      return match if match
+      def match_frame(regexp, stackframe)
+        match = regexp.match(stackframe)
+        return match if match
 
-      match = GENERIC_STACKFRAME_REGEXP.match(stackframe)
-      return match if match
+        match = GENERIC_STACKFRAME_REGEXP.match(stackframe)
+        return match if match
 
-      raise Airbrake::Error, "can't parse '#{stackframe}'"
+        raise Airbrake::Error, "can't parse '#{stackframe}'"
+      end
     end
   end
 end
