@@ -15,7 +15,7 @@ module Airbrake
       @closed = false
       @workers = ThreadGroup.new
 
-      (0...config.workers).each { @workers.add(spawn_worker) }
+      config.workers.times { @workers.add(spawn_worker) }
       @workers.enclose
     end
 
