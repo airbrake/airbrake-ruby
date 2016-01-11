@@ -75,26 +75,46 @@ RSpec.describe Airbrake::Backtrace do
     end
 
     context "generic backtrace" do
-      # rubocop:disable Metrics/LineLength
-      let(:generic_bt) do
-        ["/home/bingo/bango/assets/stylesheets/error_pages.scss:139:in `animation'",
-         "/home/bingo/bango/assets/stylesheets/error_pages.scss:139",
-         "/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb:349:in `block in visit_mixin'"]
+      context "when function is absent" do
+        # rubocop:disable Metrics/LineLength
+        let(:generic_bt) do
+          ["/home/bingo/bango/assets/stylesheets/error_pages.scss:139:in `animation'",
+           "/home/bingo/bango/assets/stylesheets/error_pages.scss:139",
+           "/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb:349:in `block in visit_mixin'"]
+        end
+        # rubocop:enable Metrics/LineLength
+
+        let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(generic_bt) } }
+
+        let(:parsed_backtrace) do
+          # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+          [{:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>"animation"},
+           {:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>nil},
+           {:file=>"/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb", :line=>349, :function=>"block in visit_mixin"}]
+          # rubocop:enable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+        end
+
+        it "returns a properly formatted array of hashes" do
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
+        end
       end
-      # rubocop:enable Metrics/LineLength
 
-      let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(generic_bt) } }
+      context "when line is absent" do
+        let(:generic_bt) do
+          ["/Users/grammakov/repositories/weintervene/config.ru:in `new'"]
+        end
 
-      let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
-        [{:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>"animation"},
-         {:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>""},
-         {:file=>"/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb", :line=>349, :function=>"block in visit_mixin"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
-      end
+        let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(generic_bt) } }
 
-      it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(ex)).to eq(parsed_backtrace)
+        let(:parsed_backtrace) do
+          [{ file: '/Users/grammakov/repositories/weintervene/config.ru',
+             line: nil,
+             function: 'new' }]
+        end
+
+        it "returns a properly formatted array of hashes" do
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
+        end
       end
     end
 

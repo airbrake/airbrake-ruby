@@ -38,10 +38,10 @@ module Airbrake
     # @return [Regexp] the template that tries to assume what a generic stack
     #   frame might look like, when exception's backtrace is set manually.
     GENERIC_STACKFRAME_REGEXP = %r{\A
-      (?<file>.+)   # Matches '/foo/bar/baz.ext'
+      (?<file>.+)              # Matches '/foo/bar/baz.ext'
       :
-      (?<line>\d+)  # Matches '43'
-      (?<function>) # No-op
+      (?<line>\d+)?            # Matches '43' or nothing
+      (in\s`(?<function>.+)')? # Matches "in `func'" or nothing
     \z}x
 
     ##
