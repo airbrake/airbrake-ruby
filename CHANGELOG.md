@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Improved parsing of backtraces
+  ([#25](https://github.com/airbrake/airbrake-ruby/pull/25))
+
 ### [v1.0.2][v1.0.2] (January 3, 2016)
 
 * Ignored `SystemExit` in the `at_exit` hook, which has fixed the Rake
