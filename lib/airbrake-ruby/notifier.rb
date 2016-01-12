@@ -139,7 +139,13 @@ module Airbrake
     end
 
     def clean_backtrace
-      caller.drop_while { |frame| frame.include?('/lib/airbrake') }
+      caller_copy = Kernel.caller
+      clean_bt = caller_copy.drop_while { |frame| frame.include?('/lib/airbrake') }
+
+      # If true, then it's likely an internal library error. In this case return
+      # at least some backtrace to simplify debugging.
+      return caller_copy if clean_bt.empty?
+      clean_bt
     end
   end
 end
