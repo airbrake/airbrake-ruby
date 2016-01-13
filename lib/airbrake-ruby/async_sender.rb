@@ -14,9 +14,7 @@ module Airbrake
       @sender = SyncSender.new(config)
       @closed = false
       @workers = ThreadGroup.new
-
-      config.workers.times { @workers.add(spawn_worker) }
-      @workers.enclose
+      @pid = nil
     end
 
     ##
@@ -67,17 +65,32 @@ module Airbrake
     # went wrong.
     #
     # Workers are expected to crash when you +fork+ the process the workers are
-    # living in. Another possible scenario is when you close the instance on
-    # +at_exit+, but some other +at_exit+ hook prevents the process from
-    # exiting.
+    # living in. In this case we detect a +fork+ and try to revive them here.
+    #
+    # Another possible scenario that crashes workers is when you close the
+    # instance on +at_exit+, but some other +at_exit+ hook prevents the process
+    # from exiting.
     #
     # @return [Boolean] true if an instance wasn't closed, but has no workers
     # @see https://goo.gl/oydz8h Example of at_exit that prevents exit
     def has_workers?
+      return false if @closed
+
+      if @pid != Process.pid && @workers.list.empty?
+        @pid = Process.pid
+        spawn_workers
+      end
+
       !@closed && @workers.list.any?
     end
 
     private
+
+    def spawn_workers
+      @workers = ThreadGroup.new
+      @config.workers.times { @workers.add(spawn_worker) }
+      @workers.enclose
+    end
 
     def spawn_worker
       Thread.new do

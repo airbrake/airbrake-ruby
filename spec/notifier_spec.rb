@@ -375,18 +375,40 @@ RSpec.describe Airbrake::Notifier do
 
     it "falls back to synchronous delivery when the async sender is dead" do
       out = StringIO.new
+      notifier = described_class.new(airbrake_params.merge(logger: Logger.new(out)))
+      async_sender = notifier.instance_variable_get(:@async_sender)
 
-      airbrake = described_class.new(airbrake_params.merge(logger: Logger.new(out)))
-      airbrake.
-        instance_variable_get(:@async_sender).
-        instance_variable_get(:@workers).
-        list.
-        each(&:kill)
-
+      expect(async_sender).to have_workers
+      async_sender.instance_variable_get(:@workers).list.each(&:kill)
       sleep 1
+      expect(async_sender).not_to have_workers
 
-      expect(airbrake.notify('bingo')).to be_nil
+      notifier.notify('bango')
       expect(out.string).to match(/falling back to sync delivery/)
+
+      notifier.close
+    end
+
+    it "respawns workers on fork()", skip: %w(jruby rbx).include?(RUBY_ENGINE) do
+      out = StringIO.new
+      notifier = described_class.new(airbrake_params.merge(logger: Logger.new(out)))
+
+      notifier.notify('bingo', bingo: 'bango')
+      sleep 1
+      expect(out.string).not_to match(/falling back to sync delivery/)
+      expect_a_request_with_body(/"bingo":"bango"/)
+
+      pid = fork do
+        expect(notifier.instance_variable_get(:@async_sender)).to have_workers
+        notifier.notify('bango', bongo: 'bish')
+        sleep 1
+        expect(out.string).not_to match(/falling back to sync delivery/)
+        expect_a_request_with_body(/"bingo":"bango"/)
+      end
+
+      Process.wait(pid)
+      notifier.close
+      expect(notifier.instance_variable_get(:@async_sender)).not_to have_workers
     end
   end
 
@@ -671,23 +693,14 @@ RSpec.describe Airbrake::Notifier do
   end
 
   describe "#close" do
-    shared_examples 'close' do |method|
+    context "when using #notify on a closed notifier" do
       it "raises error" do
-        @airbrake.close
-        expect { method.call(@airbrake) }.
+        notifier = described_class.new(airbrake_params)
+        notifier.close
+
+        expect { notifier.notify(AirbrakeTestError.new) }.
           to raise_error(Airbrake::Error, /closed Airbrake instance/)
       end
-    end
-
-    context "when using #notify" do
-      include_examples 'close', proc { |a| a.notify(AirbrakeTestError.new) }
-    end
-
-    context "when using #send_notice" do
-      include_examples 'close', proc { |a|
-        notice = a.build_notice(AirbrakeTestError.new)
-        a.send_notice(notice)
-      }
     end
 
     context "at program exit when it was closed manually" do
