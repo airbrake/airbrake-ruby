@@ -3,52 +3,23 @@ require 'spec_helper'
 RSpec.describe Airbrake::AsyncSender do
   before do
     stub_request(:post, /.*/).to_return(status: 201, body: '{}')
-    @sender = described_class.new(Airbrake::Config.new)
-    @workers = @sender.instance_variable_get(:@workers)
   end
 
-  describe "#new" do
-    context "workers_count parameter" do
-      let(:new_workers) { 5 }
-      let(:config) { Airbrake::Config.new(workers: new_workers) }
+  describe "#send" do
+    it "limits the size of the queue, but still sends all notices" do
+      stdout = StringIO.new
+      notices_count = 1000
+      config = Airbrake::Config.new(
+        logger: Logger.new(stdout), workers: 3, queue_size: 10
+      )
+      sender = described_class.new(config)
+      expect(sender).to have_workers
 
-      it "spawns alive threads in an enclosed ThreadGroup" do
-        expect(@workers).to be_a(ThreadGroup)
-        expect(@workers.list).to all(be_alive)
-        expect(@workers).to be_enclosed
-      end
+      notices_count.times { |i| sender.send(i) }
+      sender.close
 
-      it "controls the number of spawned threads" do
-        expect(@workers.list.size).to eq(1)
-
-        sender = described_class.new(config)
-        workers = sender.instance_variable_get(:@workers)
-
-        expect(workers.list.size).to eq(new_workers)
-        sender.close
-      end
-    end
-
-    context "queue" do
-      before do
-        @stdout = StringIO.new
-      end
-
-      let(:notices) { 1000 }
-
-      let(:config) do
-        Airbrake::Config.new(logger: Logger.new(@stdout), workers: 3, queue_size: 10)
-      end
-
-      it "limits the size of the queue, but still sends all notices" do
-        sender = described_class.new(config)
-
-        notices.times { |i| sender.send(i) }
-        sender.close
-
-        log = @stdout.string.split("\n")
-        expect(log.grep(/\*\*Airbrake: \{\}/).size).to eq(notices)
-      end
+      log = stdout.string.split("\n")
+      expect(log.grep(/\*\*Airbrake: \{\}/).size).to eq(notices_count)
     end
   end
 
@@ -57,14 +28,16 @@ RSpec.describe Airbrake::AsyncSender do
       @stderr = StringIO.new
       config = Airbrake::Config.new(logger: Logger.new(@stderr))
       @sender = described_class.new(config)
-      @workers = @sender.instance_variable_get(:@workers).list
+      expect(@sender).to have_workers
     end
 
     context "when there are no unsent notices" do
       it "joins the spawned thread" do
-        expect(@workers).to all(be_alive)
+        workers = @sender.instance_variable_get(:@workers).list
+
+        expect(workers).to all(be_alive)
         @sender.close
-        expect(@workers).to all(be_stop)
+        expect(workers).to all(be_stop)
       end
     end
 
@@ -91,31 +64,75 @@ RSpec.describe Airbrake::AsyncSender do
 
     context "when it was already closed" do
       it "doesn't increase the unsent queue size" do
-        @sender.close
-        expect(@sender.instance_variable_get(:@unsent).size).to be_zero
+        begin
+          @sender.close
+        rescue Airbrake::Error
+          nil
+        end
 
+        expect(@sender.instance_variable_get(:@unsent).size).to be_zero
+      end
+
+      it "raises error" do
+        @sender.close
+
+        expect(@sender).to be_closed
         expect { @sender.close }.
           to raise_error(Airbrake::Error, 'attempted to close already closed sender')
+      end
+    end
+
+    context "when workers were not spawned" do
+      it "correctly closes the notifier nevertheless" do
+        sender = described_class.new(Airbrake::Config.new)
+        sender.close
+
+        expect(sender).to be_closed
       end
     end
   end
 
   describe "#has_workers?" do
-    it "returns false when the sender is not closed, but has 0 workers" do
-      sender = described_class.new(Airbrake::Config.new)
-      expect(sender.has_workers?).to be_truthy
+    before do
+      @sender = described_class.new(Airbrake::Config.new)
+      expect(@sender).to have_workers
+    end
 
-      sender.instance_variable_get(:@workers).list.each(&:kill)
+    it "returns false when the sender is not closed, but has 0 workers" do
+      @sender.instance_variable_get(:@workers).list.each(&:kill)
       sleep 1
-      expect(sender.has_workers?).to be_falsey
+      expect(@sender).not_to have_workers
     end
 
     it "returns false when the sender is closed" do
+      @sender.close
+      expect(@sender).not_to have_workers
+    end
+  end
+
+  describe "#spawn_workers" do
+    it "spawns alive threads in an enclosed ThreadGroup" do
       sender = described_class.new(Airbrake::Config.new)
-      expect(sender.has_workers?).to be_truthy
+      expect(sender).to have_workers
+
+      workers = sender.instance_variable_get(:@workers)
+
+      expect(workers).to be_a(ThreadGroup)
+      expect(workers.list).to all(be_alive)
+      expect(workers).to be_enclosed
 
       sender.close
-      expect(sender.has_workers?).to be_falsey
+    end
+
+    it "spawns exactly config.workers workers" do
+      workers_count = 5
+      sender = described_class.new(Airbrake::Config.new(workers: workers_count))
+      expect(sender).to have_workers
+
+      workers = sender.instance_variable_get(:@workers)
+
+      expect(workers.list.size).to eq(workers_count)
+      sender.close
     end
   end
 end
