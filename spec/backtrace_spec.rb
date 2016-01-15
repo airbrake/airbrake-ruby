@@ -128,5 +128,23 @@ RSpec.describe Airbrake::Backtrace do
           to raise_error(Airbrake::Error, /can't parse/)
       end
     end
+
+    context "given a backtrace with an empty function" do
+      let(:bt) do
+        ["/airbrake-ruby/vendor/jruby/1.9/gems/rspec-core-3.4.1/exe/rspec:3:in `'"]
+      end
+
+      let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(bt) } }
+
+      let(:parsed_backtrace) do
+        [{ file: '/airbrake-ruby/vendor/jruby/1.9/gems/rspec-core-3.4.1/exe/rspec',
+           line: 3,
+           function: '' }]
+      end
+
+      it "returns a properly formatted array of hashes" do
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
+      end
+    end
   end
 end
