@@ -51,6 +51,8 @@ module Airbrake
     #   parse
     # @return [Array<Hash{Symbol=>String,Integer}>] the parsed backtrace
     def self.parse(exception)
+      return [] if exception.backtrace.nil? || exception.backtrace.none?
+
       regexp = if java_exception?(exception)
                  JAVA_STACKFRAME_REGEXP
                else

@@ -16,7 +16,7 @@ module Airbrake
       unwind_exceptions.map do |exception|
         { type: exception.class.name,
           message: exception.message,
-          backtrace: parse_backtrace(exception) }
+          backtrace: Backtrace.parse(exception) }
       end
     end
 
@@ -32,11 +32,6 @@ module Airbrake
       end
 
       exception_list
-    end
-
-    def parse_backtrace(exception)
-      return if exception.backtrace.nil? || exception.backtrace.none?
-      Backtrace.parse(exception)
     end
   end
 end

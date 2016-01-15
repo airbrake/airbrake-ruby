@@ -4,7 +4,9 @@ Airbrake Ruby Changelog
 ### master
 
 * Improved parsing of backtraces
-  ([#25](https://github.com/airbrake/airbrake-ruby/pull/25))
+  ([#25](https://github.com/airbrake/airbrake-ruby/pull/25),
+  [#29](https://github.com/airbrake/airbrake-ruby/pull/29),
+  [#30](https://github.com/airbrake/airbrake-ruby/pull/30))
 * Made sure that generated notices always have a backtrace
   ([#21](https://github.com/airbrake/airbrake-ruby/pull/21))
 * Made the asynchronous delivery mechanism more robust
