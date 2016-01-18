@@ -6,23 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: when_needed, always
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'lib/airbrake-ruby.rb'
-    - 'lib/airbrake-ruby/config.rb'
-    - 'lib/airbrake-ruby/filter_chain.rb'
-    - 'lib/airbrake-ruby/filters/keys_filter.rb'
-    - 'lib/airbrake-ruby/notice.rb'
-    - 'lib/airbrake-ruby/payload_truncator.rb'
-    - 'lib/airbrake-ruby/response.rb'
-    - 'lib/airbrake-ruby/sync_sender.rb'
-    - 'lib/airbrake-ruby/version.rb'
-    - 'spec/notifier_spec.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: SupportedStyles, IndentationWidth.
