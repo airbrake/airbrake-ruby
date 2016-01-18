@@ -84,3 +84,6 @@ Style/IfInsideElse:
 # TODO: enable this when Ruby 3.0 is out.
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+Style/IndentArray:
+  EnforcedStyle: consistent
