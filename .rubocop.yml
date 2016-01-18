@@ -77,3 +77,6 @@ Metrics/ClassLength:
 
 Performance/TimesMap:
   Enabled: true
+
+Style/IfInsideElse:
+  Enabled: true

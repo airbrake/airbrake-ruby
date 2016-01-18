@@ -47,8 +47,8 @@ module Airbrake
         hash.each_key do |key|
           if should_filter?(key)
             hash[key] = '[Filtered]'.freeze
-          else
-            filter_hash(hash[key]) if hash[key].is_a?(Hash)
+          elsif hash[key].is_a?(Hash)
+            filter_hash(hash[key])
           end
         end
       end

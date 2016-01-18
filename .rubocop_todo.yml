@@ -23,11 +23,6 @@ Style/FrozenStringLiteralComment:
     - 'lib/airbrake-ruby/version.rb'
     - 'spec/notifier_spec.rb'
 
-# Offense count: 1
-Style/IfInsideElse:
-  Exclude:
-    - 'lib/airbrake-ruby/filters/keys_filter.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: SupportedStyles, IndentationWidth.
