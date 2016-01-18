@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.0.3][v1.0.3] (January 18, 2016)
+
 * Improved parsing of backtraces
   ([#25](https://github.com/airbrake/airbrake-ruby/pull/25),
   [#29](https://github.com/airbrake/airbrake-ruby/pull/29),
@@ -40,3 +42,4 @@ Airbrake Ruby Changelog
 [v1.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0
 [v1.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.1
 [v1.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.2
+[v1.0.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.3
