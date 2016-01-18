@@ -4,10 +4,10 @@ require_relative 'benchmark_helpers'
 # Generates example errors that should be truncated.
 class Payload
   def self.generate
-    5000.times.map do |i|
+    Array.new(5000) do |i|
       { type: "Error#{i}",
         message: 'X' * 300,
-        backtrace: 300.times.map { 'Y' * 300 } }
+        backtrace: Array.new(300) { 'Y' * 300 } }
     end
   end
 end
