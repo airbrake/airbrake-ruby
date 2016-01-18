@@ -280,6 +280,10 @@ module Airbrake
       if @notifiers.key?(notifier)
         @notifiers[notifier].__send__(method, *args, &block)
       else
+        # If we raise SystemExit, the Ruby process can gracefully quit without
+        # the unwanted Airbrake::Error.
+        raise args.first if args.first.class == SystemExit
+
         raise Airbrake::Error,
               "the '#{notifier}' notifier isn't configured"
       end
@@ -289,7 +293,5 @@ end
 
 # Notify of unhandled exceptions, if there were any, but ignore SystemExit.
 at_exit do
-  if $ERROR_INFO && $ERROR_INFO.class != SystemExit
-    Airbrake.notify_sync($ERROR_INFO)
-  end
+  Airbrake.notify_sync($ERROR_INFO) if $ERROR_INFO
 end
