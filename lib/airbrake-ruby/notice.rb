@@ -150,7 +150,7 @@ module Airbrake
     end
 
     def raise_if_ignored
-      return unless self.ignored?
+      return unless ignored?
       raise Airbrake::Error, 'cannot access ignored notice'
     end
 
