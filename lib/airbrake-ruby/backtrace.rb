@@ -19,7 +19,7 @@ module Airbrake
       :
       (?<line>\d+)      # Matches '43'
       :in\s
-      `(?<function>.+)' # Matches "`block (3 levels) in <top (required)>'"
+      `(?<function>.*)' # Matches "`block (3 levels) in <top (required)>'"
     \z}x
 
     ##
