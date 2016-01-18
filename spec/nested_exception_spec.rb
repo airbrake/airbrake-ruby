@@ -68,8 +68,8 @@ RSpec.describe Airbrake::NestedException do
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(2)
-          expect(exceptions[0][:backtrace]).to be_nil
-          expect(exceptions[1][:backtrace]).to be_nil
+          expect(exceptions[0][:backtrace]).to be_empty
+          expect(exceptions[1][:backtrace]).to be_empty
         end
       end
     end
