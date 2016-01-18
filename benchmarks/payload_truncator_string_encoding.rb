@@ -76,7 +76,7 @@ module BenchmarkCase
       part = MAX / methods.size
 
       methods.each do |method|
-        strings << part.times.map { StringGenerator.__send__(method) }
+        strings << Array.new(part) { StringGenerator.__send__(method) }
       end
 
       strings.flatten
@@ -89,7 +89,7 @@ module BenchmarkCase
     private
 
     def generate(&block)
-      MAX.times.map(&block)
+      Array.new(MAX, &block)
     end
   end
 end

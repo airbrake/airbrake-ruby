@@ -74,3 +74,6 @@ Style/PredicateName:
 
 Metrics/ClassLength:
   Max: 120
+
+Performance/TimesMap:
+  Enabled: true
