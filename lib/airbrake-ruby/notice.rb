@@ -36,7 +36,7 @@ module Airbrake
       NotImplementedError,
       JSON::GeneratorError,
       Encoding::UndefinedConversionError
-    ]
+    ].freeze
 
     # @return [Array<Symbol>] the list of keys that can be be overwritten with
     #   {Airbrake::Notice#[]=}
@@ -46,7 +46,7 @@ module Airbrake
       :environment,
       :session,
       :params
-    ]
+    ].freeze
 
     def initialize(config, exception, params = {})
       @config = config

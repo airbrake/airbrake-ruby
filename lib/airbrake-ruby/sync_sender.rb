@@ -18,7 +18,7 @@ module Airbrake
       Errno::ECONNREFUSED,
       EOFError,
       OpenSSL::SSL::SSLError
-    ]
+    ].freeze
 
     ##
     # @param [Airbrake::Config] config

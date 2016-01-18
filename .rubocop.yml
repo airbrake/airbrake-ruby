@@ -87,3 +87,6 @@ Style/FrozenStringLiteralComment:
 
 Style/IndentArray:
   EnforcedStyle: consistent
+
+Style/MutableConstant:
+  Enabled: true
