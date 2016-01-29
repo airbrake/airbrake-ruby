@@ -7,7 +7,7 @@ Airbrake Ruby
 [![Issue Stats](http://issuestats.com/github/airbrake/airbrake-ruby/badge/pr?style=flat)](http://issuestats.com/github/airbrake/airbrake-ruby)
 [![Issue Stats](http://issuestats.com/github/airbrake/airbrake-ruby/badge/issue?style=flat)](http://issuestats.com/github/airbrake/airbrake-ruby)
 
-<img src="http://f.cl.ly/items/3Q163w1r2K1J1b030k0g/ruby%2009.19.32.jpg" width=800px>
+![Airbrake Ruby][arthur-ruby]
 
 * [Airbrake README][airbrake-gem]
 * [Airbrake Ruby README](https://github.com/airbrake/airbrake-ruby)
@@ -544,7 +544,7 @@ The project uses the MIT License. See LICENSE.md for details.
 [airbrake-gem]: https://github.com/airbrake/airbrake
 [semver2]: http://semver.org/spec/v2.0.0.html
 [notice-v3]: https://airbrake.io/docs/#create-notice-v3
-[project-idkey]: https://img-fotki.yandex.ru/get/3907/98991937.1f/0_b558a_c9274e4d_orig
+[project-idkey]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/project-id-key.png
 [issues]: https://github.com/airbrake/airbrake-ruby/issues
 [twitter]: https://twitter.com/airbrake
 [keysblacklist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_blacklist.rb
@@ -552,3 +552,4 @@ The project uses the MIT License. See LICENSE.md for details.
 [golang]: https://golang.org/
 [semver]: https://img.shields.io/:semver-1.0.3-brightgreen.svg?style=flat
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
+[arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
