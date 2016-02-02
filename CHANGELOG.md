@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.0.4][v1.0.4] (February 2, 2016)
+
 * Started attaching the hostname information by default
   ([#41](https://github.com/airbrake/airbrake-ruby/pull/41))
 
@@ -46,3 +48,4 @@ Airbrake Ruby Changelog
 [v1.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.1
 [v1.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.2
 [v1.0.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.3
+[v1.0.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.4
