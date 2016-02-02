@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Started attaching the hostname information by default
+  ([#41](https://github.com/airbrake/airbrake-ruby/pull/41))
+
 ### [v1.0.3][v1.0.3] (January 18, 2016)
 
 * Improved parsing of backtraces

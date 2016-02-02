@@ -48,6 +48,10 @@ module Airbrake
       :params
     ].freeze
 
+    ##
+    # @return [String] the name of the host machine
+    HOSTNAME = Socket.gethostname.freeze
+
     def initialize(config, exception, params = {})
       @config = config
 
@@ -145,7 +149,10 @@ module Airbrake
 
         # Legacy Airbrake v4 behaviour.
         component: params.delete(:component),
-        action: params.delete(:action)
+        action: params.delete(:action),
+
+        # Make sure we always send hostname.
+        hostname: HOSTNAME
       }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
     end
 
