@@ -4,6 +4,7 @@ require 'json'
 require 'thread'
 require 'set'
 require 'English'
+require 'socket'
 
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/config'

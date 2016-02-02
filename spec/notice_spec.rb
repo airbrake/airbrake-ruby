@@ -105,6 +105,11 @@ RSpec.describe Airbrake::Notice do
       expect(notice.to_json).
         to match(/"notifier":{"name":"airbrake-ruby","version":".+","url":".+"}/)
     end
+
+    it "always contains context/hostname" do
+      expect(notice.to_json).
+        to match(/"context":{.*"hostname":".+".*}/)
+    end
   end
 
   describe "#[]" do
