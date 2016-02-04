@@ -89,5 +89,5 @@ Style/IndentArray:
 Style/MutableConstant:
   Enabled: true
 
-  Style/RedundantSelf:
+Style/RedundantSelf:
   Enabled: true
