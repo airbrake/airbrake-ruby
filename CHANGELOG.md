@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug in Ruby < 2.2, when trying to encode components while filtering
+  ([#45](https://github.com/airbrake/airbrake-ruby/pull/45))
+
 ### [v1.0.4][v1.0.4] (February 2, 2016)
 
 * Started attaching the hostname information by default
