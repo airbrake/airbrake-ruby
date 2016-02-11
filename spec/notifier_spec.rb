@@ -539,13 +539,13 @@ RSpec.describe Airbrake::Notifier do
       @airbrake.blacklist_keys(%w(bish))
 
       notice = @airbrake.build_notice(ex)
-      notice[:context][:url] = 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash'
+      notice[:context][:url] = 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash&color=%23FFAAFF'
 
       @airbrake.notify_sync(notice)
 
       # rubocop:disable Metrics/LineLength
       expected_body =
-        %r("context":{.*"url":"http://localhost:3000/crash\?foo=bar&baz=bongo&bish=\[Filtered\]".*})
+        %r("context":{.*"url":"http://localhost:3000/crash\?foo=bar&baz=bongo&bish=\[Filtered\]&color=%23FFAAFF".*})
       # rubocop:enable Metrics/LineLength
 
       expect(
