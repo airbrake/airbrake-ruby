@@ -52,6 +52,10 @@ module Airbrake
     def build_https(uri)
       Net::HTTP.new(uri.host, uri.port, *proxy_params).tap do |https|
         https.use_ssl = uri.is_a?(URI::HTTPS)
+        if @config.timeout
+          https.open_timeout = @config.timeout
+          https.read_timeout = @config.timeout
+        end
       end
     end
 

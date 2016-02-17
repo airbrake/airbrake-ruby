@@ -54,6 +54,10 @@ module Airbrake
     attr_accessor :ignore_environments
 
     ##
+    # @return [Integer] The HTTP timeout in seconds.
+    attr_accessor :timeout
+
+    ##
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
@@ -69,6 +73,8 @@ module Airbrake
       self.host = 'https://airbrake.io'
 
       self.ignore_environments = []
+
+      self.timeout = user_config[:timeout]
 
       merge(user_config)
     end
