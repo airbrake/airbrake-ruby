@@ -6,20 +6,25 @@ RSpec.describe Airbrake::AsyncSender do
   end
 
   describe "#send" do
-    it "limits the size of the queue, but still sends all notices" do
+    it "limits the size of the queue" do
       stdout = StringIO.new
       notices_count = 1000
+      queue_size = 10
       config = Airbrake::Config.new(
-        logger: Logger.new(stdout), workers: 3, queue_size: 10
+        logger: Logger.new(stdout), workers: 3, queue_size: queue_size
       )
       sender = described_class.new(config)
       expect(sender).to have_workers
 
-      notices_count.times { |i| sender.send(i) }
+      notice = Airbrake::Notice.new(config, AirbrakeTestError.new)
+      notices_count.times { sender.send(notice) }
       sender.close
 
       log = stdout.string.split("\n")
-      expect(log.grep(/\*\*Airbrake: \{\}/).size).to eq(notices_count)
+      notices_sent    = log.grep(/\*\*Airbrake: \{\}/).size
+      notices_dropped = log.grep(/\*\*Airbrake:.*not.*delivered/).size
+      expect(notices_sent).to be >= queue_size
+      expect(notices_sent + notices_dropped).to eq(notices_count)
     end
   end
 
@@ -43,7 +48,8 @@ RSpec.describe Airbrake::AsyncSender do
 
     context "when there are some unsent notices" do
       before do
-        300.times { |i| @sender.send(i) }
+        notice = Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
+        300.times { @sender.send(notice) }
         expect(@sender.instance_variable_get(:@unsent).size).not_to be_zero
         @sender.close
       end
@@ -52,9 +58,12 @@ RSpec.describe Airbrake::AsyncSender do
         expect(@stderr.string).to match(/waiting to send \d+ unsent notice/)
       end
 
-      it "prints the debug message the correct number of times" do
+      it "prints the correct number of log messages" do
         log = @stderr.string.split("\n")
-        expect(log.grep(/\*\*Airbrake: \{\}/).size).to eq(300)
+        notices_sent    = log.grep(/\*\*Airbrake: \{\}/).size
+        notices_dropped = log.grep(/\*\*Airbrake:.*not.*delivered/).size
+        expect(notices_sent).to be >= @sender.instance_variable_get(:@unsent).max
+        expect(notices_sent + notices_dropped).to eq(300)
       end
 
       it "waits until the unsent notices queue is empty" do
