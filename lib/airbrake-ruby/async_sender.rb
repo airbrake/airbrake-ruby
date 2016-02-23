@@ -24,6 +24,8 @@ module Airbrake
     #   library
     # @return [nil]
     def send(notice)
+      return will_not_deliver(notice) if @unsent.size >= @unsent.max
+
       @unsent << notice
       nil
     end
@@ -98,6 +100,18 @@ module Airbrake
           @sender.send(notice)
         end
       end
+    end
+
+    def will_not_deliver(notice)
+      backtrace = notice[:errors][0][:backtrace].map do |line|
+        "#{line[:file]}:#{line[:line]} in `#{line[:function]}'"
+      end
+      @config.logger.error(
+        "#{LOG_LABEL} AsyncSender has reached its capacity of "                   \
+        "#{@unsent.max} and the following notice will not be delivered "          \
+        "Error: #{notice[:errors][0][:type]} - #{notice[:errors][0][:message]}\n" \
+        "Backtrace: \n" + backtrace.join("\n"))
+      nil
     end
   end
 end
