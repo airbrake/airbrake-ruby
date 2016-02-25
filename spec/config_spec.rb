@@ -62,6 +62,10 @@ RSpec.describe Airbrake::Config do
       it "doesn't set default notify_environments" do
         expect(config.ignore_environments).to be_empty
       end
+
+      it "doesn't set default timeout" do
+        expect(config.timeout).to be_nil
+      end
     end
   end
 end
