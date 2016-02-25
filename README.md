@@ -248,6 +248,16 @@ Airbrake.configure do |c|
 end
 ```
 
+#### timeout
+
+The number of seconds to wait for the connection to Airbrake to open.
+
+```ruby
+Airbrake.configure do |c|
+  c.timeout = 10
+end
+```
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do

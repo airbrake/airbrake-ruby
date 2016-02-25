@@ -7,6 +7,8 @@ Airbrake Ruby Changelog
   ([#45](https://github.com/airbrake/airbrake-ruby/pull/45))
 * Stopped blocking on full queue when sending errors asynchronously
   ([#47](https://github.com/airbrake/airbrake-ruby/pull/47))
+* Added the `timeout` option
+  ([#46](https://github.com/airbrake/airbrake-ruby/pull/46))
 
 ### [v1.0.4][v1.0.4] (February 2, 2016)
 
