@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.1.0][v1.1.0] (February 25, 2016)
+
 * Fixed bug in Ruby < 2.2, when trying to encode components while filtering
   ([#45](https://github.com/airbrake/airbrake-ruby/pull/45))
 * Stopped blocking on full queue when sending errors asynchronously
@@ -56,3 +58,4 @@ Airbrake Ruby Changelog
 [v1.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.2
 [v1.0.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.3
 [v1.0.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.4
+[v1.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.1.0
