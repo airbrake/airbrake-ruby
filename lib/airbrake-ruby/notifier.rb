@@ -127,7 +127,7 @@ module Airbrake
     end
 
     def default_sender
-      return @async_sender if @async_sender.has_workers?
+      return @async_sender if @config.always_async || @async_sender.has_workers?
 
       @config.logger.warn(
         "#{LOG_LABEL} falling back to sync delivery because there are no " \

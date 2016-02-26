@@ -284,6 +284,18 @@ Airbrake.configure do |c|
 end
 ```
 
+#### always_async
+
+Always send errors asynchronously. The default value is false.
+If Airbrake.notify is called but no asynchronous workers are alive, the default behaviour is
+to send the error synchronously. Set always_async to true to prevent this behaviour.
+
+```ruby
+Airbrake.configure do |c|
+  c.always_async = true
+end
+```
+
 API
 ---
 

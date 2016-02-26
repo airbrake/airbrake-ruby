@@ -58,6 +58,11 @@ module Airbrake
     attr_accessor :timeout
 
     ##
+    # @return [Boolean] If true, we will never fallback to synchronous delivery
+    #   of errors, as it happens by default when there are no async workers alive
+    attr_accessor :always_async
+
+    ##
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
@@ -75,6 +80,8 @@ module Airbrake
       self.ignore_environments = []
 
       self.timeout = user_config[:timeout]
+
+      self.always_async = false
 
       merge(user_config)
     end

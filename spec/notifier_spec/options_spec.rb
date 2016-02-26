@@ -213,5 +213,25 @@ RSpec.describe Airbrake::Notifier do
         include_examples 'sent notice', environment: :development
       end
     end
+
+    describe ":always_async" do
+      it "doesn't fall back to synchronous delivery when the async sender is dead" do
+        out = StringIO.new
+        notifier = described_class.new(
+          airbrake_params.merge(logger: Logger.new(out), always_async: true))
+        async_sender = notifier.instance_variable_get(:@async_sender)
+
+        expect(async_sender).to have_workers
+        async_sender.instance_variable_get(:@workers).list.each(&:kill)
+        sleep 1
+        expect(async_sender).not_to have_workers
+
+        expect(async_sender).to receive(:send)
+        expect(out.string).to_not match(/falling back to sync delivery/)
+        notifier.notify('bango')
+
+        notifier.close
+      end
+    end
   end
 end
