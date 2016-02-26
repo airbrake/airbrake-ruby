@@ -127,13 +127,8 @@ module Airbrake
     end
 
     def default_sender
-      return @async_sender if @async_sender.has_workers?
-
-      @config.logger.warn(
-        "#{LOG_LABEL} falling back to sync delivery because there are no " \
-        "running async workers"
-      )
-      @sync_sender
+      # Always send asynchronously to avoid blocking
+      return @async_sender
     end
 
     def clean_backtrace
