@@ -10,6 +10,10 @@ module Airbrake
     # @see KeysBlacklist
     module KeysFilter
       ##
+      # @return [String] The label to replace real values of filtered payload
+      FILTERED = '[Filtered]'.freeze
+
+      ##
       # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
@@ -27,6 +31,10 @@ module Airbrake
       # @see FilterChain
       def call(notice)
         FILTERABLE_KEYS.each { |key| filter_hash(notice[key]) }
+
+        if notice[:context][:user] && should_filter?(:user)
+          notice[:context][:user] = FILTERED
+        end
 
         return unless notice[:context][:url]
         url = URI(notice[:context][:url])
@@ -46,7 +54,7 @@ module Airbrake
       def filter_hash(hash)
         hash.each_key do |key|
           if should_filter?(key)
-            hash[key] = '[Filtered]'.freeze
+            hash[key] = FILTERED
           elsif hash[key].is_a?(Hash)
             filter_hash(hash[key])
           end

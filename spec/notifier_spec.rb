@@ -553,6 +553,17 @@ RSpec.describe Airbrake::Notifier do
         with(body: expected_body)
       ).to have_been_made.once
     end
+
+    it "filters out user" do
+      @airbrake.blacklist_keys('user')
+
+      notice = @airbrake.build_notice(ex)
+      notice[:context][:user] = { id: 1337, name: 'Bingo Bango' }
+
+      @airbrake.notify_sync(notice)
+
+      expect_a_request_with_body(/"user":"\[Filtered\]"/)
+    end
   end
 
   describe "#whitelist_keys" do
