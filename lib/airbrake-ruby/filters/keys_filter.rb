@@ -15,7 +15,7 @@ module Airbrake
       #
       # @param [Array<String,Regexp,Symbol>] patterns
       def initialize(*patterns)
-        @patterns = patterns.map(&:to_s)
+        @patterns = patterns
       end
 
       ##

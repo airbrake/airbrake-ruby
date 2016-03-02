@@ -30,7 +30,13 @@ module Airbrake
       # @return [Boolean] true if the key matches at least one pattern, false
       #   otherwise
       def should_filter?(key)
-        @patterns.any? { |pattern| key.to_s.match(pattern) }
+        @patterns.any? do |pattern|
+          if pattern.is_a?(Regexp)
+            key.match(pattern)
+          else
+            key.to_s == pattern.to_s
+          end
+        end
       end
     end
   end

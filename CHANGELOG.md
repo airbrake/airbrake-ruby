@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug when similar keys would be filtered out using non-regexp values for
+  `Airbrake.blacklist/whitelist_keys`
+  ([#54](https://github.com/airbrake/airbrake-ruby/pull/54))
+
 ### [v1.1.0][v1.1.0] (February 25, 2016)
 
 * Fixed bug in Ruby < 2.2, when trying to encode components while filtering

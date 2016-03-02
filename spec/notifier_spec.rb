@@ -495,11 +495,11 @@ RSpec.describe Airbrake::Notifier do
       it "accepts strings" do
         @airbrake.blacklist_keys('bingo')
 
-        @airbrake.notify_sync(ex, bingo: 'bango')
+        @airbrake.notify_sync(ex, bingo: 'bango', bbingoo: 'bbangoo')
 
         expect(
           a_request(:post, endpoint).
-          with(body: /"params":{"bingo":"\[Filtered\]"}/)
+          with(body: /"params":{"bingo":"\[Filtered\]","bbingoo":"bbangoo"}/)
         ).to have_been_made.once
       end
     end
@@ -586,13 +586,20 @@ RSpec.describe Airbrake::Notifier do
       it "accepts strings" do
         @airbrake.whitelist_keys('bash')
 
-        @airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish', bash: 'bosh')
-
-        body = /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]","bash":"bosh"}/
+        @airbrake.notify_sync(
+          ex,
+          bingo: 'bango',
+          bongo: 'bish',
+          bash: 'bosh',
+          bbashh: 'bboshh'
+        )
 
         expect(
           a_request(:post, endpoint).
-          with(body: body)
+          with(
+            body: /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]",
+                   "bash":"bosh","bbashh":"\[Filtered\]"}/x
+          )
         ).to have_been_made.once
       end
     end
