@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Started filtering the context payload
+  ([#55](https://github.com/airbrake/airbrake-ruby/pull/55))
 * Fixed bug when similar keys would be filtered out using non-regexp values for
   `Airbrake.blacklist/whitelist_keys`
   ([#54](https://github.com/airbrake/airbrake-ruby/pull/54))
