@@ -3,6 +3,23 @@ Airbrake Ruby Changelog
 
 ### master
 
+* **IMPORTANT:** changed public API of blacklist and whitelist filters. Instead
+  of `Airbrake.blacklist_keys` and `Airbrake.whitelist_keys` please use the
+  respective new config options
+  ([#56](https://github.com/airbrake/airbrake-ruby/pull/56)):
+
+  ```ruby
+  # v1.1.0 and older
+  Airbrake.blacklist_keys([:password, /credit/i])
+  Airbrake.whitelist_keys([:page_id, 'user'])
+
+  # New way
+  Airbrake.configure do |c|
+    c.blacklist_keys = [:password, /credit/i]
+    c.whitelist_keys = [:page_id, 'user']
+  end
+  ```
+
 * Started filtering the context payload
   ([#55](https://github.com/airbrake/airbrake-ruby/pull/55))
 * Fixed bug when similar keys would be filtered out using non-regexp values for

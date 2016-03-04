@@ -258,6 +258,64 @@ Airbrake.configure do |c|
 end
 ```
 
+#### blacklist_keys
+
+Specifies which keys in the payload (parameters, session data, environment data,
+etc) should be filtered. Before sending an error, filtered keys will be
+substituted with the `[Filtered]` label.
+
+It accepts Strings, Symbols & Regexps, which represent keys of values to be
+filtered.
+
+```ruby
+Airbrake.configure do |c|
+  c.blacklist_keys = [:email, /credit/i, 'password']
+end
+
+Airbrake.notify('App crashed!', {
+  user: 'John',
+  password: 's3kr3t',
+  email: 'john@example.com',
+  credit_card: '5555555555554444'
+})
+
+# The dashboard will display this parameter as filtered, but other values won't
+# be affected:
+#   { user: 'John',
+#     password: '[Filtered]',
+#     email: '[Filtered]',
+#     credit_card: '[Filtered]' }
+```
+
+#### whitelist_keys
+
+Specifies which keys in the payload (parameters, session data, environment data,
+etc) should _not_ be filtered. All other keys will be substituted with the
+`[Filtered]` label.
+
+It accepts Strings, Symbols & Regexps, which represent keys the values of which
+shouldn't be filtered.
+
+```ruby
+Airbrake.configure do |c|
+  c.whitelist_keys = [:email, /user/i, 'account_id']
+end
+
+Airbrake.notify(StandardError.new('App crashed!'), {
+  user: 'John',
+  password: 's3kr3t',
+  email: 'john@example.com',
+  account_id: 42
+})
+
+# The dashboard will display this parameter as is, but all other values will be
+# filtered:
+#   { user: 'John',
+#     password: '[Filtered]',
+#     email: 'john@example.com',
+#     account_id: 42 }
+```
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do
@@ -381,56 +439,6 @@ Airbrake.add_filter(MyFilter.new)
 
 The library provides two default filters that you can use to filter notices:
 [KeysBlacklist][keysblacklist] & [KeysWhitelist][keyswhitelist].
-
-##### The KeysBlacklist filter
-
-The KeysBlacklist filter filters specific keys (parameters, session data,
-environment data). Before sending the notice, filtered keys will be substituted
-with the `[Filtered]` label.
-
-It accepts Strings, Symbols & Regexps, which represent keys to be filtered.
-
-```ruby
-Airbrake.blacklist_keys([:email, /credit/i, 'password'])
-Airbrake.notify('App crashed!', {
-  user: 'John',
-  password: 's3kr3t',
-  email: 'john@example.com',
-  credit_card: '5555555555554444'
-})
-
-# The dashboard will display this parameter as filtered, but other values won't
-# be affected:
-#   { user: 'John',
-#     password: '[Filtered]',
-#     email: '[Filtered]',
-#     credit_card: '[Filtered]' }
-```
-
-##### The KeysWhitelist filter
-
-The KeysWhitelist filter allows you to specify which keys should not be
-filtered. All other keys will be substituted with the `[Filtered]` label.
-
-It accepts Strings, Symbols & Regexps, which represent keys the values of which
-shouldn't be filtered.
-
-```ruby
-Airbrake.whitelist([:email, /user/i, 'account_id'])
-Airbrake.notify(StandardError.new('App crashed!'), {
-  user: 'John',
-  password: 's3kr3t',
-  email: 'john@example.com',
-  account_id: 42
-})
-
-# The dashboard will display this parameter as is, but all other values will be
-# filtered:
-#   { user: 'John',
-#     password: '[Filtered]',
-#     email: 'john@example.com',
-#     account_id: 42 }
-```
 
 #### Airbrake.build_notice
 

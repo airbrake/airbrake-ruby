@@ -58,6 +58,18 @@ module Airbrake
     attr_accessor :timeout
 
     ##
+    # @return [Array<String, Symbol, Regexp>] the keys, which should be
+    #   filtered
+    # @since 1.2.0
+    attr_accessor :blacklist_keys
+
+    ##
+    # @return [Array<String, Symbol, Regexp>] the keys, which shouldn't be
+    #   filtered
+    # @since 1.2.0
+    attr_accessor :whitelist_keys
+
+    ##
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
@@ -75,6 +87,9 @@ module Airbrake
       self.ignore_environments = []
 
       self.timeout = user_config[:timeout]
+
+      self.blacklist_keys = []
+      self.whitelist_keys = []
 
       merge(user_config)
     end

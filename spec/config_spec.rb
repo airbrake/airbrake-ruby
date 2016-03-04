@@ -66,6 +66,14 @@ RSpec.describe Airbrake::Config do
       it "doesn't set default timeout" do
         expect(config.timeout).to be_nil
       end
+
+      it "doesn't set default blacklist" do
+        expect(config.blacklist_keys).to be_empty
+      end
+
+      it "doesn't set default whitelist" do
+        expect(config.whitelist_keys).to be_empty
+      end
     end
   end
 end
