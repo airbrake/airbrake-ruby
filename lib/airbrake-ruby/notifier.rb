@@ -8,6 +8,10 @@ module Airbrake
   # @since v5.0.0
   class Notifier
     ##
+    # @return [String] the label to be prepended to the log output
+    LOG_LABEL = '**Airbrake:'.freeze
+
+    ##
     # Creates a new Airbrake notifier with the given config options.
     #
     # @example Configuring with a Hash
@@ -31,6 +35,15 @@ module Airbrake
       end
 
       @filter_chain = FilterChain.new(@config)
+
+      if @config.blacklist_keys.any?
+        add_filter(Filters::KeysBlacklist.new(*@config.blacklist_keys))
+      end
+
+      if @config.whitelist_keys.any?
+        add_filter(Filters::KeysWhitelist.new(*@config.whitelist_keys))
+      end
+
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
     end
@@ -60,13 +73,23 @@ module Airbrake
 
     ##
     # @macro see_public_api_method
+    # @deprecated Please use {Airbrake::Config#whitelist_keys} instead
     def whitelist_keys(keys)
+      @config.logger.warn(
+        "#{LOG_LABEL} Airbrake.whitelist_keys is deprecated. Please use the " \
+        "whitelist_keys option instead (https://goo.gl/sQwpYN)"
+      )
       add_filter(Filters::KeysWhitelist.new(*keys))
     end
 
     ##
     # @macro see_public_api_method
+    # @deprecated Please use {Airbrake::Config#blacklist_keys} instead
     def blacklist_keys(keys)
+      @config.logger.warn(
+        "#{LOG_LABEL} Airbrake.blacklist_keys is deprecated. Please use the " \
+        "blacklist_keys option instead (https://goo.gl/jucrFt)"
+      )
       add_filter(Filters::KeysBlacklist.new(*keys))
     end
 

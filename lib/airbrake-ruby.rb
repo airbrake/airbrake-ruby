@@ -196,6 +196,7 @@ module Airbrake
     # @return [void]
     # @since v5.0.0
     # @see .blacklist_keys
+    # @deprecated Please use {Airbrake::Config#whitelist_keys} instead
     def whitelist_keys(keys, notifier = :default)
       call_notifier(notifier, __method__, keys)
     end
@@ -213,6 +214,7 @@ module Airbrake
     # @return [void]
     # @since v5.0.0
     # @see .whitelist_keys
+    # @deprecated Please use {Airbrake::Config#blacklist_keys} instead
     def blacklist_keys(keys, notifier = :default)
       call_notifier(notifier, __method__, keys)
     end

@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::Notifier do
+  def expect_a_request_with_body(body)
+    expect(a_request(:post, endpoint).with(body: body)).to have_been_made.once
+  end
+
   let(:project_id) { 105138 }
   let(:project_key) { 'fd04e13d806a90f96614ad8e529b2822' }
   let(:localhost) { 'http://localhost:8080' }
@@ -211,6 +215,201 @@ RSpec.describe Airbrake::Notifier do
 
       context "when the current env is set and notify envs aren't" do
         include_examples 'sent notice', environment: :development
+      end
+    end
+
+    describe ":blacklist_keys" do
+      describe "the list of values" do
+        it "accepts regexps" do
+          params = { blacklist_keys: [/\Abin/] }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          airbrake.notify_sync(ex, bingo: 'bango')
+
+          expect_a_request_with_body(/"params":{"bingo":"\[Filtered\]"}/)
+        end
+
+        it "accepts symbols" do
+          params = { blacklist_keys: [:bingo] }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          airbrake.notify_sync(ex, bingo: 'bango')
+
+          expect_a_request_with_body(/"params":{"bingo":"\[Filtered\]"}/)
+        end
+
+        it "accepts strings" do
+          params = { blacklist_keys: ['bingo'] }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          airbrake.notify_sync(ex, bingo: 'bango')
+
+          expect_a_request_with_body(/"params":{"bingo":"\[Filtered\]"}/)
+        end
+      end
+
+      describe "hash values" do
+        context "non-recursive" do
+          it "filters nested hashes" do
+            params = { blacklist_keys: ['bish'] }
+            airbrake = described_class.new(airbrake_params.merge(params))
+
+            airbrake.notify_sync(ex, bongo: { bish: 'bash' })
+
+            expect_a_request_with_body(/"params":{"bongo":{"bish":"\[Filtered\]"}}/)
+          end
+        end
+
+        context "recursive" do
+          it "filters recursive hashes" do
+            params = { blacklist_keys: ['bango'] }
+            airbrake = described_class.new(airbrake_params.merge(params))
+
+            bongo = { bingo: {} }
+            bongo[:bingo][:bango] = bongo
+
+            airbrake.notify_sync(ex, bongo)
+
+            expect_a_request_with_body(/"params":{"bingo":{"bango":"\[Filtered\]"}}/)
+          end
+        end
+      end
+
+      it "filters query parameters correctly" do
+        params = { blacklist_keys: ['bish'] }
+        airbrake = described_class.new(airbrake_params.merge(params))
+
+        notice = airbrake.build_notice(ex)
+        notice[:context][:url] = 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash&color=%23FFAAFF'
+
+        airbrake.notify_sync(notice)
+
+        # rubocop:disable Metrics/LineLength
+        expected_body =
+          %r("context":{.*"url":"http://localhost:3000/crash\?foo=bar&baz=bongo&bish=\[Filtered\]&color=%23FFAAFF".*})
+        # rubocop:enable Metrics/LineLength
+
+        expect_a_request_with_body(expected_body)
+      end
+
+      it "filters out user" do
+        params = { blacklist_keys: ['user'] }
+        airbrake = described_class.new(airbrake_params.merge(params))
+
+        notice = airbrake.build_notice(ex)
+        notice[:context][:user] = { id: 1337, name: 'Bingo Bango' }
+
+        airbrake.notify_sync(notice)
+
+        expect_a_request_with_body(/"user":"\[Filtered\]"/)
+      end
+    end
+
+    describe ":whitelist_keys" do
+      describe "the list of values" do
+        it "accepts regexes" do
+          params = { whitelist_keys: [/\Abin/] }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish', bash: 'bosh')
+
+          expect_a_request_with_body(
+            /"params":{"bingo":"bango","bongo":"\[Filtered\]","bash":"\[Filtered\]"}/
+          )
+        end
+
+        it "accepts symbols" do
+          params = { whitelist_keys: [:bongo] }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish', bash: 'bosh')
+
+          expect_a_request_with_body(
+            /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"\[Filtered\]"}/
+          )
+        end
+
+        it "accepts strings" do
+          params = { whitelist_keys: ['bash'] }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          airbrake.notify_sync(
+            ex,
+            bingo: 'bango',
+            bongo: 'bish',
+            bash: 'bosh',
+            bbashh: 'bboshh'
+          )
+
+          expect_a_request_with_body(
+            /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]",
+                       "bash":"bosh","bbashh":"\[Filtered\]"}/x
+          )
+        end
+      end
+
+      describe "hash values" do
+        context "non-recursive" do
+          it "filters out everything but the provided keys" do
+            params = { whitelist_keys: %w(bongo bish) }
+            airbrake = described_class.new(airbrake_params.merge(params))
+
+            airbrake.notify_sync(ex, bingo: 'bango', bongo: { bish: 'bash' })
+
+            expect_a_request_with_body(
+              /"params":{"bingo":"\[Filtered\]","bongo":{"bish":"bash"}}/
+            )
+          end
+        end
+
+        context "recursive" do
+          it "errors when nested hashes are not filtered" do
+            params = { whitelist_keys: %w(bingo bango) }
+            airbrake = described_class.new(airbrake_params.merge(params))
+
+            bongo = { bingo: {} }
+            bongo[:bingo][:bango] = bongo
+
+            if RUBY_ENGINE == 'jruby'
+              # JRuby might raise two different exceptions, which represent the
+              # same thing. One is a Java exception, the other is a Ruby
+              # exception. It's probably a JRuby bug:
+              # https://github.com/jruby/jruby/issues/1903
+              begin
+                expect do
+                  airbrake.notify_sync(ex, bongo)
+                end.to raise_error(SystemStackError)
+              rescue RSpec::Expectations::ExpectationNotMetError
+                expect do
+                  airbrake.notify_sync(ex, bongo)
+                end.to raise_error(java.lang.StackOverflowError)
+              end
+            else
+              expect do
+                airbrake.notify_sync(ex, bongo)
+              end.to raise_error(SystemStackError)
+            end
+          end
+        end
+      end
+
+      describe "context/url" do
+        it "filters query parameters correctly" do
+          params = { whitelist_keys: %w(bish) }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          notice = airbrake.build_notice(ex)
+          notice[:context][:url] = 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash'
+
+          airbrake.notify_sync(notice)
+
+          # rubocop:disable Metrics/LineLength
+          expected_body =
+            %r("context":{.*"url":"http://localhost:3000/crash\?foo=\[Filtered\]&baz=\[Filtered\]&bish=bash".*})
+          # rubocop:enable Metrics/LineLength
+
+          expect_a_request_with_body(expected_body)
+        end
       end
     end
   end
