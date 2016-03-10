@@ -296,5 +296,5 @@ end
 
 # Notify of unhandled exceptions, if there were any, but ignore SystemExit.
 at_exit do
-  Airbrake.notify_sync($ERROR_INFO) if $ERROR_INFO
+  Airbrake.notify_sync($ERROR_INFO) if $ERROR_INFO && @notifiers.any?
 end
