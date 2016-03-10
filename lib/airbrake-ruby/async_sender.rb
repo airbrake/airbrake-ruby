@@ -14,6 +14,7 @@ module Airbrake
       @sender = SyncSender.new(config)
       @closed = false
       @workers = ThreadGroup.new
+      @mutex = Mutex.new
       @pid = nil
     end
 
@@ -37,19 +38,22 @@ module Airbrake
     # @return [void]
     # @raise [Airbrake::Error] when invoked more than one time
     def close
-      if closed?
-        raise Airbrake::Error, 'attempted to close already closed sender'
+      threads = @mutex.synchronize do
+        if closed?
+          raise Airbrake::Error, 'attempted to close already closed sender'
+        end
+
+        unless @unsent.empty?
+          msg = "#{LOG_LABEL} waiting to send #{@unsent.size} unsent notice(s)..."
+          @config.logger.debug(msg + ' (Ctrl-C to abort)')
+        end
+
+        @config.workers.times { @unsent << :stop }
+        @closed = true
+        @workers.list.dup
       end
 
-      unless @unsent.empty?
-        msg = "#{LOG_LABEL} waiting to send #{@unsent.size} unsent notice(s)..."
-        @config.logger.debug(msg + ' (Ctrl-C to abort)')
-      end
-
-      @config.workers.times { @unsent << :stop }
-      @workers.list.each(&:join)
-      @closed = true
-
+      threads.each(&:join)
       @config.logger.debug("#{LOG_LABEL} closed")
     end
 
