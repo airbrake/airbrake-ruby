@@ -59,10 +59,12 @@ module Airbrake
     end
 
     def proxy_params
-      [@config.proxy[:host],
-       @config.proxy[:port],
-       @config.proxy[:user],
-       @config.proxy[:password]]
+      if @config.proxy.key?(:host)
+        [@config.proxy[:host],
+         @config.proxy[:port],
+         @config.proxy[:user],
+         @config.proxy[:password]]
+      end
     end
   end
 end
