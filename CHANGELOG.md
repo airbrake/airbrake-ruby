@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.2.0][v1.2.0] (March 11, 2016)
+
 * **IMPORTANT:** changed public API of blacklist and whitelist filters. Instead
   of `Airbrake.blacklist_keys` and `Airbrake.whitelist_keys` please use the
   respective new config options
@@ -28,6 +30,8 @@ Airbrake Ruby Changelog
 * Fixed bug when similar keys would be filtered out using non-regexp values for
   `Airbrake.blacklist/whitelist_keys`
   ([#54](https://github.com/airbrake/airbrake-ruby/pull/54))
+* Fixed bug when async workers die due to various unexpected network errors
+  ([#52](https://github.com/airbrake/airbrake-ruby/pull/52))
 
 ### [v1.1.0][v1.1.0] (February 25, 2016)
 
@@ -84,3 +88,4 @@ Airbrake Ruby Changelog
 [v1.0.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.3
 [v1.0.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.4
 [v1.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.1.0
+[v1.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.0
