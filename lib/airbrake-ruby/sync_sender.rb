@@ -9,18 +9,6 @@ module Airbrake
     CONTENT_TYPE = 'application/json'.freeze
 
     ##
-    # @return [Array] the errors to be rescued and logged during an HTTP request
-    HTTP_ERRORS = [
-      Timeout::Error,
-      Net::HTTPBadResponse,
-      Net::HTTPHeaderSyntaxError,
-      Errno::ECONNRESET,
-      Errno::ECONNREFUSED,
-      EOFError,
-      OpenSSL::SSL::SSLError
-    ].freeze
-
-    ##
     # @param [Airbrake::Config] config
     def initialize(config)
       @config = config
@@ -39,7 +27,7 @@ module Airbrake
 
       begin
         response = https.request(req)
-      rescue *HTTP_ERRORS => ex
+      rescue => ex
         @config.logger.error("#{LOG_LABEL} HTTP error: #{ex}")
         return
       end
