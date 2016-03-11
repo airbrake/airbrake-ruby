@@ -535,6 +535,19 @@ In order to run benchmarks against `master`, add the `lib` directory to your
 ruby -Ilib benchmarks/notify_async_vs_sync.rb
 ```
 
+### Reporting critical exceptions
+
+Critical exceptions are unhandled exceptions that terminate your program. By
+default, the library doesn't report them. However, you can either depend on the
+[airbrake gem][airbrake-gem] instead, which supports them, or you can add
+the following code somewhere in your app:
+
+```ruby
+at_exit do
+  Airbrake.notify_sync($!) if $!
+end
+```
+
 Supported Rubies
 ----------------
 
