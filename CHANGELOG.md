@@ -19,7 +19,10 @@ Airbrake Ruby Changelog
     c.whitelist_keys = [:page_id, 'user']
   end
   ```
-
+* **IMPORTANT**: dropped support for reporting critical exceptions that
+  terminate the process. This bit of functionality was moved to the
+  [airbrake gem](https://github.com/airbrake/airbrake/pull/526) instead
+  ([#61](https://github.com/airbrake/airbrake-ruby/pull/61))
 * Started filtering the context payload
   ([#55](https://github.com/airbrake/airbrake-ruby/pull/55))
 * Fixed bug when similar keys would be filtered out using non-regexp values for
@@ -74,7 +77,6 @@ Airbrake Ruby Changelog
 
 * Initial release
 
-[airbrake-gem]: https://github.com/airbrake/airbrake
 [v1.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0.rc.1
 [v1.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.0
 [v1.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.1

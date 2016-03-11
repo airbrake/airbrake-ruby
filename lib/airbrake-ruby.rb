@@ -3,7 +3,6 @@ require 'logger'
 require 'json'
 require 'thread'
 require 'set'
-require 'English'
 require 'socket'
 
 require 'airbrake-ruby/version'
@@ -292,9 +291,4 @@ module Airbrake
       end
     end
   end
-end
-
-# Notify of unhandled exceptions, if there were any, but ignore SystemExit.
-at_exit do
-  Airbrake.notify_sync($ERROR_INFO) if $ERROR_INFO
 end
