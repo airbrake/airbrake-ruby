@@ -68,6 +68,11 @@ module Airbrake
   # names, the values are Airbrake::Notifier instances.
   @notifiers = {}
 
+  ##
+  # A Hash that holds a config options. These options will override any
+  # values set via Airbrake.configure.
+  @overrides = {}
+
   class << self
     ##
     # Configures a new +notifier+ with the given name. If the name is not given,
@@ -96,14 +101,41 @@ module Airbrake
     # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
     def configure(notifier = :default)
-      yield config = Airbrake::Config.new
+      yield config = Airbrake::Config.new(notifier: notifier)
+      config.merge(@overrides)
 
-      if @notifiers.key?(notifier)
+      if @notifiers.key?(config.notifier)
         raise Airbrake::Error,
-              "the '#{notifier}' notifier was already configured"
+              "the '#{config.notifier}' notifier was already configured"
       else
-        @notifiers[notifier] = Notifier.new(config)
+        @notifiers[config.notifier] = Notifier.new(config)
       end
+    end
+
+    ##
+    # Sets overrides for options set in configure block. Overrides are available
+    # only within the block.
+    #
+    # @example Overriding project_id
+    #   Airbrake.with_overrides!(project_id: '1234') do
+    #     Airbrake.configure do |c|
+    #       c.project_id = 43321
+    #     end
+    #   end
+    #   # project_id for default notifier will be '1234'
+    #
+    # @example Overriding notifier name
+    #   Airbrake.with_overrides!(notifier: 'not-default') do
+    #     Airbrake.configure do |c|
+    #       c.project_id = 43321
+    #     end
+    #   end
+    #   # 'not-default' notifier name will be used, instead of 'default'
+    def with_overrides!(options = {})
+      @overrides = options
+      yield
+    ensure
+      @overrides = {}
     end
 
     # @!macro proxy_method
