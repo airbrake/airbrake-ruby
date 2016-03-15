@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug with regard to proxy configuration, when the library unintentionally
+  overwrites the environment proxy
+  ([#63](https://github.com/airbrake/airbrake-ruby/pull/63))
+
 ### [v1.2.0][v1.2.0] (March 11, 2016)
 
 * **IMPORTANT:** changed public API of blacklist and whitelist filters. Instead
