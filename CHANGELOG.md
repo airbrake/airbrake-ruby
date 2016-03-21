@@ -25,6 +25,9 @@ Airbrake Ruby Changelog
     c.whitelist_keys = [:page_id, 'user']
   end
   ```
+
+  The old API is still supported, but *deprecated*.
+
 * **IMPORTANT**: dropped support for reporting critical exceptions that
   terminate the process. This bit of functionality was moved to the
   [airbrake gem](https://github.com/airbrake/airbrake/pull/526) instead
