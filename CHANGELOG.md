@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.2.1][v1.2.1] (March 21, 2016)
+
 * Fixed bug with regard to proxy configuration, when the library unintentionally
   overwrites the environment proxy
   ([#63](https://github.com/airbrake/airbrake-ruby/pull/63))
@@ -96,3 +98,4 @@ Airbrake Ruby Changelog
 [v1.0.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.0.4
 [v1.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.1.0
 [v1.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.0
+[v1.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.1
