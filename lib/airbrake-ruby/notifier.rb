@@ -102,6 +102,7 @@ module Airbrake
       end
 
       if exception.is_a?(Airbrake::Notice)
+        exception[:params].merge!(params)
         exception
       else
         Notice.new(@config, convert_to_exception(exception), params)
