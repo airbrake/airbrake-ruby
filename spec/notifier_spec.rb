@@ -81,6 +81,13 @@ RSpec.describe Airbrake::Notifier do
             with(body: expected_body)
           ).to have_been_made.once
         end
+
+        it "appends provided params to the notice" do
+          notice = @airbrake.build_notice(ex)
+          @airbrake.notify_sync(notice, bingo: 'bango')
+
+          expect_a_request_with_body(/"params":{.*"bingo":"bango".*}/)
+        end
       end
     end
 
