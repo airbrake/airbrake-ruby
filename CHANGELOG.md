@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.2.2][v1.2.2] (April 5, 2016)
+
 * Fixed bug in `Notifier#notify` where the `params` Hash is ignored if the first
   argument is an `Airbrake::Notice`
   ([#66](https://github.com/airbrake/airbrake-ruby/pull/66))
@@ -103,3 +105,4 @@ Airbrake Ruby Changelog
 [v1.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.1.0
 [v1.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.0
 [v1.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.1
+[v1.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.2
