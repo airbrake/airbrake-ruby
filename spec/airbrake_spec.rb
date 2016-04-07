@@ -161,6 +161,41 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe ".with_overrides!" do
+    before do
+      described_class.instance_variable_set(:@notifiers, {})
+    end
+
+    it "allows to override options set in .configure block" do
+      described_class.with_overrides!(project_key: '000') do
+        described_class.configure do |c|
+          c.project_id = 123
+          c.project_key = '321'
+        end
+      end
+
+      notifiers = described_class.instance_variable_get(:@notifiers)
+      config = notifiers[:default].instance_variable_get(:@config)
+
+      expect(config.project_key).to eq('000')
+    end
+
+    it "resets the overrides after block exits" do
+      described_class.with_overrides!(project_key: '000') do
+        nil
+      end
+
+      described_class.configure do |c|
+        c.project_id = 123
+        c.project_key = '321'
+      end
+
+      notifiers = described_class.instance_variable_get(:@notifiers)
+      config = notifiers[:default].instance_variable_get(:@config)
+      expect(config.project_key).to eq('321')
+    end
+  end
+
   describe ".add_filter" do
     include_examples 'error handling', :add_filter
 

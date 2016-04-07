@@ -4,6 +4,10 @@ module Airbrake
   # can use to configure an Airbrake instance.
   class Config
     ##
+    # @return [String, Symbol] the configured notifier name.
+    attr_accessor :notifier
+
+    ##
     # @return [Integer] the project identificator. This value *must* be set.
     attr_accessor :project_id
 

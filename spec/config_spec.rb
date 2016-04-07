@@ -67,6 +67,10 @@ RSpec.describe Airbrake::Config do
         expect(config.timeout).to be_nil
       end
 
+      it "doesn't set default notifier name" do
+        expect(config.notifier).to be_nil
+      end
+
       it "doesn't set default blacklist" do
         expect(config.blacklist_keys).to be_empty
       end
