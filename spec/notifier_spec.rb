@@ -685,6 +685,44 @@ RSpec.describe Airbrake::Notifier do
           with(body: expected_body)
         ).to have_been_made.once
       end
+
+      context "given a non-standard URL" do
+        it "leaves the URL unfiltered" do
+          @airbrake.whitelist_keys(%w(bish))
+
+          notice = @airbrake.build_notice(ex)
+          notice[:context][:url] =
+            'http://localhost:3000/cra]]]sh?foo=bar&baz=bongo&bish=bash'
+
+          @airbrake.notify_sync(notice)
+
+          # rubocop:disable Metrics/LineLength
+          expected_body =
+            %r("context":{.*"url":"http://localhost:3000/cra\]\]\]sh\?foo=bar&baz=bongo&bish=bash".*})
+          # rubocop:enable Metrics/LineLength
+
+          expect(
+            a_request(:post, endpoint).
+            with(body: expected_body)
+          ).to have_been_made.once
+        end
+      end
+
+      context "given a URL without a query" do
+        it "skips params filtering and leaves the URL untouched" do
+          @airbrake.whitelist_keys(%w(bish))
+
+          notice = @airbrake.build_notice(ex)
+          notice[:context][:url] = 'http://localhost:3000/crash'
+
+          @airbrake.notify_sync(notice)
+
+          expect(
+            a_request(:post, endpoint).
+            with(body: %r("context":{.*"url":"http://localhost:3000/crash".*}))
+          ).to have_been_made.once
+        end
+      end
     end
   end
 

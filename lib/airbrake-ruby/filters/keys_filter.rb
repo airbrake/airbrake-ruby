@@ -37,10 +37,7 @@ module Airbrake
         end
 
         return unless notice[:context][:url]
-        url = URI(notice[:context][:url])
-        return if url.nil? || url.query.nil?
-
-        notice[:context][:url] = filter_url_params(url)
+        filter_url(notice)
       end
 
       ##
@@ -73,6 +70,17 @@ module Airbrake
         end.join('&')
 
         url.to_s
+      end
+
+      def filter_url(notice)
+        begin
+          url = URI(notice[:context][:url])
+        rescue URI::InvalidURIError
+          return
+        end
+
+        return unless url.query
+        notice[:context][:url] = filter_url_params(url)
       end
     end
   end

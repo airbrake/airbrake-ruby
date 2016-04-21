@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `URI::InvalidURIError` while trying to filter non-standard URLs
+  ([#70](https://github.com/airbrake/airbrake-ruby/pull/70))
+
 ### [v1.2.2][v1.2.2] (April 5, 2016)
 
 * Fixed bug in `Notifier#notify` where the `params` Hash is ignored if the first
