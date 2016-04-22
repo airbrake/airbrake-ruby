@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.2.3][v1.2.3] (April 22, 2016)
+
 * Fixed `URI::InvalidURIError` while trying to filter non-standard URLs
   ([#70](https://github.com/airbrake/airbrake-ruby/pull/70))
 
@@ -109,3 +111,4 @@ Airbrake Ruby Changelog
 [v1.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.0
 [v1.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.1
 [v1.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.2
+[v1.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.3
