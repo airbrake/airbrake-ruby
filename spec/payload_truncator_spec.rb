@@ -445,6 +445,17 @@ RSpec.describe Airbrake::PayloadTruncator do
 
           expect(params[:unicode]).to match(/[�\?]{4}/)
         end
+
+        it "doesn't fail when string is frozen" do
+          encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
+          bad_string = Base64.decode64(encoded).freeze
+
+          params = { unicode: bad_string }
+
+          @truncator.truncate_object(params)
+
+          expect(params[:unicode]).to match(/[�\?]{4}/)
+        end
       end
     end
 

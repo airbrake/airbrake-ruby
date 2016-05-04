@@ -91,7 +91,7 @@ module Airbrake
     end
 
     def truncate_string(str)
-      replace_invalid_characters!(str)
+      str = replace_invalid_characters!(str)
       return str if str.length <= @max_size
       str.slice(0, @max_size) + '[Truncated]'.freeze
     end
@@ -106,14 +106,16 @@ module Airbrake
     # For modern Rubies we use UTF-16 as a safe alternative.
     #
     # @param [String] str The string to replace characters
-    # @return [void]
-    # @note This method mutates +str+ for speed
+    # @return [String] a UTF-8 encoded string
+    # @note This method mutates +str+ unless it's frozen,
+    #   in which case it creates a duplicate
     # @see https://github.com/flori/json/commit/3e158410e81f94dbbc3da6b7b35f4f64983aa4e3
     def replace_invalid_characters!(str)
       encoding = str.encoding
       utf8_string = (encoding == Encoding::UTF_8 || encoding == Encoding::ASCII)
       return str if utf8_string && str.valid_encoding?
 
+      str = str.dup if str.frozen?
       str.encode!(TEMP_ENCODING, ENCODING_OPTIONS) if utf8_string
       str.encode!('utf-8', ENCODING_OPTIONS)
     end
