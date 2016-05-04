@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug when trying to truncate frozen strings
+  ([#73](https://github.com/airbrake/airbrake-ruby/pull/73))
+
 ### [v1.2.3][v1.2.3] (April 22, 2016)
 
 * Fixed `URI::InvalidURIError` while trying to filter non-standard URLs
