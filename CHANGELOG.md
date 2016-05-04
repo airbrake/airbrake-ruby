@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.2.4][v1.2.4] (May 4, 2016)
+
 * Fixed bug when trying to truncate frozen strings
   ([#73](https://github.com/airbrake/airbrake-ruby/pull/73))
 
@@ -115,3 +117,4 @@ Airbrake Ruby Changelog
 [v1.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.1
 [v1.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.2
 [v1.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.3
+[v1.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.4
