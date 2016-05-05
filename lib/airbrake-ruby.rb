@@ -275,20 +275,15 @@ module Airbrake
     private
 
     ##
-    # Calls +method+ on +notifier+ with provided +args+.
-    #
-    # @raise [Airbrake::Error] if none of the notifiers exist
+    # Calls +method+ on +notifier+ with provided +args+. If +notifier+ is not
+    # configured, returns nil.
     def call_notifier(notifier, method, *args, &block)
-      if @notifiers.key?(notifier)
-        @notifiers[notifier].__send__(method, *args, &block)
-      else
-        # If we raise SystemExit, the Ruby process can gracefully quit without
-        # the unwanted Airbrake::Error.
-        raise args.first if args.first.class == SystemExit
+      return unless configured?(notifier)
+      @notifiers[notifier].__send__(method, *args, &block)
+    end
 
-        raise Airbrake::Error,
-              "the '#{notifier}' notifier isn't configured"
-      end
+    def configured?(notifier)
+      @notifiers.key?(notifier)
     end
   end
 end
