@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.2.5][v1.2.5] (May 5, 2016)
+
 * **IMPORTANT:** stopped raising the `the 'default' notifier isn't configured`
   error when Airbrake is not configured
   ([#75](https://github.com/airbrake/airbrake-ruby/pull/75))
@@ -122,3 +124,4 @@ Airbrake Ruby Changelog
 [v1.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.2
 [v1.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.3
 [v1.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.4
+[v1.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.5
