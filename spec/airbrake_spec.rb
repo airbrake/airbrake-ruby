@@ -23,10 +23,7 @@ RSpec.describe Airbrake do
   shared_examples 'error handling' do |method|
     it "raises error if there is no notifier when using #{method}" do
       described_class.instance_variable_set(:@notifiers, {})
-
-      expect { described_class.__send__(method, 'bingo') }.
-        to raise_error(Airbrake::Error,
-                       "the 'default' notifier isn't configured")
+      expect(described_class.__send__(method, 'bingo')).to be_nil
     end
   end
 

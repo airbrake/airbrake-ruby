@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* **IMPORTANT:** stopped raising the `the 'default' notifier isn't configured`
+  error when Airbrake is not configured
+  ([#75](https://github.com/airbrake/airbrake-ruby/pull/75))
+
 ### [v1.2.4][v1.2.4] (May 4, 2016)
 
 * Fixed bug when trying to truncate frozen strings
