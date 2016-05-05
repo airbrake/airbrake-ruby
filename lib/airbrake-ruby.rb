@@ -98,7 +98,7 @@ module Airbrake
     def configure(notifier = :default)
       yield config = Airbrake::Config.new
 
-      if @notifiers.key?(notifier)
+      if configured?(notifier)
         raise Airbrake::Error,
               "the '#{notifier}' notifier was already configured"
       else
