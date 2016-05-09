@@ -75,18 +75,34 @@ project.
 ```ruby
 require 'airbrake-ruby'
 
+# Every Airbrake notifier must configure
+# two options: `project_id` and `project_key`.
 Airbrake.configure do |c|
   c.project_id = 105138
   c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
 end
 
+# Asynchronous error delivery.
 begin
   1/0
 rescue ZeroDivisionError => ex
+  # Return value is always `nil`.
   Airbrake.notify(ex)
 end
 
-puts 'Check your dashboard on http://airbrake.io'
+puts 'A ZeroDivisionError was sent to Airbrake asynchronously!',
+     "Find it at your project's dashboard on https://airbrake.io"
+
+# Synchronous error delivery.
+begin
+  1/0
+rescue ZeroDivisionError => ex
+  # Return value is a Hash.
+  response = Airbrake.notify_sync(ex)
+end
+
+puts "\nAnother ZeroDivisionError was sent to Airbrake, but this time synchronously.",
+     "See it at #{response['url']}"
 ```
 
 ### Creating a named notifier
@@ -116,6 +132,9 @@ Airbrake.notify('Oops!', params, :project_a)
 
 # Send an exception to Project B.
 Airbrake.notify('Oops!', params, :project_b)
+
+# Wait for the notifiers to finish their work and make them inactive.
+%i(project_a project_b).each { |notifier| Airbrake.close(notifier) }
 ```
 
 Configuration
