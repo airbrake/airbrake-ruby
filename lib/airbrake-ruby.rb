@@ -266,6 +266,7 @@ module Airbrake
     # @option deploy_params [Symbol] :repository
     # @option deploy_params [Symbol] :revision
     # @option deploy_params [Symbol] :version
+    # @return [void]
     # @since v5.0.0
     # @api private
     def create_deploy(deploy_params, notifier = :default)

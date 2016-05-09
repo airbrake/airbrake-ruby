@@ -20,15 +20,15 @@ RSpec.describe Airbrake do
     described_class.instance_variable_set(:@notifiers, {})
   end
 
-  shared_examples 'error handling' do |method|
-    it "raises error if there is no notifier when using #{method}" do
+  shared_examples 'non-configured notifier handling' do |method|
+    it "returns nil if there is no configured notifier when using #{method}" do
       described_class.instance_variable_set(:@notifiers, {})
       expect(described_class.__send__(method, 'bingo')).to be_nil
     end
   end
 
   describe ".notify" do
-    include_examples 'error handling', :notify
+    include_examples 'non-configured notifier handling', :notify
 
     it "sends exceptions asynchronously" do
       described_class.notify('bingo')
@@ -38,7 +38,7 @@ RSpec.describe Airbrake do
   end
 
   describe ".notify_sync" do
-    include_examples 'error handling', :notify_sync
+    include_examples 'non-configured notifier handling', :notify_sync
 
     it "sends exceptions synchronously" do
       expect(described_class.notify_sync('bingo')).to be_a(Hash)
@@ -159,7 +159,7 @@ RSpec.describe Airbrake do
   end
 
   describe ".add_filter" do
-    include_examples 'error handling', :add_filter
+    include_examples 'non-configured notifier handling', :add_filter
 
     it "adds filters with help of blocks" do
       filter_chain = notifier.instance_variable_get(:@filter_chain)
@@ -175,14 +175,14 @@ RSpec.describe Airbrake do
   end
 
   describe ".whitelist_keys" do
-    include_examples 'error handling', :whitelist_keys
+    include_examples 'non-configured notifier handling', :whitelist_keys
   end
 
   describe ".blacklist_keys" do
-    include_examples 'error handling', :blacklist_keys
+    include_examples 'non-configured notifier handling', :blacklist_keys
   end
 
   describe ".build_notice" do
-    include_examples 'error handling', :build_notice
+    include_examples 'non-configured notifier handling', :build_notice
   end
 end
