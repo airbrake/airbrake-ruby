@@ -114,7 +114,8 @@ module Airbrake
         "#{LOG_LABEL} AsyncSender has reached its capacity of "                   \
         "#{@unsent.max} and the following notice will not be delivered "          \
         "Error: #{notice[:errors][0][:type]} - #{notice[:errors][0][:message]}\n" \
-        "Backtrace: \n" + backtrace.join("\n"))
+        "Backtrace: \n" + backtrace.join("\n")
+      )
       nil
     end
   end

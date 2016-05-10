@@ -140,7 +140,8 @@ module Airbrake
     private
 
     def context(params)
-      { version: @config.app_version,
+      ctx = {
+        version: @config.app_version,
         # We ensure that root_directory is always a String, so it can always be
         # converted to JSON in a predictable manner (when it's a Pathname and in
         # Rails environment, it converts to unexpected JSON).
@@ -153,7 +154,9 @@ module Airbrake
 
         # Make sure we always send hostname.
         hostname: HOSTNAME
-      }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
+      }
+
+      ctx.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
     end
 
     def raise_if_ignored
