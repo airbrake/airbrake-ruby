@@ -4,6 +4,7 @@ Airbrake Ruby
 [![Build Status](https://circleci.com/gh/airbrake/airbrake-ruby.svg?style=shield)](https://circleci.com/gh/airbrake/airbrake-ruby)
 [![semver]](http://semver.org)
 [![Documentation Status](http://inch-ci.org/github/airbrake/airbrake-ruby.svg?branch=master)](http://inch-ci.org/github/airbrake/airbrake-ruby)
+[![Downloads](https://img.shields.io/gem/dt/airbrake-ruby.svg?style=flat)](https://rubygems.org/gems/airbrake-ruby)
 [![Issue Stats](http://issuestats.com/github/airbrake/airbrake-ruby/badge/pr?style=flat)](http://issuestats.com/github/airbrake/airbrake-ruby)
 [![Issue Stats](http://issuestats.com/github/airbrake/airbrake-ruby/badge/issue?style=flat)](http://issuestats.com/github/airbrake/airbrake-ruby)
 
