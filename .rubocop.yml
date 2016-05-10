@@ -91,3 +91,9 @@ Style/MutableConstant:
 
 Style/RedundantSelf:
   Enabled: true
+
+Style/MultilineMethodCallBraceLayout:
+  Enabled: true
+
+Style/MultilineHashBraceLayout:
+  Enabled: true

@@ -94,14 +94,16 @@ RSpec.describe Airbrake do
         include_examples(
           'backtrace building',
           'converts it to a RuntimeException and builds a fake backtrace',
-          'bingo')
+          'bingo'
+        )
       end
 
       context "given an Exception with missing backtrace" do
         include_examples(
           'backtrace building',
           'builds a backtrace for it and sends the notice',
-          RuntimeError.new('bingo'))
+          RuntimeError.new('bingo')
+        )
       end
     end
 
