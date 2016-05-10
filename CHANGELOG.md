@@ -3,9 +3,16 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.3.0][v1.3.0] (May 10, 2016)
+
 * **IMPORTANT:** stopped raising the `the 'default' notifier isn't configured`
-  error when Airbrake is not configured
+  error when Airbrake is not configured. Instead, when a notifier *is not*
+  configured, all public API methods will be returning `nil`.
   ([#75](https://github.com/airbrake/airbrake-ruby/pull/75))
+
+  Make sure that if you use `Airbrake.build_notice` or `Airbrake.notify_sync`,
+  you protect yourself from a possible crash by handling the return value (it
+  might be `nil`).
 
 ### [v1.2.4][v1.2.4] (May 4, 2016)
 
@@ -122,3 +129,4 @@ Airbrake Ruby Changelog
 [v1.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.2
 [v1.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.3
 [v1.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.4
+[v1.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.0
