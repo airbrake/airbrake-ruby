@@ -98,12 +98,11 @@ module Airbrake
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address
     def endpoint
-      @endpoint ||=
-        begin
-          self.host = ('https://' << host) if host !~ %r{\Ahttps?://}
-          api = "/api/v3/projects/#{project_id}/notices?key=#{project_key}"
-          URI.join(host, api)
-        end
+      return @endpoint if @endpoint
+      warning_missing_info
+      self.host = ('https://' << host) if host !~ %r{\Ahttps?://}
+      api = "/api/v3/projects/#{project_id}/notices?key=#{project_key}"
+      @endpoint = URI.join(host, api)
     end
 
     ##
@@ -126,6 +125,15 @@ module Airbrake
     end
 
     private
+
+    def warning_missing_info
+      logger.warn(
+        'Project ID is blank and is required to notify airbrake'
+      ) if project_id.to_s == ''
+      logger.warn(
+        'Project key is blank and is required to notify airbrake'
+      ) if project_key.to_s == ''
+    end
 
     def set_option(option, value)
       __send__("#{option}=", value)

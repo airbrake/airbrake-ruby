@@ -75,5 +75,36 @@ RSpec.describe Airbrake::Config do
         expect(config.whitelist_keys).to be_empty
       end
     end
+
+    describe '#warning_missing_info' do
+      context 'project_id' do
+        before do
+          config.project_key = 'key_present'
+          config.project_id = ''
+        end
+        it do
+          expect(config.logger).to(
+            receive(:warn).with(
+              'Project ID is blank and is required to notify airbrake'
+            )
+          )
+        end
+        after { config.send(:warning_missing_info) }
+      end
+      context 'project_key' do
+        before do
+          config.project_key = ''
+          config.project_id = '12345'
+        end
+        it do
+          expect(config.logger).to(
+            receive(:warn).with(
+              'Project key is blank and is required to notify airbrake'
+            )
+          )
+        end
+        after { config.send(:warning_missing_info) }
+      end
+    end
   end
 end
