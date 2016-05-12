@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed infinite loop bug while trying to truncate a notice
+  ([#83](https://github.com/airbrake/airbrake-ruby/pull/83))
+
 ### [v1.3.0][v1.3.0] (May 10, 2016)
 
 * **IMPORTANT:** stopped raising the `the 'default' notifier isn't configured`

@@ -10,7 +10,7 @@ RSpec.describe Airbrake::PayloadTruncator do
     @truncator = described_class.new(max_size, Logger.new('/dev/null'))
   end
 
-  describe ".truncate_error" do
+  describe "#truncate_error" do
     let(:error) do
       { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
     end
@@ -89,7 +89,7 @@ RSpec.describe Airbrake::PayloadTruncator do
     end
   end
 
-  describe ".truncate_object" do
+  describe "#truncate_object" do
     describe "given a hash with short values" do
       let(:params) do
         { bingo: 'bango', bongo: 'bish', bash: 'bosh' }

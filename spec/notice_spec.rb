@@ -65,6 +65,27 @@ RSpec.describe Airbrake::Notice do
         include_examples 'payloads', 300, small_msg
       end
 
+      context "when truncation failed" do
+        it "returns nil" do
+          expect_any_instance_of(Airbrake::PayloadTruncator).
+            to receive(:reduce_max_size).and_return(0)
+
+          encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
+          bad_string = Base64.decode64(encoded)
+
+          ex = AirbrakeTestError.new
+
+          backtrace = []
+          10.times { backtrace << "bin/rails:3:in `<#{bad_string}>'" }
+          ex.set_backtrace(backtrace)
+
+          config = Airbrake::Config.new(logger: Logger.new('/dev/null'))
+          notice = described_class.new(config, ex)
+
+          expect(notice.to_json).to be_nil
+        end
+      end
+
       describe "object replacement with its string version" do
         let(:klass) { Class.new {} }
         let(:ex) { AirbrakeTestError.new }
