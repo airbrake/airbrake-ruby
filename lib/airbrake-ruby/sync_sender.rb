@@ -23,6 +23,14 @@ module Airbrake
     def send(notice, endpoint = @config.endpoint)
       response = nil
       req = build_post_request(endpoint, notice)
+
+      if req.body.nil?
+        @config.logger.error(
+          "#{LOG_LABEL} notice was not sent because of missing body"
+        )
+        return
+      end
+
       https = build_https(endpoint)
 
       begin

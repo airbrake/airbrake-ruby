@@ -75,18 +75,18 @@ module Airbrake
     # notice's payload. Truncates notices, JSON representation of which is
     # bigger than {MAX_NOTICE_SIZE}.
     #
-    # @return [Hash{String=>String}]
+    # @return [Hash{String=>String}, nil]
     def to_json
       loop do
         begin
           json = payload.to_json
         rescue *JSON_EXCEPTIONS => ex
-          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.to_s.chomp}")
+          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")
         else
           return json if json && json.bytesize <= MAX_NOTICE_SIZE
         end
 
-        truncate_payload
+        break if truncate_payload.zero?
       end
     end
 
@@ -188,7 +188,16 @@ module Airbrake
         @truncator.truncate_object(@modifiable_payload[key])
       end
 
-      @truncator.reduce_max_size
+      new_max_size = @truncator.reduce_max_size
+      if new_max_size.zero?
+        @config.logger.error(
+          "#{LOG_LABEL} truncation failed. File an issue at " \
+          "https://github.com/airbrake/airbrake-ruby " \
+          "and attach the following payload: #{payload}"
+        )
+      end
+
+      new_max_size
     end
   end
 end

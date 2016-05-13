@@ -15,13 +15,37 @@ RSpec.describe Airbrake::SyncSender do
     it "catches exceptions raised when sending" do
       stdout = StringIO.new
       config = Airbrake::Config.new(logger: Logger.new(stdout))
-      sender = described_class.new config
+      sender = described_class.new(config)
       notice = Airbrake::Notice.new(config, AirbrakeTestError.new)
       https = double("foo")
       allow(sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
       expect(sender.send(notice)).to be_nil
       expect(stdout.string).to match(/ERROR -- : .+ HTTP error: foo/)
+    end
+
+    context "when request body is nil" do
+      it "doesn't send a notice" do
+        expect_any_instance_of(Airbrake::PayloadTruncator).
+          to receive(:reduce_max_size).and_return(0)
+
+        encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
+        bad_string = Base64.decode64(encoded)
+
+        ex = AirbrakeTestError.new
+        backtrace = []
+        10.times { backtrace << "bin/rails:3:in `<#{bad_string}>'" }
+        ex.set_backtrace(backtrace)
+
+        stdout = StringIO.new
+        config = Airbrake::Config.new(logger: Logger.new(stdout))
+
+        sender = described_class.new(config)
+        notice = Airbrake::Notice.new(config, ex)
+
+        expect(sender.send(notice)).to be_nil
+        expect(stdout.string).to match(/ERROR -- : .+ notice was not sent/)
+      end
     end
   end
 end
