@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.3.1][v1.3.1] (May 13, 2016)
+
 * Fixed infinite loop bug while trying to truncate a notice
   ([#83](https://github.com/airbrake/airbrake-ruby/pull/83))
 
@@ -133,3 +135,4 @@ Airbrake Ruby Changelog
 [v1.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.3
 [v1.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.4
 [v1.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.0
+[v1.3.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.1
