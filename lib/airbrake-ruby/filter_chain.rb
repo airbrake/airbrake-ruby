@@ -33,10 +33,6 @@ module Airbrake
     def initialize(config)
       @filters = []
 
-      if config.ignore_environments.any?
-        add_filter(env_filter(config.environment, config.ignore_environments))
-      end
-
       [SYSTEM_EXIT_FILTER, GEM_ROOT_FILTER].each do |filter|
         add_filter(filter)
       end
@@ -74,12 +70,6 @@ module Airbrake
             frame[:file].sub!(/\A#{root_directory}/, '[PROJECT_ROOT]'.freeze)
           end
         end
-      end
-    end
-
-    def env_filter(environment, ignore_environments)
-      proc do |notice|
-        notice.ignore! if ignore_environments.include?(environment)
       end
     end
   end

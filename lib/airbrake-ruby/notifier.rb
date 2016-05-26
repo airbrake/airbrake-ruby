@@ -143,6 +143,10 @@ module Airbrake
     end
 
     def send_notice(exception, params, sender = default_sender)
+      if @config.ignore_environments.any?
+        return if @config.ignore_environments.include?(@config.environment)
+      end
+
       notice = build_notice(exception, params)
       @filter_chain.refine(notice)
       return if notice.ignored?

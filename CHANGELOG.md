@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug when the library raises unwanted exception, when current environment
+  is ignored and a notifier is given an exception with bad backtrace
+  ([#85](https://github.com/airbrake/airbrake-ruby/pull/85))
+
 ### [v1.3.1][v1.3.1] (May 13, 2016)
 
 * Fixed infinite loop bug while trying to truncate a notice

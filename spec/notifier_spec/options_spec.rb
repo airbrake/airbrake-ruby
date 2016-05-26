@@ -205,6 +205,14 @@ RSpec.describe Airbrake::Notifier do
         }
 
         include_examples 'ignored notice', params
+
+        it "returns early and doesn't try to parse the given exception" do
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          expect(Airbrake::Notice).not_to receive(:new)
+          expect(airbrake.notify_sync(ex)).to be_nil
+          expect(a_request(:post, endpoint)).not_to have_been_made
+        end
       end
 
       context "when the current env is not set and notify envs are present" do
