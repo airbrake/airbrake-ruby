@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.3.2][v1.3.2] (May 27, 2016)
+
 * Fixed bug when the library raises unwanted exception, when current environment
   is ignored and a notifier is given an exception with bad backtrace
   ([#85](https://github.com/airbrake/airbrake-ruby/pull/85))
@@ -140,3 +142,4 @@ Airbrake Ruby Changelog
 [v1.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.2.4
 [v1.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.0
 [v1.3.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.1
+[v1.3.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.2
