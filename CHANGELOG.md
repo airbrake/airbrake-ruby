@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Stopped raising error when the notifier lacks either project ID or project key
+  and also told to ignore current environment. As the result, empty string for
+  `project_key` is also validated now (forbidden)
+  ([#87](https://github.com/airbrake/airbrake-ruby/pull/87))
+
 ### [v1.3.2][v1.3.2] (May 27, 2016)
 
 * Fixed bug when the library raises unwanted exception, when current environment
