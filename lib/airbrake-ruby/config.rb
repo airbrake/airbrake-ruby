@@ -130,7 +130,7 @@ module Airbrake
     #   otherwise
     def valid?
       return true if ignored_environment?
-      return false unless project_id.is_a?(Integer)
+      return false if project_id.to_i.zero?
       project_key.is_a?(String) && !project_key.empty?
     end
 
