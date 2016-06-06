@@ -2,7 +2,7 @@ Airbrake Ruby
 =============
 
 [![Build Status](https://circleci.com/gh/airbrake/airbrake-ruby.svg?style=shield)](https://circleci.com/gh/airbrake/airbrake-ruby)
-[![semver]](http://semver.org)
+[![Gem Version](https://badge.fury.io/rb/airbrake-ruby.svg)](http://badge.fury.io/rb/airbrake-ruby)
 [![Documentation Status](http://inch-ci.org/github/airbrake/airbrake-ruby.svg?branch=master)](http://inch-ci.org/github/airbrake/airbrake-ruby)
 [![Downloads](https://img.shields.io/gem/dt/airbrake-ruby.svg?style=flat)](https://rubygems.org/gems/airbrake-ruby)
 [![Issue Stats](http://issuestats.com/github/airbrake/airbrake-ruby/badge/pr?style=flat)](http://issuestats.com/github/airbrake/airbrake-ruby)
@@ -54,7 +54,7 @@ Installation
 Add the Airbrake Ruby gem to your Gemfile:
 
 ```ruby
-gem 'airbrake-ruby', '~> 1.3'
+gem 'airbrake-ruby', '~> 1.4'
 ```
 
 ### Manual
@@ -601,6 +601,5 @@ The project uses the MIT License. See LICENSE.md for details.
 [keysblacklist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_blacklist.rb
 [keyswhitelist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_whitelist.rb
 [golang]: https://golang.org/
-[semver]: https://img.shields.io/:semver-1.3.2-brightgreen.svg?style=flat
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
 [arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
