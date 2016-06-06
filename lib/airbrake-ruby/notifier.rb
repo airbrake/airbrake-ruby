@@ -30,7 +30,7 @@ module Airbrake
     def initialize(user_config)
       @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
 
-      unless [@config.project_id, @config.project_key].all?
+      unless @config.valid?
         raise Airbrake::Error, 'both :project_id and :project_key are required'
       end
 
@@ -143,9 +143,7 @@ module Airbrake
     end
 
     def send_notice(exception, params, sender = default_sender)
-      if @config.ignore_environments.any?
-        return if @config.ignore_environments.include?(@config.environment)
-      end
+      return if @config.ignored_environment?
 
       notice = build_notice(exception, params)
       @filter_chain.refine(notice)

@@ -76,4 +76,75 @@ RSpec.describe Airbrake::Config do
       end
     end
   end
+
+  describe "#valid?" do
+    context "when project_id is nil" do
+      it "returns false" do
+        config.project_id = nil
+        config.project_key = '123'
+
+        expect(config).not_to be_valid
+      end
+    end
+
+    context "when project_key is nil" do
+      it "returns false" do
+        config.project_id = 123
+        config.project_key = nil
+
+        expect(config).not_to be_valid
+      end
+    end
+
+    context "when the current environment is ignored" do
+      context "and when the notifier misconfigures configure project_key & project_id" do
+        it "returns true" do
+          config.project_id = Object.new
+          config.project_key = Object.new
+          config.environment = :bingo
+          config.ignore_environments = [:bingo]
+
+          expect(config).to be_valid
+        end
+      end
+
+      context "and when the notifier configures project_key & project_id" do
+        it "returns true" do
+          config.project_id = 123
+          config.project_key = '321'
+          config.environment = :bingo
+          config.ignore_environments = [:bingo]
+
+          expect(config).to be_valid
+        end
+      end
+    end
+
+    context "when the project_id value is not an Integer" do
+      it "returns false" do
+        config.project_id = '123'
+        config.project_key = '321'
+
+        expect(config).not_to be_valid
+      end
+    end
+
+    context "when the project_key value is not a String" do
+      it "returns false" do
+        config.project_id = 123
+        config.project_key = 321
+
+        expect(config).not_to be_valid
+      end
+    end
+
+    context "when the project_key value is an empty String" do
+      it "returns false" do
+        config.project_id = 123
+        config.project_key = ''
+
+        expect(config).not_to be_valid
+      end
+    end
+  end
 end

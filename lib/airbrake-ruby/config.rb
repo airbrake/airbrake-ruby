@@ -125,6 +125,22 @@ module Airbrake
       self
     end
 
+    ##
+    # @return [Boolean] true if the config meets the requirements, false
+    #   otherwise
+    def valid?
+      return true if ignored_environment?
+      return false unless project_id.is_a?(Integer)
+      project_key.is_a?(String) && !project_key.empty?
+    end
+
+    ##
+    # @return [Boolean] true if the config ignores current environment, false
+    #   otherwise
+    def ignored_environment?
+      ignore_environments.include?(environment)
+    end
+
     private
 
     def set_option(option, value)
