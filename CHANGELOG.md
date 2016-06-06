@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.4.1][v1.4.1] (June 6, 2016)
+
 * Allow passing a String for `project_id`
   ([#89](https://github.com/airbrake/airbrake-ruby/pull/89))
 
@@ -154,3 +156,4 @@ Airbrake Ruby Changelog
 [v1.3.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.1
 [v1.3.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.2
 [v1.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.0
+[v1.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.1
