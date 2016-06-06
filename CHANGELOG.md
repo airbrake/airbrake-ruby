@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Allow passing a String for `project_id`
+  ([#89](https://github.com/airbrake/airbrake-ruby/pull/89))
+
 ### [v1.4.0][v1.4.0] (June 6, 2016)
 
 * Stopped raising error when the notifier lacks either project ID or project key

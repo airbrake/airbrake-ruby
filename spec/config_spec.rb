@@ -120,12 +120,21 @@ RSpec.describe Airbrake::Config do
       end
     end
 
-    context "when the project_id value is not an Integer" do
+    context "when the project_id value is not an number" do
+      it "returns false" do
+        config.project_id = 'bingo'
+        config.project_key = '321'
+
+        expect(config).not_to be_valid
+      end
+    end
+
+    context "when the project_id value is a String number" do
       it "returns false" do
         config.project_id = '123'
         config.project_key = '321'
 
-        expect(config).not_to be_valid
+        expect(config).to be_valid
       end
     end
 
