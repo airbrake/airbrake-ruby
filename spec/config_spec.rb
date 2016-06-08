@@ -156,4 +156,37 @@ RSpec.describe Airbrake::Config do
       end
     end
   end
+
+  describe "#ignored_environment?" do
+    describe "warnings" do
+      let(:out) { StringIO.new }
+      let(:config) { described_class.new(logger: Logger.new(out)) }
+
+      context "when 'ignore_environments' is set and 'environment' isn't" do
+        it "prints a warning" do
+          config.ignore_environments = [:bingo]
+
+          expect(config.ignored_environment?).to be_falsey
+          expect(out.string).to match(/ignore_environments' has no effect/)
+        end
+      end
+
+      context "when 'ignore_environments' is set along with 'environment'" do
+        it "doesn't print a warning" do
+          config.environment = :bango
+          config.ignore_environments = [:bingo]
+
+          expect(config.ignored_environment?).to be_falsey
+          expect(out.string).to be_empty
+        end
+      end
+
+      context "when 'ignore_environments' isn't set and 'environment' isn't set too" do
+        it "doesn't print a warning" do
+          expect(config.ignored_environment?).to be_falsey
+          expect(out.string).to be_empty
+        end
+      end
+    end
+  end
 end

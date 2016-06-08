@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Print warning when the `environment` option is not configured, but
+  `ignore_environments` is
+  ([#92](https://github.com/airbrake/airbrake-ruby/pull/92))
+
 ### [v1.4.1][v1.4.1] (June 6, 2016)
 
 * Allow passing a String for `project_id`
