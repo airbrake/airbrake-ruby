@@ -138,6 +138,11 @@ module Airbrake
     # @return [Boolean] true if the config ignores current environment, false
     #   otherwise
     def ignored_environment?
+      if ignore_environments.any? && environment.nil?
+        logger.warn("#{LOG_LABEL} the 'environment' option is not set, " \
+                    "'ignore_environments' has no effect")
+      end
+
       ignore_environments.include?(environment)
     end
 
