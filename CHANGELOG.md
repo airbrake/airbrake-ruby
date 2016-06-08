@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.4.2][v1.4.2] (June 8, 2016)
+
 * Print warning when the `environment` option is not configured, but
   `ignore_environments` is
   ([#92](https://github.com/airbrake/airbrake-ruby/pull/92))
@@ -161,3 +163,4 @@ Airbrake Ruby Changelog
 [v1.3.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.3.2
 [v1.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.0
 [v1.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.1
+[v1.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.2
