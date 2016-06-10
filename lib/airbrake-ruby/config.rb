@@ -143,7 +143,7 @@ module Airbrake
                     "'ignore_environments' has no effect")
       end
 
-      ignore_environments.include?(environment)
+      ignore_environments.map(&:to_s).include?(environment.to_s)
     end
 
     private

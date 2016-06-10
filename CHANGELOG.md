@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Made types of the `ignore_environments` and `environment` option values not to
+  rely on each other when deciding if the current environment is ignored
+  ([#93](https://github.com/airbrake/airbrake-ruby/pull/92))
+
 ### [v1.4.2][v1.4.2] (June 8, 2016)
 
 * Print warning when the `environment` option is not configured, but

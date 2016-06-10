@@ -188,5 +188,29 @@ RSpec.describe Airbrake::Config do
         end
       end
     end
+
+    describe "environment value types" do
+      context "when 'environment' is a String" do
+        context "and when 'ignore_environments' contains Symbols" do
+          it "returns true" do
+            config.environment = 'bango'
+            config.ignore_environments = [:bango]
+
+            expect(config.ignored_environment?).to be_truthy
+          end
+        end
+      end
+
+      context "when 'environment' is a Symbol" do
+        context "and when 'ignore_environments' contains Strings" do
+          it "returns true" do
+            config.environment = :bango
+            config.ignore_environments = %w(bango)
+
+            expect(config.ignored_environment?).to be_truthy
+          end
+        end
+      end
+    end
   end
 end
