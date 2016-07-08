@@ -13,7 +13,7 @@ RSpec.describe Airbrake::NestedException do
             Ruby21Error.raise_error('bingo')
           end
         rescue Ruby21Error => ex
-          nested_exception = described_class.new(ex)
+          nested_exception = described_class.new(ex, Logger.new('/dev/null'))
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(2)
@@ -40,7 +40,7 @@ RSpec.describe Airbrake::NestedException do
             end
           end
         rescue Ruby21Error => ex
-          nested_exception = described_class.new(ex)
+          nested_exception = described_class.new(ex, Logger.new('/dev/null'))
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(3)
@@ -64,7 +64,7 @@ RSpec.describe Airbrake::NestedException do
           end
         rescue Ruby21Error => ex1
           ex1.set_backtrace([])
-          nested_exception = described_class.new(ex1)
+          nested_exception = described_class.new(ex1, Logger.new('/dev/null'))
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(2)

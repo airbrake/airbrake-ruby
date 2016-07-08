@@ -60,7 +60,7 @@ module Airbrake
       }.freeze
 
       @modifiable_payload = {
-        errors: NestedException.new(exception).as_json,
+        errors: NestedException.new(exception, @config.logger).as_json,
         context: context(params),
         environment: {},
         session: {},

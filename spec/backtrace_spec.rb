@@ -3,8 +3,6 @@ require 'spec_helper'
 RSpec.describe Airbrake::Backtrace do
   describe ".parse" do
     context "UNIX backtrace" do
-      let(:backtrace) { described_class.new(AirbrakeTestError.new) }
-
       let(:parsed_backtrace) do
         # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceAroundOperators, Style/SpaceInsideHashLiteralBraces
         [{:file=>"/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb", :line=>23, :function=>"<top (required)>"},
@@ -24,8 +22,9 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(AirbrakeTestError.new)).
-          to eq(parsed_backtrace)
+        expect(
+          described_class.parse(AirbrakeTestError.new, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
       end
     end
 
@@ -45,7 +44,9 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(ex)).to eq(parsed_backtrace)
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
       end
     end
 
@@ -69,8 +70,9 @@ RSpec.describe Airbrake::Backtrace do
       it "returns a properly formatted array of hashes" do
         allow(described_class).to receive(:java_exception?).and_return(true)
 
-        expect(described_class.parse(JavaAirbrakeTestError.new)).
-          to eq(backtrace_array)
+        expect(
+          described_class.parse(JavaAirbrakeTestError.new, Logger.new('/dev/null'))
+        ).to eq(backtrace_array)
       end
     end
 
@@ -95,7 +97,9 @@ RSpec.describe Airbrake::Backtrace do
         end
 
         it "returns a properly formatted array of hashes" do
-          expect(described_class.parse(ex)).to eq(parsed_backtrace)
+          expect(
+            described_class.parse(ex, Logger.new('/dev/null'))
+          ).to eq(parsed_backtrace)
         end
       end
 
@@ -113,7 +117,9 @@ RSpec.describe Airbrake::Backtrace do
         end
 
         it "returns a properly formatted array of hashes" do
-          expect(described_class.parse(ex)).to eq(parsed_backtrace)
+          expect(
+            described_class.parse(ex, Logger.new('/dev/null'))
+          ).to eq(parsed_backtrace)
         end
       end
     end
@@ -123,9 +129,20 @@ RSpec.describe Airbrake::Backtrace do
 
       let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(unknown_bt) } }
 
-      it "raises error" do
-        expect { described_class.parse(ex) }.
-          to raise_error(Airbrake::Error, /can't parse/)
+      it "returns array of hashes where each unknown frame is marked as 'function'" do
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq([file: nil, line: nil, function: 'a b c 1 23 321 .rb'])
+      end
+
+      it "logs unknown frames as errors" do
+        out = StringIO.new
+        logger = Logger.new(out)
+
+        expect { described_class.parse(ex, logger) }.
+          to change { out.string }.
+          from('').
+          to(/ERROR -- : can't parse 'a b c 1 23 321 .rb'/)
       end
     end
 
@@ -143,24 +160,21 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(ex)).to eq(parsed_backtrace)
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
       end
     end
 
     context "given an Oracle backtrace" do
       let(:bt) do
-        [%(ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945),
-         %(ORA-06512: at "ACTIVATION.LI_ACT_LICENSES_PACK", line 101),
-         %(ORA-06512: at line 2),
-         %(from stmt.c:243:in oci8lib_220.bundle)]
+        ['ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945',
+         'ORA-06512: at "ACTIVATION.LI_ACT_LICENSES_PACK", line 101',
+         'ORA-06512: at line 2',
+         'from stmt.c:243:in oci8lib_220.bundle']
       end
 
-      let(:ex) do
-        OCIError = AirbrakeTestError
-        OCIError.new.tap { |e| e.set_backtrace(bt) }
-      end
-
-      after { Object.__send__(:remove_const, :OCIError) }
+      let(:ex) { OCIError.new.tap { |e| e.set_backtrace(bt) } }
 
       let(:parsed_backtrace) do
         [{ file: nil, line: 1945, function: 'STORE.LI_LICENSES_PACK' },
@@ -170,7 +184,10 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(ex)).to eq(parsed_backtrace)
+        stub_const('OCIError', AirbrakeTestError)
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
       end
     end
   end

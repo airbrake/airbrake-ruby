@@ -8,7 +8,7 @@ module Airbrake
   #   begin
   #     raise 'Oops!'
   #   rescue
-  #     Backtrace.parse($!)
+  #     Backtrace.parse($!, Logger.new(STDOUT))
   #   end
   module Backtrace
     ##
@@ -70,7 +70,7 @@ module Airbrake
     # @param [Exception] exception The exception, which contains a backtrace to
     #   parse
     # @return [Array<Hash{Symbol=>String,Integer}>] the parsed backtrace
-    def self.parse(exception)
+    def self.parse(exception, logger)
       return [] if exception.backtrace.nil? || exception.backtrace.none?
 
       regexp = if java_exception?(exception)
@@ -82,7 +82,17 @@ module Airbrake
                end
 
       exception.backtrace.map do |stackframe|
-        stack_frame(match_frame(regexp, stackframe))
+        frame = match_frame(regexp, stackframe)
+
+        unless frame
+          logger.error(
+            "can't parse '#{stackframe}' (please file an issue so we can fix " \
+            "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
+          )
+          frame = { file: nil, line: nil, function: stackframe }
+        end
+
+        stack_frame(frame)
       end
     end
 
@@ -113,10 +123,7 @@ module Airbrake
         match = regexp.match(stackframe)
         return match if match
 
-        match = GENERIC_STACKFRAME_REGEXP.match(stackframe)
-        return match if match
-
-        raise Airbrake::Error, "can't parse '#{stackframe}'"
+        GENERIC_STACKFRAME_REGEXP.match(stackframe)
       end
     end
   end
