@@ -146,5 +146,32 @@ RSpec.describe Airbrake::Backtrace do
         expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
+
+    context "given an Oracle backtrace" do
+      let(:bt) do
+        [%(ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945),
+         %(ORA-06512: at "ACTIVATION.LI_ACT_LICENSES_PACK", line 101),
+         %(ORA-06512: at line 2),
+         %(from stmt.c:243:in oci8lib_220.bundle)]
+      end
+
+      let(:ex) do
+        OCIError = AirbrakeTestError
+        OCIError.new.tap { |e| e.set_backtrace(bt) }
+      end
+
+      after { Object.__send__(:remove_const, :OCIError) }
+
+      let(:parsed_backtrace) do
+        [{ file: nil, line: 1945, function: 'STORE.LI_LICENSES_PACK' },
+         { file: nil, line: 101, function: 'ACTIVATION.LI_ACT_LICENSES_PACK' },
+         { file: nil, line: 2, function: nil },
+         { file: 'stmt.c', line: 243, function: 'oci8lib_220.bundle' }]
+      end
+
+      it "returns a properly formatted array of hashes" do
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
+      end
+    end
   end
 end

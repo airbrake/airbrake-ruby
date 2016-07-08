@@ -38,11 +38,31 @@ module Airbrake
     # @return [Regexp] the template that tries to assume what a generic stack
     #   frame might look like, when exception's backtrace is set manually.
     GENERIC_STACKFRAME_REGEXP = %r{\A
+      (?:from\s)?
       (?<file>.+)              # Matches '/foo/bar/baz.ext'
       :
       (?<line>\d+)?            # Matches '43' or nothing
-      (in\s`(?<function>.+)')? # Matches "in `func'" or nothing
+      (?:
+        in\s`(?<function>.+)'  # Matches "in `func'"
+      |
+        :in\s(?<function>.+)   # Matches ":in func"
+      )?                       # ... or nothing
     \z}x
+
+    ##
+    # @return [Regexp] the template that matches exceptions from PL/SQL such as
+    #   ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945
+    # @note This is raised by https://github.com/kubo/ruby-oci8
+    OCI_STACKFRAME_REGEXP = /\A
+      (?:
+        ORA-\d{5}
+        :\sat\s
+        (?:"(?<function>.+)",\s)?
+        line\s(?<line>\d+)
+      |
+        #{GENERIC_STACKFRAME_REGEXP}
+      )
+    \z/x
 
     ##
     # Parses an exception's backtrace.
@@ -55,6 +75,8 @@ module Airbrake
 
       regexp = if java_exception?(exception)
                  JAVA_STACKFRAME_REGEXP
+               elsif oci_exception?(exception)
+                 OCI_STACKFRAME_REGEXP
                else
                  RUBY_STACKFRAME_REGEXP
                end
@@ -76,6 +98,10 @@ module Airbrake
 
     class << self
       private
+
+      def oci_exception?(exception)
+        defined?(OCIError) && exception.is_a?(OCIError)
+      end
 
       def stack_frame(match)
         { file: match[:file],

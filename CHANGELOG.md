@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added support for PL/SQL exceptions raised by
+  [ruby-oci8](https://github.com/kubo/ruby-oci8)
+  ([#99](https://github.com/airbrake/airbrake-ruby/pull/99))
+
 ### [v1.4.3][v1.4.3] (June 10, 2016)
 
 * Made types of the `ignore_environments` and `environment` option values not to
