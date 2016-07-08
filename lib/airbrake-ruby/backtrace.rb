@@ -8,7 +8,7 @@ module Airbrake
   #   begin
   #     raise 'Oops!'
   #   rescue
-  #     Backtrace.parse($!)
+  #     Backtrace.parse($!, Logger.new(STDOUT))
   #   end
   module Backtrace
     ##
@@ -38,11 +38,31 @@ module Airbrake
     # @return [Regexp] the template that tries to assume what a generic stack
     #   frame might look like, when exception's backtrace is set manually.
     GENERIC_STACKFRAME_REGEXP = %r{\A
+      (?:from\s)?
       (?<file>.+)              # Matches '/foo/bar/baz.ext'
       :
       (?<line>\d+)?            # Matches '43' or nothing
-      (in\s`(?<function>.+)')? # Matches "in `func'" or nothing
+      (?:
+        in\s`(?<function>.+)'  # Matches "in `func'"
+      |
+        :in\s(?<function>.+)   # Matches ":in func"
+      )?                       # ... or nothing
     \z}x
+
+    ##
+    # @return [Regexp] the template that matches exceptions from PL/SQL such as
+    #   ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945
+    # @note This is raised by https://github.com/kubo/ruby-oci8
+    OCI_STACKFRAME_REGEXP = /\A
+      (?:
+        ORA-\d{5}
+        :\sat\s
+        (?:"(?<function>.+)",\s)?
+        line\s(?<line>\d+)
+      |
+        #{GENERIC_STACKFRAME_REGEXP}
+      )
+    \z/x
 
     ##
     # Parses an exception's backtrace.
@@ -50,17 +70,29 @@ module Airbrake
     # @param [Exception] exception The exception, which contains a backtrace to
     #   parse
     # @return [Array<Hash{Symbol=>String,Integer}>] the parsed backtrace
-    def self.parse(exception)
+    def self.parse(exception, logger)
       return [] if exception.backtrace.nil? || exception.backtrace.none?
 
       regexp = if java_exception?(exception)
                  JAVA_STACKFRAME_REGEXP
+               elsif oci_exception?(exception)
+                 OCI_STACKFRAME_REGEXP
                else
                  RUBY_STACKFRAME_REGEXP
                end
 
       exception.backtrace.map do |stackframe|
-        stack_frame(match_frame(regexp, stackframe))
+        frame = match_frame(regexp, stackframe)
+
+        unless frame
+          logger.error(
+            "can't parse '#{stackframe}' (please file an issue so we can fix " \
+            "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
+          )
+          frame = { file: nil, line: nil, function: stackframe }
+        end
+
+        stack_frame(frame)
       end
     end
 
@@ -77,6 +109,10 @@ module Airbrake
     class << self
       private
 
+      def oci_exception?(exception)
+        defined?(OCIError) && exception.is_a?(OCIError)
+      end
+
       def stack_frame(match)
         { file: match[:file],
           line: (Integer(match[:line]) if match[:line]),
@@ -87,10 +123,7 @@ module Airbrake
         match = regexp.match(stackframe)
         return match if match
 
-        match = GENERIC_STACKFRAME_REGEXP.match(stackframe)
-        return match if match
-
-        raise Airbrake::Error, "can't parse '#{stackframe}'"
+        GENERIC_STACKFRAME_REGEXP.match(stackframe)
       end
     end
   end

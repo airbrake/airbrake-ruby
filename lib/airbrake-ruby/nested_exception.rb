@@ -8,15 +8,16 @@ module Airbrake
     #   can unwrap. Exceptions that have a longer cause chain will be ignored
     MAX_NESTED_EXCEPTIONS = 3
 
-    def initialize(exception)
+    def initialize(exception, logger)
       @exception = exception
+      @logger = logger
     end
 
     def as_json
       unwind_exceptions.map do |exception|
         { type: exception.class.name,
           message: exception.message,
-          backtrace: Backtrace.parse(exception) }
+          backtrace: Backtrace.parse(exception, @logger) }
       end
     end
 
