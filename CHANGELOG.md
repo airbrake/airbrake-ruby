@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.4.4][v1.4.4] (July 11, 2016)
+
 * Added support for PL/SQL exceptions raised by
   [ruby-oci8](https://github.com/kubo/ruby-oci8)
   ([#99](https://github.com/airbrake/airbrake-ruby/pull/99))
@@ -175,3 +177,4 @@ Airbrake Ruby Changelog
 [v1.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.1
 [v1.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.2
 [v1.4.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.3
+[v1.4.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.4
