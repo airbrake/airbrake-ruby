@@ -97,3 +97,6 @@ Style/MultilineMethodCallBraceLayout:
 
 Style/MultilineHashBraceLayout:
   Enabled: true
+
+Style/NumericPredicate:
+  Enabled: false
