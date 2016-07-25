@@ -135,13 +135,14 @@ Airbrake Ruby Changelog
 * Made the asynchronous delivery mechanism more robust
   ([#26](https://github.com/airbrake/airbrake-ruby/pull/26))
 * Improved `SystemExit` handling by ignoring it on a different level, which
-  fixed issues with the Rake integration for the [airbrake gem][airbrake-gem]
-  gem ([#32](https://github.com/airbrake/airbrake-ruby/pull/32))
+  fixed issues with the Rake integration for the
+  [airbrake gem](https://github.com/airbrake/airbrake)
+  ([#32](https://github.com/airbrake/airbrake-ruby/pull/32))
 
 ### [v1.0.2][v1.0.2] (January 3, 2016)
 
 * Ignored `SystemExit` in the `at_exit` hook, which has fixed the Rake
-  integration for the [airbrake gem][airbrake-gem] gem
+  integration for the [airbrake gem](https://github.com/airbrake/airbrake)
   ([#14](https://github.com/airbrake/airbrake-ruby/pull/14))
 
 ### [v1.0.1][v1.0.1] (December 22, 2015)
