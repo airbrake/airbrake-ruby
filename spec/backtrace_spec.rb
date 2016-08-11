@@ -190,5 +190,40 @@ RSpec.describe Airbrake::Backtrace do
         ).to eq(parsed_backtrace)
       end
     end
+
+    context "given an ExecJS backtrace" do
+      let(:bt) do
+        ['compile ((execjs):6692:19)',
+         'eval (<anonymous>:1:10)',
+         '(execjs):6703:8',
+         'require../helpers.exports ((execjs):1:102)',
+         'Object.<anonymous> ((execjs):1:120)',
+         'Object.Module._extensions..js (module.js:550:10)',
+         'bootstrap_node.js:467:3',
+         "/opt/rubies/ruby-2.3.1/lib/ruby/2.3.0/benchmark.rb:308:in `realtime'"]
+      end
+
+      let(:ex) { ExecJS::RuntimeError.new.tap { |e| e.set_backtrace(bt) } }
+
+      let(:parsed_backtrace) do
+        [{ file: '(execjs)', line: 6692, function: 'compile' },
+         { file: '<anonymous>', line: 1, function: 'eval' },
+         { file: '(execjs)', line: 6703, function: '' },
+         { file: '(execjs)', line: 1, function: 'require../helpers.exports' },
+         { file: '(execjs)', line: 1, function: 'Object.<anonymous>' },
+         { file: 'module.js', line: 550, function: 'Object.Module._extensions..js' },
+         { file: 'bootstrap_node.js', line: 467, function: '' },
+         { file: '/opt/rubies/ruby-2.3.1/lib/ruby/2.3.0/benchmark.rb',
+           line: 308,
+           function: 'realtime' }]
+      end
+
+      it "returns a properly formatted array of hashes" do
+        stub_const('ExecJS::RuntimeError', AirbrakeTestError)
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
+      end
+    end
   end
 end
