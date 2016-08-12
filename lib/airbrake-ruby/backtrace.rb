@@ -65,6 +65,22 @@ module Airbrake
     \z/x
 
     ##
+    # @return [Regexp] the template that matches CoffeeScript backtraces
+    #   usually coming from Rails & ExecJS
+    EXECJS_STACKFRAME_REGEXP = /\A
+      (?:
+        # Matches 'compile ((execjs):6692:19)'
+        (?<function>.+)\s\((?<file>.+):(?<line>\d+):\d+\)
+      |
+        # Matches 'bootstrap_node.js:467:3'
+        (?<file>.+):(?<line>\d+):\d+(?<function>)
+      |
+        # Matches the Ruby part of the backtrace
+        #{RUBY_STACKFRAME_REGEXP}
+      )
+    \z/x
+
+    ##
     # Parses an exception's backtrace.
     #
     # @param [Exception] exception The exception, which contains a backtrace to
@@ -73,13 +89,7 @@ module Airbrake
     def self.parse(exception, logger)
       return [] if exception.backtrace.nil? || exception.backtrace.none?
 
-      regexp = if java_exception?(exception)
-                 JAVA_STACKFRAME_REGEXP
-               elsif oci_exception?(exception)
-                 OCI_STACKFRAME_REGEXP
-               else
-                 RUBY_STACKFRAME_REGEXP
-               end
+      regexp = best_regexp_for(exception)
 
       exception.backtrace.map do |stackframe|
         frame = match_frame(regexp, stackframe)
@@ -109,8 +119,28 @@ module Airbrake
     class << self
       private
 
+      def best_regexp_for(exception)
+        if java_exception?(exception)
+          JAVA_STACKFRAME_REGEXP
+        elsif oci_exception?(exception)
+          OCI_STACKFRAME_REGEXP
+        elsif execjs_exception?(exception)
+          EXECJS_STACKFRAME_REGEXP
+        else
+          RUBY_STACKFRAME_REGEXP
+        end
+      end
+
       def oci_exception?(exception)
         defined?(OCIError) && exception.is_a?(OCIError)
+      end
+
+      def execjs_exception?(exception)
+        return false unless defined?(ExecJS::RuntimeError)
+        return true if exception.is_a?(ExecJS::RuntimeError)
+        return true if exception.cause && exception.cause.is_a?(ExecJS::RuntimeError)
+
+        false
       end
 
       def stack_frame(match)

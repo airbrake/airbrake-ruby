@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added support for CoffeeScript/ExecJS backtraces
+  ([#107](https://github.com/airbrake/airbrake-ruby/pull/107))
+
 ### [v1.4.4][v1.4.4] (July 11, 2016)
 
 * Added support for PL/SQL exceptions raised by
