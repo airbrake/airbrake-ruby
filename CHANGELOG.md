@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added support for blacklisting/whitelisting using procs
+  ([#108](https://github.com/airbrake/airbrake-ruby/pull/108))
+
 ### [v1.5.0][v1.5.0] (September 9, 2016)
 
 * Added support for custom exception attributes

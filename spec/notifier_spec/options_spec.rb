@@ -254,6 +254,102 @@ RSpec.describe Airbrake::Notifier do
 
           expect_a_request_with_body(/"params":{"bingo":"\[Filtered\]"}/)
         end
+
+        it "logs error on invalid pattern" do
+          out = StringIO.new
+          params = { blacklist_keys: [Object.new], logger: Logger.new(out) }
+          airbrake = described_class.new(airbrake_params.merge(params))
+
+          expect { airbrake.notify_sync(ex, bingo: 'bango') }.
+            to change { out.string }.
+            from('').
+            to(/ERROR.+KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/)
+        end
+
+        describe "procs" do
+          context "given an array with a proc, which returns an array of keys" do
+            it "filters notice based on evaluated proc" do
+              params = { blacklist_keys: [proc { ['bingo'] }] }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+
+              expect_a_request_with_body(
+                /"params":{"bingo":"\[Filtered\]","bongo":"bish"}/
+              )
+            end
+          end
+
+          context "given an array with a proc and other keys" do
+            it "filters notice based on evaluated proc and the keys" do
+              params = { blacklist_keys: [proc { ['bongo'] }, :bash] }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish', bash: 'bosh')
+
+              expect_a_request_with_body(
+                /"params":{"bingo":"bango","bongo":"\[Filtered\]","bash":"\[Filtered\]"}/
+              )
+            end
+          end
+
+          context "given an array with a proc, which doesn't return an array of keys" do
+            it "logs an error" do
+              out = StringIO.new
+              logger = Logger.new(out)
+
+              params = { blacklist_keys: [proc { Object.new }], logger: logger }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              expect { airbrake.notify_sync(ex, bingo: 'bango') }.
+                to change { out.string }.
+                from('').
+                to(/ERROR.+KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/)
+            end
+
+            it "doesn't blacklist keys" do
+              params = { blacklist_keys: [proc { Object.new }] }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+
+              expect_a_request_with_body(
+                /"params":{"bingo":"bango","bongo":"bish"}/
+              )
+            end
+          end
+
+          context "given an array with a proc, which returns another proc" do
+            context "when called once" do
+              it "logs an error" do
+                out = StringIO.new
+                logger = Logger.new(out)
+
+                params = { blacklist_keys: [proc { proc { ['bingo'] } }], logger: logger }
+                airbrake = described_class.new(airbrake_params.merge(params))
+
+                expect { airbrake.notify_sync(ex, bingo: 'bango') }.
+                  to change { out.string }.
+                  from('').
+                  to(/ERROR.+KeysBlacklist is invalid.+patterns: \[#<Proc:.+>\]/)
+              end
+            end
+
+            context "when called twice" do
+              it "unwinds procs and filters keys" do
+                params = { blacklist_keys: [proc { proc { ['bingo'] } }] }
+                airbrake = described_class.new(airbrake_params.merge(params))
+
+                airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+                airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+
+                expect_a_request_with_body(
+                  /"params":{"bingo":"\[Filtered\]","bongo":"bish"}/
+                )
+              end
+            end
+          end
+        end
       end
 
       describe "hash values" do
@@ -353,6 +449,91 @@ RSpec.describe Airbrake::Notifier do
             /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]",
                        "bash":"bosh","bbashh":"\[Filtered\]"}/x
           )
+        end
+
+        describe "procs" do
+          context "given an array with a proc, which returns an array of keys" do
+            it "filters notice based on evaluated proc" do
+              params = { whitelist_keys: [proc { ['bongo'] }] }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish', bash: 'bosh')
+
+              expect_a_request_with_body(
+                /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"\[Filtered\]"}/
+              )
+            end
+          end
+
+          context "given an array with a proc and other keys" do
+            it "filters notice based on evaluated proc and the keys" do
+              params = { whitelist_keys: [proc { ['bongo'] }, :bash] }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish', bash: 'bosh')
+
+              expect_a_request_with_body(
+                /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"bosh"}/
+              )
+            end
+          end
+
+          context "given an array with a proc, which doesn't return an array of keys" do
+            it "logs an error" do
+              out = StringIO.new
+              logger = Logger.new(out)
+
+              params = { whitelist_keys: [proc { Object.new }], logger: logger }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              expect { airbrake.notify_sync(ex, bingo: 'bango') }.
+                to change { out.string }.
+                from('').
+                to(/ERROR.+KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/)
+            end
+
+            it "doesn't whitelist keys" do
+              params = { whitelist_keys: [proc { Object.new }] }
+              airbrake = described_class.new(airbrake_params.merge(params))
+
+              airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+
+              expect_a_request_with_body(
+                /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]"}/
+              )
+            end
+          end
+
+          context "given an array with a proc, which returns another proc" do
+            context "when called once" do
+              it "logs an error" do
+                out = StringIO.new
+                logger = Logger.new(out)
+
+                params = { whitelist_keys: [proc { proc { ['bingo'] } }], logger: logger }
+                airbrake = described_class.new(airbrake_params.merge(params))
+
+                expect { airbrake.notify_sync(ex, bingo: 'bango') }.
+                  to change { out.string }.
+                  from('').
+                  to(/ERROR.+KeysWhitelist is invalid.+patterns: \[#<Proc:.+>\]/)
+              end
+            end
+
+            context "when called twice" do
+              it "unwinds procs and filters keys" do
+                params = { whitelist_keys: [proc { proc { ['bingo'] } }] }
+                airbrake = described_class.new(airbrake_params.merge(params))
+
+                airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+                airbrake.notify_sync(ex, bingo: 'bango', bongo: 'bish')
+
+                expect_a_request_with_body(
+                  /"params":{"bingo":"bango","bongo":"\[Filtered\]"}/
+                )
+              end
+            end
+          end
         end
       end
 
