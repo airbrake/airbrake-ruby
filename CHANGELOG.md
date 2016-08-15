@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.4.5][v1.4.5] (August 15, 2016)
+
 * Added support for CoffeeScript/ExecJS backtraces
   ([#107](https://github.com/airbrake/airbrake-ruby/pull/107))
 
@@ -182,3 +184,4 @@ Airbrake Ruby Changelog
 [v1.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.2
 [v1.4.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.3
 [v1.4.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.4
+[v1.4.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.5
