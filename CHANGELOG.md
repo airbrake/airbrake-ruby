@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed support for ExecJS backtraces for Ruby 1.9.3 sometimes resulting in
+  `NameError`s ([#109](https://github.com/airbrake/airbrake-ruby/pull/109))
+
 ### [v1.4.5][v1.4.5] (August 15, 2016)
 
 * Added support for CoffeeScript/ExecJS backtraces

@@ -81,6 +81,11 @@ module Airbrake
     \z/x
 
     ##
+    # @return [Regexp] +EXECJS_STACKFRAME_REGEXP+ without named captures and
+    #   uncommon frames
+    EXECJS_STACKFRAME_REGEXP_SIMPLIFIED = /\A.+ \(.+:\d+:\d+\)\z/
+
+    ##
     # Parses an exception's backtrace.
     #
     # @param [Exception] exception The exception, which contains a backtrace to
@@ -135,13 +140,24 @@ module Airbrake
         defined?(OCIError) && exception.is_a?(OCIError)
       end
 
+      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       def execjs_exception?(exception)
         return false unless defined?(ExecJS::RuntimeError)
         return true if exception.is_a?(ExecJS::RuntimeError)
-        return true if exception.cause && exception.cause.is_a?(ExecJS::RuntimeError)
+
+        if Airbrake::RUBY_19
+          # Ruby 1.9 doesn't support Exception#cause. We work around this by
+          # parsing backtraces. It's slow, so we check only a few first frames.
+          exception.backtrace[0..2].each do |frame|
+            return true if frame =~ EXECJS_STACKFRAME_REGEXP_SIMPLIFIED
+          end
+        elsif exception.cause && exception.cause.is_a?(ExecJS::RuntimeError)
+          return true
+        end
 
         false
       end
+      # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
       def stack_frame(match)
         { file: match[:file],
