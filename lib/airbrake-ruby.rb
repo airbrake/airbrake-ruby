@@ -64,6 +64,11 @@ module Airbrake
   LOG_LABEL = '**Airbrake:'.freeze
 
   ##
+  # @return [Boolean] true if current Ruby is Ruby 1.9.*. The result is used
+  #   for special cases where we need to work around older implementations
+  RUBY_19 = RUBY_VERSION.start_with?('1.9')
+
+  ##
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances.
   @notifiers = {}

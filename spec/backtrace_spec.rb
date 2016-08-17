@@ -191,7 +191,7 @@ RSpec.describe Airbrake::Backtrace do
       end
     end
 
-    context "given an ExecJS backtrace" do
+    context "given an ExecJS exception" do
       let(:bt) do
         ['compile ((execjs):6692:19)',
          'eval (<anonymous>:1:10)',
@@ -202,8 +202,6 @@ RSpec.describe Airbrake::Backtrace do
          'bootstrap_node.js:467:3',
          "/opt/rubies/ruby-2.3.1/lib/ruby/2.3.0/benchmark.rb:308:in `realtime'"]
       end
-
-      let(:ex) { ExecJS::RuntimeError.new.tap { |e| e.set_backtrace(bt) } }
 
       let(:parsed_backtrace) do
         [{ file: '(execjs)', line: 6692, function: 'compile' },
@@ -218,11 +216,35 @@ RSpec.describe Airbrake::Backtrace do
            function: 'realtime' }]
       end
 
-      it "returns a properly formatted array of hashes" do
-        stub_const('ExecJS::RuntimeError', AirbrakeTestError)
-        expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
-        ).to eq(parsed_backtrace)
+      context "when not on Ruby 1.9" do
+        let(:ex) { ExecJS::RuntimeError.new.tap { |e| e.set_backtrace(bt) } }
+
+        it "returns a properly formatted array of hashes" do
+          stub_const('ExecJS::RuntimeError', AirbrakeTestError)
+          stub_const('Airbrake::RUBY_19', false)
+
+          expect(
+            described_class.parse(ex, Logger.new('/dev/null'))
+          ).to eq(parsed_backtrace)
+        end
+      end
+
+      context "when on Ruby 1.9" do
+        context "and when exception's class isn't ExecJS" do
+          let(:ex) do
+            ActionView::Template::Error.new.tap { |e| e.set_backtrace(bt) }
+          end
+
+          it "returns a properly formatted array of hashes" do
+            stub_const('ActionView::Template::Error', AirbrakeTestError)
+            stub_const('ExecJS::RuntimeError', NameError)
+            stub_const('Airbrake::RUBY_19', true)
+
+            expect(
+              described_class.parse(ex, Logger.new('/dev/null'))
+            ).to eq(parsed_backtrace)
+          end
+        end
       end
     end
   end
