@@ -11,79 +11,81 @@ module Airbrake
   #     Backtrace.parse($!, Logger.new(STDOUT))
   #   end
   module Backtrace
-    ##
-    # @return [Regexp] the pattern that matches standard Ruby stack frames,
-    #   such as ./spec/notice_spec.rb:43:in `block (3 levels) in <top (required)>'
-    RUBY_STACKFRAME_REGEXP = %r{\A
-      (?<file>.+)       # Matches './spec/notice_spec.rb'
-      :
-      (?<line>\d+)      # Matches '43'
-      :in\s
-      `(?<function>.*)' # Matches "`block (3 levels) in <top (required)>'"
-    \z}x
+    module Patterns
+      ##
+      # @return [Regexp] the pattern that matches standard Ruby stack frames,
+      #   such as ./spec/notice_spec.rb:43:in `block (3 levels) in <top (required)>'
+      RUBY = %r{\A
+        (?<file>.+)       # Matches './spec/notice_spec.rb'
+        :
+        (?<line>\d+)      # Matches '43'
+        :in\s
+        `(?<function>.*)' # Matches "`block (3 levels) in <top (required)>'"
+      \z}x
 
-    ##
-    # @return [Regexp] the template that matches JRuby Java stack frames, such
-    #  as org.jruby.ast.NewlineNode.interpret(NewlineNode.java:105)
-    JAVA_STACKFRAME_REGEXP = /\A
-      (?<function>.+)  # Matches 'org.jruby.ast.NewlineNode.interpret
-      \(
-        (?<file>[^:]+) # Matches 'NewlineNode.java'
-        :?
-        (?<line>\d+)?  # Matches '105'
-      \)
-    \z/x
+      ##
+      # @return [Regexp] the pattern that matches JRuby Java stack frames, such
+      #  as org.jruby.ast.NewlineNode.interpret(NewlineNode.java:105)
+      JAVA = /\A
+        (?<function>.+)  # Matches 'org.jruby.ast.NewlineNode.interpret
+        \(
+          (?<file>[^:]+) # Matches 'NewlineNode.java'
+          :?
+          (?<line>\d+)?  # Matches '105'
+        \)
+      \z/x
 
-    ##
-    # @return [Regexp] the template that tries to assume what a generic stack
-    #   frame might look like, when exception's backtrace is set manually.
-    GENERIC_STACKFRAME_REGEXP = %r{\A
-      (?:from\s)?
-      (?<file>.+)              # Matches '/foo/bar/baz.ext'
-      :
-      (?<line>\d+)?            # Matches '43' or nothing
-      (?:
-        in\s`(?<function>.+)'  # Matches "in `func'"
-      |
-        :in\s(?<function>.+)   # Matches ":in func"
-      )?                       # ... or nothing
-    \z}x
+      ##
+      # @return [Regexp] the pattern that tries to assume what a generic stack
+      #   frame might look like, when exception's backtrace is set manually.
+      GENERIC = %r{\A
+        (?:from\s)?
+        (?<file>.+)              # Matches '/foo/bar/baz.ext'
+        :
+        (?<line>\d+)?            # Matches '43' or nothing
+        (?:
+          in\s`(?<function>.+)'  # Matches "in `func'"
+        |
+          :in\s(?<function>.+)   # Matches ":in func"
+        )?                       # ... or nothing
+      \z}x
 
-    ##
-    # @return [Regexp] the template that matches exceptions from PL/SQL such as
-    #   ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945
-    # @note This is raised by https://github.com/kubo/ruby-oci8
-    OCI_STACKFRAME_REGEXP = /\A
-      (?:
-        ORA-\d{5}
-        :\sat\s
-        (?:"(?<function>.+)",\s)?
-        line\s(?<line>\d+)
-      |
-        #{GENERIC_STACKFRAME_REGEXP}
-      )
-    \z/x
+      ##
+      # @return [Regexp] the pattern that matches exceptions from PL/SQL such as
+      #   ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945
+      # @note This is raised by https://github.com/kubo/ruby-oci8
+      OCI = /\A
+        (?:
+          ORA-\d{5}
+          :\sat\s
+          (?:"(?<function>.+)",\s)?
+          line\s(?<line>\d+)
+        |
+          #{GENERIC}
+        )
+      \z/x
 
-    ##
-    # @return [Regexp] the template that matches CoffeeScript backtraces
-    #   usually coming from Rails & ExecJS
-    EXECJS_STACKFRAME_REGEXP = /\A
-      (?:
-        # Matches 'compile ((execjs):6692:19)'
-        (?<function>.+)\s\((?<file>.+):(?<line>\d+):\d+\)
-      |
-        # Matches 'bootstrap_node.js:467:3'
-        (?<file>.+):(?<line>\d+):\d+(?<function>)
-      |
-        # Matches the Ruby part of the backtrace
-        #{RUBY_STACKFRAME_REGEXP}
-      )
-    \z/x
+      ##
+      # @return [Regexp] the pattern that matches CoffeeScript backtraces
+      #   usually coming from Rails & ExecJS
+      EXECJS = /\A
+        (?:
+          # Matches 'compile ((execjs):6692:19)'
+          (?<function>.+)\s\((?<file>.+):(?<line>\d+):\d+\)
+        |
+          # Matches 'bootstrap_node.js:467:3'
+          (?<file>.+):(?<line>\d+):\d+(?<function>)
+        |
+          # Matches the Ruby part of the backtrace
+          #{RUBY}
+        )
+      \z/x
 
-    ##
-    # @return [Regexp] +EXECJS_STACKFRAME_REGEXP+ without named captures and
-    #   uncommon frames
-    EXECJS_STACKFRAME_REGEXP_SIMPLIFIED = /\A.+ \(.+:\d+:\d+\)\z/
+      ##
+      # @return [Regexp] +EXECJS+ pattern without named captures and
+      #   uncommon frames
+      EXECJS_SIMPLIFIED = /\A.+ \(.+:\d+:\d+\)\z/
+    end
 
     ##
     # Parses an exception's backtrace.
@@ -126,13 +128,13 @@ module Airbrake
 
       def best_regexp_for(exception)
         if java_exception?(exception)
-          JAVA_STACKFRAME_REGEXP
+          Patterns::JAVA
         elsif oci_exception?(exception)
-          OCI_STACKFRAME_REGEXP
+          Patterns::OCI
         elsif execjs_exception?(exception)
-          EXECJS_STACKFRAME_REGEXP
+          Patterns::EXECJS
         else
-          RUBY_STACKFRAME_REGEXP
+          Patterns::RUBY
         end
       end
 
@@ -149,7 +151,7 @@ module Airbrake
           # Ruby 1.9 doesn't support Exception#cause. We work around this by
           # parsing backtraces. It's slow, so we check only a few first frames.
           exception.backtrace[0..2].each do |frame|
-            return true if frame =~ EXECJS_STACKFRAME_REGEXP_SIMPLIFIED
+            return true if frame =~ Patterns::EXECJS_SIMPLIFIED
           end
         elsif exception.cause && exception.cause.is_a?(ExecJS::RuntimeError)
           return true
@@ -169,7 +171,7 @@ module Airbrake
         match = regexp.match(stackframe)
         return match if match
 
-        GENERIC_STACKFRAME_REGEXP.match(stackframe)
+        Patterns::GENERIC.match(stackframe)
       end
     end
   end

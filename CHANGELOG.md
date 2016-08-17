@@ -4,7 +4,7 @@ Airbrake Ruby Changelog
 ### master
 
 * Fixed support for ExecJS backtraces for Ruby 1.9.3 sometimes resulting in
-  `NameError`s ([#109](https://github.com/airbrake/airbrake-ruby/pull/109))
+  `NameError` ([#110](https://github.com/airbrake/airbrake-ruby/pull/110))
 
 ### [v1.4.5][v1.4.5] (August 15, 2016)
 
