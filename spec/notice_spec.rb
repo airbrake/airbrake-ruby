@@ -5,6 +5,75 @@ RSpec.describe Airbrake::Notice do
     described_class.new(Airbrake::Config.new, AirbrakeTestError.new, bingo: '1')
   end
 
+  describe "#new" do
+    let(:params) do
+      { bingo: 'bango', bongo: 'bish' }
+    end
+
+    let(:ex) { airbrake_exception_class.new(params) }
+
+    context "given an exception class, which supports #to_airbrake" do
+      context "and when #to_airbrake returns a non-Hash object" do
+        let(:airbrake_exception_class) do
+          Class.new(AirbrakeTestError) do
+            def to_airbrake
+              Object.new
+            end
+          end
+        end
+
+        it "rescues the error, logs it and doesn't modify the payload" do
+          out = StringIO.new
+          config = Airbrake::Config.new(logger: Logger.new(out))
+          notice = nil
+
+          expect { notice = described_class.new(config, ex) }.not_to raise_error
+          expect(out.string).to match(/#to_airbrake failed:.+Object.+must be a Hash/)
+          expect(notice[:params]).to be_empty
+        end
+      end
+
+      context "and when #to_airbrake errors out" do
+        let(:airbrake_exception_class) do
+          Class.new(AirbrakeTestError) do
+            def to_airbrake
+              1 / 0
+            end
+          end
+        end
+
+        it "rescues the error, logs it and doesn't modify the payload" do
+          out = StringIO.new
+          config = Airbrake::Config.new(logger: Logger.new(out))
+          notice = nil
+
+          expect { notice = described_class.new(config, ex) }.not_to raise_error
+          expect(out.string).to match(/#to_airbrake failed: ZeroDivisionError/)
+          expect(notice[:params]).to be_empty
+        end
+      end
+
+      context "and when #to_airbrake succeeds" do
+        let(:airbrake_exception_class) do
+          Class.new(AirbrakeTestError) do
+            def initialize(params)
+              @params = params
+            end
+
+            def to_airbrake
+              { params: @params }
+            end
+          end
+        end
+
+        it "merges the parameters with the notice" do
+          notice = described_class.new(Airbrake::Config.new, ex)
+          expect(notice[:params]).to eq(params)
+        end
+      end
+    end
+  end
+
   describe "#to_json" do
     context "app_version" do
       context "when missing" do

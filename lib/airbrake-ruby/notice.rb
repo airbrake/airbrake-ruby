@@ -2,7 +2,9 @@ module Airbrake
   ##
   # Represents a chunk of information that is meant to be either sent to
   # Airbrake or ignored completely.
+  # rubocop:disable Metrics/ClassLength
   class Notice
+    ##
     # @return [Hash{Symbol=>String}] the information about the notifier library
     NOTIFIER = {
       name: 'airbrake-ruby'.freeze,
@@ -66,6 +68,7 @@ module Airbrake
         session: {},
         params: params
       }
+      extract_custom_attributes(exception)
 
       @truncator = PayloadTruncator.new(PAYLOAD_MAX_SIZE, @config.logger)
     end
@@ -199,5 +202,30 @@ module Airbrake
 
       new_max_size
     end
+
+    def extract_custom_attributes(exception)
+      return unless exception.respond_to?(:to_airbrake)
+      attributes = nil
+
+      begin
+        attributes = exception.to_airbrake
+      rescue => ex
+        @config.logger.error(
+          "#{LOG_LABEL} #{exception.class}#to_airbrake failed: #{ex.class}: #{ex}"
+        )
+      end
+
+      return unless attributes
+
+      begin
+        @modifiable_payload.merge!(attributes)
+      rescue TypeError
+        @config.logger.error(
+          "#{LOG_LABEL} #{exception.class}#to_airbrake failed:" \
+          " #{attributes} must be a Hash"
+        )
+      end
+    end
   end
+  # rubocop:enable Metrics/ClassLength
 end
