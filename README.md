@@ -42,6 +42,7 @@ Key features
 * Support for Java exceptions occurring in JRuby
 * SSL support (all communication with Airbrake is encrypted by default)
 * Support for fatal exceptions (the ones that terminate your program)
+* Support for custom exception attributes<sup>[[link](#custom-exception-attributes)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -527,6 +528,38 @@ filtered. Modifiable payload includes:
 ```ruby
 notice[:params][:my_param] = 'foobar'
 ```
+
+### Custom exception attributes
+
+The library supports custom exception attributes. This is useful if you work
+with custom exceptions, which define non-standard attributes and you can't
+attach any additional data with help of the [`add_filter`](#airbrakeadd_filter)
+API due to the fact that the data isn't available at confuration time yet.
+
+In this case, you could define a special hook method on your exception called
+`#to_airbrake`. The method must return a Hash the keys of which must be a subset
+of the ones mentioned in the [`Notice#[]`](#notice--notice) API.
+
+```ruby
+class MyException
+  def initialize
+    @http_code = 404
+  end
+
+  # The library expects you to define this method. You must return a Hash,
+  # containing the keys you want to modify.
+  def to_airbrake
+    { params: { http_code: @http_code } }
+  end
+end
+
+# The `{ http_code: 404 }` Hash will transported to the Airbrake dashboard via
+# the `#to_airbrake` method.
+Airbrake.notify(MyException.new)
+```
+
+Note: you don't have to call `Airbrake.notify` manually to be able to benefit
+from this API. It should "just work".
 
 Additional notes
 ----------------
