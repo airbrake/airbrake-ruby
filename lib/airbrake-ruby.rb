@@ -7,6 +7,7 @@ require 'socket'
 
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/config'
+require 'airbrake-ruby/config/validator'
 require 'airbrake-ruby/sync_sender'
 require 'airbrake-ruby/async_sender'
 require 'airbrake-ruby/response'

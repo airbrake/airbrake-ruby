@@ -30,21 +30,18 @@ RSpec.describe Airbrake::Notifier do
   describe "#new" do
     context "raises error if" do
       example ":project_id is not provided" do
-        expect { described_class.new(project_id: project_id) }.
-          to raise_error(Airbrake::Error,
-                         'both :project_id and :project_key are required')
+        expect { described_class.new(project_key: project_key) }.
+          to raise_error(Airbrake::Error, ':project_id is required')
       end
 
       example ":project_key is not provided" do
-        expect { described_class.new(project_key: project_key) }.
-          to raise_error(Airbrake::Error,
-                         'both :project_id and :project_key are required')
+        expect { described_class.new(project_id: project_id) }.
+          to raise_error(Airbrake::Error, ':project_key is required')
       end
 
       example "neither :project_id nor :project_key are provided" do
         expect { described_class.new({}) }.
-          to raise_error(Airbrake::Error,
-                         'both :project_id and :project_key are required')
+          to raise_error(Airbrake::Error, ':project_id is required')
       end
     end
 

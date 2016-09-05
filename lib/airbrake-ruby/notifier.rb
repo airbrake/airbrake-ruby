@@ -31,7 +31,7 @@ module Airbrake
       @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
 
       unless @config.valid?
-        raise Airbrake::Error, 'both :project_id and :project_key are required'
+        raise Airbrake::Error, @config.validation_error_message
       end
 
       @filter_chain = FilterChain.new(@config)
