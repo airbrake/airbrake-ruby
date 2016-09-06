@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added support for custom exception attributes
+  ([#113](https://github.com/airbrake/airbrake-ruby/pull/113))
+
 ### [v1.4.6][v1.4.6] (August 18, 2016)
 
 * Fixed support for ExecJS backtraces for Ruby 1.9.3 sometimes resulting in
