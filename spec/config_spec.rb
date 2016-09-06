@@ -155,6 +155,22 @@ RSpec.describe Airbrake::Config do
         expect(config).not_to be_valid
       end
     end
+
+    context "when the environment value is not a String" do
+      let(:out) { StringIO.new }
+      let(:config) { described_class.new(logger: Logger.new(out)) }
+
+      before do
+        config.project_id = 123
+        config.project_key = '321'
+
+        config.environment = ['bingo']
+      end
+
+      it "returns false" do
+        expect(config).not_to be_valid
+      end
+    end
   end
 
   describe "#ignored_environment?" do

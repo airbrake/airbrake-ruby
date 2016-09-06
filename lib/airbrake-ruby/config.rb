@@ -73,6 +73,8 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
+      @validator = Config::Validator.new(self)
+
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
@@ -130,8 +132,16 @@ module Airbrake
     #   otherwise
     def valid?
       return true if ignored_environment?
-      return false if project_id.to_i.zero?
-      project_key.is_a?(String) && !project_key.empty?
+
+      return false unless @validator.valid_project_id?
+      return false unless @validator.valid_project_key?
+      return false unless @validator.valid_environment?
+
+      true
+    end
+
+    def validation_error_message
+      @validator.error_message
     end
 
     ##
