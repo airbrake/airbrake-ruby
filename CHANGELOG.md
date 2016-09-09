@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.5.0][v1.5.0] (September 9, 2016)
+
 * Added support for custom exception attributes
   ([#113](https://github.com/airbrake/airbrake-ruby/pull/113))
 * Started validating the 'environment' config option (a warning will be printed,
@@ -203,3 +205,4 @@ Airbrake Ruby Changelog
 [v1.4.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.4
 [v1.4.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.5
 [v1.4.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.6
+[v1.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.5.0
