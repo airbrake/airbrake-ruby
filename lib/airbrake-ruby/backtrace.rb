@@ -26,14 +26,18 @@ module Airbrake
       ##
       # @return [Regexp] the pattern that matches JRuby Java stack frames, such
       #  as org.jruby.ast.NewlineNode.interpret(NewlineNode.java:105)
-      JAVA = /\A
-        (?<function>.+)  # Matches 'org.jruby.ast.NewlineNode.interpret
+      JAVA = %r{\A
+        (?<function>.+)  # Matches 'org.jruby.ast.NewlineNode.interpret'
         \(
-          (?<file>[^:]+) # Matches 'NewlineNode.java'
+          (?<file>
+            (?:uri:classloader:/.+(?=:)) # Matches '/META-INF/jruby.home/protocol.rb'
+            |
+            [^:]+        # Matches 'NewlineNode.java'
+          )
           :?
           (?<line>\d+)?  # Matches '105'
         \)
-      \z/x
+      \z}x
 
       ##
       # @return [Regexp] the pattern that tries to assume what a generic stack

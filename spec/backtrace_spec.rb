@@ -76,6 +76,32 @@ RSpec.describe Airbrake::Backtrace do
       end
     end
 
+    context "JRuby classloader exceptions" do
+      let(:backtrace) do
+        # rubocop:disable Metrics/LineLength
+        ['uri_3a_classloader_3a_.META_minus_INF.jruby_dot_home.lib.ruby.stdlib.net.protocol.rbuf_fill(uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/net/protocol.rb:158)',
+         'bin.processors.image_uploader.block in make_streams(bin/processors/image_uploader.rb:21)']
+        # rubocop:enable Metrics/LineLength
+      end
+
+      let(:parsed_backtrace) do
+        # rubocop:disable Metrics/LineLength
+        [{ file: 'uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/net/protocol.rb', line: 158, function: 'uri_3a_classloader_3a_.META_minus_INF.jruby_dot_home.lib.ruby.stdlib.net.protocol.rbuf_fill' },
+         { file: 'bin/processors/image_uploader.rb', line: 21, function: 'bin.processors.image_uploader.block in make_streams' }]
+        # rubocop:enable Metrics/LineLength
+      end
+
+      let(:ex) { JavaAirbrakeTestError.new.tap { |e| e.set_backtrace(backtrace) } }
+
+      it "returns a properly formatted array of hashes" do
+        allow(described_class).to receive(:java_exception?).and_return(true)
+
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
+      end
+    end
+
     context "generic backtrace" do
       context "when function is absent" do
         # rubocop:disable Metrics/LineLength
