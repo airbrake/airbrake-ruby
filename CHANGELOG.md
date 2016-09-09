@@ -10,6 +10,8 @@ Airbrake Ruby Changelog
   ([#115](https://github.com/airbrake/airbrake-ruby/pull/115))
 * Fixed error while filtering unparseable backtraces
   ([#120](https://github.com/airbrake/airbrake-ruby/pull/120))
+* Improved support for parsing JRuby backtraces
+  ([#119](https://github.com/airbrake/airbrake-ruby/pull/119))
 
 ### [v1.4.6][v1.4.6] (August 18, 2016)
 
