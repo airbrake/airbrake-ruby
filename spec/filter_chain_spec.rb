@@ -152,6 +152,42 @@ RSpec.describe Airbrake::FilterChain do
             to(change { notice.ignored? }.from(false).to(true))
         end
       end
+
+      context "gem root filter" do
+        let(:ex) do
+          AirbrakeTestError.new.tap do |error|
+            error.set_backtrace(['(unparseable/frame.rb:23)'])
+          end
+        end
+
+        it "does not filter file if it is nil" do
+          config.logger = Logger.new('/dev/null')
+          notice = Airbrake::Notice.new(config, ex)
+
+          expect(notice[:errors].first[:file]).to be_nil
+          expect { @chain.refine(notice) }.
+            not_to change { notice[:errors].first[:file] }
+        end
+      end
+
+      context "root directory filter" do
+        let(:ex) do
+          AirbrakeTestError.new.tap do |error|
+            error.set_backtrace(['(unparseable/frame.rb:23)'])
+          end
+        end
+
+        it "does not filter file if it is nil" do
+          config.logger = Logger.new('/dev/null')
+          config.root_directory = '/bingo/bango'
+          notice = Airbrake::Notice.new(config, ex)
+          filter_chain = described_class.new(config)
+
+          expect(notice[:errors].first[:file]).to be_nil
+          expect { filter_chain.refine(notice) }.
+            not_to change { notice[:errors].first[:file] }
+        end
+      end
     end
   end
 end

@@ -8,6 +8,8 @@ Airbrake Ruby Changelog
 * Started validating the 'environment' config option (a warning will be printed,
   if it is misconfigured)
   ([#115](https://github.com/airbrake/airbrake-ruby/pull/115))
+* Fixed error while filtering unparseable backtraces
+  ([#120](https://github.com/airbrake/airbrake-ruby/pull/120))
 
 ### [v1.4.6][v1.4.6] (August 18, 2016)
 
