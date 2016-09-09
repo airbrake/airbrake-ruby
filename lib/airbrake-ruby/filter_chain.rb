@@ -13,7 +13,10 @@ module Airbrake
       notice[:errors].each do |error|
         Gem.path.each do |gem_path|
           error[:backtrace].each do |frame|
-            frame[:file].sub!(/\A#{gem_path}/, '[GEM_ROOT]'.freeze)
+            # If the frame is unparseable, then 'file' is nil, thus nothing to
+            # filter (all frame's data is in 'function' instead).
+            next unless (file = frame[:file])
+            file.sub!(/\A#{gem_path}/, '[GEM_ROOT]'.freeze)
           end
         end
       end
@@ -67,7 +70,8 @@ module Airbrake
       proc do |notice|
         notice[:errors].each do |error|
           error[:backtrace].each do |frame|
-            frame[:file].sub!(/\A#{root_directory}/, '[PROJECT_ROOT]'.freeze)
+            next unless (file = frame[:file])
+            file.sub!(/\A#{root_directory}/, '[PROJECT_ROOT]'.freeze)
           end
         end
       end
