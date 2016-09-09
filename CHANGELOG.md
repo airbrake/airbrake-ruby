@@ -12,6 +12,8 @@ Airbrake Ruby Changelog
   ([#120](https://github.com/airbrake/airbrake-ruby/pull/120))
 * Improved support for parsing JRuby backtraces
   ([#119](https://github.com/airbrake/airbrake-ruby/pull/119))
+* Fixed bug where individual user fields couldn't be filtered
+  ([#118](https://github.com/airbrake/airbrake-ruby/pull/118))
 
 ### [v1.4.6][v1.4.6] (August 18, 2016)
 

@@ -568,6 +568,17 @@ RSpec.describe Airbrake::Notifier do
 
       expect_a_request_with_body(/"user":"\[Filtered\]"/)
     end
+
+    it "filters out individual user fields" do
+      @airbrake.blacklist_keys('name')
+
+      notice = @airbrake.build_notice(ex)
+      notice[:context][:user] = { id: 1337, name: 'Bingo Bango' }
+
+      @airbrake.notify_sync(notice)
+
+      expect_a_request_with_body(/"user":{"id":1337,"name":"\[Filtered\]"}/)
+    end
   end
 
   describe "#whitelist_keys" do

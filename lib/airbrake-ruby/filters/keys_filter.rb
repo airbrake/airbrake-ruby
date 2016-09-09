@@ -32,8 +32,12 @@ module Airbrake
       def call(notice)
         FILTERABLE_KEYS.each { |key| filter_hash(notice[key]) }
 
-        if notice[:context][:user] && should_filter?(:user)
-          notice[:context][:user] = FILTERED
+        if notice[:context][:user]
+          if should_filter?(:user)
+            notice[:context][:user] = FILTERED
+          else
+            filter_hash(notice[:context][:user])
+          end
         end
 
         return unless notice[:context][:url]
