@@ -534,7 +534,7 @@ notice[:params][:my_param] = 'foobar'
 The library supports custom exception attributes. This is useful if you work
 with custom exceptions, which define non-standard attributes and you can't
 attach any additional data with help of the [`add_filter`](#airbrakeadd_filter)
-API due to the fact that the data isn't available at confuration time yet.
+API due to the fact that the data isn't available at configuration time yet.
 
 In this case, you could define a special hook method on your exception called
 `#to_airbrake`. The method must return a Hash the keys of which must be a subset
