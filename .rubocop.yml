@@ -100,3 +100,9 @@ Style/MultilineHashBraceLayout:
 
 Style/NumericPredicate:
   Enabled: false
+
+Style/VariableNumber:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
