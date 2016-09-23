@@ -103,3 +103,6 @@ Style/NumericPredicate:
 
 Style/VariableNumber:
   Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
