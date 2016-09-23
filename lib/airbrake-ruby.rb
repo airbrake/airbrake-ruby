@@ -189,42 +189,6 @@ module Airbrake
     end
 
     ##
-    # Specifies which keys should *not* be filtered. All other keys will be
-    # substituted with the +[Filtered]+ label.
-    #
-    # @macro proxy_method
-    # @example
-    #   Airbrake.whitelist([:email, /user/i, 'account_id'])
-    #
-    # @param [Array<String, Symbol, Regexp>] keys The keys, which shouldn't be
-    #   filtered
-    # @return [void]
-    # @since v5.0.0
-    # @see .blacklist_keys
-    # @deprecated Please use {Airbrake::Config#whitelist_keys} instead
-    def whitelist_keys(keys, notifier = :default)
-      call_notifier(notifier, __method__, keys)
-    end
-
-    ##
-    # Specifies which keys *should* be filtered. Such keys will be replaced with
-    # the +[Filtered]+ label.
-    #
-    # @macro proxy_method
-    # @example
-    #   Airbrake.blacklist_keys([:email, /credit/i, 'password'])
-    #
-    # @param [Array<String, Symbol, Regexp>] keys The keys, which should be
-    #   filtered
-    # @return [void]
-    # @since v5.0.0
-    # @see .whitelist_keys
-    # @deprecated Please use {Airbrake::Config#blacklist_keys} instead
-    def blacklist_keys(keys, notifier = :default)
-      call_notifier(notifier, __method__, keys)
-    end
-
-    ##
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
     # value only for a specific notice. When you're done modifying the notice,
     # send it with {.notify} or {.notify_sync}.
