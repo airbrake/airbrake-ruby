@@ -36,13 +36,7 @@ module Airbrake
 
       @filter_chain = FilterChain.new(@config)
 
-      if @config.blacklist_keys.any?
-        add_filter(Filters::KeysBlacklist.new(@config.logger, *@config.blacklist_keys))
-      end
-
-      if @config.whitelist_keys.any?
-        add_filter(Filters::KeysWhitelist.new(@config.logger, *@config.whitelist_keys))
-      end
+      add_filters_for_config_keys
 
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
@@ -170,6 +164,16 @@ module Airbrake
       # at least some backtrace to simplify debugging.
       return caller_copy if clean_bt.empty?
       clean_bt
+    end
+
+    def add_filters_for_config_keys
+      if @config.blacklist_keys.any?
+        add_filter(Filters::KeysBlacklist.new(@config.logger, *@config.blacklist_keys))
+      end
+
+      return if @config.whitelist_keys.none?
+
+      add_filter(Filters::KeysWhitelist.new(@config.logger, *@config.whitelist_keys))
     end
   end
 end
