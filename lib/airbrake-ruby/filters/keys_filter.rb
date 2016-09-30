@@ -14,12 +14,19 @@ module Airbrake
       FILTERED = '[Filtered]'.freeze
 
       ##
+      # @return [Array<String,Symbol,Regexp>] the array of classes instances of
+      #   which can compared with payload keys
+      VALID_PATTERN_CLASSES = [String, Symbol, Regexp].freeze
+
+      ##
       # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
       # @param [Array<String,Regexp,Symbol>] patterns
-      def initialize(*patterns)
+      def initialize(logger, *patterns)
+        @logger = logger
         @patterns = patterns
+        @valid_patterns = false
       end
 
       ##
@@ -30,6 +37,11 @@ module Airbrake
       # @return [void]
       # @see FilterChain
       def call(notice)
+        unless @valid_patterns
+          eval_proc_patterns!
+          validate_patterns
+        end
+
         FILTERABLE_KEYS.each { |key| filter_hash(notice[key]) }
 
         if notice[:context][:user]
@@ -85,6 +97,28 @@ module Airbrake
 
         return unless url.query
         notice[:context][:url] = filter_url_params(url)
+      end
+
+      def eval_proc_patterns!
+        return unless @patterns.any? { |pattern| pattern.is_a?(Proc) }
+
+        @patterns = @patterns.flat_map do |pattern|
+          next(pattern) unless pattern.respond_to?(:call)
+          pattern.call
+        end
+      end
+
+      def validate_patterns
+        @valid_patterns = @patterns.all? do |pattern|
+          VALID_PATTERN_CLASSES.any? { |c| pattern.is_a?(c) }
+        end
+
+        return if @valid_patterns
+
+        @logger.error(
+          "#{LOG_LABEL} one of the patterns in #{self.class} is invalid. " \
+          "Known patterns: #{@patterns}"
+        )
       end
     end
   end

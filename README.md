@@ -306,6 +306,34 @@ Airbrake.notify('App crashed!', {
 #     credit_card: '[Filtered]' }
 ```
 
+##### Using Procs to delay filters configuration
+
+If you cannot inline your keys (for example, they should be loaded from external
+process), there's a way to load them later. Let's imagine `Keyloader.load_keys`
+builds an Array of keys by talking to another process:
+
+```ruby
+module Keyloader
+  # Builds an Array of keys (talking to another process is omitted).
+  def self.load_keys
+    [:credit_card, :telephone]
+  end
+end
+```
+
+We need to wrap this call in a Proc, so the library can execute it later (it
+gets executed on first notify, only once):
+
+```ruby
+Airbrake.configure do |c|
+  # You can mix inline keys and Procs.
+  c.blacklist_keys = [:email, proc { Keyloader.load_keys }, 'password']
+end
+```
+
+The Proc *must* return an Array consisting only of the elements, which are
+considered to be valid for this option.
+
 #### whitelist_keys
 
 Specifies which keys in the payload (parameters, session data, environment data,
@@ -334,6 +362,12 @@ Airbrake.notify(StandardError.new('App crashed!'), {
 #     email: 'john@example.com',
 #     account_id: 42 }
 ```
+
+##### Using Procs to delay filters configuration
+
+See documentation about
+[blacklisting using Proc objects](#using-procs-to-delay-filters-configuration).
+It's identical.
 
 ### Asynchronous Airbrake options
 

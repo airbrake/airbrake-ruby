@@ -36,13 +36,7 @@ module Airbrake
 
       @filter_chain = FilterChain.new(@config)
 
-      if @config.blacklist_keys.any?
-        add_filter(Filters::KeysBlacklist.new(*@config.blacklist_keys))
-      end
-
-      if @config.whitelist_keys.any?
-        add_filter(Filters::KeysWhitelist.new(*@config.whitelist_keys))
-      end
+      add_filters_for_config_keys
 
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
@@ -79,7 +73,7 @@ module Airbrake
         "#{LOG_LABEL} Airbrake.whitelist_keys is deprecated. Please use the " \
         "whitelist_keys option instead (https://goo.gl/sQwpYN)"
       )
-      add_filter(Filters::KeysWhitelist.new(*keys))
+      add_filter(Filters::KeysWhitelist.new(@config.logger, *keys))
     end
 
     ##
@@ -90,7 +84,7 @@ module Airbrake
         "#{LOG_LABEL} Airbrake.blacklist_keys is deprecated. Please use the " \
         "blacklist_keys option instead (https://goo.gl/jucrFt)"
       )
-      add_filter(Filters::KeysBlacklist.new(*keys))
+      add_filter(Filters::KeysBlacklist.new(@config.logger, *keys))
     end
 
     ##
@@ -170,6 +164,16 @@ module Airbrake
       # at least some backtrace to simplify debugging.
       return caller_copy if clean_bt.empty?
       clean_bt
+    end
+
+    def add_filters_for_config_keys
+      if @config.blacklist_keys.any?
+        add_filter(Filters::KeysBlacklist.new(@config.logger, *@config.blacklist_keys))
+      end
+
+      return if @config.whitelist_keys.none?
+
+      add_filter(Filters::KeysWhitelist.new(@config.logger, *@config.whitelist_keys))
     end
   end
 end
