@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Added support for blacklisting/whitelisting using procs
   ([#108](https://github.com/airbrake/airbrake-ruby/pull/108))
+* Deleted deprecated public API methods (whitelisting, blacklisting)
+  ([#123](https://github.com/airbrake/airbrake-ruby/pull/113))
 
 ### [v1.5.0][v1.5.0] (September 9, 2016)
 

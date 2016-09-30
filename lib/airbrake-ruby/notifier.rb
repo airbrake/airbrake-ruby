@@ -67,28 +67,6 @@ module Airbrake
 
     ##
     # @macro see_public_api_method
-    # @deprecated Please use {Airbrake::Config#whitelist_keys} instead
-    def whitelist_keys(keys)
-      @config.logger.warn(
-        "#{LOG_LABEL} Airbrake.whitelist_keys is deprecated. Please use the " \
-        "whitelist_keys option instead (https://goo.gl/sQwpYN)"
-      )
-      add_filter(Filters::KeysWhitelist.new(@config.logger, *keys))
-    end
-
-    ##
-    # @macro see_public_api_method
-    # @deprecated Please use {Airbrake::Config#blacklist_keys} instead
-    def blacklist_keys(keys)
-      @config.logger.warn(
-        "#{LOG_LABEL} Airbrake.blacklist_keys is deprecated. Please use the " \
-        "blacklist_keys option instead (https://goo.gl/jucrFt)"
-      )
-      add_filter(Filters::KeysBlacklist.new(@config.logger, *keys))
-    end
-
-    ##
-    # @macro see_public_api_method
     def build_notice(exception, params = {})
       if @async_sender.closed?
         raise Airbrake::Error,

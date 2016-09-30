@@ -176,14 +176,6 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe ".whitelist_keys" do
-    include_examples 'non-configured notifier handling', :whitelist_keys
-  end
-
-  describe ".blacklist_keys" do
-    include_examples 'non-configured notifier handling', :blacklist_keys
-  end
-
   describe ".build_notice" do
     include_examples 'non-configured notifier handling', :build_notice
   end
