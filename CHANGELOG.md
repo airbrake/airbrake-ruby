@@ -6,7 +6,9 @@ Airbrake Ruby Changelog
 * Added support for blacklisting/whitelisting using procs
   ([#108](https://github.com/airbrake/airbrake-ruby/pull/108))
 * Deleted deprecated public API methods (whitelisting, blacklisting)
-  ([#123](https://github.com/airbrake/airbrake-ruby/pull/113))
+  ([#125](https://github.com/airbrake/airbrake-ruby/pull/125))
+* Fixed support for Ruby 2.0.* not being able to report ExecJS exceptions
+  ([#130](https://github.com/airbrake/airbrake-ruby/pull/130))
 
 ### [v1.5.0][v1.5.0] (September 9, 2016)
 

@@ -70,6 +70,11 @@ module Airbrake
   RUBY_19 = RUBY_VERSION.start_with?('1.9')
 
   ##
+  # @return [Boolean] true if current Ruby is Ruby 2.0.*. The result is used
+  #   for special cases where we need to work around older implementations
+  RUBY_20 = RUBY_VERSION.start_with?('2.0')
+
+  ##
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances.
   @notifiers = {}
