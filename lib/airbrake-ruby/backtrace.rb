@@ -151,7 +151,7 @@ module Airbrake
         return false unless defined?(ExecJS::RuntimeError)
         return true if exception.is_a?(ExecJS::RuntimeError)
 
-        if Airbrake::RUBY_19
+        if Airbrake::RUBY_19 || Airbrake::RUBY_20
           # Ruby 1.9 doesn't support Exception#cause. We work around this by
           # parsing backtraces. It's slow, so we check only a few first frames.
           exception.backtrace[0..2].each do |frame|
