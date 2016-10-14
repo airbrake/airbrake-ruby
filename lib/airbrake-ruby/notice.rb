@@ -57,17 +57,14 @@ module Airbrake
     def initialize(config, exception, params = {})
       @config = config
 
-      @private_payload = {
-        notifier: NOTIFIER
-      }.freeze
-
-      @modifiable_payload = {
+      @payload = {
         errors: NestedException.new(exception, @config.logger).as_json,
         context: context(params),
         environment: {},
         session: {},
         params: params
       }
+
       extract_custom_attributes(exception)
 
       @truncator = PayloadTruncator.new(PAYLOAD_MAX_SIZE, @config.logger)
@@ -82,7 +79,7 @@ module Airbrake
     def to_json
       loop do
         begin
-          json = payload.to_json
+          json = @payload.to_json
         rescue *JSON_EXCEPTIONS => ex
           @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")
         else
@@ -100,7 +97,7 @@ module Airbrake
     # @see #ignored?
     # @note Ignored noticed can't be unignored
     def ignore!
-      @modifiable_payload = nil
+      @payload = nil
     end
 
     ##
@@ -109,21 +106,21 @@ module Airbrake
     # @return [Boolean]
     # @see #ignore!
     def ignored?
-      @modifiable_payload.nil?
+      @payload.nil?
     end
 
     ##
-    # Reads a value from notice's modifiable payload.
+    # Reads a value from notice's payload.
     # @return [Object]
     #
     # @raise [Airbrake::Error] if the notice is ignored
     def [](key)
       raise_if_ignored
-      @modifiable_payload[key]
+      @payload[key]
     end
 
     ##
-    # Writes a value to the modifiable payload hash. Restricts unrecognized
+    # Writes a value to the payload hash. Restricts unrecognized
     # writes.
     # @example
     #   notice[:params][:my_param] = 'foobar'
@@ -137,7 +134,7 @@ module Airbrake
       raise_if_unrecognized_key(key)
       raise_if_non_hash_value(value)
 
-      @modifiable_payload[key] = value.to_hash
+      @payload[key] = value.to_hash
     end
 
     private
@@ -178,17 +175,13 @@ module Airbrake
       raise Airbrake::Error, "Got #{value.class} value, wanted a Hash"
     end
 
-    def payload
-      @modifiable_payload.merge(@private_payload)
-    end
-
     def truncate_payload
-      @modifiable_payload[:errors].each do |error|
+      @payload[:errors].each do |error|
         @truncator.truncate_error(error)
       end
 
       Filters::FILTERABLE_KEYS.each do |key|
-        @truncator.truncate_object(@modifiable_payload[key])
+        @truncator.truncate_object(@payload[key])
       end
 
       new_max_size = @truncator.reduce_max_size
@@ -196,7 +189,7 @@ module Airbrake
         @config.logger.error(
           "#{LOG_LABEL} truncation failed. File an issue at " \
           "https://github.com/airbrake/airbrake-ruby " \
-          "and attach the following payload: #{payload}"
+          "and attach the following payload: #{@payload}"
         )
       end
 
@@ -218,7 +211,7 @@ module Airbrake
       return unless attributes
 
       begin
-        @modifiable_payload.merge!(attributes)
+        @payload.merge!(attributes)
       rescue TypeError
         @config.logger.error(
           "#{LOG_LABEL} #{exception.class}#to_airbrake failed:" \

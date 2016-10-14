@@ -2,7 +2,7 @@ module Airbrake
   module Filters
     ##
     # A default Airbrake notice filter. Filters only specific keys listed in the
-    # list of parameters in the modifiable payload of a notice.
+    # list of parameters in the payload of a notice.
     #
     # @example
     #   filter = Airbrake::Filters::KeysBlacklist.new(:email, /credit/i, 'password')

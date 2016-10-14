@@ -1,8 +1,8 @@
 module Airbrake
   module Filters
     ##
-    # A default Airbrake notice filter. Filters everything in the modifiable
-    # payload of a notice, but specified keys.
+    # A default Airbrake notice filter. Filters everything in the payload of a
+    # notice, but specified keys.
     #
     # @example
     #   filter = Airbrake::Filters::KeysWhitelist.new(:email, /user/i, 'account_id')

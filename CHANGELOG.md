@@ -9,6 +9,8 @@ Airbrake Ruby Changelog
   ([#125](https://github.com/airbrake/airbrake-ruby/pull/125))
 * Fixed support for Ruby 2.0.* not being able to report ExecJS exceptions
   ([#130](https://github.com/airbrake/airbrake-ruby/pull/130))
+* Reduced notice size (small improvement, which affects every single notice)
+  ([#132](https://github.com/airbrake/airbrake-ruby/pull/132))
 
 ### [v1.5.0][v1.5.0] (September 9, 2016)
 
