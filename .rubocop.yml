@@ -106,3 +106,12 @@ Style/VariableNumber:
 
 Style/SafeNavigation:
   Enabled: false
+
+Metrics/BlockLength:
+  CountComments: false
+  Max: 25
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - 'airbrake-ruby.gemspec'
