@@ -550,8 +550,7 @@ notice.ignored? #=> false
 
 #### Notice#[] & Notice#[]=
 
-Accesses a notice's modifiable payload, which can be read or
-filtered. Modifiable payload includes:
+Accesses a notice's payload, which can be read or filtered. Payload includes:
 
 * `:errors`
 * `:context`
