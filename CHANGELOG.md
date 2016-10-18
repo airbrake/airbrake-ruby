@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.6.0][v1.6.0] (October 18, 2016)
+
 * Added support for blacklisting/whitelisting using procs
   ([#108](https://github.com/airbrake/airbrake-ruby/pull/108))
 * Deleted deprecated public API methods (whitelisting, blacklisting)
@@ -215,3 +217,4 @@ Airbrake Ruby Changelog
 [v1.4.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.5
 [v1.4.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.6
 [v1.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.5.0
+[v1.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.6.0
