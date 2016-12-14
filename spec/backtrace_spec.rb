@@ -80,14 +80,18 @@ RSpec.describe Airbrake::Backtrace do
       let(:backtrace) do
         # rubocop:disable Metrics/LineLength
         ['uri_3a_classloader_3a_.META_minus_INF.jruby_dot_home.lib.ruby.stdlib.net.protocol.rbuf_fill(uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/net/protocol.rb:158)',
-         'bin.processors.image_uploader.block in make_streams(bin/processors/image_uploader.rb:21)']
+         'bin.processors.image_uploader.block in make_streams(bin/processors/image_uploader.rb:21)',
+         'uri_3a_classloader_3a_.gems.faye_minus_websocket_minus_0_dot_10_dot_5.lib.faye.websocket.api.invokeOther13:dispatch_event(uri_3a_classloader_3a_/gems/faye_minus_websocket_minus_0_dot_10_dot_5/lib/faye/websocket/uri:classloader:/gems/faye-websocket-0.10.5/lib/faye/websocket/api.rb:109)',
+         'tmp.jruby9022301782566983632extract.$dot.META_minus_INF.rails.file(/tmp/jruby9022301782566983632extract/./META-INF/rails.rb:13)']
         # rubocop:enable Metrics/LineLength
       end
 
       let(:parsed_backtrace) do
         # rubocop:disable Metrics/LineLength
         [{ file: 'uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/net/protocol.rb', line: 158, function: 'uri_3a_classloader_3a_.META_minus_INF.jruby_dot_home.lib.ruby.stdlib.net.protocol.rbuf_fill' },
-         { file: 'bin/processors/image_uploader.rb', line: 21, function: 'bin.processors.image_uploader.block in make_streams' }]
+         { file: 'bin/processors/image_uploader.rb', line: 21, function: 'bin.processors.image_uploader.block in make_streams' },
+         { file: 'uri_3a_classloader_3a_/gems/faye_minus_websocket_minus_0_dot_10_dot_5/lib/faye/websocket/uri:classloader:/gems/faye-websocket-0.10.5/lib/faye/websocket/api.rb', line: 109, function: 'uri_3a_classloader_3a_.gems.faye_minus_websocket_minus_0_dot_10_dot_5.lib.faye.websocket.api.invokeOther13:dispatch_event' },
+         { file: '/tmp/jruby9022301782566983632extract/./META-INF/rails.rb', line: 13, function: 'tmp.jruby9022301782566983632extract.$dot.META_minus_INF.rails.file' }]
         # rubocop:enable Metrics/LineLength
       end
 

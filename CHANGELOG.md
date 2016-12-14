@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Improved JRuby parsing of frames which include classloader
+  ([#140](https://github.com/airbrake/airbrake-ruby/pull/140))
+
 ### [v1.6.0][v1.6.0] (October 18, 2016)
 
 * Added support for blacklisting/whitelisting using procs
