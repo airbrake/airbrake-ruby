@@ -32,6 +32,8 @@ module Airbrake
           (?<file>
             (?:uri:classloader:/.+(?=:)) # Matches '/META-INF/jruby.home/protocol.rb'
             |
+            (?:uri_3a_classloader_3a_.+(?=:)) # Matches 'uri_3a_classloader_3a_/gems/...'
+            |
             [^:]+        # Matches 'NewlineNode.java'
           )
           :?
