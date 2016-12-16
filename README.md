@@ -31,6 +31,7 @@ Key features
 * Simple, consistent and easy-to-use library API<sup>[[link](#api)]</sup>
 * Awesome performance (check out our benchmarks)<sup>[[link](#running-benchmarks)]</sup>
 * Asynchronous exception reporting<sup>[[link](#asynchronous-airbrake-options)]</sup>
+* Promise support<sup>[[link](#promise)]</sup>
 * Flexible logging support (configure your own logger)<sup>[[link](#logger)]</sup>
 * Flexible configuration options (configure as many Airbrake notifers in one
   application as you want)<sup>[[link](#configuration)]</sup>
@@ -426,6 +427,9 @@ Airbrake.notify('App crashed!', {
 })
 ```
 
+Returns an [`Airbrake::Promise`](#promise), which can be used to read Airbrake
+error ids.
+
 #### Airbrake.notify_sync
 
 Sends an exception to Airbrake synchronously. Returns a Hash with an error ID
@@ -560,6 +564,40 @@ Accesses a notice's payload, which can be read or filtered. Payload includes:
 
 ```ruby
 notice[:params][:my_param] = 'foobar'
+```
+
+### Promise
+
+`Airbrake::Promise` represents a simplified promise object (similar to promises
+found in JavaScript), which allows chaining callbacks that are executed when
+the promise is either resolved or rejected.
+
+#### Promise#then
+
+Attaches a callback to be executed when a promise is resolved (fulfilled). The
+promise is resolved whenever the Airbrake API successfully accepts your
+exception.
+
+Yields successful response containing the id of an error at Airbrake and URL to
+the error at Airbrake.  Returns `self`.
+
+```rb
+Airbrake.notify('Oops').then { |response| puts response }
+#=> {"id"=>"00054415-8201-e9c6-65d6-fc4d231d2871",
+#    "url"=>"http://localhost/locate/00054415-8201-e9c6-65d6-fc4d231d2871"}
+```
+
+#### Promise#rescue
+
+Attaches a callback to be executed when a promise is rejected. The promise is
+rejected whenever the API returns an error response.
+
+Yields an error message in the form of String explaining the failure and returns
+`self`.
+
+```rb
+Airbrake.notify('Oops').rescue { |error| puts error }
+#=> Failed to open TCP connection to localhostt:80
 ```
 
 ### Custom exception attributes

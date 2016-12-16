@@ -210,7 +210,8 @@ RSpec.describe Airbrake::Notifier do
           airbrake = described_class.new(airbrake_params.merge(params))
 
           expect(Airbrake::Notice).not_to receive(:new)
-          expect(airbrake.notify_sync(ex)).to be_nil
+          expect(airbrake.notify_sync(ex)).
+            to eq('error' => "The 'development' environment is ignored")
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end

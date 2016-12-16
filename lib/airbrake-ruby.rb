@@ -8,6 +8,7 @@ require 'socket'
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
+require 'airbrake-ruby/promise'
 require 'airbrake-ruby/sync_sender'
 require 'airbrake-ruby/async_sender'
 require 'airbrake-ruby/response'
@@ -140,7 +141,7 @@ module Airbrake
     # @param [Hash] params The additional payload to be sent to Airbrake. Can
     #   contain any values. The provided values will be displayed in the Params
     #   tab in your project's dashboard
-    # @return [nil]
+    # @return [Airbrake::Promise]
     # @see .notify_sync
     def notify(exception, params = {}, notifier = :default)
       call_notifier(notifier, __method__, exception, params)
