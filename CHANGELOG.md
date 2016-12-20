@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+* **IMPORTANT:** added the promise API
+  ([#143](https://github.com/airbrake/airbrake-ruby/pull/143))
 * Improved JRuby parsing of frames which include classloader
   ([#140](https://github.com/airbrake/airbrake-ruby/pull/140))
 

@@ -35,7 +35,7 @@ module Airbrake
       rescue => ex
         body_msg = truncated_body(body)
         logger.error("#{LOG_LABEL} error while parsing body (#{ex}). Body: #{body_msg}")
-        { 'error' => ex }
+        { 'error' => ex.inspect }
       end
     end
 

@@ -49,14 +49,13 @@ module Airbrake
     ##
     # @macro see_public_api_method
     def notify(exception, params = {})
-      send_notice(exception, params)
-      nil
+      send_notice(exception, params, default_sender)
     end
 
     ##
     # @macro see_public_api_method
     def notify_sync(exception, params = {})
-      send_notice(exception, params, @sync_sender)
+      send_notice(exception, params, @sync_sender).value
     end
 
     ##
@@ -95,7 +94,9 @@ module Airbrake
       host = @config.endpoint.to_s.split(@config.endpoint.path).first
       path = "/api/v4/projects/#{@config.project_id}/deploys?key=#{@config.project_key}"
 
-      @sync_sender.send(deploy_params, URI.join(host, path))
+      promise = Airbrake::Promise.new
+      @sync_sender.send(deploy_params, promise, URI.join(host, path))
+      promise
     end
 
     private
@@ -114,14 +115,19 @@ module Airbrake
       e
     end
 
-    def send_notice(exception, params, sender = default_sender)
-      return if @config.ignored_environment?
+    def send_notice(exception, params, sender)
+      promise = Airbrake::Promise.new
+      if @config.ignored_environment?
+        return promise.reject("The '#{@config.environment}' environment is ignored")
+      end
 
       notice = build_notice(exception, params)
       @filter_chain.refine(notice)
-      return if notice.ignored?
+      if notice.ignored?
+        return promise.reject("#{notice} was marked as ignored")
+      end
 
-      sender.send(notice)
+      sender.send(notice, promise)
     end
 
     def default_sender

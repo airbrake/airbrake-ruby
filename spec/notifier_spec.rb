@@ -23,7 +23,10 @@ RSpec.describe Airbrake::Notifier do
   let(:ex) { AirbrakeTestError.new }
 
   before do
-    stub_request(:post, endpoint).to_return(status: 201, body: '{}')
+    # rubocop:disable Metrics/LineLength
+    body = '{"id":"00054414-b147-6ffa-85d6-1524d83362a6","url":"http://localhost/locate/00054414-b147-6ffa-85d6-1524d83362a6"}'
+    # rubocop:enable Metrics/LineLength
+    stub_request(:post, endpoint).to_return(status: 201, body: body)
     @airbrake = described_class.new(airbrake_params)
   end
 
@@ -58,6 +61,15 @@ RSpec.describe Airbrake::Notifier do
   end
 
   describe "#notify_sync" do
+    it "returns a hash with error id & url" do
+      expect(@airbrake.notify_sync(ex)).to(
+        eq(
+          'id' => '00054414-b147-6ffa-85d6-1524d83362a6',
+          'url' => 'http://localhost/locate/00054414-b147-6ffa-85d6-1524d83362a6'
+        )
+      )
+    end
+
     describe "first argument" do
       context "when it is a Notice" do
         it "sends the argument" do
@@ -372,8 +384,8 @@ RSpec.describe Airbrake::Notifier do
       expect_a_request_with_body(/params":{"bingo":"bango"}/)
     end
 
-    it "returns nil" do
-      expect(@airbrake.notify(ex)).to be_nil
+    it "returns a promise" do
+      expect(@airbrake.notify(ex)).to be_an(Airbrake::Promise)
       sleep 1
     end
 

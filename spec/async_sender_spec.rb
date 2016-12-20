@@ -17,7 +17,7 @@ RSpec.describe Airbrake::AsyncSender do
       expect(sender).to have_workers
 
       notice = Airbrake::Notice.new(config, AirbrakeTestError.new)
-      notices_count.times { sender.send(notice) }
+      notices_count.times { sender.send(notice, Airbrake::Promise.new) }
       sender.close
 
       log = stdout.string.split("\n")
@@ -49,7 +49,7 @@ RSpec.describe Airbrake::AsyncSender do
     context "when there are some unsent notices" do
       before do
         notice = Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-        300.times { @sender.send(notice) }
+        300.times { @sender.send(notice, Airbrake::Promise.new) }
         expect(@sender.instance_variable_get(:@unsent).size).not_to be_zero
         @sender.close
       end
