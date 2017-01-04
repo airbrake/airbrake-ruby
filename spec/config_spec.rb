@@ -229,4 +229,29 @@ RSpec.describe Airbrake::Config do
       end
     end
   end
+
+  describe "#endpoint" do
+    context "when host is configured with a URL with a slug" do
+      before do
+        config.project_id = 1
+        config.project_key = '2'
+      end
+
+      context "and with a trailing slash" do
+        it "sets the endpoint with the slug" do
+          config.host = 'https://localhost/bingo/'
+          expect(config.endpoint.to_s).
+            to eq('https://localhost/bingo/api/v3/projects/1/notices?key=2')
+        end
+      end
+
+      context "and without a trailing slash" do
+        it "sets the endpoint without the slug" do
+          config.host = 'https://localhost/bingo'
+          expect(config.endpoint.to_s).
+            to eq('https://localhost/api/v3/projects/1/notices?key=2')
+        end
+      end
+    end
+  end
 end

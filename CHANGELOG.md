@@ -7,6 +7,8 @@ Airbrake Ruby Changelog
   ([#143](https://github.com/airbrake/airbrake-ruby/pull/143))
 * Improved JRuby parsing of frames which include classloader
   ([#140](https://github.com/airbrake/airbrake-ruby/pull/140))
+* Fixed bug in the `host` option, when it is configured with a slug
+  ([#145](https://github.com/airbrake/airbrake-ruby/pull/145))
 
 ### [v1.6.0][v1.6.0] (October 18, 2016)
 
