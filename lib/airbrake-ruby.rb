@@ -66,11 +66,6 @@ module Airbrake
   LOG_LABEL = '**Airbrake:'.freeze
 
   ##
-  # @return [Boolean] true if current Ruby is Ruby 1.9.*. The result is used
-  #   for special cases where we need to work around older implementations
-  RUBY_19 = RUBY_VERSION.start_with?('1.9')
-
-  ##
   # @return [Boolean] true if current Ruby is Ruby 2.0.*. The result is used
   #   for special cases where we need to work around older implementations
   RUBY_20 = RUBY_VERSION.start_with?('2.0')

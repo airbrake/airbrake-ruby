@@ -25,12 +25,11 @@ DESC
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
   s.test_files   = Dir.glob('spec/**/*')
 
+  s.required_ruby_version = '>= 2.0'
+
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rake', '~> 10'
   s.add_development_dependency 'pry', '~> 0'
-
-  # We still support Ruby 1.9.2+, but webmock 2.2.0+ doesn't.
-  s.add_development_dependency 'webmock', '= 2.2.0'
-
+  s.add_development_dependency 'webmock', '~> 2'
   s.add_development_dependency 'benchmark-ips', '~> 2'
 end
