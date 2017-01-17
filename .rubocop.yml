@@ -115,3 +115,6 @@ Metrics/BlockLength:
     - '**/*.rake'
     - 'spec/**/*.rb'
     - 'airbrake-ruby.gemspec'
+
+Performance/RegexpMatch:
+  Enabled: false
