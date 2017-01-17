@@ -1,6 +1,6 @@
 machine:
   ruby:
-    version: 2.3.3
+    version: 2.4.0
 
 dependencies:
   cache_directories:
@@ -10,19 +10,19 @@ dependencies:
     - ? |
         case $CIRCLE_NODE_INDEX in
           0)
+            rvm-exec 2.0.0-p645 bundle install --path=vendor
             ;;
           1)
-            rvm-exec 2.0.0-p645 bundle install --path=vendor
             rvm-exec 2.1.10 bundle install --path=vendor
             ;;
           2)
             rvm-exec 2.2.5 bundle install --path=vendor
-            rvm-exec 2.3.3 bundle install --path=vendor
             ;;
           3)
-            rvm-exec 2.4.0-preview3 bundle install --path=vendor
+            rvm-exec 2.3.3 bundle install --path=vendor
             ;;
           4)
+            rvm-exec 2.4.0 bundle install --path=vendor
             ;;
           5)
             JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.6.0 bundle install --path=vendor
@@ -38,19 +38,19 @@ test:
         set -e
         case $CIRCLE_NODE_INDEX in
           0)
+            rvm-exec 2.0.0-p645 bundle exec rake
             ;;
           1)
-            rvm-exec 2.0.0-p645 bundle exec rake
             rvm-exec 2.1.10 bundle exec rake
             ;;
           2)
             rvm-exec 2.2.5 bundle exec rake
-            rvm-exec 2.3.3 bundle exec rake
             ;;
           3)
-            rvm-exec 2.4.0-preview3 bundle exec rake
+            rvm-exec 2.3.3 bundle exec rake
             ;;
           4)
+            rvm-exec 2.4.0 bundle exec rake
             ;;
           5)
             JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.6.0 bundle exec rake
