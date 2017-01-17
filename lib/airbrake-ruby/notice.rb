@@ -55,6 +55,7 @@ module Airbrake
     HOSTNAME = Socket.gethostname.freeze
 
     def initialize(config, exception, params = {})
+      params = params.dup
       @config = config
 
       @payload = {

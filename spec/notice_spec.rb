@@ -27,7 +27,10 @@ RSpec.describe Airbrake::Notice do
           config = Airbrake::Config.new(logger: Logger.new(out))
           notice = nil
 
-          expect { notice = described_class.new(config, ex) }.not_to raise_error
+          # Freeze params so modification will fail
+          params = {}.freeze
+
+          expect { notice = described_class.new(config, ex, params) }.not_to raise_error
           expect(out.string).to match(/#to_airbrake failed:.+Object.+must be a Hash/)
           expect(notice[:params]).to be_empty
         end
