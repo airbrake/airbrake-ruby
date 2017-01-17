@@ -409,12 +409,7 @@ RSpec.describe Airbrake::PayloadTruncator do
           @truncator.truncate_object(params)
 
           expect(params[:unicode].length).to eq(max_len - 1)
-
-          if RUBY_VERSION == '1.9.2'
-            expect(params[:unicode]).to match(/\A?{#{max_size - 1}}\[Truncated\]\z/)
-          else
-            expect(params[:unicode]).to match(/\A€{#{max_size - 1}}\[Truncated\]\z/)
-          end
+          expect(params[:unicode]).to match(/\A€{#{max_size - 1}}\[Truncated\]\z/)
         end
       end
 
@@ -425,12 +420,7 @@ RSpec.describe Airbrake::PayloadTruncator do
         it "converts strings to valid UTF-8" do
           @truncator.truncate_object(params)
 
-          if RUBY_VERSION == '1.9.2'
-            expect(params[:unicode]).to eq('bad string??')
-          else
-            expect(params[:unicode]).to match(/\Abad string€[�\?]\z/)
-          end
-
+          expect(params[:unicode]).to match(/\Abad string€[�\?]\z/)
           expect { params.to_json }.not_to raise_error
         end
 

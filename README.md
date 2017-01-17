@@ -673,8 +673,8 @@ end
 Supported Rubies
 ----------------
 
-* CRuby >= 1.9.2
-* JRuby >= 1.9-mode
+* CRuby >= 2.0.0
+* JRuby >= 9k
 * Rubinius >= 2.2.10
 
 Contact

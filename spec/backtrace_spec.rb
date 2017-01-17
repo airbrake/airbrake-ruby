@@ -246,12 +246,12 @@ RSpec.describe Airbrake::Backtrace do
            function: 'realtime' }]
       end
 
-      context "when not on Ruby 1.9" do
+      context "when not on Ruby 2.0" do
         let(:ex) { ExecJS::RuntimeError.new.tap { |e| e.set_backtrace(bt) } }
 
         it "returns a properly formatted array of hashes" do
           stub_const('ExecJS::RuntimeError', AirbrakeTestError)
-          stub_const('Airbrake::RUBY_19', false)
+          stub_const('Airbrake::RUBY_20', false)
 
           expect(
             described_class.parse(ex, Logger.new('/dev/null'))
@@ -259,7 +259,7 @@ RSpec.describe Airbrake::Backtrace do
         end
       end
 
-      context "when on Ruby 1.9" do
+      context "when on Ruby 2.0" do
         context "and when exception's class isn't ExecJS" do
           let(:ex) do
             ActionView::Template::Error.new.tap { |e| e.set_backtrace(bt) }
@@ -268,7 +268,7 @@ RSpec.describe Airbrake::Backtrace do
           it "returns a properly formatted array of hashes" do
             stub_const('ActionView::Template::Error', AirbrakeTestError)
             stub_const('ExecJS::RuntimeError', NameError)
-            stub_const('Airbrake::RUBY_19', true)
+            stub_const('Airbrake::RUBY_20', true)
 
             expect(
               described_class.parse(ex, Logger.new('/dev/null'))

@@ -10,7 +10,7 @@ module Airbrake
     ##
     # @return [String] the temporary encoding to be used when fixing invalid
     #   strings with +ENCODING_OPTIONS+
-    TEMP_ENCODING = (RUBY_VERSION == '1.9.2' ? 'iso-8859-1' : 'utf-16')
+    TEMP_ENCODING = 'utf-16'.freeze
 
     ##
     # @param [Integer] max_size maximum size of hashes, arrays and strings
@@ -98,12 +98,6 @@ module Airbrake
 
     ##
     # Replaces invalid characters in string with arbitrary encoding.
-    #
-    # For Ruby 1.9.2 the method converts encoding of +str+ to +iso-8859-1+ to
-    # avoid a bug when encoding options are no-op, when `#encode` is given the
-    # same encoding as the receiver's encoding.
-    #
-    # For modern Rubies we use UTF-16 as a safe alternative.
     #
     # @param [String] str The string to replace characters
     # @return [String] a UTF-8 encoded string

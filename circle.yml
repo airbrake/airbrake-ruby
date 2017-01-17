@@ -10,8 +10,6 @@ dependencies:
     - ? |
         case $CIRCLE_NODE_INDEX in
           0)
-            rvm-exec 1.9.2-p330 bundle install --path=vendor
-            rvm-exec 1.9.3-p551 bundle install --path=vendor
             ;;
           1)
             rvm-exec 2.0.0-p645 bundle install --path=vendor
@@ -25,9 +23,6 @@ dependencies:
             rvm-exec 2.4.0-preview3 bundle install --path=vendor
             ;;
           4)
-            # End of support is in the end of 2016
-            # https://github.com/jruby/jruby/issues/4112
-            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-1.7.26 bundle install --path=vendor
             ;;
           5)
             JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.6.0 bundle install --path=vendor
@@ -43,8 +38,6 @@ test:
         set -e
         case $CIRCLE_NODE_INDEX in
           0)
-            rvm-exec 1.9.2-p330 bundle exec rake
-            rvm-exec 1.9.3-p551 bundle exec rake
             ;;
           1)
             rvm-exec 2.0.0-p645 bundle exec rake
@@ -58,7 +51,6 @@ test:
             rvm-exec 2.4.0-preview3 bundle exec rake
             ;;
           4)
-            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-1.7.26 bundle exec rake
             ;;
           5)
             JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.6.0 bundle exec rake
