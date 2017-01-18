@@ -143,7 +143,7 @@ RSpec.describe Airbrake::Notifier do
       it "is being used if configured" do
         @airbrake.notify_sync(ex)
 
-        proxied_request = requests.pop
+        proxied_request = requests.pop(true)
 
         expect(proxied_request.header['proxy-authorization'].first).
           to eq('Basic dXNlcjpwYXNzd29yZA==')
