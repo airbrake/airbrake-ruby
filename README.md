@@ -479,6 +479,22 @@ Airbrake.add_filter do |notice|
 end
 ```
 
+Notices can carry custom objects attached to
+the [notice stash](#noticestash--noticestash). Such notices can be produced
+by [`build_notice`](#airbrakebuild_notice) manually or provided to you by an
+Airbrake integration:
+
+```ruby
+# Build a notice and store a Request object in the stash.
+notice = Airbrake.build_notice('oops')
+notice.stash[:request] = Request.new
+
+Airbrake.add_filter do |notice|
+  # Access the stored request object inside a filter and interact with it.
+  notice[:params][:remoteIp] = notice.stash[:request].env['REMOTE_IP']
+end
+```
+
 ##### Using classes for building filters
 
 For more complex filters you can use the special API. Simply pass an object that
@@ -564,6 +580,23 @@ Accesses a notice's payload, which can be read or filtered. Payload includes:
 
 ```ruby
 notice[:params][:my_param] = 'foobar'
+```
+
+#### Notice#stash[] & Notice#stash[]=
+
+Each notice can carry arbitrary objects stored in the notice stash, accessible
+through the `stash` method. Callbacks defined
+via [`add_filter`](#airbrakeadd_filter) can access the stash and attach stored
+object's values to the notice payload:
+
+```ruby
+notice.stash[:my_object] = Object.new
+
+Airbrake.add_filter do |notice|
+  # Access :my_object from the stash and directly call its method. The return
+  # value will be sent to Airbrake.
+  notice[:params][:object_id] = notice.stash[:my_object].object_id
+end
 ```
 
 ### Promise

@@ -237,4 +237,12 @@ RSpec.describe Airbrake::Notice do
         to raise_error(Airbrake::Error, 'Got Object value, wanted a Hash')
     end
   end
+
+  describe "#stash" do
+    it "returns a hash" do
+      obj = Object.new
+      notice.stash[:bingo_object] = obj
+      expect(notice.stash[:bingo_object]).to eql(obj)
+    end
+  end
 end
