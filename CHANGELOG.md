@@ -13,6 +13,7 @@ Airbrake Ruby Changelog
   ([#140](https://github.com/airbrake/airbrake-ruby/pull/140))
 * Fixed bug in the `host` option, when it is configured with a slug
   ([#145](https://github.com/airbrake/airbrake-ruby/pull/145))
+* Added `Notice#stash` ([#152](https://github.com/airbrake/airbrake-ruby/pull/152))
 
 ### [v1.6.0][v1.6.0] (October 18, 2016)
 
