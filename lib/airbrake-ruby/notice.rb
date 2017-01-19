@@ -140,6 +140,17 @@ module Airbrake
     private
 
     def context(params)
+      # DEPRECATION: remove the following code in the next MINOR release.
+      if params.key?(:component) || params.key?(:action)
+        @config.logger.warn(
+          "#{LOG_LABEL} passing component/action keys in the params hash is " \
+          "deprecated and will be removed soon. Please update your code to use " \
+          "`Airbrake.build_notice` and set these keys like this:\n" \
+          "  notice[:context][:component] = 'mycomponent'\n" \
+          "  notice[:context][:action] = 'myaction'"
+        )
+      end
+
       ctx = {
         version: @config.app_version,
         # We ensure that root_directory is always a String, so it can always be
@@ -148,6 +159,7 @@ module Airbrake
         rootDirectory: @config.root_directory.to_s,
         environment: @config.environment,
 
+        # DEPRECATION: remove the following code in the next MINOR release.
         # Legacy Airbrake v4 behaviour.
         component: params.delete(:component),
         action: params.delete(:action),

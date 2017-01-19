@@ -7,6 +7,8 @@ Airbrake Ruby Changelog
   ([#146](https://github.com/airbrake/airbrake/pull/146))
 * **IMPORTANT:** added the promise API
   ([#143](https://github.com/airbrake/airbrake-ruby/pull/143))
+* **IMPORTANT:** deprecated the `component/action` API (when setting through
+  `params`) ([#151](https://github.com/airbrake/airbrake-ruby/pull/151))
 * Improved JRuby parsing of frames which include classloader
   ([#140](https://github.com/airbrake/airbrake-ruby/pull/140))
 * Fixed bug in the `host` option, when it is configured with a slug
