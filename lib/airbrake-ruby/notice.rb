@@ -2,6 +2,8 @@ module Airbrake
   ##
   # Represents a chunk of information that is meant to be either sent to
   # Airbrake or ignored completely.
+  #
+  # @since v1.0.0
   # rubocop:disable Metrics/ClassLength
   class Notice
     ##

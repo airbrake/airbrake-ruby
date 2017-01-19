@@ -2,6 +2,9 @@ module Airbrake
   ##
   # Parses responses coming from the Airbrake API. Handles HTTP errors by
   # logging them.
+  #
+  # @api private
+  # @since v1.0.0
   module Response
     ##
     # @return [Integer] the limit of the response body

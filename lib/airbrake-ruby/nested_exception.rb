@@ -2,6 +2,9 @@ module Airbrake
   ##
   # A class that is capable of unwinding nested exceptions and representing them
   # as JSON-like hash.
+  #
+  # @api private
+  # @since v1.0.4
   class NestedException
     ##
     # @return [Integer] the maximum number of nested exceptions that a notice

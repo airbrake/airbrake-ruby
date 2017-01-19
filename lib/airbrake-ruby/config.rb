@@ -2,6 +2,9 @@ module Airbrake
   ##
   # Represents the Airbrake config. A config contains all the options that you
   # can use to configure an Airbrake instance.
+  #
+  # @api private
+  # @since v1.0.0
   class Config
     ##
     # @return [Integer] the project identificator. This value *must* be set.

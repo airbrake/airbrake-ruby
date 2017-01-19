@@ -5,7 +5,7 @@ module Airbrake
   #
   # @see Airbrake::Config The list of options
   # @api private
-  # @since v5.0.0
+  # @since v1.0.0
   class Notifier
     ##
     # @return [String] the label to be prepended to the log output

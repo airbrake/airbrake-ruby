@@ -5,6 +5,8 @@ module Airbrake
   # (both values are configurable).
   #
   # @see SyncSender
+  # @api private
+  # @since v1.0.0
   class AsyncSender
     ##
     # @param [Airbrake::Config] config

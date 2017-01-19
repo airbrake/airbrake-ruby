@@ -2,7 +2,10 @@ module Airbrake
   ##
   # Represents the mechanism for filtering notices. Defines a few default
   # filters.
+  #
   # @see Airbrake.add_filter
+  # @api private
+  # @since v1.0.0
   class FilterChain
     ##
     # Replaces paths to gems with a placeholder.

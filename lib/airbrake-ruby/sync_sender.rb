@@ -3,6 +3,8 @@ module Airbrake
   # Responsible for sending notices to Airbrake synchronously. Supports proxies.
   #
   # @see AsyncSender
+  # @api private
+  # @since v1.0.0
   class SyncSender
     ##
     # @return [String] body for HTTP requests
