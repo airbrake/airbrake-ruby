@@ -54,6 +54,12 @@ module Airbrake
     # @return [String] the name of the host machine
     HOSTNAME = Socket.gethostname.freeze
 
+    ##
+    # @since v1.7.0
+    # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
+    #   in filters
+    attr_reader :stash
+
     def initialize(config, exception, params = {})
       @config = config
 
@@ -64,6 +70,7 @@ module Airbrake
         session: {},
         params: params
       }
+      @stash = {}
 
       extract_custom_attributes(exception)
 
