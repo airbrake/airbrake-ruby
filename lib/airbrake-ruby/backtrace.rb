@@ -10,6 +10,9 @@ module Airbrake
   #   rescue
   #     Backtrace.parse($!, Logger.new(STDOUT))
   #   end
+  #
+  # @api private
+  # @since v1.0.0
   module Backtrace
     module Patterns
       ##

@@ -56,6 +56,7 @@ require 'airbrake-ruby/notifier'
 #   Airbrake.notify('Oops', params, :my_other_project)
 #
 # @see Airbrake::Notifier
+# @since v1.0.0
 module Airbrake
   ##
   # The general error that this library uses when it wants to raise.
@@ -152,7 +153,6 @@ module Airbrake
     #
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
-    # @since v5.0.0
     def notify_sync(exception, params = {}, notifier = :default)
       call_notifier(notifier, __method__, exception, params)
     end
@@ -183,7 +183,6 @@ module Airbrake
     # @yieldparam [Airbrake::Notice]
     # @yieldreturn [void]
     # @return [void]
-    # @since v5.0.0
     # @note Once a filter was added, there's no way to delete it
     def add_filter(filter = nil, notifier = :default, &block)
       call_notifier(notifier, __method__, filter, &block)
@@ -205,7 +204,6 @@ module Airbrake
     # @param [Hash] params The additional params attached to the notice
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
-    # @since v5.0.0
     def build_notice(exception, params = {}, notifier = :default)
       call_notifier(notifier, __method__, exception, params)
     end
@@ -221,7 +219,6 @@ module Airbrake
     #   Airbrake.notify('App crashed!') #=> raises Airbrake::Error
     #
     # @return [void]
-    # @since v5.0.0
     def close(notifier = :default)
       call_notifier(notifier, __method__)
     end
@@ -238,8 +235,6 @@ module Airbrake
     # @option deploy_params [Symbol] :revision
     # @option deploy_params [Symbol] :version
     # @return [void]
-    # @since v5.0.0
-    # @api private
     def create_deploy(deploy_params, notifier = :default)
       call_notifier(notifier, __method__, deploy_params)
     end

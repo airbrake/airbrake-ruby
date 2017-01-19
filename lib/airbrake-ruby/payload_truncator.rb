@@ -2,6 +2,9 @@ module Airbrake
   ##
   # This class is responsible for truncation of too big objects. Mainly, you
   # should use it for simple objects such as strings, hashes, & arrays.
+  #
+  # @api private
+  # @since v1.0.0
   class PayloadTruncator
     ##
     # @return [Hash] the options for +String#encode+
