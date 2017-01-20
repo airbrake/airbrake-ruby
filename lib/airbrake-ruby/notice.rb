@@ -244,8 +244,7 @@ module Airbrake
     end
 
     def deep_dup(params, level = 1)
-      level = 0 if level > 3
-      return params.dup if level == 0 || !params.respond_to?(:each_with_object)
+      return params.dup if level > 3 || !params.respond_to?(:each_with_object)
 
       params.each_with_object(params.dup) do |(key, value), hash|
         hash[key] = deep_dup(value, level + 1)
