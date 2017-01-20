@@ -14,6 +14,8 @@ Airbrake Ruby Changelog
 * Fixed bug in the `host` option, when it is configured with a slug
   ([#145](https://github.com/airbrake/airbrake-ruby/pull/145))
 * Added `Notice#stash` ([#152](https://github.com/airbrake/airbrake-ruby/pull/152))
+* Fixed bug when `Airbrake.add_filter` can mutate params provided via
+  `Airbrake.notify` ([#155](https://github.com/airbrake/airbrake-ruby/pull/155))
 
 ### [v1.6.0][v1.6.0] (October 18, 2016)
 
