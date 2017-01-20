@@ -9,7 +9,7 @@ Airbrake Ruby Changelog
   ([#143](https://github.com/airbrake/airbrake-ruby/pull/143))
 * **IMPORTANT:** deprecated the `component/action` API (when setting through
   `params`) ([#151](https://github.com/airbrake/airbrake-ruby/pull/151))
-* Improved JRuby parsing of frames which include classloader
+* Improved parsing of JRuby frames which include classloader
   ([#140](https://github.com/airbrake/airbrake-ruby/pull/140))
 * Fixed bug in the `host` option, when it is configured with a slug
   ([#145](https://github.com/airbrake/airbrake-ruby/pull/145))
