@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.7.0][v1.7.0] (January 20, 2017)
+
 * **IMPORTANT:** support for Ruby 1.9.2, 1.9.3 & JRuby (1.9-mode) is dropped
   ([#146](https://github.com/airbrake/airbrake/pull/146))
 * **IMPORTANT:** added the promise API
@@ -230,3 +232,4 @@ Airbrake Ruby Changelog
 [v1.4.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.4.6
 [v1.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.5.0
 [v1.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.6.0
+[v1.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.0
