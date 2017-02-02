@@ -26,6 +26,15 @@ module Airbrake
     end
 
     ##
+    # Filters to be executed last. By this time all permutations on a notice
+    # should be done, so the final step is to blacklist/whitelist keys.
+    # @return [Array<Class>]
+    KEYS_FILTERS = [
+      Airbrake::Filters::KeysBlacklist,
+      Airbrake::Filters::KeysWhitelist
+    ].freeze
+
+    ##
     # Skip over SystemExit exceptions, because they're just noise.
     # @return [Proc]
     SYSTEM_EXIT_FILTER = proc do |notice|
@@ -38,6 +47,7 @@ module Airbrake
     # @param [Airbrake::Config] config
     def initialize(config)
       @filters = []
+      @keys_filters = []
 
       [SYSTEM_EXIT_FILTER, GEM_ROOT_FILTER].each do |filter|
         add_filter(filter)
@@ -51,6 +61,7 @@ module Airbrake
     # Adds a filter to the filter chain.
     # @param [#call] filter The filter object (proc, class, module, etc)
     def add_filter(filter)
+      return @keys_filters << filter if KEYS_FILTERS.include?(filter.class)
       @filters << filter
     end
 
@@ -61,7 +72,7 @@ module Airbrake
     # @param [Airbrake::Notice] notice The notice to be filtered
     # @return [void]
     def refine(notice)
-      @filters.each do |filter|
+      (@filters + @keys_filters).each do |filter|
         break if notice.ignored?
         filter.call(notice)
       end

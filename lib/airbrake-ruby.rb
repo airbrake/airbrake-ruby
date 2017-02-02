@@ -15,12 +15,12 @@ require 'airbrake-ruby/response'
 require 'airbrake-ruby/nested_exception'
 require 'airbrake-ruby/notice'
 require 'airbrake-ruby/backtrace'
-require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/payload_truncator'
 require 'airbrake-ruby/filters'
 require 'airbrake-ruby/filters/keys_filter'
 require 'airbrake-ruby/filters/keys_whitelist'
 require 'airbrake-ruby/filters/keys_blacklist'
+require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 
 ##
