@@ -3,29 +3,36 @@ machine:
     version: 2.4.0
 
 dependencies:
-  cache_directories:
-    - vendor
   override:
-    - bundle install --path=vendor
+    - gem update --system
+    - bundle install
     - ? |
         case $CIRCLE_NODE_INDEX in
           0)
-            rvm-exec 2.0.0-p645 bundle install --path=vendor
+            rvm-exec 2.0.0-p645 bundle install
             ;;
           1)
-            rvm-exec 2.1.10 bundle install --path=vendor
+            rvm-exec 2.1.10 bundle install
             ;;
           2)
-            rvm-exec 2.2.5 bundle install --path=vendor
+            rvm-exec 2.2.5 bundle install
             ;;
           3)
-            rvm-exec 2.3.3 bundle install --path=vendor
+            # Workaround for https://github.com/sickill/rainbow/issues/48
+            rvm-exec 2.3.3 gem update --system
+
+            rvm-exec 2.3.3 bundle install
             ;;
           4)
-            rvm-exec 2.4.0 bundle install --path=vendor
+            rvm-exec 2.4.0 bundle install
             ;;
           5)
-            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.6.0 bundle install --path=vendor
+            export JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF"
+
+            # Workaround for https://github.com/sickill/rainbow/issues/48
+            rvm-exec jruby-9.1.7.0 gem update --system
+
+            rvm-exec jruby-9.1.7.0 bundle install
             ;;
         esac
       :
@@ -53,7 +60,7 @@ test:
             rvm-exec 2.4.0 bundle exec rake
             ;;
           5)
-            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.6.0 bundle exec rake
+            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.7.0 bundle exec rake
             ;;
         esac
       :
