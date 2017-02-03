@@ -39,6 +39,21 @@ RSpec.describe Airbrake::FilterChain do
 
         expect(nums).to eq([0, 1, 2])
       end
+
+      it "executes keys filters last" do
+        notice[:params] = { bingo: 'bango' }
+        blacklist = Airbrake::Filters::KeysBlacklist.new(config.logger, :bingo)
+        @chain.add_filter(blacklist)
+
+        @chain.add_filter(
+          proc do |notice|
+            expect(notice[:params][:bingo]).to eq('bango')
+          end
+        )
+
+        @chain.refine(notice)
+        expect(notice[:params][:bingo]).to eq('[Filtered]')
+      end
     end
 
     describe "default backtrace filters" do

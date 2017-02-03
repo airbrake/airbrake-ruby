@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* **IMPORTANT:** fixed bug when `blacklist_keys/whitelist_keys` does not filter
+  keys at all ([#159](https://github.com/airbrake/airbrake/pull/159))
+
 ### [v1.7.0][v1.7.0] (January 20, 2017)
 
 * **IMPORTANT:** support for Ruby 1.9.2, 1.9.3 & JRuby (1.9-mode) is dropped
