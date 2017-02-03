@@ -6,12 +6,12 @@ Airbrake Ruby Changelog
 ### [v1.7.1][v1.7.1] (February 3, 2017)
 
 * **IMPORTANT:** fixed bug when `blacklist_keys/whitelist_keys` does not filter
-  keys at all ([#159](https://github.com/airbrake/airbrake/pull/159))
+  keys at all ([#159](https://github.com/airbrake/airbrake-ruby/pull/159))
 
 ### [v1.7.0][v1.7.0] (January 20, 2017)
 
 * **IMPORTANT:** support for Ruby 1.9.2, 1.9.3 & JRuby (1.9-mode) is dropped
-  ([#146](https://github.com/airbrake/airbrake/pull/146))
+  ([#146](https://github.com/airbrake/airbrake-ruby/pull/146))
 * **IMPORTANT:** added the promise API
   ([#143](https://github.com/airbrake/airbrake-ruby/pull/143))
 * **IMPORTANT:** deprecated the `component/action` API (when setting through
