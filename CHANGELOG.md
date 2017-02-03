@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.7.1][v1.7.1] (February 3, 2017)
+
 * **IMPORTANT:** fixed bug when `blacklist_keys/whitelist_keys` does not filter
   keys at all ([#159](https://github.com/airbrake/airbrake/pull/159))
 
@@ -236,3 +238,4 @@ Airbrake Ruby Changelog
 [v1.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.5.0
 [v1.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.6.0
 [v1.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.0
+[v1.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.1
