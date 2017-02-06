@@ -43,7 +43,7 @@ module Airbrake
       ##
       # @return [Boolean]
       def valid_project_id?
-        valid = @config.project_id.to_i > 0
+        valid = @config.project_id.to_i != 0
         @error_message = REQUIRED_ID_MSG unless valid
         valid
       end
