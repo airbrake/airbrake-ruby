@@ -78,7 +78,7 @@ RSpec.describe Airbrake do
           # rubocop:disable Metrics/LineLength
           expected_body = %r|
             {"errors":\[{"type":"RuntimeError","message":"bingo","backtrace":\[
-            {"file":"[\w/\-\.]+spec/airbrake_spec.rb","line":\d+,"function":"[\w/\s\(\)<>]+"},
+            {"file":"\[PROJECT_ROOT\]/spec/airbrake_spec.rb","line":\d+,"function":"[\w/\s\(\)<>]+"},
             {"file":"\[GEM_ROOT\]/gems/rspec-core-.+/.+","line":\d+,"function":"[\w/\s\(\)<>]+"}
           |x
           # rubocop:enable Metrics/LineLength
@@ -167,11 +167,11 @@ RSpec.describe Airbrake do
       filter_chain = notifier.instance_variable_get(:@filter_chain)
       filters = filter_chain.instance_variable_get(:@filters)
 
-      expect(filters.size).to eq(2)
+      expect(filters.size).to eq(3)
 
       described_class.add_filter {}
 
-      expect(filters.size).to eq(3)
+      expect(filters.size).to eq(4)
       expect(filters.last).to be_a(Proc)
     end
   end
