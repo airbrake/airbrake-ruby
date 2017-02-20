@@ -1,6 +1,8 @@
 # coding: utf-8
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/payload_truncator.rb', uncovered: 2
+
 RSpec.describe Airbrake::PayloadTruncator do
   let(:max_size) { 1000 }
   let(:truncated_len) { '[Truncated]'.length }

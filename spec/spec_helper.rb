@@ -1,3 +1,8 @@
+require 'bundler/setup'
+
+require 'single_cov'
+SingleCov.setup :rspec
+
 require 'airbrake-ruby'
 
 require 'webmock'

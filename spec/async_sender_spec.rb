@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/async_sender.rb'
+
 RSpec.describe Airbrake::AsyncSender do
   before do
     stub_request(:post, /.*/).to_return(status: 201, body: '{}')

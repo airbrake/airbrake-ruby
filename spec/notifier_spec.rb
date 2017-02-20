@@ -1,6 +1,8 @@
 # coding: utf-8
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/notifier.rb', uncovered: 3
+
 RSpec.describe Airbrake::Notifier do
   def expect_a_request_with_body(body)
     expect(a_request(:post, endpoint).with(body: body)).to have_been_made.once
@@ -415,6 +417,7 @@ RSpec.describe Airbrake::Notifier do
       expect_a_request_with_body(/"bingo":"bango"/)
 
       pid = fork do
+        SingleCov.disable
         expect(notifier.instance_variable_get(:@async_sender)).to have_workers
         notifier.notify('bango', bongo: 'bish')
         sleep 1
@@ -527,7 +530,7 @@ RSpec.describe Airbrake::Notifier do
     context "at program exit when it was closed manually" do
       it "doesn't raise error", skip: RUBY_ENGINE == 'jruby' do
         expect do
-          Process.wait(fork { described_class.new(airbrake_params) })
+          Process.wait(fork { SingleCov.disable; described_class.new(airbrake_params) })
         end.not_to raise_error
       end
     end
