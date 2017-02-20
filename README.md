@@ -129,13 +129,13 @@ end
 params = { time: Time.now }
 
 # Send an exception to Project A.
-Airbrake.notify('Oops!', params, :project_a)
+Airbrake[:project_a].notify('Oops!', params)
 
 # Send an exception to Project B.
-Airbrake.notify('Oops!', params, :project_b)
+Airbrake[:project_b].notify('Oops!', params)
 
 # Wait for the notifiers to finish their work and make them inactive.
-%i(project_a project_b).each { |notifier| Airbrake.close(notifier) }
+%i(project_a project_b).each { |notifier_name| Airbrake[notifier_name].close }
 ```
 
 Configuration
@@ -401,6 +401,14 @@ API
 
 ### Airbrake
 
+#### Airbrake.[]
+
+Retrieves a configured notifier.
+
+```ruby
+Airbrake[:my_notifier] #=> Airbrake::Notifier
+```
+
 #### Airbrake.notify
 
 Sends an exception to Airbrake asynchronously.
@@ -545,7 +553,7 @@ at_exit do
   Airbrake.close
 
   # Closes a named notifier.
-  Airbrake.close(:my_notifier)
+  Airbrake[:my_notifier].close
 end
 ```
 

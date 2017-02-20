@@ -53,7 +53,7 @@ require 'airbrake-ruby/notifier'
 #
 #   # Send an exception via other configured notifier.
 #   params = {}
-#   Airbrake.notify('Oops', params, :my_other_project)
+#   Airbrake[:my_other_project].notify('Oops', params)
 #
 # @see Airbrake::Notifier
 # @since v1.0.0
@@ -77,6 +77,18 @@ module Airbrake
   @notifiers = {}
 
   class << self
+    ##
+    # Retrieves configured notifiers.
+    #
+    # @example
+    #   Airbrake[:my_notifier].notify('oops')
+    #
+    # @return [Airbrake::Notifier, nil]
+    # @since v1.8.0
+    def [](notifier_name)
+      @notifiers[notifier_name]
+    end
+
     ##
     # Configures a new +notifier+ with the given name. If the name is not given,
     # configures the default notifier.
@@ -139,7 +151,8 @@ module Airbrake
     #   tab in your project's dashboard
     # @return [Airbrake::Promise]
     # @see .notify_sync
-    def notify(exception, params = {}, notifier = :default)
+    def notify(exception, params = {}, notifier = (no_arg = true && :default))
+      deprecation_warn(__method__, notifier) unless no_arg
       call_notifier(notifier, __method__, exception, params)
     end
 
@@ -153,7 +166,8 @@ module Airbrake
     #
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
-    def notify_sync(exception, params = {}, notifier = :default)
+    def notify_sync(exception, params = {}, notifier = (no_arg = true && :default))
+      deprecation_warn(__method__, notifier) unless no_arg
       call_notifier(notifier, __method__, exception, params)
     end
 
@@ -184,7 +198,8 @@ module Airbrake
     # @yieldreturn [void]
     # @return [void]
     # @note Once a filter was added, there's no way to delete it
-    def add_filter(filter = nil, notifier = :default, &block)
+    def add_filter(filter = nil, notifier = (no_arg = true && :default), &block)
+      deprecation_warn(__method__, notifier) unless no_arg
       call_notifier(notifier, __method__, filter, &block)
     end
 
@@ -204,7 +219,8 @@ module Airbrake
     # @param [Hash] params The additional params attached to the notice
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
-    def build_notice(exception, params = {}, notifier = :default)
+    def build_notice(exception, params = {}, notifier = (no_arg = true && :default))
+      deprecation_warn(__method__, notifier) unless no_arg
       call_notifier(notifier, __method__, exception, params)
     end
 
@@ -219,7 +235,8 @@ module Airbrake
     #   Airbrake.notify('App crashed!') #=> raises Airbrake::Error
     #
     # @return [void]
-    def close(notifier = :default)
+    def close(notifier = (no_arg = true && :default))
+      deprecation_warn(__method__, notifier) unless no_arg
       call_notifier(notifier, __method__)
     end
 
@@ -235,7 +252,8 @@ module Airbrake
     # @option deploy_params [Symbol] :revision
     # @option deploy_params [Symbol] :version
     # @return [void]
-    def create_deploy(deploy_params, notifier = :default)
+    def create_deploy(deploy_params, notifier = (no_arg = true && :default))
+      deprecation_warn(__method__, notifier) unless no_arg
       call_notifier(notifier, __method__, deploy_params)
     end
 
@@ -251,6 +269,16 @@ module Airbrake
 
     def configured?(notifier)
       @notifiers.key?(notifier)
+    end
+
+    def deprecation_warn(method, notifier)
+      warn(
+        "#{LOG_LABEL} `Airbrake.#{method}` method signature was changed. " \
+        "Passing `notifier_name` is deprecated and will be removed in the " \
+        "next MAJOR release.\n" \
+        "Use `Airbrake[:#{notifier}]` to access the :#{notifier} notifier " \
+        "and call same methods directly on it."
+      )
     end
   end
 end
