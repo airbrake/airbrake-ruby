@@ -6,6 +6,8 @@ Airbrake Ruby Changelog
 * **IMPORTANT:** Deprecated `notifier_name` argument for all public API methods
   such as `Airbrake.notify('oops', {}, :my_notifier)`
   ([#168](https://github.com/airbrake/airbrake/pull/168))
+* `root_directory` is now defaulted to either `Bundler.root` or current working
+  directory ([#171](https://github.com/airbrake/airbrake-ruby/pull/171))
 
 ### [v1.7.1][v1.7.1] (February 3, 2017)
 
