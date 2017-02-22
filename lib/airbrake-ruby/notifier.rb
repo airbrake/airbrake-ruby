@@ -4,7 +4,6 @@ module Airbrake
   # synchronous and asynchronous delivery.
   #
   # @see Airbrake::Config The list of options
-  # @api private
   # @since v1.0.0
   class Notifier
     ##
