@@ -96,6 +96,11 @@ module Airbrake
       self.blacklist_keys = []
       self.whitelist_keys = []
 
+      self.root_directory = (
+        (defined?(Bundler) && Bundler.root) ||
+        File.expand_path(Dir.pwd)
+      )
+
       merge(user_config)
     end
 
