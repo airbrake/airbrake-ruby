@@ -63,6 +63,7 @@ module Airbrake
     attr_reader :stash
 
     def initialize(config, exception, params = {})
+      @now = Time.now.utc
       @config = config
 
       @payload = {
@@ -174,7 +175,10 @@ module Airbrake
         action: params.delete(:action),
 
         # Make sure we always send hostname.
-        hostname: HOSTNAME
+        hostname: HOSTNAME,
+
+        # Make sure we always send the time of the exception.
+        time: @now.to_s
       }
 
       ctx.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
