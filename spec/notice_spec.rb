@@ -189,17 +189,28 @@ RSpec.describe Airbrake::Notice do
       end
     end
 
-    it "overwrites the 'notifier' payload with the default values" do
-      notice[:notifier] = { name: 'bingo', bango: 'bongo' }
-
-      expect(notice.to_json).
-        to match(/"notifier":{"name":"airbrake-ruby","version":".+","url":".+"}/)
+    context "when severity is specified explicitly" do
+      it "sends the severity" do
+        notice[:context][:severity] = 'critical'
+        expect(notice.to_json).to match(/"context":{.*"severity":"critical".*}/)
+      end
     end
 
-    it "always contains context/hostname" do
-      expect(notice.to_json).
-        to match(/"context":{.*"hostname":".+".*}/)
+    it "defaults to the error severity" do
+      expect(notice.to_json).to match(/"context":{.*"severity":"error".*}/)
     end
+  end
+
+  it "overwrites the 'notifier' payload with the default values" do
+    notice[:notifier] = { name: 'bingo', bango: 'bongo' }
+
+    expect(notice.to_json).
+      to match(/"notifier":{"name":"airbrake-ruby","version":".+","url":".+"}/)
+  end
+
+  it "always contains context/hostname" do
+    expect(notice.to_json).
+      to match(/"context":{.*"hostname":".+".*}/)
   end
 
   describe "#[]" do

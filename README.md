@@ -438,6 +438,37 @@ Airbrake.notify('App crashed!', {
 Returns an [`Airbrake::Promise`](#promise), which can be used to read Airbrake
 error ids.
 
+##### severity
+
+`severity` is an optional special parameter, which sets the severity of your
+notice. There are two ways to use it.
+
+The first way is to use it inline, with `.notify` calls and pass it in the
+params hash:
+
+```ruby
+Airbrake.notify('App crashed!', severity: 'critical')
+```
+
+The second way is to assign `context/severity` of a notice:
+
+```ruby
+notice = Airbrake.build_notice('App crashed!')
+notice[:context][:severity] = 'critical'
+```
+
+When not specified, it defaults to `error`. Supported severities:
+
+* debug
+* info
+* notice
+* warning
+* error
+* critical
+* alert
+* emergency
+* invalid
+
 #### Airbrake.notify_sync
 
 Sends an exception to Airbrake synchronously. Returns a Hash with an error ID
@@ -707,7 +738,7 @@ the following code somewhere in your app:
 
 ```ruby
 at_exit do
-  Airbrake.notify_sync($!) if $!
+  Airbrake.notify_sync($!, severity: 'critical') if $!
 end
 ```
 

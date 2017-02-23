@@ -125,6 +125,16 @@ RSpec.describe Airbrake do
           with(body: /"context":{.*"action":"bango".+"params":{}/)
         ).to have_been_made.once
       end
+
+      it "sends severity" do
+        described_class.notify_sync('bingo', severity: 'bongo', bingo: 'bango')
+
+        expect(
+          a_request(:post, endpoint).
+          with(body: /"context":{.*"severity":"bongo".*}.+
+                    "params":{"severity":"bongo","bingo":"bango"}/x)
+        ).to have_been_made.once
+      end
     end
   end
 
