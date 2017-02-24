@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v1.8.0][v1.8.0] (February 23, 2017)
+
 * **IMPORTANT:** Deprecated `notifier_name` argument for all public API methods
   such as `Airbrake.notify('oops', {}, :my_notifier)`
   ([#168](https://github.com/airbrake/airbrake/pull/168))
@@ -245,3 +247,4 @@ Airbrake Ruby Changelog
 [v1.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.6.0
 [v1.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.0
 [v1.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.1
+[v1.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.8.0
