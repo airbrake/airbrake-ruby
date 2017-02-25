@@ -62,6 +62,10 @@ module Airbrake
     #   in filters
     attr_reader :stash
 
+    ##
+    # @return [String]
+    DEFAULT_SEVERITY = 'error'.freeze
+
     def initialize(config, exception, params = {})
       @config = config
 
@@ -148,6 +152,9 @@ module Airbrake
 
     private
 
+    ##
+    # @note Do *not* mutate `params` in this method.
+    #   https://github.com/airbrake/airbrake-ruby/pull/149
     def context(params)
       # DEPRECATION: remove the following code in the next MINOR release.
       if params.key?(:component) || params.key?(:action)
@@ -172,6 +179,8 @@ module Airbrake
         # Legacy Airbrake v4 behaviour.
         component: params.delete(:component),
         action: params.delete(:action),
+
+        severity: params[:severity] || DEFAULT_SEVERITY,
 
         # Make sure we always send hostname.
         hostname: HOSTNAME
