@@ -45,31 +45,6 @@ RSpec.describe Airbrake do
       expect(a_request(:post, endpoint)).to have_been_made.once
     end
 
-    context "given the notifier argument" do
-      it "sends exceptions via that notifier, ignoring other ones" do
-        bingo_string = StringIO.new
-        bango_string = StringIO.new
-
-        described_class.configure(:bingo) do |c|
-          c.project_id = 113743
-          c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
-          c.logger = Logger.new(bingo_string)
-        end
-
-        described_class.configure(:bango) do |c|
-          c.project_id = 113743
-          c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
-          c.logger = Logger.new(bango_string)
-        end
-
-        stub_request(:post, endpoint).to_return(status: 201, body: '{"id":1}')
-
-        described_class.notify_sync('bango', {}, :bango)
-        expect(bingo_string.string).to be_empty
-        expect(bango_string.string).to match(/\*\*Airbrake: {"id"=>1}/)
-      end
-    end
-
     describe "clean backtrace" do
       shared_examples 'backtrace building' do |msg, argument|
         it(msg) do

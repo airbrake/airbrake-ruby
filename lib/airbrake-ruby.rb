@@ -115,26 +115,20 @@ module Airbrake
     #   existing notifier
     # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
-    def configure(notifier = :default)
+    def configure(notifier_name = :default)
       yield config = Airbrake::Config.new
 
-      if configured?(notifier)
+      if @notifiers.key?(notifier_name)
         raise Airbrake::Error,
-              "the '#{notifier}' notifier was already configured"
+              "the '#{notifier_name}' notifier was already configured"
       else
-        @notifiers[notifier] = Notifier.new(config)
+        @notifiers[notifier_name] = Notifier.new(config)
       end
     end
-
-    # @!macro proxy_method
-    #   @param [Symbol] notifier The name of the notifier
-    #   @raise [Airbrake::Error] if +notifier+ doesn't exist
-    #   @see Airbrake::Notifier#$0
 
     ##
     # Sends an exception to Airbrake asynchronously.
     #
-    # @macro proxy_method
     # @example Sending an exception
     #   Airbrake.notify(RuntimeError.new('Oops!'))
     # @example Sending a string
@@ -151,24 +145,21 @@ module Airbrake
     #   tab in your project's dashboard
     # @return [Airbrake::Promise]
     # @see .notify_sync
-    def notify(exception, params = {}, notifier = (no_arg = true && :default))
-      deprecation_warn(__method__, notifier) unless no_arg
-      call_notifier(notifier, __method__, exception, params)
+    def notify(exception, params = {})
+      @notifiers[:default] && @notifiers[:default].notify(exception, params)
     end
 
     ##
     # Sends an exception to Airbrake synchronously.
     #
-    # @macro proxy_method
     # @example
     #   Airbrake.notify_sync('App crashed!')
     #   #=> {"id"=>"123", "url"=>"https://airbrake.io/locate/321"}
     #
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
-    def notify_sync(exception, params = {}, notifier = (no_arg = true && :default))
-      deprecation_warn(__method__, notifier) unless no_arg
-      call_notifier(notifier, __method__, exception, params)
+    def notify_sync(exception, params = {})
+      @notifiers[:default] && @notifiers[:default].notify_sync(exception, params)
     end
 
     ##
@@ -176,7 +167,6 @@ module Airbrake
     # useful if you want to ignore specific notices or filter the data the
     # notice contains.
     #
-    # @macro proxy_method
     # @example Ignore all notices
     #   Airbrake.add_filter(&:ignore!)
     # @example Ignore based on some condition
@@ -198,9 +188,8 @@ module Airbrake
     # @yieldreturn [void]
     # @return [void]
     # @note Once a filter was added, there's no way to delete it
-    def add_filter(filter = nil, notifier = (no_arg = true && :default), &block)
-      deprecation_warn(__method__, notifier) unless no_arg
-      call_notifier(notifier, __method__, filter, &block)
+    def add_filter(filter = nil, &block)
+      @notifiers[:default] && @notifiers[:default].add_filter(filter, &block)
     end
 
     ##
@@ -208,7 +197,6 @@ module Airbrake
     # value only for a specific notice. When you're done modifying the notice,
     # send it with {.notify} or {.notify_sync}.
     #
-    # @macro proxy_method
     # @example
     #   notice = airbrake.build_notice('App crashed!')
     #   notice[:params][:username] = user.name
@@ -219,9 +207,8 @@ module Airbrake
     # @param [Hash] params The additional params attached to the notice
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
-    def build_notice(exception, params = {}, notifier = (no_arg = true && :default))
-      deprecation_warn(__method__, notifier) unless no_arg
-      call_notifier(notifier, __method__, exception, params)
+    def build_notice(exception, params = {})
+      @notifiers[:default] && @notifiers[:default].build_notice(exception, params)
     end
 
     ##
@@ -229,22 +216,19 @@ module Airbrake
     # {.notify_sync} methods anymore. It also stops the notifier's worker
     # threads.
     #
-    # @macro proxy_method
     # @example
     #   Airbrake.close
     #   Airbrake.notify('App crashed!') #=> raises Airbrake::Error
     #
     # @return [void]
-    def close(notifier = (no_arg = true && :default))
-      deprecation_warn(__method__, notifier) unless no_arg
-      call_notifier(notifier, __method__)
+    def close
+      @notifiers[:default] && @notifiers[:default].close
     end
 
     ##
     # Pings the Airbrake Deploy API endpoint about the occurred deploy. This
     # method is used by the airbrake gem for various integrations.
     #
-    # @macro proxy_method
     # @param [Hash{Symbol=>String}] deploy_params The params for the API
     # @option deploy_params [Symbol] :environment
     # @option deploy_params [Symbol] :username
@@ -252,33 +236,8 @@ module Airbrake
     # @option deploy_params [Symbol] :revision
     # @option deploy_params [Symbol] :version
     # @return [void]
-    def create_deploy(deploy_params, notifier = (no_arg = true && :default))
-      deprecation_warn(__method__, notifier) unless no_arg
-      call_notifier(notifier, __method__, deploy_params)
-    end
-
-    private
-
-    ##
-    # Calls +method+ on +notifier+ with provided +args+. If +notifier+ is not
-    # configured, returns nil.
-    def call_notifier(notifier, method, *args, &block)
-      return unless configured?(notifier)
-      @notifiers[notifier].__send__(method, *args, &block)
-    end
-
-    def configured?(notifier)
-      @notifiers.key?(notifier)
-    end
-
-    def deprecation_warn(method, notifier)
-      warn(
-        "#{LOG_LABEL} `Airbrake.#{method}` method signature was changed. " \
-        "Passing `notifier_name` is deprecated and will be removed in the " \
-        "next MAJOR release.\n" \
-        "Use `Airbrake[:#{notifier}]` to access the :#{notifier} notifier " \
-        "and call same methods directly on it."
-      )
+    def create_deploy(deploy_params)
+      @notifiers[:default] && @notifiers[:default].create_deploy(deploy_params)
     end
   end
 end
