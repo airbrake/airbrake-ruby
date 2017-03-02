@@ -67,7 +67,7 @@ module Airbrake
 
       @payload = {
         errors: NestedException.new(exception, @config.logger).as_json,
-        context: context(params),
+        context: context,
         environment: {},
         session: {},
         params: params
@@ -148,19 +148,8 @@ module Airbrake
 
     private
 
-    def context(params)
-      # DEPRECATION: remove the following code in the next MINOR release.
-      if params.key?(:component) || params.key?(:action)
-        @config.logger.warn(
-          "#{LOG_LABEL} passing component/action keys in the params hash is " \
-          "deprecated and will be removed soon. Please update your code to use " \
-          "`Airbrake.build_notice` and set these keys like this:\n" \
-          "  notice[:context][:component] = 'mycomponent'\n" \
-          "  notice[:context][:action] = 'myaction'"
-        )
-      end
-
-      ctx = {
+    def context
+      {
         version: @config.app_version,
         # We ensure that root_directory is always a String, so it can always be
         # converted to JSON in a predictable manner (when it's a Pathname and in
@@ -168,16 +157,9 @@ module Airbrake
         rootDirectory: @config.root_directory.to_s,
         environment: @config.environment,
 
-        # DEPRECATION: remove the following code in the next MINOR release.
-        # Legacy Airbrake v4 behaviour.
-        component: params.delete(:component),
-        action: params.delete(:action),
-
         # Make sure we always send hostname.
         hostname: HOSTNAME
-      }
-
-      ctx.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
+      }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
     end
 
     def raise_if_ignored

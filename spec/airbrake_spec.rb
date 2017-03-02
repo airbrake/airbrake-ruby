@@ -106,26 +106,6 @@ RSpec.describe Airbrake do
         )
       end
     end
-
-    context "special params" do
-      it "sends context/component and doesn't contain params/component" do
-        described_class.notify_sync('bingo', component: 'bango')
-
-        expect(
-          a_request(:post, endpoint).
-          with(body: /"context":{.*"component":"bango".+"params":{}/)
-        ).to have_been_made.once
-      end
-
-      it "sends context/action and doesn't contain params/action" do
-        described_class.notify_sync('bingo', action: 'bango')
-
-        expect(
-          a_request(:post, endpoint).
-          with(body: /"context":{.*"action":"bango".+"params":{}/)
-        ).to have_been_made.once
-      end
-    end
   end
 
   describe ".configure" do
