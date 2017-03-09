@@ -3,6 +3,13 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Removed the `component/action` API deprecated
+  in [v1.7.0](#v170-january-20-2017)
+  ([#169](https://github.com/airbrake/airbrake-ruby/pull/169))
+* Removed `notifier_name` argument deprecated
+  in [v1.8.0](#v180-february-23-2017)
+  ([#176](https://github.com/airbrake/airbrake-ruby/pull/176))
+
 ### [v1.8.0][v1.8.0] (February 23, 2017)
 
 * **IMPORTANT:** Deprecated `notifier_name` argument for all public API methods
