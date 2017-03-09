@@ -557,6 +557,20 @@ at_exit do
 end
 ```
 
+#### Airbrake.create_deploy
+
+Notifies Airbrake of a new deploy. Accepts a Hash with the following params:
+
+```ruby
+Airbrake.create_deploy(
+  environment: 'development',
+  username: 'john',
+  repository: 'https://github.com/airbrake/airbrake-ruby',
+  revision: '0b77f289166c9fef4670588471b6584fbc34b0f3',
+  version: '1.2.3'
+)
+```
+
 ### Notice
 
 #### Notice#ignore!
