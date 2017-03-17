@@ -52,7 +52,7 @@ RSpec.describe Airbrake::Config do
       end
 
       it "sets the default root_directory" do
-        expect(config.root_directory).to eq Bundler.root
+        expect(config.root_directory).to eq Bundler.root.realpath.to_s
       end
 
       it "doesn't set the default environment" do
