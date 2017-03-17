@@ -3,18 +3,20 @@ Airbrake Ruby Changelog
 
 ### master
 
-* Removed the `component/action` API deprecated
+* **IMPORTANT:** Removed the `component/action` API deprecated
   in [v1.7.0](#v170-january-20-2017)
   ([#169](https://github.com/airbrake/airbrake-ruby/pull/169))
-* Removed `notifier_name` argument deprecated
+* **IMPORTANT:** Removed `notifier_name` argument deprecated
   in [v1.8.0](#v180-february-23-2017)
   ([#176](https://github.com/airbrake/airbrake-ruby/pull/176))
+* Fixed default `root_directory` not resolving symlinks
+  ([#180](https://github.com/airbrake/airbrake-ruby/pull/180))
 
 ### [v1.8.0][v1.8.0] (February 23, 2017)
 
 * **IMPORTANT:** Deprecated `notifier_name` argument for all public API methods
   such as `Airbrake.notify('oops', {}, :my_notifier)`
-  ([#168](https://github.com/airbrake/airbrake/pull/168))
+  ([#168](https://github.com/airbrake/airbrake-ruby/pull/168))
 * `root_directory` is now defaulted to either `Bundler.root` or current working
   directory ([#171](https://github.com/airbrake/airbrake-ruby/pull/171))
 
