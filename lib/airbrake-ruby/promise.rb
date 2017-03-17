@@ -9,8 +9,10 @@ module Airbrake
   # @since v1.7.0
   class Promise
     ##
+    # @api private
     # @return [Hash<String,String>] either successful response containing the
-    #   `id` key or unsuccessful response containing the `error` key
+    #   +id+ key or unsuccessful response containing the +error+ key
+    # @note This is a non-blocking call!
     attr_reader :value
 
     def initialize
