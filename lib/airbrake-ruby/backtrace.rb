@@ -128,8 +128,14 @@ module Airbrake
     # @param [Exception] exception
     # @return [Boolean]
     def self.java_exception?(exception)
-      defined?(Java::JavaLang::Throwable) &&
-        exception.is_a?(Java::JavaLang::Throwable)
+      if defined?(Java::JavaLang::Throwable) &&
+         exception.is_a?(Java::JavaLang::Throwable)
+        return true
+      end
+
+      return false unless exception.respond_to?(:backtrace)
+
+      (Patterns::JAVA =~ exception.backtrace.first) != nil
     end
 
     class << self
