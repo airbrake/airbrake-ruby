@@ -106,6 +106,32 @@ RSpec.describe Airbrake::Backtrace do
       end
     end
 
+    context "JRuby non-throwable exceptions" do
+      let(:backtrace) do
+        # rubocop:disable Metrics/LineLength
+        ['org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(org/postgresql/core/v3/ConnectionFactoryImpl.java:257)',
+         'org.postgresql.core.ConnectionFactory.openConnection(org/postgresql/core/ConnectionFactory.java:65)',
+         'org.postgresql.jdbc2.AbstractJdbc2Connection.<init>(org/postgresql/jdbc2/AbstractJdbc2Connection.java:149)']
+        # rubocop:enable Metrics/LineLength
+      end
+
+      let(:parsed_backtrace) do
+        # rubocop:disable Metrics/LineLength
+        [{ file: 'org/postgresql/core/v3/ConnectionFactoryImpl.java', line: 257, function: 'org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl' },
+         { file: 'org/postgresql/core/ConnectionFactory.java', line: 65, function: 'org.postgresql.core.ConnectionFactory.openConnection' },
+         { file: 'org/postgresql/jdbc2/AbstractJdbc2Connection.java', line: 149, function: 'org.postgresql.jdbc2.AbstractJdbc2Connection.<init>' }]
+        # rubocop:enable Metrics/LineLength
+      end
+
+      let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(backtrace) } }
+
+      it "returns a properly formatted array of hashes" do
+        expect(
+          described_class.parse(ex, Logger.new('/dev/null'))
+        ).to eq(parsed_backtrace)
+      end
+    end
+
     context "generic backtrace" do
       context "when function is absent" do
         # rubocop:disable Metrics/LineLength

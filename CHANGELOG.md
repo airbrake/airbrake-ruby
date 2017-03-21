@@ -11,6 +11,8 @@ Airbrake Ruby Changelog
   ([#176](https://github.com/airbrake/airbrake-ruby/pull/176))
 * Fixed default `root_directory` not resolving symlinks
   ([#180](https://github.com/airbrake/airbrake-ruby/pull/180))
+* Fixed parsing JRuby exceptions that don't subclass `Java::JavaLang::Throwable`
+  ([#184](https://github.com/airbrake/airbrake-ruby/pull/184))
 
 ### [v1.8.0][v1.8.0] (February 23, 2017)
 
