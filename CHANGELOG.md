@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.0.0][v2.0.0] (March 21, 2017)
+
 * **IMPORTANT:** Removed the `component/action` API deprecated
   in [v1.7.0](#v170-january-20-2017)
   ([#169](https://github.com/airbrake/airbrake-ruby/pull/169))
@@ -259,3 +261,4 @@ Airbrake Ruby Changelog
 [v1.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.0
 [v1.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.1
 [v1.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.8.0
+[v2.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.0.0
