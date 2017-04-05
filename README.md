@@ -141,7 +141,7 @@ Airbrake[:project_b].notify('Oops!', params)
 Configuration
 -------------
 
-Before using the library and its notifiers, you must to configure them. In most
+Before using the library and its notifiers, you must configure them. In most
 cases, it is sufficient to configure only one, default, notifier.
 
 ```ruby
@@ -183,8 +183,8 @@ end
 
 #### proxy
 
-If your server is not able to directly reach Airbrake, you can use built-in
-proxy. By default, Airbrake Ruby uses direct connection.
+If your server is not able to directly reach Airbrake, you can use a built-in
+proxy. By default, Airbrake Ruby uses a direct connection.
 
 ```ruby
 Airbrake.configure do |c|
