@@ -12,9 +12,9 @@ RSpec.describe Airbrake::Config::Validator do
       end
 
       it "sets correct error message" do
-        expect { subject.valid_project_id? }.
-          to change { subject.error_message }.
-          to(/:project_id is required/)
+        expect { subject.valid_project_id? }.to(
+          change { subject.error_message }.to(/:project_id is required/)
+        )
       end
     end
 
@@ -28,8 +28,9 @@ RSpec.describe Airbrake::Config::Validator do
 
         it "sets correct error message" do
           expect { subject.valid_project_id? }.
-            to change { subject.error_message }.
-            to(/:project_id is required/)
+            to(
+              change { subject.error_message }.to(/:project_id is required/)
+            )
         end
       end
 
@@ -41,9 +42,9 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "sets correct error message" do
-          expect { subject.valid_project_id? }.
-            to change { subject.error_message }.
-            to(/:project_id is required/)
+          expect { subject.valid_project_id? }.to(
+            change { subject.error_message }.to(/:project_id is required/)
+          )
         end
       end
 
@@ -55,7 +56,7 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "doesn't set the error message" do
-          expect { subject.valid_project_id? }.not_to change { subject.error_message }
+          expect { subject.valid_project_id? }.not_to(change { subject.error_message })
         end
       end
     end
@@ -68,7 +69,7 @@ RSpec.describe Airbrake::Config::Validator do
       end
 
       it "doesn't set the error message" do
-        expect { subject.valid_project_id? }.not_to change { subject.error_message }
+        expect { subject.valid_project_id? }.not_to(change { subject.error_message })
       end
     end
   end
@@ -97,7 +98,7 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "doesn't set the error message" do
-          expect { subject.valid_project_key? }.not_to change { subject.error_message }
+          expect { subject.valid_project_key? }.not_to(change { subject.error_message })
         end
       end
     end
@@ -110,9 +111,9 @@ RSpec.describe Airbrake::Config::Validator do
       end
 
       it "sets correct error message" do
-        expect { subject.valid_project_key? }.
-          to change { subject.error_message }.
-          to(/:project_key is required/)
+        expect { subject.valid_project_key? }.to(
+          change { subject.error_message }.to(/:project_key is required/)
+        )
       end
     end
   end
@@ -126,7 +127,7 @@ RSpec.describe Airbrake::Config::Validator do
       end
 
       it "doesn't set the error message" do
-        expect { subject.valid_environment? }.not_to change { subject.error_message }
+        expect { subject.valid_environment? }.not_to(change { subject.error_message })
       end
     end
 
@@ -139,9 +140,10 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "sets the error message" do
-          expect { subject.valid_environment? }.
-            to change { subject.error_message }.
-            to(/the 'environment' option must be configured with a Symbol/)
+          expect { subject.valid_environment? }.to(
+            change { subject.error_message }.
+              to(/the 'environment' option must be configured with a Symbol/)
+          )
         end
       end
 
@@ -153,7 +155,7 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "doesn't set the error message" do
-          expect { subject.valid_environment? }.not_to change { subject.error_message }
+          expect { subject.valid_environment? }.not_to(change { subject.error_message })
         end
       end
 
@@ -165,7 +167,7 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "doesn't set the error message" do
-          expect { subject.valid_environment? }.not_to change { subject.error_message }
+          expect { subject.valid_environment? }.not_to(change { subject.error_message })
         end
       end
 
@@ -181,7 +183,7 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "doesn't set the error message" do
-          expect { subject.valid_environment? }.not_to change { subject.error_message }
+          expect { subject.valid_environment? }.not_to(change { subject.error_message })
         end
       end
     end

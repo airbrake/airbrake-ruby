@@ -1,4 +1,5 @@
 # coding: utf-8
+
 require 'spec_helper'
 
 RSpec.describe Airbrake::PayloadTruncator do
@@ -216,13 +217,13 @@ RSpec.describe Airbrake::PayloadTruncator do
 
         context "of short strings" do
           let(:params) do
-            { bingo: %w(foo bar baz), bango: 'bongo', bish: 'bash' }
+            { bingo: %w[foo bar baz], bango: 'bongo', bish: 'bash' }
           end
 
           it "truncates long strings in the array, but not short ones" do
             @truncator.truncate_object(params)
             expect(params).
-              to eq(bingo: %w(foo bar baz), bango: 'bongo', bish: 'bash')
+              to eq(bingo: %w[foo bar baz], bango: 'bongo', bish: 'bash')
           end
         end
 

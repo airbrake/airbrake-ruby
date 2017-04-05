@@ -94,7 +94,7 @@ RSpec.describe Airbrake do
         notifiers = described_class.instance_variable_get(:@notifiers)
 
         expect(notifiers).to be_a(Hash)
-        expect(notifiers.keys).to eq([:default, :bingo])
+        expect(notifiers.keys).to eq(%i[default bingo])
         expect(notifiers.values).to all(satisfy { |v| v.is_a?(Airbrake::Notifier) })
       end
 

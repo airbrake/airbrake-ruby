@@ -1,4 +1,5 @@
 # coding: utf-8
+
 require 'spec_helper'
 
 RSpec.describe Airbrake::Notifier do
@@ -405,7 +406,7 @@ RSpec.describe Airbrake::Notifier do
       notifier.close
     end
 
-    it "respawns workers on fork()", skip: %w(jruby rbx).include?(RUBY_ENGINE) do
+    it "respawns workers on fork()", skip: %w[jruby rbx].include?(RUBY_ENGINE) do
       out = StringIO.new
       notifier = described_class.new(airbrake_params.merge(logger: Logger.new(out)))
 
@@ -445,7 +446,7 @@ RSpec.describe Airbrake::Notifier do
     end
 
     it "accepts multiple filters" do
-      [:bingo, :bongo, :bash].each do |key|
+      %i[bingo bongo bash].each do |key|
         @airbrake.add_filter do |notice|
           notice[:params][key] = '[Filtered]'.freeze if notice[:params][key]
         end

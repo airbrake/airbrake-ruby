@@ -181,7 +181,7 @@ RSpec.describe Airbrake::FilterChain do
 
           expect(notice[:errors].first[:file]).to be_nil
           expect { @chain.refine(notice) }.
-            not_to change { notice[:errors].first[:file] }
+            not_to(change { notice[:errors].first[:file] })
         end
       end
 
@@ -200,7 +200,7 @@ RSpec.describe Airbrake::FilterChain do
 
           expect(notice[:errors].first[:file]).to be_nil
           expect { filter_chain.refine(notice) }.
-            not_to change { notice[:errors].first[:file] }
+            not_to(change { notice[:errors].first[:file] })
         end
       end
     end
