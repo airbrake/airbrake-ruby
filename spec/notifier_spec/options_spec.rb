@@ -201,7 +201,7 @@ RSpec.describe Airbrake::Notifier do
       context "when the current env and notify envs are the same" do
         params = {
           environment: :development,
-          ignore_environments: [:production, :development]
+          ignore_environments: %i[production development]
         }
 
         include_examples 'ignored notice', params
@@ -217,7 +217,7 @@ RSpec.describe Airbrake::Notifier do
       end
 
       context "when the current env is not set and notify envs are present" do
-        params = { ignore_environments: [:production, :development] }
+        params = { ignore_environments: %i[production development] }
 
         include_examples 'sent notice', params
       end

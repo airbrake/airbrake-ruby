@@ -5,6 +5,6 @@ module Airbrake
     ##
     # @return [Array<Symbol>] parts of a Notice's payload that can be modified
     #   by various filters
-    FILTERABLE_KEYS = [:environment, :session, :params].freeze
+    FILTERABLE_KEYS = %i[environment session params].freeze
   end
 end

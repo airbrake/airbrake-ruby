@@ -44,12 +44,12 @@ module Airbrake
 
     # @return [Array<Symbol>] the list of keys that can be be overwritten with
     #   {Airbrake::Notice#[]=}
-    WRITABLE_KEYS = [
-      :notifier,
-      :context,
-      :environment,
-      :session,
-      :params
+    WRITABLE_KEYS = %i[
+      notifier
+      context
+      environment
+      session
+      params
     ].freeze
 
     ##

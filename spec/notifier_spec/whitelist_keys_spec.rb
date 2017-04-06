@@ -91,14 +91,14 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
       include_examples(
         'whitelisting',
-        %w(bongo bish),
+        %w[bongo bish],
         bingo: 'bango', bongo: { bish: 'bash' }
       )
     end
 
     context "and it is a recursive hash" do
       it "errors when nested hashes are not filtered" do
-        whitelist = airbrake_params.merge(whitelist_keys: %w(bingo bango))
+        whitelist = airbrake_params.merge(whitelist_keys: %w[bingo bango])
         notifier = Airbrake::Notifier.new(whitelist)
 
         bongo = { bingo: {} }
@@ -196,7 +196,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
   describe "context/url" do
     let(:notifier) do
-      Airbrake::Notifier.new(airbrake_params.merge(whitelist_keys: %w(bish)))
+      Airbrake::Notifier.new(airbrake_params.merge(whitelist_keys: %w[bish]))
     end
 
     context "given a standard URL" do

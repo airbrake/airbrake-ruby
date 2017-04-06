@@ -118,3 +118,6 @@ Metrics/BlockLength:
 
 Performance/RegexpMatch:
   Enabled: false
+
+Style/IndentHeredoc:
+  Enabled: false

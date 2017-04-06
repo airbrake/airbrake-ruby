@@ -221,7 +221,7 @@ RSpec.describe Airbrake::Config do
         context "and when 'ignore_environments' contains Strings" do
           it "returns true" do
             config.environment = :bango
-            config.ignore_environments = %w(bango)
+            config.ignore_environments = %w[bango]
 
             expect(config.ignored_environment?).to be_truthy
           end
