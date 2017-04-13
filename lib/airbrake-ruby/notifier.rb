@@ -159,4 +159,23 @@ module Airbrake
       add_filter(Filters::KeysWhitelist.new(@config.logger, *@config.whitelist_keys))
     end
   end
+
+  ##
+  # NilNotifier is a no-op notifier, which mimics +Airbrake::Notifier+ and
+  # serves only for the purpose of making the library API easier to use.
+  #
+  # @since 2.1.0
+  class NilNotifier
+    def notify(_exception, _params = {}); end
+
+    def notify_sync(_exception, _params); end
+
+    def add_filter(_filter = nil, &_block); end
+
+    def build_notice(_exception, _params); end
+
+    def close; end
+
+    def create_deploy(_deploy_params); end
+  end
 end

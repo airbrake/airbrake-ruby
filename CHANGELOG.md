@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Return `Airbrake::NilNotifier` when no notifiers are configured and
+  `Airbrake.[]` is called
+  ([#191](https://github.com/airbrake/airbrake-ruby/pull/191))
+
 ### [v2.0.0][v2.0.0] (March 21, 2017)
 
 * **IMPORTANT:** Removed the `component/action` API deprecated
