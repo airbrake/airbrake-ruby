@@ -90,7 +90,7 @@ module Airbrake
     def create_deploy(deploy_params)
       deploy_params[:environment] ||= @config.environment
 
-      host = @config.endpoint.to_s.split(@config.endpoint.path).first
+      host = @config.host
       path = "api/v4/projects/#{@config.project_id}/deploys?key=#{@config.project_key}"
 
       promise = Airbrake::Promise.new
