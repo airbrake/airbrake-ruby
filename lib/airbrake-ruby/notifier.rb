@@ -94,7 +94,6 @@ module Airbrake
       path = "api/v4/projects/#{@config.project_id}/deploys?key=#{@config.project_key}"
 
       promise = Airbrake::Promise.new
-      p URI.join(host, path)
       @sync_sender.send(deploy_params, promise, URI.join(host, path))
       promise
     end
