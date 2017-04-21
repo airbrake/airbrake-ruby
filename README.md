@@ -409,6 +409,9 @@ Retrieves a configured notifier.
 Airbrake[:my_notifier] #=> Airbrake::Notifier
 ```
 
+If the notifier is not configured, returns an instance of
+`Airbrake::NilNotifier` (a no-op version of `Airbrake::Notifier`).
+
 #### Airbrake.notify
 
 Sends an exception to Airbrake asynchronously.

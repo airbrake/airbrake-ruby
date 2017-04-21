@@ -17,12 +17,18 @@ RSpec.describe Airbrake do
   end
 
   after do
-    described_class.instance_variable_set(:@notifiers, {})
+    described_class.instance_variable_set(
+      :@notifiers,
+      Hash.new(Airbrake::NilNotifier.new)
+    )
   end
 
   shared_examples 'non-configured notifier handling' do |method|
     it "returns nil if there is no configured notifier when using #{method}" do
-      described_class.instance_variable_set(:@notifiers, {})
+      described_class.instance_variable_set(
+        :@notifiers,
+        Hash.new(Airbrake::NilNotifier.new)
+      )
       expect(described_class.__send__(method, 'bingo')).to be_nil
     end
   end

@@ -73,8 +73,9 @@ module Airbrake
 
   ##
   # A Hash that holds all notifiers. The keys of the Hash are notifier
-  # names, the values are Airbrake::Notifier instances.
-  @notifiers = {}
+  # names, the values are Airbrake::Notifier instances. If a notifier is not
+  # assigned to the hash, then it returns a null object (NilNotifier).
+  @notifiers = Hash.new(NilNotifier.new)
 
   class << self
     ##
@@ -146,7 +147,7 @@ module Airbrake
     # @return [Airbrake::Promise]
     # @see .notify_sync
     def notify(exception, params = {})
-      @notifiers[:default] && @notifiers[:default].notify(exception, params)
+      @notifiers[:default].notify(exception, params)
     end
 
     ##
@@ -159,7 +160,7 @@ module Airbrake
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
     def notify_sync(exception, params = {})
-      @notifiers[:default] && @notifiers[:default].notify_sync(exception, params)
+      @notifiers[:default].notify_sync(exception, params)
     end
 
     ##
@@ -189,7 +190,7 @@ module Airbrake
     # @return [void]
     # @note Once a filter was added, there's no way to delete it
     def add_filter(filter = nil, &block)
-      @notifiers[:default] && @notifiers[:default].add_filter(filter, &block)
+      @notifiers[:default].add_filter(filter, &block)
     end
 
     ##
@@ -208,7 +209,7 @@ module Airbrake
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
     def build_notice(exception, params = {})
-      @notifiers[:default] && @notifiers[:default].build_notice(exception, params)
+      @notifiers[:default].build_notice(exception, params)
     end
 
     ##
@@ -222,7 +223,7 @@ module Airbrake
     #
     # @return [void]
     def close
-      @notifiers[:default] && @notifiers[:default].close
+      @notifiers[:default].close
     end
 
     ##
@@ -237,7 +238,7 @@ module Airbrake
     # @option deploy_params [Symbol] :version
     # @return [void]
     def create_deploy(deploy_params)
-      @notifiers[:default] && @notifiers[:default].create_deploy(deploy_params)
+      @notifiers[:default].create_deploy(deploy_params)
     end
   end
 end
