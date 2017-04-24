@@ -22,6 +22,7 @@ require 'airbrake-ruby/filters/keys_whitelist'
 require 'airbrake-ruby/filters/keys_blacklist'
 require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
+require 'airbrake-ruby/thread_context'
 
 ##
 # This module defines the Airbrake API. The user is meant to interact with
@@ -239,6 +240,24 @@ module Airbrake
     # @return [void]
     def create_deploy(deploy_params)
       @notifiers[:default].create_deploy(deploy_params)
+    end
+
+    ##
+    # Returns current thread context. Can be used to set new thread context
+    # values. The thread context is cleared on every `notify/notify_sync` call,
+    # and also and when the current thread `join`'s. The values assigned to the
+    # thread context are passed to the `params` field of a notice.
+    #
+    # @example
+    #   Airbrake.thread_context[:bingo] = :bango
+    #
+    #   # This call will deliver `{ :bingo => :bango }` to the dashboard.
+    #   Airbrake.notify('Oops')
+    #
+    # @since v2.1.0
+    # @return [Airbrake::ThreadContext] the thread context of
+    def thread_context
+      @notifiers[:default].thread_context
     end
   end
 end

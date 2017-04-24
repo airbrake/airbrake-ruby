@@ -545,4 +545,10 @@ RSpec.describe Airbrake::Notifier do
       expect(a_request(:post, deploy_endpoint)).to have_been_made.once
     end
   end
+
+  describe "#thread_context" do
+    it "returns an Airbrake::ThreadContext instance" do
+      expect(@airbrake.thread_context).to be_an(Airbrake::ThreadContext)
+    end
+  end
 end
