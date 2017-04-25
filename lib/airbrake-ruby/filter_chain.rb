@@ -8,6 +8,11 @@ module Airbrake
   # @since v1.0.0
   class FilterChain
     ##
+    # @return [String] the namespace for filters, which are executed first,
+    #   before any other filters
+    LIB_NAMESPACE = '#<Airbrake::'.freeze
+
+    ##
     # Filters to be executed last. By this time all permutations on a notice
     # should be done, so the final step is to blacklist/whitelist keys.
     # @return [Array<Class>]
@@ -24,21 +29,26 @@ module Airbrake
 
       [Airbrake::Filters::SystemExitFilter,
        Airbrake::Filters::GemRootFilter].each do |filter|
-        add_filter(filter.new)
+        @filters << filter.new
       end
 
       root_directory = config.root_directory
       return unless root_directory
 
-      add_filter(Airbrake::Filters::RootDirectoryFilter.new(root_directory))
+      @filters << Airbrake::Filters::RootDirectoryFilter.new(root_directory)
     end
 
     ##
     # Adds a filter to the filter chain.
+    #
     # @param [#call] filter The filter object (proc, class, module, etc)
+    # @return [void]
     def add_filter(filter)
       return @keys_filters << filter if KEYS_FILTERS.include?(filter.class)
-      @filters << filter
+      return @filters << filter unless filter.to_s.start_with?(LIB_NAMESPACE)
+
+      i = @filters.rindex { |f| f.to_s.start_with?(LIB_NAMESPACE) }
+      @filters.insert(i + 1, filter) if i
     end
 
     ##
