@@ -544,5 +544,22 @@ RSpec.describe Airbrake::Notifier do
       @airbrake.create_deploy({})
       expect(a_request(:post, deploy_endpoint)).to have_been_made.once
     end
+
+    describe "when a host contains subdirectories" do
+      let(:deploy_host) do
+        "https://airbrake.io/subdir/"
+      end
+
+      let(:deploy_endpoint) do
+        "#{deploy_host}api/v4/projects/#{project_id}/deploys?key=#{project_key}"
+      end
+
+      it "sends a request to the deploy API" do
+        @airbrake.instance_variable_get(:@config).host = deploy_host
+        stub_request(:post, deploy_endpoint).to_return(status: 201, body: '{"id":"123"}')
+        @airbrake.create_deploy({})
+        expect(a_request(:post, deploy_endpoint)).to have_been_made.once
+      end
+    end
   end
 end
