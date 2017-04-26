@@ -539,10 +539,27 @@ RSpec.describe Airbrake::Notifier do
       "https://airbrake.io/api/v4/projects/#{project_id}/deploys?key=#{project_key}"
     end
 
-    it "sends a request to the deploy API" do
+    before do
       stub_request(:post, deploy_endpoint).to_return(status: 201, body: '{"id":"123"}')
+    end
+
+    it "sends a request to the deploy API" do
       @airbrake.create_deploy({})
       expect(a_request(:post, deploy_endpoint)).to have_been_made.once
+    end
+
+    context "when a host contains paths" do
+      let(:deploy_host) { "https://example.net/errbit/" }
+
+      let(:deploy_endpoint) do
+        "#{deploy_host}api/v4/projects/#{project_id}/deploys?key=#{project_key}"
+      end
+
+      it "sends a request to the deploy API" do
+        airbrake = described_class.new(airbrake_params.merge(host: deploy_host))
+        airbrake.create_deploy({})
+        expect(a_request(:post, deploy_endpoint)).to have_been_made.once
+      end
     end
   end
 end
