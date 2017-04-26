@@ -9,6 +9,9 @@ Airbrake Ruby Changelog
 * Fixed the `host` option not recognizing hosts with subpaths such as
   `https://example.com/subpath/`
   ([#192](https://github.com/airbrake/airbrake-ruby/pull/192))
+* Fixed the order of invokation of library & user defined filters, so the user
+  filters are always invoked after all the library filters
+  ([#195](https://github.com/airbrake/airbrake-ruby/pull/195))
 
 ### [v2.0.0][v2.0.0] (March 21, 2017)
 

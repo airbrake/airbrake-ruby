@@ -54,6 +54,22 @@ RSpec.describe Airbrake::FilterChain do
         @chain.refine(notice)
         expect(notice[:params][:bingo]).to eq('[Filtered]')
       end
+
+      it "executes library filters before user ones" do
+        nums = []
+
+        @chain.add_filter(proc { nums << 2 })
+
+        priority_filter = proc { nums << 1 }
+        def priority_filter.to_s
+          '#<Airbrake::'
+        end
+        @chain.add_filter(priority_filter)
+
+        @chain.refine(notice)
+
+        expect(nums).to eq([1, 2])
+      end
     end
 
     describe "default backtrace filters" do
