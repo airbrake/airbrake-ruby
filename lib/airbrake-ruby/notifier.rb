@@ -11,6 +11,12 @@ module Airbrake
     LOG_LABEL = '**Airbrake:'.freeze
 
     ##
+    # @since v2.1.0
+    # @see Airbrake.thread_context
+    # @return [Airbrake::ThreadContext] the thread context of the notifier
+    attr_reader :thread_context
+
+    ##
     # Creates a new Airbrake notifier with the given config options.
     #
     # @example Configuring with a Hash
@@ -33,7 +39,8 @@ module Airbrake
         raise Airbrake::Error, @config.validation_error_message
       end
 
-      @filter_chain = FilterChain.new(@config)
+      @thread_context = ThreadContext.new(object_id)
+      @filter_chain = FilterChain.new(@config, @thread_context)
 
       add_filters_for_config_keys
 
@@ -174,5 +181,7 @@ module Airbrake
     def close; end
 
     def create_deploy(_deploy_params); end
+
+    def thread_context; end
   end
 end

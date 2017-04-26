@@ -44,6 +44,7 @@ Key features
 * SSL support (all communication with Airbrake is encrypted by default)
 * Support for fatal exceptions (the ones that terminate your program)
 * Support for custom exception attributes<sup>[[link](#custom-exception-attributes)]</sup>
+* Support for thread context<sup>[[link](#airbrakethread_context)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -572,6 +573,39 @@ Airbrake.create_deploy(
   revision: '0b77f289166c9fef4670588471b6584fbc34b0f3',
   version: '1.2.3'
 )
+```
+
+#### Airbrake.thread_context
+
+Returns current thread context. It can be used to set new thread context
+values. This is useful when you want to send an arbitrary object to Airbrake,
+which can't be accessed during a `notify` call.
+
+The thread context is cleared on every `notify/notify_sync` call, and
+also and when the current thread `join`'s. The values assigned to the thread
+context are passed to the `params` field of a notice.
+
+
+```ruby
+# Assign a value to the thread context hash.
+Airbrake.thread_context[:foo] = :bar
+
+# Notify and send the value as 'params'.
+Airbrake.notify('Oops')
+# The thread context hash is cleared immediately.
+Airbrake.thread_context[:foo] #=> nil
+```
+
+Thread context values can be accessed inside filters. The assigned values will
+be added to the `params/thread_context` hash of a `notice` before sending them:
+
+```ruby
+# Assign a value to the thread context hash.
+Airbrake.thread_context[:foo] = :value
+
+Airbrake.add_filter do |notice|
+  notice[:params][:thread_context][:foo] #=> :bar
+end
 ```
 
 ### Notice

@@ -2,17 +2,16 @@ require 'spec_helper'
 
 RSpec.describe Airbrake::FilterChain do
   before do
-    @chain = described_class.new(config)
+    @chain = described_class.new(config, thread_context)
   end
 
   let(:config) { Airbrake::Config.new }
+  let(:thread_context) { Airbrake::ThreadContext.new('bingo') }
 
   describe "#refine" do
-    describe "execution order" do
-      let(:notice) do
-        Airbrake::Notice.new(config, AirbrakeTestError.new)
-      end
+    let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
 
+    describe "execution order" do
       it "executes filters starting from the oldest" do
         nums = []
 
@@ -71,7 +70,7 @@ RSpec.describe Airbrake::FilterChain do
 
         before do
           config = Airbrake::Config.new(root_directory: root_directory)
-          chain = described_class.new(config)
+          chain = described_class.new(config, thread_context)
           chain.refine(notice)
           @bt = notice[:errors].first[:backtrace].map { |frame| frame[:file] }
         end
@@ -196,12 +195,34 @@ RSpec.describe Airbrake::FilterChain do
           config.logger = Logger.new('/dev/null')
           config.root_directory = '/bingo/bango'
           notice = Airbrake::Notice.new(config, ex)
-          filter_chain = described_class.new(config)
+          filter_chain = described_class.new(config, thread_context)
 
           expect(notice[:errors].first[:file]).to be_nil
           expect { filter_chain.refine(notice) }.
             not_to(change { notice[:errors].first[:file] })
         end
+      end
+    end
+
+    describe "thread context filter" do
+      it "adds appends variables to params" do
+        thread_context[:bingo] = :bango
+        filter_chain = described_class.new(config, thread_context)
+
+        expect(notice[:params][:thread_context]).to be_nil
+        filter_chain.refine(notice)
+        expect(notice[:params][:thread_context][:bingo]).to eq(:bango)
+      end
+
+      it "clears thread context" do
+        thread_context[:bingo] = :bango
+        @chain.refine(notice)
+        expect(thread_context[:bingo]).to be_nil
+      end
+
+      it "doesn't append thread context when it's empty" do
+        @chain.refine(notice)
+        expect(notice[:params][:thread_context]).to be_nil
       end
     end
   end

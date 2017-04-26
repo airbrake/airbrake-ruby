@@ -45,7 +45,7 @@ module Airbrake
 
     ##
     # @param [Airbrake::Config] config
-    def initialize(config)
+    def initialize(config, thread_context)
       @filters = []
       @keys_filters = []
 
@@ -55,6 +55,7 @@ module Airbrake
 
       root_directory = config.root_directory
       add_filter(root_directory_filter(root_directory)) if root_directory
+      add_filter(thread_context_filter(thread_context))
     end
 
     ##
@@ -87,6 +88,15 @@ module Airbrake
             next unless (file = frame[:file])
             file.sub!(/\A#{root_directory}/, '[PROJECT_ROOT]'.freeze)
           end
+        end
+      end
+    end
+
+    def thread_context_filter(thread_context)
+      proc do |notice|
+        unless (ctx = thread_context.to_h).empty?
+          notice[:params][:thread_context] = ctx
+          thread_context.clear
         end
       end
     end

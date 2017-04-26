@@ -128,16 +128,30 @@ RSpec.describe Airbrake do
       filter_chain = notifier.instance_variable_get(:@filter_chain)
       filters = filter_chain.instance_variable_get(:@filters)
 
-      expect(filters.size).to eq(3)
+      expect(filters.size).to eq(4)
 
       described_class.add_filter {}
 
-      expect(filters.size).to eq(4)
+      expect(filters.size).to eq(5)
       expect(filters.last).to be_a(Proc)
     end
   end
 
   describe ".build_notice" do
     include_examples 'non-configured notifier handling', :build_notice
+  end
+
+  describe ".thread_context" do
+    context "when there are no configured notifiers" do
+      it "returns nil" do
+        expect(described_class[:bingo_notifier].thread_context).to be_nil
+      end
+    end
+
+    context "when there's a configured notifier" do
+      it "returns a ThreadContext object" do
+        expect(described_class.thread_context).to be_an(Airbrake::ThreadContext)
+      end
+    end
   end
 end

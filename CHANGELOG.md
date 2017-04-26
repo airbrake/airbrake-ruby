@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+* **IMPORTANT:** added support for thread context
+  ([#194](https://github.com/airbrake/airbrake-ruby/pull/194))
 * Return `Airbrake::NilNotifier` when no notifiers are configured and
   `Airbrake.[]` is called
   ([#191](https://github.com/airbrake/airbrake-ruby/pull/191))
