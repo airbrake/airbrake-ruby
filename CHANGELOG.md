@@ -6,6 +6,9 @@ Airbrake Ruby Changelog
 * Return `Airbrake::NilNotifier` when no notifiers are configured and
   `Airbrake.[]` is called
   ([#191](https://github.com/airbrake/airbrake-ruby/pull/191))
+* Fixed the `host` option not recognizing hosts with subpaths such as
+  `https://example.com/subpath/`
+  ([#192](https://github.com/airbrake/airbrake-ruby/pull/192))
 
 ### [v2.0.0][v2.0.0] (March 21, 2017)
 
