@@ -49,28 +49,28 @@ RSpec.describe "Airbrake::Notifier blacklist_keys" do
   end
 
   context "when blacklisting with a Regexp" do
-    let(:expected_body) { /"params":{"bingo":"\[Filtered\]"}/ }
+    let(:expected_body) { /"params":{"bingo":"\[Filtered\]".*}/ }
     include_examples('blacklisting', [/\Abin/], bingo: 'bango')
   end
 
   context "when blacklisting with a Symbol" do
-    let(:expected_body) { /"params":{"bingo":"\[Filtered\]"}/ }
+    let(:expected_body) { /"params":{"bingo":"\[Filtered\]".*}/ }
     include_examples('blacklisting', [:bingo], bingo: 'bango')
   end
 
   context "when blacklisting with a String" do
-    let(:expected_body) { /"params":{"bingo":"\[Filtered\]"}/ }
+    let(:expected_body) { /"params":{"bingo":"\[Filtered\]".*}/ }
     include_examples('blacklisting', ['bingo'], bingo: 'bango')
   end
 
   context "when payload has a hash" do
     context "and it is a non-recursive hash" do
-      let(:expected_body) { /"params":{"bongo":{"bish":"\[Filtered\]"}}/ }
+      let(:expected_body) { /"params":{"bongo":{"bish":"\[Filtered\]"}.*}/ }
       include_examples('blacklisting', ['bish'], bongo: { bish: 'bash' })
     end
 
     context "and it is a recursive hash" do
-      let(:expected_body) { /"params":{"bingo":{"bango":"\[Filtered\]"}}/ }
+      let(:expected_body) { /"params":{"bingo":{"bango":"\[Filtered\]"}.*}/ }
 
       bongo = { bingo: {} }
       bongo[:bingo][:bango] = bongo
@@ -88,13 +88,13 @@ RSpec.describe "Airbrake::Notifier blacklist_keys" do
   end
 
   context "when there was a proc provided, which returns an array of keys" do
-    let(:expected_body) { /"params":{"bingo":"\[Filtered\]","bongo":"bish"}/ }
+    let(:expected_body) { /"params":{"bingo":"\[Filtered\]","bongo":"bish".*}/ }
     include_examples('blacklisting', [proc { 'bingo' }], bingo: 'bango', bongo: 'bish')
   end
 
   context "when there was a proc provided along with normal keys" do
     let(:expected_body) do
-      /"params":{"bingo":"bango","bongo":"\[Filtered\]","bash":"\[Filtered\]"}/
+      /"params":{"bingo":"bango","bongo":"\[Filtered\]","bash":"\[Filtered\]".*}/
     end
 
     include_examples(
@@ -117,7 +117,7 @@ RSpec.describe "Airbrake::Notifier blacklist_keys" do
 
       notifier.notify_sync(ex, bingo: 'bango', bongo: 'bish')
 
-      expect_a_request_with_body(/"params":{"bingo":"bango","bongo":"bish"}/)
+      expect_a_request_with_body(/"params":{"bingo":"bango","bongo":"bish".*}/)
     end
   end
 
@@ -139,7 +139,7 @@ RSpec.describe "Airbrake::Notifier blacklist_keys" do
         notifier.notify_sync(ex, bingo: 'bango', bongo: 'bish')
 
         expect_a_request_with_body(
-          /"params":{"bingo":"\[Filtered\]","bongo":"bish"}/
+          /"params":{"bingo":"\[Filtered\]","bongo":"bish".*}/
         )
       end
     end

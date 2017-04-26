@@ -12,6 +12,8 @@ Airbrake Ruby Changelog
 * Fixed the order of invokation of library & user defined filters, so the user
   filters are always invoked after all the library filters
   ([#195](https://github.com/airbrake/airbrake-ruby/pull/195))
+* Started attaching current thread information (including thread & fiber
+  variables) ([#198](https://github.com/airbrake/airbrake-ruby/pull/198))
 
 ### [v2.0.0][v2.0.0] (March 21, 2017)
 
