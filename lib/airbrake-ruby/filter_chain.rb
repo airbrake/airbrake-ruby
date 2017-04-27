@@ -28,7 +28,8 @@ module Airbrake
       @keys_filters = []
 
       [Airbrake::Filters::SystemExitFilter,
-       Airbrake::Filters::GemRootFilter].each do |filter|
+       Airbrake::Filters::GemRootFilter,
+       Airbrake::Filters::ThreadFilter].each do |filter|
         @filters << filter.new
       end
 

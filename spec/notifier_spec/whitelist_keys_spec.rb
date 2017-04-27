@@ -50,7 +50,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
   context "when whitelisting with a Regexp" do
     let(:expected_body) do
-      /"params":{"bingo":"bango","bongo":"\[Filtered\]","bash":"\[Filtered\]"}/
+      /"params":{"bingo":"bango","bongo":"\[Filtered\]","bash":"\[Filtered\]".*}/
     end
 
     include_examples(
@@ -62,7 +62,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
   context "when whitelisting with a Symbol" do
     let(:expected_body) do
-      /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"\[Filtered\]"}/
+      /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"\[Filtered\]".*}/
     end
 
     include_examples(
@@ -75,7 +75,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
   context "when whitelisting with a String" do
     let(:expected_body) do
       /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]",
-         "bash":"bosh","bbashh":"\[Filtered\]"}/x
+         "bash":"bosh","bbashh":"\[Filtered\]".*}/x
     end
 
     include_examples(
@@ -87,7 +87,9 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
   context "when payload has a hash" do
     context "and it is a non-recursive hash" do
-      let(:expected_body) { /"params":{"bingo":"\[Filtered\]","bongo":{"bish":"bash"}}/ }
+      let(:expected_body) do
+        /"params":{"bingo":"\[Filtered\]","bongo":{"bish":"bash"}.*}/
+      end
 
       include_examples(
         'whitelisting',
@@ -129,7 +131,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
   context "when there was a proc provided, which returns an array of keys" do
     let(:expected_body) do
-      /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"\[Filtered\]"}/
+      /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"\[Filtered\]".*}/
     end
 
     include_examples(
@@ -141,7 +143,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
 
   context "when there was a proc provided along with normal keys" do
     let(:expected_body) do
-      /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"bosh"}/
+      /"params":{"bingo":"\[Filtered\]","bongo":"bish","bash":"bosh".*}/
     end
 
     include_examples(
@@ -169,7 +171,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
         notifier.notify_sync(ex, bingo: 'bango', bongo: 'bish')
 
         expect_a_request_with_body(
-          /"params":{"bingo":"bango","bongo":"\[Filtered\]"}/
+          /"params":{"bingo":"bango","bongo":"\[Filtered\]".*}/
         )
       end
     end
@@ -189,7 +191,7 @@ RSpec.describe "Airbrake::Notifier whitelist_keys" do
       notifier.notify_sync(ex, bingo: 'bango', bongo: 'bish')
 
       expect_a_request_with_body(
-        /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]"}/
+        /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]".*}/
       )
     end
   end

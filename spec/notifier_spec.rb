@@ -154,8 +154,12 @@ RSpec.describe Airbrake::Notifier do
 
         it "features 'params'" do
           expect_a_request_with_body(
-            /"params":{"bingo":\["bango"\],"bongo":"bish"}/
+            /"params":{"bingo":\["bango"\],"bongo":"bish".*}/
           )
+        end
+
+        it "features 'params/thread'" do
+          expect_a_request_with_body(/"params":{.*"thread":{.*}/)
         end
       end
     end
@@ -360,7 +364,7 @@ RSpec.describe Airbrake::Notifier do
           include_examples(
             'truncation',
             params,
-            /"params":{"bingo":{"bango":{"bongo":".+ObjectWithIoIvars.+"}}}/
+            /"params":{"bingo":{"bango":{"bongo":".+ObjectWithIoIvars.+"}}.*}/
           )
         end
 
@@ -369,7 +373,7 @@ RSpec.describe Airbrake::Notifier do
           include_examples(
             'truncation',
             params,
-            /"params":{"bingo":\[\[".+ObjectWithIoIvars.+"\]\]}/
+            /"params":{"bingo":\[\[".+ObjectWithIoIvars.+"\]\].*}/
           )
         end
       end
@@ -382,7 +386,7 @@ RSpec.describe Airbrake::Notifier do
 
       sleep 1
 
-      expect_a_request_with_body(/params":{"bingo":"bango"}/)
+      expect_a_request_with_body(/params":{"bingo":"bango".*}/)
     end
 
     it "returns a promise" do
@@ -441,7 +445,7 @@ RSpec.describe Airbrake::Notifier do
 
       expect(
         a_request(:post, endpoint).
-        with(body: /params":{"password":"\[Filtered\]"}/)
+        with(body: /params":{"password":"\[Filtered\]".*}/)
       ).to have_been_made.once
     end
 
@@ -455,7 +459,7 @@ RSpec.describe Airbrake::Notifier do
       @airbrake.notify_sync(ex, bingo: ['bango'], bongo: 'bish', bash: 'bosh')
 
       # rubocop:disable Metrics/LineLength
-      body = /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]","bash":"\[Filtered\]"}/
+      body = /"params":{"bingo":"\[Filtered\]","bongo":"\[Filtered\]","bash":"\[Filtered\]".*}/
       # rubocop:enable Metrics/LineLength
 
       expect(

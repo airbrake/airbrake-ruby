@@ -23,6 +23,7 @@ require 'airbrake-ruby/filters/keys_blacklist'
 require 'airbrake-ruby/filters/gem_root_filter'
 require 'airbrake-ruby/filters/system_exit_filter'
 require 'airbrake-ruby/filters/root_directory_filter'
+require 'airbrake-ruby/filters/thread_filter'
 require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 
@@ -73,6 +74,11 @@ module Airbrake
   # @return [Boolean] true if current Ruby is Ruby 2.0.*. The result is used
   #   for special cases where we need to work around older implementations
   RUBY_20 = RUBY_VERSION.start_with?('2.0')
+
+  ##
+  # @return [Boolean] true if current Ruby is JRuby. The result is used for
+  #  special cases where we need to work around older implementations
+  JRUBY = (RUBY_ENGINE == 'jruby')
 
   ##
   # A Hash that holds all notifiers. The keys of the Hash are notifier
