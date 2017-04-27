@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.1.0][v2.1.0] (April 27, 2017)
+
 * Return `Airbrake::NilNotifier` when no notifiers are configured and
   `Airbrake.[]` is called
   ([#191](https://github.com/airbrake/airbrake-ruby/pull/191))
@@ -274,3 +276,4 @@ Airbrake Ruby Changelog
 [v1.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.7.1
 [v1.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.8.0
 [v2.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.0.0
+[v2.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.1.0
