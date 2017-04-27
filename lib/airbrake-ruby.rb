@@ -117,7 +117,7 @@ module Airbrake
     #     c.project_key = '91ac5e4a37496026c6837f63276ed2b6'
     #   end
     #
-    # @param [Symbol] notifier the name to be associated with the notifier
+    # @param [Symbol] notifier_name the name to be associated with the notifier
     # @yield [config] The configuration object
     # @yieldparam config [Airbrake::Config]
     # @return [void]
