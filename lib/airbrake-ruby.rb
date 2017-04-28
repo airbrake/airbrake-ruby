@@ -153,10 +153,13 @@ module Airbrake
     # @param [Hash] params The additional payload to be sent to Airbrake. Can
     #   contain any values. The provided values will be displayed in the Params
     #   tab in your project's dashboard
+    # @yield [notice] The notice to filter
+    # @yieldparam [Airbrake::Notice]
+    # @yieldreturn [void]
     # @return [Airbrake::Promise]
     # @see .notify_sync
-    def notify(exception, params = {})
-      @notifiers[:default].notify(exception, params)
+    def notify(exception, params = {}, &block)
+      @notifiers[:default].notify(exception, params, &block)
     end
 
     ##
@@ -166,10 +169,18 @@ module Airbrake
     #   Airbrake.notify_sync('App crashed!')
     #   #=> {"id"=>"123", "url"=>"https://airbrake.io/locate/321"}
     #
+    # @param [Exception, String, Airbrake::Notice] exception The exception to be
+    #   sent to Airbrake
+    # @param [Hash] params The additional payload to be sent to Airbrake. Can
+    #   contain any values. The provided values will be displayed in the Params
+    #   tab in your project's dashboard
+    # @yield [notice] The notice to filter
+    # @yieldparam [Airbrake::Notice]
+    # @yieldreturn [void]
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
-    def notify_sync(exception, params = {})
-      @notifiers[:default].notify_sync(exception, params)
+    def notify_sync(exception, params = {}, &block)
+      @notifiers[:default].notify_sync(exception, params, &block)
     end
 
     ##

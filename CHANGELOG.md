@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Make `notify/notify_sync` accept a block, which yields an `Airbrake::Notice`
+  ([#201](https://github.com/airbrake/airbrake-ruby/pull/201))
+
 ### [v2.1.0][v2.1.0] (April 27, 2017)
 
 * Return `Airbrake::NilNotifier` when no notifiers are configured and

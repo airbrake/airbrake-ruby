@@ -438,6 +438,14 @@ Airbrake.notify('App crashed!', {
 })
 ```
 
+Accepts a block, which yields an `Airbrake::Notice`:
+
+```ruby
+Airbrake.notify('App crashed') do |notice|
+  notice[:params][:foo] = :bar
+end
+```
+
 Returns an [`Airbrake::Promise`](#promise), which can be used to read Airbrake
 error ids.
 
@@ -535,6 +543,8 @@ notice = Airbrake.build_notice('App crashed!')
 notice[:params][:username] = user.name
 airbrake.notify_sync(notice)
 ```
+
+See the block form of [`Airbrake.notify`](#airbrakenotify) for shorter syntax.
 
 #### Airbrake.close
 
