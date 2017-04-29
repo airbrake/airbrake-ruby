@@ -200,6 +200,10 @@ RSpec.describe Airbrake::Notice do
       expect(notice.to_json).
         to match(/"context":{.*"hostname":".+".*}/)
     end
+
+    it "defaults to the error severity" do
+      expect(notice.to_json).to match(/"context":{.*"severity":"error".*}/)
+    end
   end
 
   describe "#[]" do
