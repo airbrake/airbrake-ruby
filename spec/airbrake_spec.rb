@@ -41,6 +41,19 @@ RSpec.describe Airbrake do
       sleep 2
       expect(a_request(:post, endpoint)).to have_been_made.once
     end
+
+    it "yields a notice" do
+      described_class.notify('bongo') do |notice|
+        notice[:params][:bingo] = :bango
+      end
+
+      sleep 1
+
+      expect(
+        a_request(:post, endpoint).
+        with(body: /params":{.*"bingo":"bango".*}/)
+      ).to have_been_made.once
+    end
   end
 
   describe ".notify_sync" do
@@ -49,6 +62,17 @@ RSpec.describe Airbrake do
     it "sends exceptions synchronously" do
       expect(described_class.notify_sync('bingo')).to be_a(Hash)
       expect(a_request(:post, endpoint)).to have_been_made.once
+    end
+
+    it "yields a notice" do
+      described_class.notify_sync('bongo') do |notice|
+        notice[:params][:bingo] = :bango
+      end
+
+      expect(
+        a_request(:post, endpoint).
+        with(body: /params":{.*"bingo":"bango".*}/)
+      ).to have_been_made.once
     end
 
     describe "clean backtrace" do

@@ -47,14 +47,14 @@ module Airbrake
 
     ##
     # @macro see_public_api_method
-    def notify(exception, params = {})
-      send_notice(exception, params, default_sender)
+    def notify(exception, params = {}, &block)
+      send_notice(exception, params, default_sender, &block)
     end
 
     ##
     # @macro see_public_api_method
-    def notify_sync(exception, params = {})
-      send_notice(exception, params, @sync_sender).value
+    def notify_sync(exception, params = {}, &block)
+      send_notice(exception, params, @sync_sender, &block).value
     end
 
     ##
@@ -119,6 +119,8 @@ module Airbrake
 
       notice = build_notice(exception, params)
       @filter_chain.refine(notice)
+      yield notice if block_given?
+
       if notice.ignored?
         return promise.reject("#{notice} was marked as ignored")
       end

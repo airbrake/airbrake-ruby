@@ -378,6 +378,13 @@ RSpec.describe Airbrake::Notifier do
         end
       end
     end
+
+    describe "block argument" do
+      it "yields a notice" do
+        @airbrake.notify_sync(ex) { |notice| notice[:params][:bingo] = :bango }
+        expect_a_request_with_body(/params":{.*"bingo":"bango".*}/)
+      end
+    end
   end
 
   describe "#notify" do
