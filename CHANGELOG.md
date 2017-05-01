@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.2.0][v2.2.0] (May 1, 2017)
+
 * Make `notify/notify_sync` accept a block, which yields an `Airbrake::Notice`
   ([#201](https://github.com/airbrake/airbrake-ruby/pull/201))
 * Started sending `context/severity`, which is set to `error`
@@ -282,3 +284,4 @@ Airbrake Ruby Changelog
 [v1.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v1.8.0
 [v2.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.0.0
 [v2.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.1.0
+[v2.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.0
