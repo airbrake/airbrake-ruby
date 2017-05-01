@@ -44,6 +44,7 @@ Key features
 * SSL support (all communication with Airbrake is encrypted by default)
 * Support for fatal exceptions (the ones that terminate your program)
 * Support for custom exception attributes<sup>[[link](#custom-exception-attributes)]</sup>
+* Severity support<sup>[[link](#setting-severity)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -449,6 +450,19 @@ end
 Returns an [`Airbrake::Promise`](#promise), which can be used to read Airbrake
 error ids.
 
+
+##### Setting severity
+
+[Severity][what-is-severity] allows categorizing how severe an error is. By
+default, it's set to `error`. To redefine severity, simply overwrite
+`context/severity` of a notice object. For example:
+
+```ruby
+Airbrake.notify do |notice|
+  notice[:context][:severity] = 'critical'
+end
+```
+
 #### Airbrake.notify_sync
 
 Sends an exception to Airbrake synchronously. Returns a Hash with an error ID
@@ -773,3 +787,4 @@ The project uses the MIT License. See LICENSE.md for details.
 [golang]: https://golang.org/
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
 [arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
+[what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/

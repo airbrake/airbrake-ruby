@@ -57,6 +57,10 @@ module Airbrake
     HOSTNAME = Socket.gethostname.freeze
 
     ##
+    # @return [String]
+    DEFAULT_SEVERITY = 'error'.freeze
+
+    ##
     # @since v1.7.0
     # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
     #   in filters
@@ -158,7 +162,9 @@ module Airbrake
         environment: @config.environment,
 
         # Make sure we always send hostname.
-        hostname: HOSTNAME
+        hostname: HOSTNAME,
+
+        severity: DEFAULT_SEVERITY
       }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
     end
 
