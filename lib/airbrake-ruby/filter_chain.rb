@@ -13,10 +13,16 @@ module Airbrake
     LIB_NAMESPACE = '#<Airbrake::'.freeze
 
     ##
-    # Filters to be executed last. By this time all permutations on a notice
-    # should be done, so the final step is to blacklist/whitelist keys.
-    # @return [Array<Class>]
-    KEYS_FILTERS = [
+    # @return [Array<Class>] filters to be executed first
+    DEFAULT_FILTERS = [
+      Airbrake::Filters::SystemExitFilter,
+      Airbrake::Filters::GemRootFilter,
+      Airbrake::Filters::ThreadFilter
+    ].freeze
+
+    ##
+    # @return [Array<Class>] filters to be executed last
+    POST_FILTERS = [
       Airbrake::Filters::KeysBlacklist,
       Airbrake::Filters::KeysWhitelist
     ].freeze
@@ -24,14 +30,8 @@ module Airbrake
     ##
     # @param [Airbrake::Config] config
     def initialize(config)
-      @filters = []
-      @keys_filters = []
-
-      [Airbrake::Filters::SystemExitFilter,
-       Airbrake::Filters::GemRootFilter,
-       Airbrake::Filters::ThreadFilter].each do |filter|
-        @filters << filter.new
-      end
+      @filters = DEFAULT_FILTERS.map(&:new)
+      @post_filters = []
 
       root_directory = config.root_directory
       return unless root_directory
@@ -45,7 +45,7 @@ module Airbrake
     # @param [#call] filter The filter object (proc, class, module, etc)
     # @return [void]
     def add_filter(filter)
-      return @keys_filters << filter if KEYS_FILTERS.include?(filter.class)
+      return @post_filters << filter if POST_FILTERS.include?(filter.class)
       return @filters << filter unless filter.to_s.start_with?(LIB_NAMESPACE)
 
       i = @filters.rindex { |f| f.to_s.start_with?(LIB_NAMESPACE) }
@@ -59,7 +59,7 @@ module Airbrake
     # @param [Airbrake::Notice] notice The notice to be filtered
     # @return [void]
     def refine(notice)
-      (@filters + @keys_filters).each do |filter|
+      (@filters + @post_filters).each do |filter|
         break if notice.ignored?
         filter.call(notice)
       end
