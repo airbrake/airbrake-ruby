@@ -8,11 +8,6 @@ module Airbrake
   # @since v1.0.0
   class FilterChain
     ##
-    # @return [String] the namespace for filters, which are executed first,
-    #   before any other filters
-    LIB_NAMESPACE = '#<Airbrake::'.freeze
-
-    ##
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
       Airbrake::Filters::SystemExitFilter,
@@ -21,35 +16,47 @@ module Airbrake
     ].freeze
 
     ##
-    # @return [Array<Class>] filters to be executed last
-    POST_FILTERS = [
-      Airbrake::Filters::KeysBlacklist,
-      Airbrake::Filters::KeysWhitelist
-    ].freeze
+    # @return [Integer]
+    DEFAULT_WEIGHT = 0
 
     ##
     # @param [Airbrake::Config] config
     def initialize(config)
-      @filters = DEFAULT_FILTERS.map(&:new)
-      @post_filters = []
+      @filters = []
 
-      root_directory = config.root_directory
-      return unless root_directory
+      DEFAULT_FILTERS.each { |f| add_filter(f.new) }
 
-      @filters << Airbrake::Filters::RootDirectoryFilter.new(root_directory)
+      if config.whitelist_keys.any?
+        add_filter(
+          Airbrake::Filters::KeysWhitelist.new(
+            config.logger,
+            config.whitelist_keys
+          )
+        )
+      end
+
+      if config.blacklist_keys.any?
+        add_filter(
+          Airbrake::Filters::KeysBlacklist.new(
+            config.logger,
+            config.blacklist_keys
+          )
+        )
+      end
+
+      return unless (root_directory = config.root_directory)
+      add_filter(Airbrake::Filters::RootDirectoryFilter.new(root_directory))
     end
 
     ##
-    # Adds a filter to the filter chain.
+    # Adds a filter to the filter chain. Sorts filters by weight.
     #
     # @param [#call] filter The filter object (proc, class, module, etc)
     # @return [void]
     def add_filter(filter)
-      return @post_filters << filter if POST_FILTERS.include?(filter.class)
-      return @filters << filter unless filter.to_s.start_with?(LIB_NAMESPACE)
-
-      i = @filters.rindex { |f| f.to_s.start_with?(LIB_NAMESPACE) }
-      @filters.insert(i + 1, filter) if i
+      @filters = (@filters << filter).sort_by do |f|
+        f.respond_to?(:weight) ? f.weight : DEFAULT_WEIGHT
+      end.reverse!
     end
 
     ##
@@ -59,7 +66,7 @@ module Airbrake
     # @param [Airbrake::Notice] notice The notice to be filtered
     # @return [void]
     def refine(notice)
-      (@filters + @post_filters).each do |filter|
+      @filters.each do |filter|
         break if notice.ignored?
         filter.call(notice)
       end

@@ -7,6 +7,14 @@ module Airbrake
       # @return [String]
       GEM_ROOT_LABEL = '[GEM_ROOT]'.freeze
 
+      ##
+      # @return [Integer]
+      attr_reader :weight
+
+      def initialize
+        @weight = 120
+      end
+
       def call(notice)
         return unless defined?(Gem)
 

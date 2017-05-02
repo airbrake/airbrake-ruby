@@ -26,6 +26,11 @@ module Airbrake
     class KeysWhitelist
       include KeysFilter
 
+      def initialize(*)
+        super
+        @weight = -100
+      end
+
       ##
       # @return [Boolean] true if the key doesn't match any pattern, false
       #   otherwise.

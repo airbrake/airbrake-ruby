@@ -19,11 +19,15 @@ module Airbrake
       VALID_PATTERN_CLASSES = [String, Symbol, Regexp].freeze
 
       ##
+      # @return [Integer]
+      attr_reader :weight
+
+      ##
       # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
       # @param [Array<String,Regexp,Symbol>] patterns
-      def initialize(logger, *patterns)
+      def initialize(logger, patterns)
         @logger = logger
         @patterns = patterns
         @valid_patterns = false
