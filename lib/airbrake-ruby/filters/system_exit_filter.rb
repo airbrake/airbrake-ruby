@@ -7,6 +7,14 @@ module Airbrake
       # @return [String]
       SYSTEM_EXIT_TYPE = 'SystemExit'.freeze
 
+      ##
+      # @return [Integer]
+      attr_reader :weight
+
+      def initialize
+        @weight = 130
+      end
+
       def call(notice)
         return if notice[:errors].none? { |error| error[:type] == SYSTEM_EXIT_TYPE }
         notice.ignore!

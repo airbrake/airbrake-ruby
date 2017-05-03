@@ -13,37 +13,10 @@ RSpec.describe Airbrake::FilterChain do
         Airbrake::Notice.new(config, AirbrakeTestError.new)
       end
 
-      it "executes filters starting from the oldest" do
-        nums = []
-
-        3.times do |i|
-          @chain.add_filter(proc { nums << i })
-        end
-
-        @chain.refine(notice)
-
-        expect(nums).to eq([0, 1, 2])
-      end
-
-      it "stops execution once a notice was ignored" do
-        nums = []
-
-        5.times do |i|
-          @chain.add_filter(proc do |notice|
-                              nums << i
-                              notice.ignore! if i == 2
-                            end)
-        end
-
-        @chain.refine(notice)
-
-        expect(nums).to eq([0, 1, 2])
-      end
-
       it "executes keys filters last" do
         notice[:params] = { bingo: 'bango' }
-        blacklist = Airbrake::Filters::KeysBlacklist.new(config.logger, :bingo)
-        @chain.add_filter(blacklist)
+        config.blacklist_keys = [:bingo]
+        @chain = described_class.new(config)
 
         @chain.add_filter(
           proc do |notice|
@@ -55,20 +28,45 @@ RSpec.describe Airbrake::FilterChain do
         expect(notice[:params][:bingo]).to eq('[Filtered]')
       end
 
-      it "executes library filters before user ones" do
-        nums = []
+      describe "filter weight" do
+        let(:filter) do
+          Class.new do
+            attr_reader :weight
 
-        @chain.add_filter(proc { nums << 2 })
+            def initialize(weight)
+              @weight = weight
+            end
 
-        priority_filter = proc { nums << 1 }
-        def priority_filter.to_s
-          '#<Airbrake::'
+            def call(notice)
+              notice[:params][:bingo] << @weight
+            end
+          end
         end
-        @chain.add_filter(priority_filter)
 
-        @chain.refine(notice)
+        it "executes filters from heaviest to lightest" do
+          notice[:params][:bingo] = []
 
-        expect(nums).to eq([1, 2])
+          (0...3).reverse_each do |i|
+            @chain.add_filter(filter.new(i))
+          end
+          @chain.refine(notice)
+
+          expect(notice[:params][:bingo]).to eq([2, 1, 0])
+        end
+
+        it "stops execution once a notice was ignored" do
+          f2 = filter.new(2)
+          expect(f2).to receive(:call)
+
+          f1 = proc { |notice| notice.ignore! }
+
+          f0 = filter.new(-1)
+          expect(f0).not_to receive(:call)
+
+          [f2, f1, f0].each { |f| @chain.add_filter(f) }
+
+          @chain.refine(notice)
+        end
       end
     end
 

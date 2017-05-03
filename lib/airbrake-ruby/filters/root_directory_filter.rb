@@ -7,8 +7,13 @@ module Airbrake
       # @return [String]
       PROJECT_ROOT_LABEL = '[PROJECT_ROOT]'.freeze
 
+      ##
+      # @return [Integer]
+      attr_reader :weight
+
       def initialize(root_directory)
         @root_directory = root_directory
+        @weight = 100
       end
 
       def call(notice)

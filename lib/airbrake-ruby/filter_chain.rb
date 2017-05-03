@@ -8,48 +8,55 @@ module Airbrake
   # @since v1.0.0
   class FilterChain
     ##
-    # @return [String] the namespace for filters, which are executed first,
-    #   before any other filters
-    LIB_NAMESPACE = '#<Airbrake::'.freeze
+    # @return [Array<Class>] filters to be executed first
+    DEFAULT_FILTERS = [
+      Airbrake::Filters::SystemExitFilter,
+      Airbrake::Filters::GemRootFilter,
+      Airbrake::Filters::ThreadFilter
+    ].freeze
 
     ##
-    # Filters to be executed last. By this time all permutations on a notice
-    # should be done, so the final step is to blacklist/whitelist keys.
-    # @return [Array<Class>]
-    KEYS_FILTERS = [
-      Airbrake::Filters::KeysBlacklist,
-      Airbrake::Filters::KeysWhitelist
-    ].freeze
+    # @return [Integer]
+    DEFAULT_WEIGHT = 0
 
     ##
     # @param [Airbrake::Config] config
     def initialize(config)
       @filters = []
-      @keys_filters = []
 
-      [Airbrake::Filters::SystemExitFilter,
-       Airbrake::Filters::GemRootFilter,
-       Airbrake::Filters::ThreadFilter].each do |filter|
-        @filters << filter.new
+      DEFAULT_FILTERS.each { |f| add_filter(f.new) }
+
+      if config.whitelist_keys.any?
+        add_filter(
+          Airbrake::Filters::KeysWhitelist.new(
+            config.logger,
+            config.whitelist_keys
+          )
+        )
       end
 
-      root_directory = config.root_directory
-      return unless root_directory
+      if config.blacklist_keys.any?
+        add_filter(
+          Airbrake::Filters::KeysBlacklist.new(
+            config.logger,
+            config.blacklist_keys
+          )
+        )
+      end
 
-      @filters << Airbrake::Filters::RootDirectoryFilter.new(root_directory)
+      return unless (root_directory = config.root_directory)
+      add_filter(Airbrake::Filters::RootDirectoryFilter.new(root_directory))
     end
 
     ##
-    # Adds a filter to the filter chain.
+    # Adds a filter to the filter chain. Sorts filters by weight.
     #
     # @param [#call] filter The filter object (proc, class, module, etc)
     # @return [void]
     def add_filter(filter)
-      return @keys_filters << filter if KEYS_FILTERS.include?(filter.class)
-      return @filters << filter unless filter.to_s.start_with?(LIB_NAMESPACE)
-
-      i = @filters.rindex { |f| f.to_s.start_with?(LIB_NAMESPACE) }
-      @filters.insert(i + 1, filter) if i
+      @filters = (@filters << filter).sort_by do |f|
+        f.respond_to?(:weight) ? f.weight : DEFAULT_WEIGHT
+      end.reverse!
     end
 
     ##
@@ -59,7 +66,7 @@ module Airbrake
     # @param [Airbrake::Notice] notice The notice to be filtered
     # @return [void]
     def refine(notice)
-      (@filters + @keys_filters).each do |filter|
+      @filters.each do |filter|
         break if notice.ignored?
         filter.call(notice)
       end

@@ -26,6 +26,11 @@ module Airbrake
     class KeysBlacklist
       include KeysFilter
 
+      def initialize(*)
+        super
+        @weight = -110
+      end
+
       ##
       # @return [Boolean] true if the key matches at least one pattern, false
       #   otherwise
