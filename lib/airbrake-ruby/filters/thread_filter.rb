@@ -38,12 +38,17 @@ module Airbrake
 
       def thread_variables(th)
         th.thread_variables.map.with_object({}) do |var, h|
-          h[var] = th.thread_variable_get(var).inspect
+          next if (value = th.thread_variable_get(var)).is_a?(IO)
+          h[var] = value
         end
       end
 
       def fiber_variables(th)
-        th.keys.map.with_object({}) { |key, h| h[key] = th[key].inspect }
+        th.keys.map.with_object({}) do |key, h|
+          next if key == :__recursive_key__
+          next if (value = th[key]).is_a?(IO)
+          h[key] = value
+        end
       end
 
       def add_thread_info(th, thread_info)
