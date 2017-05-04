@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed segfault on Ruby 2.1 while using the thread filter
+  ([#206](https://github.com/airbrake/airbrake-ruby/pull/206))
+
 ### [v2.2.0][v2.2.0] (May 1, 2017)
 
 * Make `notify/notify_sync` accept a block, which yields an `Airbrake::Notice`
