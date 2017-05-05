@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `SystemStackError` while using the thread filter with RSpec
+  ([#208](https://github.com/airbrake/airbrake-ruby/pull/208))
+
 ### [v2.2.1][v2.2.1] (May 4, 2017)
 
 * Fixed segfault on Ruby 2.1 while using the thread filter

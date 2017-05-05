@@ -8,6 +8,16 @@ module Airbrake
       # @return [Integer]
       attr_reader :weight
 
+      ##
+      # @return [Array<Symbol>] the list of ignored fiber variables
+      IGNORED_FIBER_VARIABLES = [
+        # https://github.com/airbrake/airbrake-ruby/issues/204
+        :__recursive_key__,
+
+        # https://github.com/rails/rails/issues/28996
+        :__rspec
+      ].freeze
+
       def initialize
         @weight = 110
       end
@@ -45,7 +55,7 @@ module Airbrake
 
       def fiber_variables(th)
         th.keys.map.with_object({}) do |key, h|
-          next if key == :__recursive_key__
+          next if IGNORED_FIBER_VARIABLES.any? { |v| v == key }
           next if (value = th[key]).is_a?(IO)
           h[key] = value
         end

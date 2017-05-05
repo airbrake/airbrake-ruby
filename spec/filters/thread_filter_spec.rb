@@ -6,10 +6,27 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
   let(:notice) { Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new) }
   let(:th) { Thread.current }
 
+  shared_examples "fiber variable ignore" do |key|
+    it "ignores the :#{key} fiber variable" do
+      th[key] = :bingo
+      subject.call(notice)
+      th[key] = nil
+
+      fiber_variables = notice[:params][:thread][:fiber_variables]
+      expect(fiber_variables[key]).to be_nil
+    end
+  end
+
+  %i[__recursive_key__ __rspec].each do |key|
+    include_examples "fiber variable ignore", key
+  end
+
   it "appends thread variables" do
-    th.thread_variable_set(:bingo, :bango)
-    subject.call(notice)
-    th.thread_variable_set(:bingo, nil)
+    Thread.new do
+      th.thread_variable_set(:bingo, :bango)
+      subject.call(notice)
+      th.thread_variable_set(:bingo, nil)
+    end.join
 
     expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(:bango)
   end
@@ -62,11 +79,13 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     end
 
     it "doesn't append the IO object to thread variables" do
-      th.thread_variable_set(:io, io_obj)
-      subject.call(notice)
-      th.thread_variable_set(:io, nil)
+      Thread.new do
+        th.thread_variable_set(:io, io_obj)
+        subject.call(notice)
+        th.thread_variable_set(:io, nil)
+      end.join
 
-      expect(notice[:params][:thread][:thread_variables][:io]).to be_nil
+      expect(notice[:params][:thread][:thread_variables]).to be_nil
     end
 
     it "doesn't append the IO object to thread variables" do
