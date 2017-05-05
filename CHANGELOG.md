@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.2.2][v2.2.2] (May 5, 2017)
+
 * Fixed `SystemStackError` while using the thread filter with RSpec
   ([#208](https://github.com/airbrake/airbrake-ruby/pull/208))
 
@@ -294,3 +296,4 @@ Airbrake Ruby Changelog
 [v2.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.1.0
 [v2.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.0
 [v2.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.1
+[v2.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.2
