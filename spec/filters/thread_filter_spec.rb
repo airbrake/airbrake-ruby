@@ -13,7 +13,11 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       th[key] = nil
 
       fiber_variables = notice[:params][:thread][:fiber_variables]
-      expect(fiber_variables[key]).to be_nil
+      if RUBY_ENGINE == 'jruby'
+        expect(fiber_variables).to be_nil
+      else
+        expect(fiber_variables[key]).to be_nil
+      end
     end
   end
 
