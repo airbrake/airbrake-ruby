@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::Promise do
-  subject { described_class.new }
-
   describe ".then" do
     let(:resolved_with) { [] }
     let(:rejected_with) { [] }
