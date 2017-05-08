@@ -1,23 +1,30 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::Filters::ThreadFilter do
-  subject { described_class.new }
+  let(:notice) do
+    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
+  end
 
-  let(:notice) { Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new) }
-  let(:th) { Thread.current }
+  def new_thread
+    Thread.new do
+      th = Thread.current
+
+      # Ensure a thread always has some variable to make sure the
+      # :fiber_variables Hash is always present.
+      th[:random_var] = 42
+      yield(th)
+    end.join
+  end
 
   shared_examples "fiber variable ignore" do |key|
     it "ignores the :#{key} fiber variable" do
-      th[key] = :bingo
-      subject.call(notice)
-      th[key] = nil
+      new_thread do |th|
+        th[key] = :bingo
+        subject.call(notice)
+      end
 
       fiber_variables = notice[:params][:thread][:fiber_variables]
-      if RUBY_ENGINE == 'jruby'
-        expect(fiber_variables).to be_nil
-      else
-        expect(fiber_variables[key]).to be_nil
-      end
+      expect(fiber_variables[key]).to be_nil
     end
   end
 
@@ -26,27 +33,28 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
   end
 
   it "appends thread variables" do
-    Thread.new do
+    new_thread do |th|
       th.thread_variable_set(:bingo, :bango)
       subject.call(notice)
-      th.thread_variable_set(:bingo, nil)
-    end.join
+    end
 
     expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(:bango)
   end
 
   it "appends fiber variables" do
-    th[:bingo] = :bango
-    subject.call(notice)
-    th[:bingo] = nil
+    new_thread do |th|
+      th[:bingo] = :bango
+      subject.call(notice)
+    end
 
     expect(notice[:params][:thread][:fiber_variables][:bingo]).to eq(:bango)
   end
 
   it "appends name", skip: !Thread.current.respond_to?(:name) do
-    th.name = 'bingo'
-    subject.call(notice)
-    th.name = nil
+    new_thread do |th|
+      th.name = 'bingo'
+      subject.call(notice)
+    end
 
     expect(notice[:params][:thread][:name]).to eq('bingo')
   end
@@ -83,19 +91,19 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     end
 
     it "doesn't append the IO object to thread variables" do
-      Thread.new do
+      new_thread do |th|
         th.thread_variable_set(:io, io_obj)
         subject.call(notice)
-        th.thread_variable_set(:io, nil)
-      end.join
+      end
 
       expect(notice[:params][:thread][:thread_variables]).to be_nil
     end
 
     it "doesn't append the IO object to thread variables" do
-      th[:io] = io_obj
-      subject.call(notice)
-      th[:io] = nil
+      new_thread do |th|
+        th[:io] = io_obj
+        subject.call(notice)
+      end
 
       expect(notice[:params][:thread][:fiber_variables][:io]).to be_nil
     end
