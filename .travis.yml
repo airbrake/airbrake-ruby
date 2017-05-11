@@ -1,0 +1,16 @@
+language: ruby
+sudo: false
+
+rvm:
+  - jruby-9.1.8.0
+
+env:
+  global:
+    - JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF"
+cache:
+  bundler: true
+
+notifications:
+  slack:
+    rooms:
+      secure: KA961/QiMZGtPX44AGoC+ALulY9X1jiBN2W0HlgSMQnAZ7QAU8ZVLt6jJWXqMzE7q2kD1pPaZJVv6QEFNVB3FDatiMhlL2p07VyDDEjCuV6c6OGJ32lTcsswFIshJsj773RHqDNlMxVtDT5NeRCNa72qYvNQp2QSJMdXNIqq0E0pLzwR9zma53DKdxh9+9iG2eJ060HbOcFJxAtsOxq0V9CgRWw7wLysOMTCZSb/II4IjpVvyOVTDvvtMlvNEnSzBi2b7x5Qh6p0B+2L2aGoXgQYtOQyvcOnvtyVwoV1gIIKlyNrQYq80bTu+QMtaNIVQBtDEMPap+7wqWHcptW3fifdUBOeosPfWGufDfR00/NHq91wLW3eHRX2lZiYXTaQLR3F/wD5vCOtrLfD6goboRnIPd9P2XEfLsgmpUQ10/Jlrvb56AFnEnJl9mjaNT5q7hK4qZR/ODpSnrw5D1x++jcj1A3+e+gM19PMplm94BVh3w+7IYJHjiJsCy5SnHwRdbnf87r2cMDqZuW3pYAf9jrDmXDYm98ijBKUP7dKm7qIPhm6LRIaGiwqB0nOD6UFEp/Ys9m4NFcVGrt54paFjh54wY+hs79ywH2JJnWVBabglUbCs03+nnhHfnBVDGFn9p9QnSwb9ja/hIQ4/flI6IqHf68A1y8IwB0jXHPS4zI=

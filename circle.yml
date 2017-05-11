@@ -1,67 +1,31 @@
-machine:
-  ruby:
-    version: 2.4.1
-
 dependencies:
   override:
-    - gem update --system
-    - bundle install
     - ? |
         case $CIRCLE_NODE_INDEX in
-          0)
-            rvm-exec 2.0.0-p645 bundle install
-            ;;
-          1)
-            rvm-exec 2.1.10 bundle install
-            ;;
-          2)
-            rvm-exec 2.2.7 bundle install
-            ;;
-          3)
-            # Workaround for https://github.com/sickill/rainbow/issues/48
-            rvm-exec 2.3.4 gem update --system
-
-            rvm-exec 2.3.4 bundle install
-            ;;
-          4)
-            rvm-exec 2.4.1 bundle install
-            ;;
-          5)
-            export JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF"
-
-            # Workaround for https://github.com/sickill/rainbow/issues/48
-            rvm-exec jruby-9.1.8.0 gem update --system
-
-            rvm-exec jruby-9.1.8.0 bundle install
-            ;;
+          0) rvm-exec 2.0.0-p645 bundle install ;;
+          1) rvm-exec 2.1.10 bundle install ;;
+          2) rvm-exec 2.2.7 bundle install ;;
+          3) rvm-exec 2.3.4 bundle install ;;
+          4) rvm-exec 2.4.1 bundle install ;;
         esac
       :
         parallel: true
 
 test:
   override:
-    - bundle exec rubocop
     - ? |
-        set -e
         case $CIRCLE_NODE_INDEX in
-          0)
-            rvm-exec 2.0.0-p645 bundle exec rake
-            ;;
-          1)
-            rvm-exec 2.1.10 bundle exec rake
-            ;;
-          2)
-            rvm-exec 2.2.7 bundle exec rake
-            ;;
-          3)
-            rvm-exec 2.3.4 bundle exec rake
-            ;;
-          4)
-            rvm-exec 2.4.1 bundle exec rake
-            ;;
-          5)
-            JRUBY_OPTS="--dev -Xcompile.invokedynamic=false -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-noverify -Xcompile.mode=OFF" rvm-exec jruby-9.1.8.0 bundle exec rake
-            ;;
+          4) rvm-exec 2.4.1 bundle exec rubocop ;;
+        esac
+      :
+        parallel: true
+    - ? |
+        case $CIRCLE_NODE_INDEX in
+          0) rvm-exec 2.0.0-p645 bundle exec rake ;;
+          1) rvm-exec 2.1.10 bundle exec rake ;;
+          2) rvm-exec 2.2.7 bundle exec rake ;;
+          3) rvm-exec 2.3.4 bundle exec rake ;;
+          4) rvm-exec 2.4.1 bundle exec rake ;;
         esac
       :
         parallel: true
