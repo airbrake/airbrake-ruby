@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug in keys filters while trying to filter a non Symbol/String key when
+  there's a Regexp ignore pattern defined
+  ([#213](https://github.com/airbrake/airbrake-ruby/pull/213))
+
 ### [v2.2.2][v2.2.2] (May 5, 2017)
 
 * Fixed `SystemStackError` while using the thread filter with RSpec

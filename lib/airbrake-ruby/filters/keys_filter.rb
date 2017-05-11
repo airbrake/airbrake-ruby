@@ -70,7 +70,7 @@ module Airbrake
 
       def filter_hash(hash)
         hash.each_key do |key|
-          if should_filter?(key)
+          if should_filter?(key.to_s)
             hash[key] = FILTERED
           elsif hash[key].is_a?(Hash)
             filter_hash(hash[key])
