@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.2.3][v2.2.3] (May 11, 2017)
+
 * Fixed bug in keys filters while trying to filter a non Symbol/String key when
   there's a Regexp ignore pattern defined
   ([#213](https://github.com/airbrake/airbrake-ruby/pull/213))
@@ -301,3 +303,4 @@ Airbrake Ruby Changelog
 [v2.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.0
 [v2.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.1
 [v2.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.2
+[v2.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.3
