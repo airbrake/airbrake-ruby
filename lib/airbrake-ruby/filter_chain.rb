@@ -19,33 +19,9 @@ module Airbrake
     # @return [Integer]
     DEFAULT_WEIGHT = 0
 
-    ##
-    # @param [Airbrake::Config] config
-    def initialize(config)
+    def initialize
       @filters = []
-
       DEFAULT_FILTERS.each { |f| add_filter(f.new) }
-
-      if config.whitelist_keys.any?
-        add_filter(
-          Airbrake::Filters::KeysWhitelist.new(
-            config.logger,
-            config.whitelist_keys
-          )
-        )
-      end
-
-      if config.blacklist_keys.any?
-        add_filter(
-          Airbrake::Filters::KeysBlacklist.new(
-            config.logger,
-            config.blacklist_keys
-          )
-        )
-      end
-
-      return unless (root_directory = config.root_directory)
-      add_filter(Airbrake::Filters::RootDirectoryFilter.new(root_directory))
     end
 
     ##
