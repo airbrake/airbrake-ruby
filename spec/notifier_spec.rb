@@ -494,6 +494,32 @@ RSpec.describe Airbrake::Notifier do
       @airbrake.notify_sync(ex)
       expect(a_request(:post, endpoint)).to have_been_made.once
     end
+
+    it "doesn't mutate params" do
+      params = {
+        bingo: '',
+        bango: { bongo: '' },
+        foo: { bar: { baz: '' } },
+        wibble: { wobble: { wubble: { flob: '' } } }
+      }
+
+      @airbrake.add_filter do |notice|
+        notice[:params][:bingo] << 'mutation'
+        notice[:params][:bango][:bongo] << 'mutation'
+        notice[:params][:foo][:bar][:baz] << 'mutation'
+        notice[:params][:wibble][:wobble][:wubble][:flob] << 'mutation'
+      end
+
+      @airbrake.notify_sync(ex, params)
+      expect(params).to(
+        eq(
+          bingo: '',
+          bango: { bongo: '' },
+          foo: { bar: { baz: '' } },
+          wibble: { wobble: { wubble: { flob: 'mutation' } } }
+        )
+      )
+    end
   end
 
   describe "#build_notice" do

@@ -67,6 +67,8 @@ module Airbrake
     attr_reader :stash
 
     def initialize(config, exception, params = {})
+      params = deep_dup(params)
+
       @config = config
 
       @payload = {
@@ -226,6 +228,14 @@ module Airbrake
           "#{LOG_LABEL} #{exception.class}#to_airbrake failed:" \
           " #{attributes} must be a Hash"
         )
+      end
+    end
+
+    def deep_dup(params, level = 1)
+      return params.dup if level > 3 || !params.respond_to?(:each_with_object)
+
+      params.each_with_object(params.dup) do |(key, value), hash|
+        hash[key] = deep_dup(value, level + 1)
       end
     end
   end
