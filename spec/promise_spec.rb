@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/promise.rb'
+
 RSpec.describe Airbrake::Promise do
   describe ".then" do
     let(:resolved_with) { [] }

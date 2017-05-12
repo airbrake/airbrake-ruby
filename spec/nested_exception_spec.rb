@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/nested_exception.rb'
+
 RSpec.describe Airbrake::NestedException do
   let(:config) { Airbrake::Config.new }
 

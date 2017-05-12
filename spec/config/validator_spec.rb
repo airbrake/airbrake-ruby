@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/config/validator.rb'
+
 RSpec.describe Airbrake::Config::Validator do
   subject { described_class.new(config) }
 

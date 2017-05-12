@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/backtrace.rb', uncovered: 2
+
 RSpec.describe Airbrake::Backtrace do
   describe ".parse" do
     context "UNIX backtrace" do

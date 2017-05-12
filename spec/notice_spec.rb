@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/notice.rb', uncovered: 1
+
 RSpec.describe Airbrake::Notice do
   let(:notice) do
     described_class.new(Airbrake::Config.new, AirbrakeTestError.new, bingo: '1')

@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/filter_chain.rb'
+
 RSpec.describe Airbrake::FilterChain do
   before do
     @chain = described_class.new(config)

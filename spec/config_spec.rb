@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/config.rb', uncovered: 1
+
 RSpec.describe Airbrake::Config do
   let(:config) { described_class.new }
 

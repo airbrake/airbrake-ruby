@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+SingleCov.covered! file: 'lib/airbrake-ruby/sync_sender.rb', uncovered: 4
+
 RSpec.describe Airbrake::SyncSender do
   describe "#build_https" do
     it "overrides Net::HTTP's open_timeout and read_timeout if timeout is specified" do

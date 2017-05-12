@@ -33,4 +33,5 @@ DESC
   s.add_development_dependency 'webmock', '~> 2.3'
   s.add_development_dependency 'benchmark-ips', '~> 2'
   s.add_development_dependency 'rubocop', '~> 0.47'
+  s.add_development_dependency 'single_cov', '~> 0'
 end
