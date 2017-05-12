@@ -155,11 +155,11 @@ module Airbrake
   class NilNotifier
     def notify(_exception, _params = {}); end
 
-    def notify_sync(_exception, _params); end
+    def notify_sync(_exception, _params = {}, &block); end
 
     def add_filter(_filter = nil, &_block); end
 
-    def build_notice(_exception, _params); end
+    def build_notice(_exception, _params = {}); end
 
     def close; end
 
