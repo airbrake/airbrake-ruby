@@ -33,7 +33,8 @@ module Airbrake
         raise Airbrake::Error, @config.validation_error_message
       end
 
-      @filter_chain = FilterChain.new(@config)
+      @filter_chain = FilterChain.new
+      add_default_filters
 
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
@@ -144,6 +145,25 @@ module Airbrake
       # at least some backtrace to simplify debugging.
       return caller_copy if clean_bt.empty?
       clean_bt
+    end
+
+    def add_default_filters
+      if (whitelist_keys = @config.whitelist_keys).any?
+        @filter_chain.add_filter(
+          Airbrake::Filters::KeysWhitelist.new(@config.logger, whitelist_keys)
+        )
+      end
+
+      if (blacklist_keys = @config.blacklist_keys).any?
+        @filter_chain.add_filter(
+          Airbrake::Filters::KeysBlacklist.new(@config.logger, blacklist_keys)
+        )
+      end
+
+      return unless (root_directory = @config.root_directory)
+      @filter_chain.add_filter(
+        Airbrake::Filters::RootDirectoryFilter.new(root_directory)
+      )
     end
   end
 
