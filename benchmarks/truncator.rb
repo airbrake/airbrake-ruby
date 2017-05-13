@@ -21,14 +21,14 @@ LOGGER = Logger.new('/dev/null')
 truncate_error_payload = Payload.generate
 truncate_object_payload = Payload.generate
 
-truncator = Airbrake::PayloadTruncator.new(TRUNCATOR_MAX_SIZE, LOGGER)
+truncator = Airbrake::Truncator.new(TRUNCATOR_MAX_SIZE, LOGGER)
 
 Benchmark.bm do |bm|
-  bm.report("PayloadTruncator#truncate_error ") do
+  bm.report("Truncator#truncate_error ") do
     truncate_error_payload.each { |error| truncator.truncate_error(error) }
   end
 
-  bm.report("PayloadTruncator#truncate_object") do
+  bm.report("Truncator#truncate_object") do
     truncate_object_payload.each { |error| truncator.truncate_object(error) }
   end
 end
