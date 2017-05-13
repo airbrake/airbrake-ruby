@@ -103,28 +103,28 @@ best_case = BenchmarkCase.best
 # Make sure we never truncate strings,
 # because this is irrelevant to this benchmark.
 MAX_PAYLOAD_SIZE = 1_000_000
-truncator = Airbrake::PayloadTruncator.new(MAX_PAYLOAD_SIZE, Logger.new('/dev/null'))
+truncator = Airbrake::Truncator.new(MAX_PAYLOAD_SIZE, Logger.new('/dev/null'))
 
 Benchmark.bmbm do |bm|
-  bm.report("(worst case utf8)  PayloadTruncator#truncate_string") do
+  bm.report("(worst case utf8)  Truncator#truncate_string") do
     worst_case_utf8.each do |str|
       truncator.__send__(:truncate_string, str)
     end
   end
 
-  bm.report("(worst case ascii) PayloadTruncator#truncate_string") do
+  bm.report("(worst case ascii) Truncator#truncate_string") do
     worst_case_ascii.each do |str|
       truncator.__send__(:truncate_string, str)
     end
   end
 
-  bm.report("(mixed)            PayloadTruncator#truncate_string") do
+  bm.report("(mixed)            Truncator#truncate_string") do
     mixed_case.each do |str|
       truncator.__send__(:truncate_string, str)
     end
   end
 
-  bm.report("(best case)        PayloadTruncator#truncate_string") do
+  bm.report("(best case)        Truncator#truncate_string") do
     best_case.each do |str|
       truncator.__send__(:truncate_string, str)
     end

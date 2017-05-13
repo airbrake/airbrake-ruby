@@ -5,7 +5,7 @@ module Airbrake
   #
   # @api private
   # @since v1.0.0
-  class PayloadTruncator
+  class Truncator
     ##
     # @return [Hash] the options for +String#encode+
     ENCODING_OPTIONS = { invalid: :replace, undef: :replace }.freeze

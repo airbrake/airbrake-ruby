@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Airbrake::PayloadTruncator do
+RSpec.describe Airbrake::Truncator do
   let(:max_size) { 1000 }
   let(:truncated_len) { '[Truncated]'.length }
   let(:max_len) { max_size + truncated_len }
