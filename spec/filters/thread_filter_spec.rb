@@ -16,29 +16,13 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     end.join
   end
 
-  shared_examples "fiber variable ignore" do |key|
-    it "ignores the :#{key} fiber variable" do
-      new_thread do |th|
-        th[key] = :bingo
-        subject.call(notice)
-      end
-
-      fiber_variables = notice[:params][:thread][:fiber_variables]
-      expect(fiber_variables[key]).to be_nil
-    end
-  end
-
-  %i[__recursive_key__ __rspec].each do |key|
-    include_examples "fiber variable ignore", key
-  end
-
   it "appends thread variables" do
     new_thread do |th|
       th.thread_variable_set(:bingo, :bango)
       subject.call(notice)
     end
 
-    expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(:bango)
+    expect(notice[:params][:thread][:thread_variables][:bingo]).to eq('"bango"')
   end
 
   it "appends fiber variables" do
@@ -47,7 +31,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       subject.call(notice)
     end
 
-    expect(notice[:params][:thread][:fiber_variables][:bingo]).to eq(:bango)
+    expect(notice[:params][:thread][:fiber_variables][:bingo]).to eq('"bango"')
   end
 
   it "appends name", skip: !Thread.current.respond_to?(:name) do
