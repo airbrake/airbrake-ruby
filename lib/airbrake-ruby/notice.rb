@@ -80,7 +80,7 @@ module Airbrake
 
       extract_custom_attributes(exception)
 
-      @truncator = Truncator.new(PAYLOAD_MAX_SIZE, @config.logger)
+      @truncator = Truncator.new(PAYLOAD_MAX_SIZE)
     end
 
     ##

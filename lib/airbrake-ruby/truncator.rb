@@ -17,10 +17,8 @@ module Airbrake
 
     ##
     # @param [Integer] max_size maximum size of hashes, arrays and strings
-    # @param [Logger] logger the logger object
-    def initialize(max_size, logger)
+    def initialize(max_size)
       @max_size = max_size
-      @logger = logger
     end
 
     ##
@@ -33,13 +31,11 @@ module Airbrake
     def truncate_error(error)
       if error[:message].length > @max_size
         error[:message] = truncate_string(error[:message])
-        @logger.info("#{LOG_LABEL} truncated the message of #{error[:type]}")
       end
 
-      return if (dropped_frames = error[:backtrace].size - @max_size) < 0
+      return if error[:backtrace].size - @max_size < 0
 
       error[:backtrace] = error[:backtrace].slice(0, @max_size)
-      @logger.info("#{LOG_LABEL} dropped #{dropped_frames} frame(s) from #{error[:type]}")
     end
 
     ##
