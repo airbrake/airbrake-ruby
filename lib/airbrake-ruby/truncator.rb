@@ -53,16 +53,17 @@ module Airbrake
       return seen[object] if seen[object]
 
       seen[object] = '[Circular]'.freeze
-      truncated = if object.is_a?(Hash)
-                    truncate_hash(object, seen)
-                  elsif object.is_a?(Array)
-                    truncate_array(object, seen)
-                  elsif object.is_a?(Set)
-                    truncate_set(object, seen)
-                  else
-                    raise Airbrake::Error,
-                          "cannot truncate object: #{object} (#{object.class})"
-                  end
+      truncated =
+        if object.is_a?(Hash)
+          truncate_hash(object, seen)
+        elsif object.is_a?(Array)
+          truncate_array(object, seen)
+        elsif object.is_a?(Set)
+          truncate_set(object, seen)
+        else
+          raise Airbrake::Error,
+                "cannot truncate object: #{object} (#{object.class})"
+        end
       seen[object] = truncated
     end
 
@@ -84,11 +85,12 @@ module Airbrake
       when Numeric, TrueClass, FalseClass, Symbol, NilClass
         val
       else
-        stringified_val = begin
-                            val.to_json
-                          rescue *Notice::JSON_EXCEPTIONS
-                            val.to_s
-                          end
+        stringified_val =
+          begin
+            val.to_json
+          rescue *Notice::JSON_EXCEPTIONS
+            val.to_s
+          end
         truncate_string(stringified_val)
       end
     end
