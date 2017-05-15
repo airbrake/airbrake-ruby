@@ -28,6 +28,8 @@ module Airbrake
     # @param [Hash,Array] object The object to truncate
     # @param [Hash] seen The hash that helps to detect recursion
     # @return [void]
+    # @note This method is public to simplify testing. You probably want to use
+    #   {truncate_notice} instead
     def truncate_object(object, seen = {})
       return seen[object] if seen[object]
 
@@ -48,7 +50,7 @@ module Airbrake
 
     ##
     # Reduces maximum allowed size of the truncated object.
-    # @return [void]
+    # @return [Integer] current +max_size+ value
     def reduce_max_size
       @max_size /= 2
     end
