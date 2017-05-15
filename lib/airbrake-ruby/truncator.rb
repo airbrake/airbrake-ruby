@@ -22,23 +22,6 @@ module Airbrake
     end
 
     ##
-    # Truncates errors (not exceptions) to fit the limit.
-    #
-    # @param [Hash] error
-    # @option error [Symbol] :message
-    # @option error [Array<String>] :backtrace
-    # @return [void]
-    def truncate_error(error)
-      if error[:message].length > @max_size
-        error[:message] = truncate_string(error[:message])
-      end
-
-      return if error[:backtrace].size - @max_size < 0
-
-      error[:backtrace] = error[:backtrace].slice(0, @max_size)
-    end
-
-    ##
     # Performs deep truncation of arrays, hashes and sets. Uses a
     # placeholder for recursive objects (`[Circular]`).
     #

@@ -53,6 +53,16 @@ module Airbrake
     ].freeze
 
     ##
+    # @return [Array<Symbol>] parts of a Notice's payload that can be modified
+    #   by the truncator
+    TRUNCATABLE_KEYS = %i[
+      errors
+      environment
+      session
+      params
+    ].freeze
+
+    ##
     # @return [String] the name of the host machine
     HOSTNAME = Socket.gethostname.freeze
 
@@ -185,13 +195,7 @@ module Airbrake
     end
 
     def truncate_payload
-      @payload[:errors].each do |error|
-        @truncator.truncate_error(error)
-      end
-
-      Filters::FILTERABLE_KEYS.each do |key|
-        @truncator.truncate_object(@payload[key])
-      end
+      TRUNCATABLE_KEYS.each { |key| @truncator.truncate_object(@payload[key]) }
 
       new_max_size = @truncator.reduce_max_size
       if new_max_size.zero?

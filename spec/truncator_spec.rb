@@ -11,19 +11,19 @@ RSpec.describe Airbrake::Truncator do
     @truncator = described_class.new(max_size)
   end
 
-  describe "#truncate_error" do
-    let(:error) do
-      { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
-    end
-
+  describe "#truncate_object" do
     describe "error backtrace" do
+      let(:error) do
+        { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
+      end
+
       before do
         backtrace = Array.new(size) do
           { file: 'foo.rb', line: 23, function: '<main>' }
         end
 
         @error = error.merge(backtrace: backtrace)
-        described_class.new(max_size).truncate_error(@error)
+        described_class.new(max_size).truncate_object(@error)
       end
 
       context "when long" do
@@ -44,9 +44,13 @@ RSpec.describe Airbrake::Truncator do
     end
 
     describe "error message" do
+      let(:error) do
+        { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
+      end
+
       before do
         @error = error.merge(message: message)
-        described_class.new(max_size).truncate_error(@error)
+        described_class.new(max_size).truncate_object(@error)
       end
 
       context "when long" do
@@ -66,9 +70,7 @@ RSpec.describe Airbrake::Truncator do
         end
       end
     end
-  end
 
-  describe "#truncate_object" do
     describe "given a hash with short values" do
       let(:params) do
         { bingo: 'bango', bongo: 'bish', bash: 'bosh' }
