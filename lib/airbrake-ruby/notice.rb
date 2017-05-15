@@ -4,7 +4,6 @@ module Airbrake
   # Airbrake or ignored completely.
   #
   # @since v1.0.0
-  # rubocop:disable Metrics/ClassLength
   class Notice
     ##
     # @return [Hash{Symbol=>String}] the information about the notifier library
@@ -44,13 +43,12 @@ module Airbrake
 
     # @return [Array<Symbol>] the list of keys that can be be overwritten with
     #   {Airbrake::Notice#[]=}
-    WRITABLE_KEYS = %i[
-      notifier
-      context
-      environment
-      session
-      params
-    ].freeze
+    WRITABLE_KEYS = %i[notifier context environment session params].freeze
+
+    ##
+    # @return [Array<Symbol>] parts of a Notice's payload that can be modified
+    #   by the truncator
+    TRUNCATABLE_KEYS = %i[errors environment session params].freeze
 
     ##
     # @return [String] the name of the host machine
@@ -77,10 +75,9 @@ module Airbrake
         params: params
       }
       @stash = {}
+      @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
 
       extract_custom_attributes(exception)
-
-      @truncator = Truncator.new(PAYLOAD_MAX_SIZE, @config.logger)
     end
 
     ##
@@ -99,7 +96,7 @@ module Airbrake
           return json if json && json.bytesize <= MAX_NOTICE_SIZE
         end
 
-        break if truncate_payload.zero?
+        break if truncate == 0
       end
     end
 
@@ -184,17 +181,11 @@ module Airbrake
       raise Airbrake::Error, "Got #{value.class} value, wanted a Hash"
     end
 
-    def truncate_payload
-      @payload[:errors].each do |error|
-        @truncator.truncate_error(error)
-      end
-
-      Filters::FILTERABLE_KEYS.each do |key|
-        @truncator.truncate_object(@payload[key])
-      end
+    def truncate
+      TRUNCATABLE_KEYS.each { |key| @truncator.truncate_object(self[key]) }
 
       new_max_size = @truncator.reduce_max_size
-      if new_max_size.zero?
+      if new_max_size == 0
         @config.logger.error(
           "#{LOG_LABEL} truncation failed. File an issue at " \
           "https://github.com/airbrake/airbrake-ruby " \
@@ -229,5 +220,4 @@ module Airbrake
       end
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

@@ -17,29 +17,8 @@ module Airbrake
 
     ##
     # @param [Integer] max_size maximum size of hashes, arrays and strings
-    # @param [Logger] logger the logger object
-    def initialize(max_size, logger)
+    def initialize(max_size)
       @max_size = max_size
-      @logger = logger
-    end
-
-    ##
-    # Truncates errors (not exceptions) to fit the limit.
-    #
-    # @param [Hash] error
-    # @option error [Symbol] :message
-    # @option error [Array<String>] :backtrace
-    # @return [void]
-    def truncate_error(error)
-      if error[:message].length > @max_size
-        error[:message] = truncate_string(error[:message])
-        @logger.info("#{LOG_LABEL} truncated the message of #{error[:type]}")
-      end
-
-      return if (dropped_frames = error[:backtrace].size - @max_size) < 0
-
-      error[:backtrace] = error[:backtrace].slice(0, @max_size)
-      @logger.info("#{LOG_LABEL} dropped #{dropped_frames} frame(s) from #{error[:type]}")
     end
 
     ##
@@ -49,26 +28,29 @@ module Airbrake
     # @param [Hash,Array] object The object to truncate
     # @param [Hash] seen The hash that helps to detect recursion
     # @return [void]
+    # @note This method is public to simplify testing. You probably want to use
+    #   {truncate_notice} instead
     def truncate_object(object, seen = {})
       return seen[object] if seen[object]
 
       seen[object] = '[Circular]'.freeze
-      truncated = if object.is_a?(Hash)
-                    truncate_hash(object, seen)
-                  elsif object.is_a?(Array)
-                    truncate_array(object, seen)
-                  elsif object.is_a?(Set)
-                    truncate_set(object, seen)
-                  else
-                    raise Airbrake::Error,
-                          "cannot truncate object: #{object} (#{object.class})"
-                  end
+      truncated =
+        if object.is_a?(Hash)
+          truncate_hash(object, seen)
+        elsif object.is_a?(Array)
+          truncate_array(object, seen)
+        elsif object.is_a?(Set)
+          truncate_set(object, seen)
+        else
+          raise Airbrake::Error,
+                "cannot truncate object: #{object} (#{object.class})"
+        end
       seen[object] = truncated
     end
 
     ##
     # Reduces maximum allowed size of the truncated object.
-    # @return [void]
+    # @return [Integer] current +max_size+ value
     def reduce_max_size
       @max_size /= 2
     end
@@ -84,11 +66,12 @@ module Airbrake
       when Numeric, TrueClass, FalseClass, Symbol, NilClass
         val
       else
-        stringified_val = begin
-                            val.to_json
-                          rescue *Notice::JSON_EXCEPTIONS
-                            val.to_s
-                          end
+        stringified_val =
+          begin
+            val.to_json
+          rescue *Notice::JSON_EXCEPTIONS
+            val.to_s
+          end
         truncate_string(stringified_val)
       end
     end

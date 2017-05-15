@@ -8,26 +8,22 @@ RSpec.describe Airbrake::Truncator do
   let(:max_len) { max_size + truncated_len }
 
   before do
-    @truncator = described_class.new(max_size, Logger.new('/dev/null'))
+    @truncator = described_class.new(max_size)
   end
 
-  describe "#truncate_error" do
-    let(:error) do
-      { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
-    end
-
-    before do
-      @stdout = StringIO.new
-    end
-
+  describe "#truncate_object" do
     describe "error backtrace" do
+      let(:error) do
+        { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
+      end
+
       before do
         backtrace = Array.new(size) do
           { file: 'foo.rb', line: 23, function: '<main>' }
         end
 
         @error = error.merge(backtrace: backtrace)
-        described_class.new(max_size, Logger.new(@stdout)).truncate_error(@error)
+        described_class.new(max_size).truncate_object(@error)
       end
 
       context "when long" do
@@ -35,11 +31,6 @@ RSpec.describe Airbrake::Truncator do
 
         it "truncates the backtrace to the max size" do
           expect(@error[:backtrace].size).to eq(1000)
-        end
-
-        it "logs the about the number of truncated frames" do
-          expect(@stdout.string).
-            to match(/INFO -- .+ dropped 1003 frame\(s\) from AirbrakeTestError/)
         end
       end
 
@@ -49,17 +40,17 @@ RSpec.describe Airbrake::Truncator do
         it "does not truncate the backtrace" do
           expect(@error[:backtrace].size).to eq(size)
         end
-
-        it "doesn't log anything" do
-          expect(@stdout.string).to be_empty
-        end
       end
     end
 
     describe "error message" do
+      let(:error) do
+        { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
+      end
+
       before do
         @error = error.merge(message: message)
-        described_class.new(max_size, Logger.new(@stdout)).truncate_error(@error)
+        described_class.new(max_size).truncate_object(@error)
       end
 
       context "when long" do
@@ -67,11 +58,6 @@ RSpec.describe Airbrake::Truncator do
 
         it "truncates the message" do
           expect(@error[:message].length).to eq(max_len)
-        end
-
-        it "logs about the truncated string" do
-          expect(@stdout.string).
-            to match(/INFO -- .+ truncated the message of AirbrakeTestError/)
         end
       end
 
@@ -82,15 +68,9 @@ RSpec.describe Airbrake::Truncator do
         it "doesn't truncate the message" do
           expect(@error[:message].length).to eq(msg_len)
         end
-
-        it "doesn't log about the truncated string" do
-          expect(@stdout.string).to be_empty
-        end
       end
     end
-  end
 
-  describe "#truncate_object" do
     describe "given a hash with short values" do
       let(:params) do
         { bingo: 'bango', bongo: 'bish', bash: 'bosh' }
@@ -270,7 +250,7 @@ RSpec.describe Airbrake::Truncator do
 
           context "with strings that equal to max_size" do
             before do
-              @truncator = described_class.new(max_size, Logger.new('/dev/null'))
+              @truncator = described_class.new(max_size)
             end
 
             let(:params) { { unicode: '1111' } }
@@ -399,7 +379,7 @@ RSpec.describe Airbrake::Truncator do
 
     describe "unicode payload" do
       before do
-        @truncator = described_class.new(max_size - 1, Logger.new('/dev/null'))
+        @truncator = described_class.new(max_size - 1)
       end
 
       describe "truncation" do

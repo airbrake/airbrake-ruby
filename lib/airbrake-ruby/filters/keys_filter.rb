@@ -19,6 +19,11 @@ module Airbrake
       VALID_PATTERN_CLASSES = [String, Symbol, Regexp].freeze
 
       ##
+      # @return [Array<Symbol>] parts of a Notice's payload that can be modified
+      #   by blacklist/whitelist filters
+      FILTERABLE_KEYS = %i[environment session params].freeze
+
+      ##
       # @return [Integer]
       attr_reader :weight
 
