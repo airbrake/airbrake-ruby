@@ -8,16 +8,6 @@ module Airbrake
       # @return [Integer]
       attr_reader :weight
 
-      ##
-      # @return [Array<Symbol>] the list of ignored fiber variables
-      IGNORED_FIBER_VARIABLES = [
-        # https://github.com/airbrake/airbrake-ruby/issues/204
-        :__recursive_key__,
-
-        # https://github.com/rails/rails/issues/28996
-        :__rspec
-      ].freeze
-
       def initialize
         @weight = 110
       end
@@ -49,15 +39,14 @@ module Airbrake
       def thread_variables(th)
         th.thread_variables.map.with_object({}) do |var, h|
           next if (value = th.thread_variable_get(var)).is_a?(IO)
-          h[var] = value
+          h[var] = value_to_json(value)
         end
       end
 
       def fiber_variables(th)
         th.keys.map.with_object({}) do |key, h|
-          next if IGNORED_FIBER_VARIABLES.any? { |v| v == key }
           next if (value = th[key]).is_a?(IO)
-          h[key] = value
+          h[key] = value_to_json(value)
         end
       end
 
@@ -67,6 +56,12 @@ module Airbrake
         thread_info[:priority] = th.priority
 
         thread_info[:safe_level] = th.safe_level unless Airbrake::JRUBY
+      end
+
+      def value_to_json(value)
+        value.to_json
+      rescue *Airbrake::Notice::JSON_EXCEPTIONS
+        value.to_s
       end
     end
   end

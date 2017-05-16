@@ -4,6 +4,7 @@ module Airbrake
   # Airbrake or ignored completely.
   #
   # @since v1.0.0
+  # rubocop:disable Metrics/ClassLength
   class Notice
     ##
     # @return [Hash{Symbol=>String}] the information about the notifier library
@@ -38,7 +39,8 @@ module Airbrake
       IOError,
       NotImplementedError,
       JSON::GeneratorError,
-      Encoding::UndefinedConversionError
+      Encoding::UndefinedConversionError,
+      SystemStackError
     ].freeze
 
     # @return [Array<Symbol>] the list of keys that can be be overwritten with
@@ -220,4 +222,5 @@ module Airbrake
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
