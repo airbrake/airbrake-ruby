@@ -16,38 +16,214 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     end.join
   end
 
-  shared_examples "fiber variable ignore" do |key|
-    it "ignores the :#{key} fiber variable" do
-      new_thread do |th|
-        th[key] = :bingo
-        subject.call(notice)
+  describe "thread variables" do
+    shared_examples "expected thread variable" do |var|
+      it "attaches the thread variable" do
+        new_thread do |th|
+          th.thread_variable_set(:bingo, var)
+          subject.call(notice)
+        end
+
+        expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(var)
+      end
+    end
+
+    context "given nil" do
+      include_examples "expected thread variable", nil
+    end
+
+    context "given true" do
+      include_examples "expected thread variable", true
+    end
+
+    context "given false" do
+      include_examples "expected thread variable", false
+    end
+
+    context "given a String" do
+      include_examples "expected thread variable", 'bango'
+    end
+
+    context "given a Symbol" do
+      include_examples "expected thread variable", :bango
+    end
+
+    context "given a Regexp" do
+      include_examples "expected thread variable", /bango/
+    end
+
+    context "given an Integer" do
+      include_examples "expected thread variable", 1
+    end
+
+    context "given a Float" do
+      include_examples "expected thread variable", 1.01
+    end
+
+    context "given an Object" do
+      it "converts it to a String and attaches" do
+        new_thread do |th|
+          th.thread_variable_set(:bingo, Object.new)
+          subject.call(notice)
+        end
+
+        vars = notice[:params][:thread][:thread_variables]
+        expect(vars[:bingo]).to match(/\A#<Object:.+>\z/)
+      end
+    end
+
+    context "given an Array of nested Hashes with complex objects" do
+      let(:var) do
+        [
+          {
+            bango: {
+              bongo: [
+                {
+                  bish: {
+                    bash: 'foo',
+                    bosh: Object.new
+                  }
+                }
+              ]
+            }
+          },
+          123
+        ]
       end
 
-      fiber_variables = notice[:params][:thread][:fiber_variables]
-      expect(fiber_variables[key]).to be_nil
+      it "converts objects to a safe objects" do
+        new_thread do |th|
+          th.thread_variable_set(:bingo, var)
+          subject.call(notice)
+        end
+
+        vars = notice[:params][:thread][:thread_variables]
+        expect(vars[:bingo]).to(
+          match(
+            [
+              {
+                bango: {
+                  bongo: [
+                    {
+                      bish: {
+                        bash: 'foo',
+                        bosh: /\A#<Object:.+>\z/
+                      }
+                    }
+                  ]
+                }
+              },
+              123
+            ]
+          )
+        )
+      end
     end
   end
 
-  %i[__recursive_key__ __rspec].each do |key|
-    include_examples "fiber variable ignore", key
-  end
+  describe "fiber variables" do
+    shared_examples "expected fiber variable" do |var|
+      it "attaches the fiber variable" do
+        new_thread do |th|
+          th[:bingo] = var
+          subject.call(notice)
+        end
 
-  it "appends thread variables" do
-    new_thread do |th|
-      th.thread_variable_set(:bingo, :bango)
-      subject.call(notice)
+        expect(notice[:params][:thread][:fiber_variables][:bingo]).to eq(var)
+      end
     end
 
-    expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(:bango)
-  end
-
-  it "appends fiber variables" do
-    new_thread do |th|
-      th[:bingo] = :bango
-      subject.call(notice)
+    context "given nil" do
+      include_examples "expected fiber variable", nil
     end
 
-    expect(notice[:params][:thread][:fiber_variables][:bingo]).to eq(:bango)
+    context "given true" do
+      include_examples "expected fiber variable", true
+    end
+
+    context "given false" do
+      include_examples "expected fiber variable", false
+    end
+
+    context "given a String" do
+      include_examples "expected fiber variable", 'bango'
+    end
+
+    context "given a Symbol" do
+      include_examples "expected fiber variable", :bango
+    end
+
+    context "given a Regexp" do
+      include_examples "expected fiber variable", /bango/
+    end
+
+    context "given an Integer" do
+      include_examples "expected fiber variable", 1
+    end
+
+    context "given a Float" do
+      include_examples "expected fiber variable", 1.01
+    end
+
+    context "given an Object" do
+      it "converts it to a String and attaches" do
+        new_thread do |th|
+          th[:bingo] = Object.new
+          subject.call(notice)
+        end
+
+        vars = notice[:params][:thread][:fiber_variables]
+        expect(vars[:bingo]).to match(/\A#<Object:.+>\z/)
+      end
+    end
+
+    context "given an Array of nested Hashes with complex objects" do
+      let(:var) do
+        [
+          {
+            bango: {
+              bongo: [
+                {
+                  bish: {
+                    bash: 'foo',
+                    bosh: Object.new
+                  }
+                }
+              ]
+            }
+          },
+          123
+        ]
+      end
+
+      it "converts objects to a safe objects" do
+        new_thread do |th|
+          th[:bingo] = var
+          subject.call(notice)
+        end
+
+        vars = notice[:params][:thread][:fiber_variables]
+        expect(vars[:bingo]).to(
+          match(
+            [
+              {
+                bango: {
+                  bongo: [
+                    {
+                      bish: {
+                        bash: 'foo',
+                        bosh: /\A#<Object:.+>\z/
+                      }
+                    }
+                  ]
+                }
+              },
+              123
+            ]
+          )
+        )
+      end
+    end
   end
 
   it "appends name", skip: !Thread.current.respond_to?(:name) do
@@ -77,35 +253,5 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
   it "appends safe_level", skip: Airbrake::JRUBY do
     subject.call(notice)
     expect(notice[:params][:thread][:safe_level]).to eq(0)
-  end
-
-  context "when an IO-like object is stored" do
-    let(:io_obj) do
-      Class.new(IO) do
-        def initialize; end
-      end.new
-    end
-
-    before do
-      expect(io_obj).to be_is_a(IO)
-    end
-
-    it "doesn't append the IO object to thread variables" do
-      new_thread do |th|
-        th.thread_variable_set(:io, io_obj)
-        subject.call(notice)
-      end
-
-      expect(notice[:params][:thread][:thread_variables]).to be_nil
-    end
-
-    it "doesn't append the IO object to thread variables" do
-      new_thread do |th|
-        th[:io] = io_obj
-        subject.call(notice)
-      end
-
-      expect(notice[:params][:thread][:fiber_variables][:io]).to be_nil
-    end
   end
 end

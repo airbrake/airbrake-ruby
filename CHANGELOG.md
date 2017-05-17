@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug in `ThreadFilter`, when it attaches an object, which can't be dumped
+  to JSON. As result, `ThreadFilter` has become stricter: it only allows
+  instances of whitelisted classes (primitives)
+  ([#224](https://github.com/airbrake/airbrake-ruby/pull/224))
+
 ### [v2.2.3][v2.2.3] (May 11, 2017)
 
 * Fixed bug in keys filters while trying to filter a non Symbol/String key when
