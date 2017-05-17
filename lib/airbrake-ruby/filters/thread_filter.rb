@@ -9,13 +9,16 @@ module Airbrake
       attr_reader :weight
 
       ##
-      # @return [Array<Symbol>] the list of ignored fiber variables
-      IGNORED_FIBER_VARIABLES = [
-        # https://github.com/airbrake/airbrake-ruby/issues/204
-        :__recursive_key__,
-
-        # https://github.com/rails/rails/issues/28996
-        :__rspec
+      # @return [Array<Class>] the list of classes that can be safely converted
+      #   to JSON
+      SAFE_CLASSES = [
+        NilClass,
+        TrueClass,
+        FalseClass,
+        String,
+        Symbol,
+        Regexp,
+        Numeric
       ].freeze
 
       def initialize
@@ -48,16 +51,13 @@ module Airbrake
 
       def thread_variables(th)
         th.thread_variables.map.with_object({}) do |var, h|
-          next if (value = th.thread_variable_get(var)).is_a?(IO)
-          h[var] = value
+          h[var] = sanitize_value(th.thread_variable_get(var))
         end
       end
 
       def fiber_variables(th)
         th.keys.map.with_object({}) do |key, h|
-          next if IGNORED_FIBER_VARIABLES.any? { |v| v == key }
-          next if (value = th[key]).is_a?(IO)
-          h[key] = value
+          h[key] = sanitize_value(th[key])
         end
       end
 
@@ -67,6 +67,19 @@ module Airbrake
         thread_info[:priority] = th.priority
 
         thread_info[:safe_level] = th.safe_level unless Airbrake::JRUBY
+      end
+
+      def sanitize_value(value)
+        return value if SAFE_CLASSES.any? { |klass| value.is_a?(klass) }
+
+        case value
+        when Array
+          value = value.map { |elem| sanitize_value(elem) }
+        when Hash
+          Hash[value.map { |k, v| [k, sanitize_value(v)] }]
+        else
+          value.to_s
+        end
       end
     end
   end
