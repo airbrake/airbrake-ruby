@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.2.4][v2.2.4] (May 17, 2017)
+
 * Fixed bug in `ThreadFilter`, when it attaches an object, which can't be dumped
   to JSON. As result, `ThreadFilter` has become stricter: it only allows
   instances of whitelisted classes (primitives)
@@ -309,3 +311,4 @@ Airbrake Ruby Changelog
 [v2.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.1
 [v2.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.2
 [v2.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.3
+[v2.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.4
