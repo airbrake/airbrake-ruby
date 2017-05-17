@@ -22,7 +22,6 @@ require 'airbrake-ruby/filters/keys_blacklist'
 require 'airbrake-ruby/filters/gem_root_filter'
 require 'airbrake-ruby/filters/system_exit_filter'
 require 'airbrake-ruby/filters/root_directory_filter'
-require 'airbrake-ruby/filters/thread_filter'
 require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 

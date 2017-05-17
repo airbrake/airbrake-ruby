@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Stopped attaching current thread information
+  ([#223](https://github.com/airbrake/airbrake-ruby/pull/223))
+
 ### [v2.2.3][v2.2.3] (May 11, 2017)
 
 * Fixed bug in keys filters while trying to filter a non Symbol/String key when

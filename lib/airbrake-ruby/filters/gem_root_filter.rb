@@ -12,7 +12,7 @@ module Airbrake
       attr_reader :weight
 
       def initialize
-        @weight = 120
+        @weight = 110
       end
 
       def call(notice)

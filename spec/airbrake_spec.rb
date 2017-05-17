@@ -152,11 +152,11 @@ RSpec.describe Airbrake do
       filter_chain = notifier.instance_variable_get(:@filter_chain)
       filters = filter_chain.instance_variable_get(:@filters)
 
-      expect(filters.size).to eq(4)
+      expect(filters.size).to eq(3)
 
       described_class.add_filter {}
 
-      expect(filters.size).to eq(5)
+      expect(filters.size).to eq(4)
       expect(filters.last).to be_a(Proc)
     end
   end
