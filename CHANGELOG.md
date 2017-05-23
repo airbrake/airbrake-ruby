@@ -3,8 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
-* Fixed bug when the block form of `notify` would run for ignored notices
-  ([#226](https://github.com/airbrake/airbrake-ruby/pull/226))
+### [v2.2.5][v2.2.5] (May 23, 2017)
+
+* Fixed bug when the block form of `notify` would run its block for ignored
+  notices: ([#226](https://github.com/airbrake/airbrake-ruby/pull/226))
 
 ### [v2.2.4][v2.2.4] (May 17, 2017)
 
@@ -315,3 +317,4 @@ Airbrake Ruby Changelog
 [v2.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.2
 [v2.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.3
 [v2.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.4
+[v2.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.5
