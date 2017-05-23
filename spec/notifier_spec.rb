@@ -387,7 +387,7 @@ RSpec.describe Airbrake::Notifier do
         end
       end
 
-      context "when a notice is ignored" do
+      context "when a notice is ignored before entering the block" do
         it "doesn't call the given block" do
           @airbrake.add_filter(&:ignore!)
           @airbrake.notify_sync(ex) { |n| n[:params][:bingo] = :bango }
@@ -395,6 +395,13 @@ RSpec.describe Airbrake::Notifier do
             a_request(:post, endpoint).
             with(body: /params":{.*"bingo":"bango".*}/)
           ).not_to have_been_made
+        end
+      end
+
+      context "and when a notice is ignored inside the block" do
+        it "doesn't send the notice" do
+          @airbrake.notify_sync(ex, &:ignore!)
+          expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end
     end
