@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug when the block form of `notify` would run for ignored notices
+  ([#226](https://github.com/airbrake/airbrake-ruby/pull/226))
+
 ### [v2.2.4][v2.2.4] (May 17, 2017)
 
 * Fixed bug in `ThreadFilter`, when it attaches an object, which can't be dumped

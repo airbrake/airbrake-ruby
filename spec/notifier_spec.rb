@@ -380,9 +380,22 @@ RSpec.describe Airbrake::Notifier do
     end
 
     describe "block argument" do
-      it "yields a notice" do
-        @airbrake.notify_sync(ex) { |notice| notice[:params][:bingo] = :bango }
-        expect_a_request_with_body(/params":{.*"bingo":"bango".*}/)
+      context "when a notice is not ignored" do
+        it "yields the notice" do
+          @airbrake.notify_sync(ex) { |notice| notice[:params][:bingo] = :bango }
+          expect_a_request_with_body(/params":{.*"bingo":"bango".*}/)
+        end
+      end
+
+      context "when a notice is ignored" do
+        it "doesn't call the given block" do
+          @airbrake.add_filter(&:ignore!)
+          @airbrake.notify_sync(ex) { |n| n[:params][:bingo] = :bango }
+          expect(
+            a_request(:post, endpoint).
+            with(body: /params":{.*"bingo":"bango".*}/)
+          ).not_to have_been_made
+        end
       end
     end
   end
