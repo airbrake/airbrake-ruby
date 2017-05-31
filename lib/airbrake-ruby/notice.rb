@@ -65,6 +65,7 @@ module Airbrake
     attr_reader :stash
 
     def initialize(config, exception, params = {})
+      params = params.dup
       @config = config
 
       @payload = {
