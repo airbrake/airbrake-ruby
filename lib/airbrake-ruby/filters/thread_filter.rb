@@ -21,6 +21,12 @@ module Airbrake
         Numeric
       ].freeze
 
+      ##
+      # Variables starting with this prefix are not attached to a notice.
+      # @see https://github.com/airbrake/airbrake-ruby/issues/229
+      # @return [String]
+      IGNORE_PREFIX = '_'.freeze
+
       def initialize
         @weight = 110
       end
@@ -51,12 +57,14 @@ module Airbrake
 
       def thread_variables(th)
         th.thread_variables.map.with_object({}) do |var, h|
+          next if var.to_s.start_with?(IGNORE_PREFIX)
           h[var] = sanitize_value(th.thread_variable_get(var))
         end
       end
 
       def fiber_variables(th)
         th.keys.map.with_object({}) do |key, h|
+          next if key.to_s.start_with?(IGNORE_PREFIX)
           h[key] = sanitize_value(th[key])
         end
       end
