@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed segfault in `ThreadFilter` on Ruby 2.1.3
+  ([#231](https://github.com/airbrake/airbrake-ruby/pull/231))
+
 ### [v2.2.5][v2.2.5] (May 23, 2017)
 
 * Fixed bug when the block form of `notify` would run its block for ignored

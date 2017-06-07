@@ -119,6 +119,18 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
         )
       end
     end
+
+    it "ignores thread variables starting with an underscore" do
+      var = :__recursive_key__
+
+      new_thread do |th|
+        th.thread_variable_set(var, :bingo)
+        subject.call(notice)
+      end
+
+      thread_variables = notice[:params][:thread][:thread_variables]
+      expect(thread_variables).to be_nil
+    end
   end
 
   describe "fiber variables" do
@@ -253,5 +265,17 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
   it "appends safe_level", skip: Airbrake::JRUBY do
     subject.call(notice)
     expect(notice[:params][:thread][:safe_level]).to eq(0)
+  end
+
+  it "ignores fiber variables starting with an underscore" do
+    key = :__recursive_key__
+
+    new_thread do |th|
+      th[key] = :bingo
+      subject.call(notice)
+    end
+
+    fiber_variables = notice[:params][:thread][:fiber_variables]
+    expect(fiber_variables[key]).to be_nil
   end
 end
