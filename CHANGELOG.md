@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.2.6][v2.2.6] (June 15, 2017)
+
 * Fixed segfault in `ThreadFilter` on Ruby 2.1.3
   ([#231](https://github.com/airbrake/airbrake-ruby/pull/231))
 
@@ -321,3 +323,4 @@ Airbrake Ruby Changelog
 [v2.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.3
 [v2.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.4
 [v2.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.5
+[v2.2.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.6
