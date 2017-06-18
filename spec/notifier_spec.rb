@@ -522,6 +522,12 @@ RSpec.describe Airbrake::Notifier do
     end
 
     context "given a non-exception with calculated internal frames only" do
+      it "prevents mutation of passed-in params hash" do
+        params = {only_this_item: true}
+        notice = @airbrake.build_notice(RuntimeError.new('bingo'), params)
+        expect(params.object_id).not_to eq(notice[:params].object_id)
+      end
+      
       it "returns the internal frames nevertheless" do
         backtrace = [
           "/airbrake-ruby/lib/airbrake-ruby/notifier.rb:84:in `build_notice'",
