@@ -74,7 +74,7 @@ module Airbrake
         exception[:params].merge!(params)
         exception
       else
-        Notice.new(@config, convert_to_exception(exception), params)
+        Notice.new(@config, convert_to_exception(exception), params.dup)
       end
     end
 
