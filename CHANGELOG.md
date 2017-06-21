@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed unwanted mutation of `params` on `Airbrake.notify(ex, params)`
+  ([#234](https://github.com/airbrake/airbrake-ruby/pull/234))
+
 ### [v2.2.6][v2.2.6] (June 15, 2017)
 
 * Fixed segfault in `ThreadFilter` on Ruby 2.1.3
