@@ -525,7 +525,8 @@ RSpec.describe Airbrake::Notifier do
       it "prevents mutation of passed-in params hash" do
         params = { only_this_item: true }
         notice = @airbrake.build_notice(RuntimeError.new('bingo'), params)
-        expect(params.object_id).not_to eq(notice[:params].object_id)
+        notice[:params][:extra_item] = :not_in_original_params
+        expect(params).to eq(only_this_item: true)
       end
 
       it "returns the internal frames nevertheless" do
