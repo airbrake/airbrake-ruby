@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.2.7][v2.2.7] (June 24, 2017)
+
 * Fixed unwanted mutation of `params` on `Airbrake.notify(ex, params)`
   ([#234](https://github.com/airbrake/airbrake-ruby/pull/234))
 
@@ -327,3 +329,4 @@ Airbrake Ruby Changelog
 [v2.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.4
 [v2.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.5
 [v2.2.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.6
+[v2.2.7]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.7
