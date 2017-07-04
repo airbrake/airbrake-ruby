@@ -136,6 +136,13 @@ module Airbrake
     end
 
     ##
+    # @return [Boolean] true if the notifier was configured, false otherwise
+    # @since 2.3.0
+    def configured?
+      @notifiers[:default].configured?
+    end
+
+    ##
     # Sends an exception to Airbrake asynchronously.
     #
     # @example Sending an exception

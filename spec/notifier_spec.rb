@@ -600,4 +600,9 @@ RSpec.describe Airbrake::Notifier do
       end
     end
   end
+
+  describe "#configured?" do
+    subject { described_class.new(airbrake_params) }
+    it { is_expected.to be_configured }
+  end
 end

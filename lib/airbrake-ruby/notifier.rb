@@ -94,6 +94,12 @@ module Airbrake
       promise
     end
 
+    ##
+    # @macro see_public_api_method
+    def configured?
+      @config.valid?
+    end
+
     private
 
     def convert_to_exception(ex)
@@ -184,5 +190,9 @@ module Airbrake
     def close; end
 
     def create_deploy(_deploy_params); end
+
+    def configured?
+      false
+    end
   end
 end

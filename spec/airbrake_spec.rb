@@ -145,6 +145,19 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe ".configured?" do
+    before do
+      described_class.instance_variable_set(
+        :@notifiers,
+        Hash.new(Airbrake::NilNotifier.new)
+      )
+    end
+
+    it "returns false" do
+      expect(described_class).not_to be_configured
+    end
+  end
+
   describe ".add_filter" do
     include_examples 'non-configured notifier handling', :add_filter
 

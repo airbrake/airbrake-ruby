@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added a new helper method `Airbrake#configured?`
+  ([#237](https://github.com/airbrake/airbrake-ruby/pull/237))
+
 ### [v2.2.7][v2.2.7] (June 24, 2017)
 
 * Fixed unwanted mutation of `params` on `Airbrake.notify(ex, params)`
