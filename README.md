@@ -600,6 +600,14 @@ Airbrake.create_deploy(
 )
 ```
 
+#### Airbrake.configured?
+
+Checks whether the notifier is configured or not:
+
+```ruby
+Airbrake.configured? #=> false
+```
+
 ### Notice
 
 #### Notice#ignore!
