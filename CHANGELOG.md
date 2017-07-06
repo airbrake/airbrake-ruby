@@ -3,7 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
-* Added a new helper method `Airbrake#configured?`
+### [v2.3.0][v2.3.0] (June 6, 2017)
+
+* Added a new helper method `Airbrake.configured?`
   ([#237](https://github.com/airbrake/airbrake-ruby/pull/237))
 
 ### [v2.2.7][v2.2.7] (June 24, 2017)
@@ -333,3 +335,4 @@ Airbrake Ruby Changelog
 [v2.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.5
 [v2.2.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.6
 [v2.2.7]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.7
+[v2.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.0
