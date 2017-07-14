@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fix response parser not parsing errors
+  ([#239](https://github.com/airbrake/airbrake-ruby/pull/239))
+
 ### [v2.3.0][v2.3.0] (June 6, 2017)
 
 * Added a new helper method `Airbrake.configured?`

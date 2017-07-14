@@ -184,8 +184,8 @@ RSpec.describe Airbrake::Notifier do
           expect(@stdout.string).to match(expected_output)
           expect(response).to be_a Hash
 
-          if response['error']
-            expect(response['error']).to satisfy do |error|
+          if response['message']
+            expect(response['message']).to satisfy do |error|
               error.is_a?(Exception) || error.is_a?(String)
             end
           end
@@ -215,18 +215,18 @@ RSpec.describe Airbrake::Notifier do
       end
 
       context "error 400" do
-        include_examples 'HTTP codes', 400, '{"error": "Invalid Content-Type header."}',
+        include_examples 'HTTP codes', 400, '{"message": "Invalid Content-Type header."}',
                          /ERROR -- : .+ Invalid Content-Type header\./
       end
 
       context "error 401" do
         include_examples 'HTTP codes', 401,
-                         '{"error":"Project not found or access denied."}',
+                         '{"message":"Project not found or access denied."}',
                          /ERROR -- : .+ Project not found or access denied./
       end
 
       context "the rate-limit message" do
-        include_examples 'HTTP codes', 429, '{"error": "Project is rate limited."}',
+        include_examples 'HTTP codes', 429, '{"message": "Project is rate limited."}',
                          /ERROR -- : .+ Project is rate limited.+/
       end
 
