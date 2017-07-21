@@ -62,7 +62,7 @@ module Airbrake
     # @since v1.7.0
     # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
     #   in filters
-    attr_reader :stash
+    attr_reader :stash, :exception
 
     def initialize(config, exception, params = {})
       @config = config
@@ -75,6 +75,7 @@ module Airbrake
         params: params
       }
       @stash = {}
+      @exception = exception
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
 
       extract_custom_attributes(exception)
