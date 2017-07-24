@@ -497,7 +497,7 @@ Instead, you can ignore notices based on some condition.
 
 ```ruby
 Airbrake.add_filter do |notice|
-  notice.ignore! if notice.exception.kind_of? StandardError
+  notice.ignore! if notice.exception.kind_of?(StandardError)
 end
 ```
 

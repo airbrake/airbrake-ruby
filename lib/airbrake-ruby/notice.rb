@@ -62,7 +62,11 @@ module Airbrake
     # @since v1.7.0
     # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
     #   in filters
-    attr_reader :stash, :exception
+    attr_reader :stash
+
+    ##
+    # @return [Exception] raw exception
+    attr_reader :exception
 
     def initialize(config, exception, params = {})
       @config = config
