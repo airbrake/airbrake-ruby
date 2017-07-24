@@ -519,7 +519,7 @@ RSpec.describe Airbrake::Notifier do
       class AirbrakeTestSubError < AirbrakeTestError; end
 
       @airbrake.add_filter do |notice|
-        notice.ignore! if notice.exception.kind_of? AirbrakeTestError
+        notice.ignore! if notice.exception.kind_of?(AirbrakeTestError)
       end
 
       @airbrake.notify_sync(AirbrakeTestSubError.new('Not caring!'))
