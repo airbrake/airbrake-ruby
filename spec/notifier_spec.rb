@@ -516,13 +516,13 @@ RSpec.describe Airbrake::Notifier do
     end
 
     it "ignores descendant classes" do
-      class AirbrakeTestSubError < AirbrakeTestError; end
+      descendant = Class.new(AirbrakeTestError)
 
       @airbrake.add_filter do |notice|
-        notice.ignore! if notice.exception.kind_of?(AirbrakeTestError)
+        notice.ignore! if notice.stash[:exception].is_a?(AirbrakeTestError)
       end
 
-      @airbrake.notify_sync(AirbrakeTestSubError.new('Not caring!'))
+      @airbrake.notify_sync(descendant.new('Not caring!'))
       expect(a_request(:post, endpoint)).not_to have_been_made
 
       @airbrake.notify_sync(RuntimeError.new('Catch me if you can!'))

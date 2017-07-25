@@ -64,10 +64,6 @@ module Airbrake
     #   in filters
     attr_reader :stash
 
-    ##
-    # @return [Exception] raw exception
-    attr_reader :exception
-
     def initialize(config, exception, params = {})
       @config = config
 
@@ -78,8 +74,7 @@ module Airbrake
         session: {},
         params: params
       }
-      @stash = {}
-      @exception = exception
+      @stash = {exception: exception}
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
 
       extract_custom_attributes(exception)
