@@ -10,16 +10,10 @@ Lint/HandleExceptions:
 Metrics/MethodLength:
   Max: 25
 
-Style/SpaceInsideBrackets:
-  Enabled: true
-
 Metrics/LineLength:
   Max: 90
 
-Style/AccessorMethodName:
-  Enabled: true
-
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
 # Details:
@@ -35,36 +29,15 @@ Style/StringLiterals:
 Style/HashSyntax:
   EnforcedStyle: ruby19
 
-Style/GuardClause:
-  Enabled: true
-
 Style/FileName:
   Exclude:
     - 'lib/airbrake-ruby.rb'
 
-Style/SpaceInsideHashLiteralBraces:
-  Enabled: true
-
 Style/NumericLiterals:
   Enabled: false
 
-Style/ParallelAssignment:
-  Enabled: true
-
-Style/SpaceAroundOperators:
-  Enabled: true
-
 Style/SignalException:
   EnforcedStyle: only_raise
-
-Style/RedundantSelf:
-  Enabled: true
-
-Style/SpaceInsideParens:
-  Enabled: true
-
-Style/TrivialAccessors:
-  AllowPredicates: true
 
 Style/PredicateName:
   Exclude:
@@ -73,30 +46,12 @@ Style/PredicateName:
 Metrics/ClassLength:
   Max: 120
 
-Performance/TimesMap:
-  Enabled: true
-
-Style/IfInsideElse:
-  Enabled: true
-
 # TODO: enable this when Ruby 3.0 is out.
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/IndentArray:
+Layout/IndentArray:
   EnforcedStyle: consistent
-
-Style/MutableConstant:
-  Enabled: true
-
-Style/RedundantSelf:
-  Enabled: true
-
-Style/MultilineMethodCallBraceLayout:
-  Enabled: true
-
-Style/MultilineHashBraceLayout:
-  Enabled: true
 
 Style/NumericPredicate:
   Enabled: false
@@ -119,5 +74,5 @@ Metrics/BlockLength:
 Performance/RegexpMatch:
   Enabled: false
 
-Style/IndentHeredoc:
+Layout/IndentHeredoc:
   Enabled: false
