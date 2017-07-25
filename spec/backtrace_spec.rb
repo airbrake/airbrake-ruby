@@ -4,7 +4,7 @@ RSpec.describe Airbrake::Backtrace do
   describe ".parse" do
     context "UNIX backtrace" do
       let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceAroundOperators, Style/SpaceInsideHashLiteralBraces
+        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceAroundOperators, Layout/SpaceInsideHashLiteralBraces
         [{:file=>"/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb", :line=>23, :function=>"<top (required)>"},
          {:file=>"/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb", :line=>54, :function=>"require"},
          {:file=>"/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb", :line=>54, :function=>"require"},
@@ -18,7 +18,7 @@ RSpec.describe Airbrake::Backtrace do
          {:file=>"/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb", :line=>73, :function=>"run"},
          {:file=>"/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb", :line=>41, :function=>"invoke"},
          {:file=>"/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec", :line=>4, :function=>"<main>"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax,Style/SpaceAroundOperators, Style/SpaceInsideHashLiteralBraces
+        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceAroundOperators, Layout/SpaceInsideHashLiteralBraces
       end
 
       it "returns a properly formatted array of hashes" do
@@ -37,10 +37,10 @@ RSpec.describe Airbrake::Backtrace do
       let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(windows_bt) } }
 
       let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
         [{:file=>"C:/Program Files/Server/app/models/user.rb", :line=>13, :function=>"magic"},
          {:file=>"C:/Program Files/Server/app/controllers/users_controller.rb", :line=>8, :function=>"index"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
       end
 
       it "returns a properly formatted array of hashes" do
@@ -52,7 +52,7 @@ RSpec.describe Airbrake::Backtrace do
 
     context "JRuby Java exceptions" do
       let(:backtrace_array) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
         [{:file=>"InstanceMethodInvoker.java", :line=>26, :function=>"org.jruby.java.invokers.InstanceMethodInvoker.call"},
          {:file=>"Interpreter.java", :line=>126, :function=>"org.jruby.ir.interpreter.Interpreter.INTERPRET_EVAL"},
          {:file=>"RubyKernel$INVOKER$s$0$3$eval19.gen", :line=>nil, :function=>"org.jruby.RubyKernel$INVOKER$s$0$3$eval19.call"},
@@ -64,7 +64,7 @@ RSpec.describe Airbrake::Backtrace do
          {:file=>"Compiler.java", :line=>111, :function=>"org.jruby.ir.Compiler$1.load"},
          {:file=>"Main.java", :line=>225, :function=>"org.jruby.Main.run"},
          {:file=>"Main.java", :line=>197, :function=>"org.jruby.Main.main"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
       end
 
       it "returns a properly formatted array of hashes" do
@@ -145,11 +145,11 @@ RSpec.describe Airbrake::Backtrace do
         let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(generic_bt) } }
 
         let(:parsed_backtrace) do
-          # rubocop:disable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+          # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
           [{:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>"animation"},
            {:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>nil},
            {:file=>"/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb", :line=>349, :function=>"block in visit_mixin"}]
-          # rubocop:enable Metrics/LineLength, Style/HashSyntax, Style/SpaceInsideHashLiteralBraces, Style/SpaceAroundOperators
+          # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
         end
 
         it "returns a properly formatted array of hashes" do
