@@ -514,6 +514,20 @@ RSpec.describe Airbrake::Notifier do
       @airbrake.notify_sync(ex)
       expect(a_request(:post, endpoint)).to have_been_made.once
     end
+
+    it "ignores descendant classes" do
+      descendant = Class.new(AirbrakeTestError)
+
+      @airbrake.add_filter do |notice|
+        notice.ignore! if notice.stash[:exception].is_a?(AirbrakeTestError)
+      end
+
+      @airbrake.notify_sync(descendant.new('Not caring!'))
+      expect(a_request(:post, endpoint)).not_to have_been_made
+
+      @airbrake.notify_sync(RuntimeError.new('Catch me if you can!'))
+      expect(a_request(:post, endpoint)).to have_been_made.once
+    end
   end
 
   describe "#build_notice" do

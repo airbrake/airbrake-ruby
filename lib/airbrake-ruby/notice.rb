@@ -74,7 +74,7 @@ module Airbrake
         session: {},
         params: params
       }
-      @stash = {}
+      @stash = { exception: exception }
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
 
       extract_custom_attributes(exception)
