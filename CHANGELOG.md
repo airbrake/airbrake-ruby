@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.3.2][v2.3.2] (July 26, 2017)
+
+* Every notice started carrying original exception, accessible via the notice
+  stash ([#241](https://github.com/airbrake/airbrake-ruby/pull/241))
+
 ### [v2.3.1][v2.3.1] (July 15, 2017)
 
 * Fix response parser not parsing errors
@@ -342,3 +347,4 @@ Airbrake Ruby Changelog
 [v2.2.7]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.2.7
 [v2.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.0
 [v2.3.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.1
+[v2.3.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.2
