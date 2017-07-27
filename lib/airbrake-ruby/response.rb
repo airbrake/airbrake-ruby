@@ -26,7 +26,7 @@ module Airbrake
           parsed_body = JSON.parse(body)
           logger.debug("#{LOG_LABEL} #{parsed_body}")
           parsed_body
-        when 400, 401, 403, 429
+        when 400, 401, 403, 420, 429
           parsed_body = JSON.parse(body)
           logger.error("#{LOG_LABEL} #{parsed_body['message']}")
           parsed_body
