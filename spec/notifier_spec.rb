@@ -225,6 +225,12 @@ RSpec.describe Airbrake::Notifier do
                          /ERROR -- : .+ Project not found or access denied./
       end
 
+      context "error 420" do
+        include_examples 'HTTP codes', 420,
+                         '{"message":"Project is rate limited."}',
+                         /ERROR -- : .+ Project is rate limited./
+      end
+
       context "the rate-limit message" do
         include_examples 'HTTP codes', 429, '{"message": "Project is rate limited."}',
                          /ERROR -- : .+ Project is rate limited.+/
