@@ -67,6 +67,9 @@ module Airbrake
     def initialize(config, exception, params = {})
       @config = config
 
+      # The command used to execute the program.
+      params[:programName] = $PROGRAM_NAME
+
       @payload = {
         errors: NestedException.new(exception, @config.logger).as_json,
         context: context,
