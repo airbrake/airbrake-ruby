@@ -5,7 +5,10 @@ module Airbrake
     # notice, but specified keys.
     #
     # @example
-    #   filter = Airbrake::Filters::KeysWhitelist.new(Logger.new(STDOUT), [:email, /user/i, 'account_id'])
+    #   filter = Airbrake::Filters::KeysBlacklist.new(
+    #     Logger.new(STDOUT), 
+    #     [:email, /credit/i, 'password']
+    #   )
     #   airbrake.add_filter(filter)
     #   airbrake.notify(StandardError.new('App crashed!'), {
     #     user: 'John',
