@@ -204,6 +204,11 @@ RSpec.describe Airbrake::Notice do
     it "defaults to the error severity" do
       expect(notice.to_json).to match(/"context":{.*"severity":"error".*}/)
     end
+
+    it "always contains environment/program_name" do
+      expect(notice.to_json).
+        to match(%r|"environment":{"program_name":.+/exe/rspec.*|)
+    end
   end
 
   describe "#[]" do

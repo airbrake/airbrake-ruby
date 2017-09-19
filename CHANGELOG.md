@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Started appending `$PROGRAM_NAME` to `environment`
+  ([#251](https://github.com/airbrake/airbrake-ruby/pull/251))
+
 ### [v2.3.2][v2.3.2] (July 26, 2017)
 
 * Every notice started carrying original exception, accessible via the notice
