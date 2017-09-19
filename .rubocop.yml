@@ -4,9 +4,6 @@ AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
 
-Lint/HandleExceptions:
-  Enabled: true
-
 Metrics/MethodLength:
   Max: 25
 
