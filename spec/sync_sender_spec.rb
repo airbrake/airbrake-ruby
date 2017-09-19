@@ -13,12 +13,12 @@ RSpec.describe Airbrake::SyncSender do
 
   describe "#send" do
     let(:promise) { Airbrake::Promise.new }
+    let(:stdout) { StringIO.new }
+    let(:config) { Airbrake::Config.new(logger: Logger.new(stdout)) }
+    let(:sender) { described_class.new(config) }
+    let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
 
     it "catches exceptions raised while sending" do
-      stdout = StringIO.new
-      config = Airbrake::Config.new(logger: Logger.new(stdout))
-      sender = described_class.new(config)
-      notice = Airbrake::Notice.new(config, AirbrakeTestError.new)
       https = double("foo")
       allow(sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
@@ -40,16 +40,34 @@ RSpec.describe Airbrake::SyncSender do
         10.times { backtrace << "bin/rails:3:in `<#{bad_string}>'" }
         ex.set_backtrace(backtrace)
 
-        stdout = StringIO.new
-        config = Airbrake::Config.new(logger: Logger.new(stdout))
-
-        sender = described_class.new(config)
         notice = Airbrake::Notice.new(config, ex)
 
         expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
         expect(promise.value).
           to match('error' => '**Airbrake: notice was not sent because of missing body')
         expect(stdout.string).to match(/ERROR -- : .+ notice was not sent/)
+      end
+    end
+
+    context "when IP is rate limited" do
+      let(:endpoint) { %r{https://airbrake.io/api/v3/projects/notices} }
+
+      before do
+        stub_request(:post, endpoint).to_return(
+          status: 429,
+          body: '{"message":"IP is rate limited"}',
+          headers: { 'X-RateLimit-Delay' => '45' }
+        )
+      end
+
+      it "returns error" do
+        2.times do
+          sender.send(notice, promise)
+          expect(promise.value).
+            to match('error' => '**Airbrake: IP is rate limited')
+        end
+
+        expect(a_request(:post, endpoint)).to have_been_made.once
       end
     end
   end

@@ -14,6 +14,7 @@ module Airbrake
     # @param [Airbrake::Config] config
     def initialize(config)
       @config = config
+      @rate_limit_reset = Time.now
     end
 
     ##
@@ -23,6 +24,10 @@ module Airbrake
     # @param [Airbrake::Notice] endpoint
     # @return [Hash{String=>String}] the parsed HTTP response
     def send(notice, promise, endpoint = @config.endpoint)
+      if Time.now < @rate_limit_reset
+        return promise.reject("#{LOG_LABEL} IP is rate limited")
+      end
+
       response = nil
       req = build_post_request(endpoint, notice)
 
@@ -43,6 +48,10 @@ module Airbrake
       end
 
       parsed_resp = Response.parse(response, @config.logger)
+      if parsed_resp.key?('delay')
+        @rate_limit_reset = parsed_resp['delay']
+      end
+
       return promise.reject(parsed_resp['error']) if parsed_resp.key?('error')
       promise.resolve(parsed_resp)
     end
