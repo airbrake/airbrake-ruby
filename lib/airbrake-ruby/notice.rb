@@ -70,7 +70,9 @@ module Airbrake
       @payload = {
         errors: NestedException.new(exception, @config.logger).as_json,
         context: context,
-        environment: {},
+        environment: {
+          program_name: $PROGRAM_NAME
+        },
         session: {},
         params: params
       }
