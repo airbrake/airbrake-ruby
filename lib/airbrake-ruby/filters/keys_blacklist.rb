@@ -5,7 +5,7 @@ module Airbrake
     # list of parameters in the payload of a notice.
     #
     # @example
-    #   filter = Airbrake::Filters::KeysBlacklist.new(:email, /credit/i, 'password')
+    #   filter = Airbrake::Filters::KeysBlacklist.new(Logger.new(STDOUT), [:email, /credit/i, 'password'])
     #   airbrake.add_filter(filter)
     #   airbrake.notify(StandardError.new('App crashed!'), {
     #     user: 'John'

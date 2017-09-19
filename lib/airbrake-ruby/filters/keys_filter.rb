@@ -31,6 +31,7 @@ module Airbrake
       # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
+      # @param [Logger, #error] logger
       # @param [Array<String,Regexp,Symbol>] patterns
       def initialize(logger, patterns)
         @logger = logger
