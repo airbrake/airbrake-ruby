@@ -43,11 +43,11 @@ class AirbrakeTestError < RuntimeError
     # rubocop:enable Metrics/LineLength
   end
 
-  # rubocop:disable Style/AccessorMethodName
+  # rubocop:disable Naming/AccessorMethodName
   def set_backtrace(backtrace)
     @backtrace = backtrace
   end
-  # rubocop:enable Style/AccessorMethodName
+  # rubocop:enable Naming/AccessorMethodName
 
   def message
     'App crashed!'
@@ -90,9 +90,9 @@ class Ruby21Error < RuntimeError
   end
 end
 
-puts <<EOS
+puts <<BANNER
 #{'#' * 80}
 # RUBY_VERSION: #{RUBY_VERSION}
 # RUBY_ENGINE: #{RUBY_ENGINE}
 #{'#' * 80}
-EOS
+BANNER

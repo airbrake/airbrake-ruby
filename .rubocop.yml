@@ -4,9 +4,6 @@ AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
 
-Lint/HandleExceptions:
-  Enabled: true
-
 Metrics/MethodLength:
   Max: 25
 
@@ -29,7 +26,7 @@ Style/StringLiterals:
 Style/HashSyntax:
   EnforcedStyle: ruby19
 
-Style/FileName:
+Naming/FileName:
   Exclude:
     - 'lib/airbrake-ruby.rb'
 
@@ -39,7 +36,7 @@ Style/NumericLiterals:
 Style/SignalException:
   EnforcedStyle: only_raise
 
-Style/PredicateName:
+Naming/PredicateName:
   Exclude:
     - 'lib/airbrake-ruby/async_sender.rb'
 
@@ -56,7 +53,7 @@ Layout/IndentArray:
 Style/NumericPredicate:
   Enabled: false
 
-Style/VariableNumber:
+Naming/VariableNumber:
   Enabled: false
 
 Style/SafeNavigation:

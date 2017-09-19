@@ -36,7 +36,7 @@ module Airbrake
 
       begin
         response = https.request(req)
-      rescue => ex
+      rescue StandardError => ex
         reason = "#{LOG_LABEL} HTTP error: #{ex}"
         @config.logger.error(reason)
         return promise.reject(reason)
