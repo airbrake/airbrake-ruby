@@ -35,7 +35,7 @@ module Airbrake
           logger.error("#{LOG_LABEL} unexpected code (#{code}). Body: #{body_msg}")
           { 'error' => body_msg }
         end
-      rescue => ex
+      rescue StandardError => ex
         body_msg = truncated_body(body)
         logger.error("#{LOG_LABEL} error while parsing body (#{ex}). Body: #{body_msg}")
         { 'error' => ex.inspect }

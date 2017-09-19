@@ -200,7 +200,7 @@ module Airbrake
 
       begin
         attributes = exception.to_airbrake
-      rescue => ex
+      rescue StandardError => ex
         @config.logger.error(
           "#{LOG_LABEL} #{exception.class}#to_airbrake failed: #{ex.class}: #{ex}"
         )
