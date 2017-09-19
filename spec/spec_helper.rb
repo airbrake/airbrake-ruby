@@ -90,9 +90,9 @@ class Ruby21Error < RuntimeError
   end
 end
 
-puts <<EOS
+puts <<BANNER
 #{'#' * 80}
 # RUBY_VERSION: #{RUBY_VERSION}
 # RUBY_ENGINE: #{RUBY_ENGINE}
 #{'#' * 80}
-EOS
+BANNER
