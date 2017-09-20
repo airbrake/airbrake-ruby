@@ -56,18 +56,28 @@ RSpec.describe Airbrake::SyncSender do
         stub_request(:post, endpoint).to_return(
           status: 429,
           body: '{"message":"IP is rate limited"}',
-          headers: { 'X-RateLimit-Delay' => '45' }
+          headers: { 'X-RateLimit-Delay' => '1' }
         )
       end
 
       it "returns error" do
-        2.times do
-          sender.send(notice, promise)
-          expect(promise.value).
-            to match('error' => '**Airbrake: IP is rate limited')
-        end
+        p1 = Airbrake::Promise.new
+        sender.send(notice, p1)
+        expect(p1.value).to match('error' => '**Airbrake: IP is rate limited')
 
-        expect(a_request(:post, endpoint)).to have_been_made.once
+        p2 = Airbrake::Promise.new
+        sender.send(notice, p2)
+        expect(p2.value).to match('error' => '**Airbrake: IP is rate limited')
+
+        # Wait for X-RateLimit-Delay and then make a new request to make sure p2
+        # was ignored (no request made for it).
+        sleep 1
+
+        p3 = Airbrake::Promise.new
+        sender.send(notice, p3)
+        expect(p3.value).to match('error' => '**Airbrake: IP is rate limited')
+
+        expect(a_request(:post, endpoint)).to have_been_made.twice
       end
     end
   end
