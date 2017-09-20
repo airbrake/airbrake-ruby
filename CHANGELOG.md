@@ -6,7 +6,7 @@ Airbrake Ruby Changelog
 * Started appending `$PROGRAM_NAME` to `environment`
   ([#251](https://github.com/airbrake/airbrake-ruby/pull/251))
 * Added support for rate limiting by IP
-  ([#252](https://github.com/airbrake/airbrake-ruby/pull/252))
+  ([#253](https://github.com/airbrake/airbrake-ruby/pull/253))
 
 ### [v2.3.2][v2.3.2] (July 26, 2017)
 
