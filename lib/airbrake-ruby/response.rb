@@ -39,7 +39,7 @@ module Airbrake
           parsed_body = JSON.parse(body)
           msg = "#{LOG_LABEL} #{parsed_body['message']}"
           logger.error(msg)
-          { 'error' => msg, 'delay' => rate_limit_delay(response) }
+          { 'error' => msg, 'rate_limit_reset' => rate_limit_reset(response) }
         else
           body_msg = truncated_body(body)
           logger.error("#{LOG_LABEL} unexpected code (#{code}). Body: #{body_msg}")
@@ -64,9 +64,9 @@ module Airbrake
     end
     private_class_method :truncated_body
 
-    def self.rate_limit_delay(response)
+    def self.rate_limit_reset(response)
       Time.now + response['X-RateLimit-Delay'].to_i
     end
-    private_class_method :rate_limit_delay
+    private_class_method :rate_limit_reset
   end
 end

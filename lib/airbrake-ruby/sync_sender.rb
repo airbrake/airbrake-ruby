@@ -42,7 +42,9 @@ module Airbrake
       end
 
       parsed_resp = Response.parse(response, @config.logger)
-      @rate_limit_reset = parsed_resp['delay'] if parsed_resp.key?('delay')
+      if parsed_resp.key?('rate_limit_reset')
+        @rate_limit_reset = parsed_resp['rate_limit_reset']
+      end
 
       return promise.reject(parsed_resp['error']) if parsed_resp.key?('error')
       promise.resolve(parsed_resp)
