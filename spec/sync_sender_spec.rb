@@ -13,12 +13,12 @@ RSpec.describe Airbrake::SyncSender do
 
   describe "#send" do
     let(:promise) { Airbrake::Promise.new }
+    let(:stdout) { StringIO.new }
+    let(:config) { Airbrake::Config.new(logger: Logger.new(stdout)) }
+    let(:sender) { described_class.new(config) }
+    let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
 
     it "catches exceptions raised while sending" do
-      stdout = StringIO.new
-      config = Airbrake::Config.new(logger: Logger.new(stdout))
-      sender = described_class.new(config)
-      notice = Airbrake::Notice.new(config, AirbrakeTestError.new)
       https = double("foo")
       allow(sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
@@ -40,16 +40,44 @@ RSpec.describe Airbrake::SyncSender do
         10.times { backtrace << "bin/rails:3:in `<#{bad_string}>'" }
         ex.set_backtrace(backtrace)
 
-        stdout = StringIO.new
-        config = Airbrake::Config.new(logger: Logger.new(stdout))
-
-        sender = described_class.new(config)
         notice = Airbrake::Notice.new(config, ex)
 
         expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
         expect(promise.value).
           to match('error' => '**Airbrake: notice was not sent because of missing body')
         expect(stdout.string).to match(/ERROR -- : .+ notice was not sent/)
+      end
+    end
+
+    context "when IP is rate limited" do
+      let(:endpoint) { %r{https://airbrake.io/api/v3/projects/notices} }
+
+      before do
+        stub_request(:post, endpoint).to_return(
+          status: 429,
+          body: '{"message":"IP is rate limited"}',
+          headers: { 'X-RateLimit-Delay' => '1' }
+        )
+      end
+
+      it "returns error" do
+        p1 = Airbrake::Promise.new
+        sender.send(notice, p1)
+        expect(p1.value).to match('error' => '**Airbrake: IP is rate limited')
+
+        p2 = Airbrake::Promise.new
+        sender.send(notice, p2)
+        expect(p2.value).to match('error' => '**Airbrake: IP is rate limited')
+
+        # Wait for X-RateLimit-Delay and then make a new request to make sure p2
+        # was ignored (no request made for it).
+        sleep 1
+
+        p3 = Airbrake::Promise.new
+        sender.send(notice, p3)
+        expect(p3.value).to match('error' => '**Airbrake: IP is rate limited')
+
+        expect(a_request(:post, endpoint)).to have_been_made.twice
       end
     end
   end

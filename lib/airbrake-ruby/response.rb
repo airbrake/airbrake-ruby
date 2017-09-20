@@ -11,11 +11,16 @@ module Airbrake
     TRUNCATE_LIMIT = 100
 
     ##
+    # @return [Integer] HTTP code returned when an IP sends over 10k/min notices
+    TOO_MANY_REQUESTS = 429
+
+    ##
     # Parses HTTP responses from the Airbrake API.
     #
     # @param [Net::HTTPResponse] response
     # @param [Logger] logger
     # @return [Hash{String=>String}] parsed response
+    # rubocop:disable Metrics/MethodLength
     def self.parse(response, logger)
       code = response.code.to_i
       body = response.body
@@ -26,10 +31,15 @@ module Airbrake
           parsed_body = JSON.parse(body)
           logger.debug("#{LOG_LABEL} #{parsed_body}")
           parsed_body
-        when 400, 401, 403, 420, 429
+        when 400, 401, 403, 420
           parsed_body = JSON.parse(body)
           logger.error("#{LOG_LABEL} #{parsed_body['message']}")
           parsed_body
+        when TOO_MANY_REQUESTS
+          parsed_body = JSON.parse(body)
+          msg = "#{LOG_LABEL} #{parsed_body['message']}"
+          logger.error(msg)
+          { 'error' => msg, 'rate_limit_reset' => rate_limit_reset(response) }
         else
           body_msg = truncated_body(body)
           logger.error("#{LOG_LABEL} unexpected code (#{code}). Body: #{body_msg}")
@@ -41,6 +51,7 @@ module Airbrake
         { 'error' => ex.inspect }
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def self.truncated_body(body)
       if body.nil?
@@ -52,5 +63,10 @@ module Airbrake
       end
     end
     private_class_method :truncated_body
+
+    def self.rate_limit_reset(response)
+      Time.now + response['X-RateLimit-Delay'].to_i
+    end
+    private_class_method :rate_limit_reset
   end
 end

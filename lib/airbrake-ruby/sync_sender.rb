@@ -14,6 +14,7 @@ module Airbrake
     # @param [Airbrake::Config] config
     def initialize(config)
       @config = config
+      @rate_limit_reset = Time.now
     end
 
     ##
@@ -23,14 +24,12 @@ module Airbrake
     # @param [Airbrake::Notice] endpoint
     # @return [Hash{String=>String}] the parsed HTTP response
     def send(notice, promise, endpoint = @config.endpoint)
+      return promise if rate_limited_ip?(promise)
+
       response = nil
       req = build_post_request(endpoint, notice)
 
-      if req.body.nil?
-        reason = "#{LOG_LABEL} notice was not sent because of missing body"
-        @config.logger.error(reason)
-        return promise.reject(reason)
-      end
+      return promise if missing_body?(req, promise)
 
       https = build_https(endpoint)
 
@@ -43,6 +42,10 @@ module Airbrake
       end
 
       parsed_resp = Response.parse(response, @config.logger)
+      if parsed_resp.key?('rate_limit_reset')
+        @rate_limit_reset = parsed_resp['rate_limit_reset']
+      end
+
       return promise.reject(parsed_resp['error']) if parsed_resp.key?('error')
       promise.resolve(parsed_resp)
     end
@@ -75,6 +78,24 @@ module Airbrake
 
       [@config.proxy[:host], @config.proxy[:port], @config.proxy[:user],
        @config.proxy[:password]]
+    end
+
+    def rate_limited_ip?(promise)
+      rate_limited = Time.now < @rate_limit_reset
+      promise.reject("#{LOG_LABEL} IP is rate limited") if rate_limited
+      rate_limited
+    end
+
+    def missing_body?(req, promise)
+      missing = req.body.nil?
+
+      if missing
+        reason = "#{LOG_LABEL} notice was not sent because of missing body"
+        @config.logger.error(reason)
+        promise.reject(reason)
+      end
+
+      missing
     end
   end
 end
