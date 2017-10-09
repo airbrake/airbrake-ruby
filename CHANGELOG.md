@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug when HTTP headers couldn't be filtered
+  ([#257](https://github.com/airbrake/airbrake-ruby/pull/257))
+
 ### [v2.4.0][v2.4.0] (September 20, 2017)
 
 * Started appending `$PROGRAM_NAME` to `environment`

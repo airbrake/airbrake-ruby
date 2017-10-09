@@ -24,6 +24,11 @@ module Airbrake
       FILTERABLE_KEYS = %i[environment session params].freeze
 
       ##
+      # @return [Array<Symbol>] parts of a Notice's *context* payload that can
+      #   be modified by blacklist/whitelist filters
+      FILTERABLE_CONTEXT_KEYS = %i[user headers].freeze
+
+      ##
       # @return [Integer]
       attr_reader :weight
 
@@ -53,14 +58,7 @@ module Airbrake
         end
 
         FILTERABLE_KEYS.each { |key| filter_hash(notice[key]) }
-
-        if notice[:context][:user]
-          if should_filter?(:user)
-            notice[:context][:user] = FILTERED
-          else
-            filter_hash(notice[:context][:user])
-          end
-        end
+        FILTERABLE_CONTEXT_KEYS.each { |key| filter_context_key(notice, key) }
 
         return unless notice[:context][:url]
         filter_url(notice)
@@ -129,6 +127,13 @@ module Airbrake
           "#{LOG_LABEL} one of the patterns in #{self.class} is invalid. " \
           "Known patterns: #{@patterns}"
         )
+      end
+
+      def filter_context_key(notice, key)
+        return unless notice[:context][key]
+        return filter_hash(notice[:context][key]) unless should_filter?(key)
+
+        notice[:context][key] = FILTERED
       end
     end
   end
