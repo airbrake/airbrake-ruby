@@ -303,8 +303,7 @@ RSpec.describe Airbrake::Backtrace do
             file: File.join(fixture_path('code.rb')),
             line: 94,
             function: 'to_json',
-            code_hunk: {
-              91 => '    def to_json',
+            code: {
               92 => '      loop do',
               93 => '        begin',
               94 => '          json = @payload.to_json',
@@ -312,7 +311,6 @@ RSpec.describe Airbrake::Backtrace do
               # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
               96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
               # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
-              97 => '        else'
             }
           }
         ]

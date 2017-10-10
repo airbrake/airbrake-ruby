@@ -183,7 +183,7 @@ module Airbrake
           function: match[:function]
         }
 
-        read_code_hunk(config.logger, frame) if config.code_hunks
+        populate_code(config, frame) if config.code_hunks
         frame
       end
 
@@ -194,19 +194,9 @@ module Airbrake
         Patterns::GENERIC.match(stackframe)
       end
 
-      def read_code_hunk(logger, frame)
-        code_hunk = Airbrake::CodeHunk.new(frame[:file], frame[:line]).to_h
-        return unless code_hunk
-
-        unless code_hunk.key?(0)
-          frame[:code_hunk] = code_hunk
-          return
-        end
-
-        logger.error(
-          "#{LOG_LABEL} error while reading code hunk `#{file}:#{line}'. " \
-          "Reason: #{code_hunk[0]}"
-        )
+      def populate_code(config, frame)
+        code = Airbrake::CodeHunk.new(config).get(frame[:file], frame[:line])
+        frame[:code] = code if code
       end
     end
   end

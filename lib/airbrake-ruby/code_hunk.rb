@@ -1,7 +1,8 @@
 module Airbrake
   ##
   # Represents a small hunk of code consisting of a base line and a couple lines
-  # around
+  # around it
+  # @api private
   class CodeHunk
     ##
     # @return [Integer] the maximum length of a line
@@ -9,43 +10,39 @@ module Airbrake
 
     ##
     # @return [Integer] how many lines should be read around the base line
-    INTERVAL = 3
+    NLINES = 2
 
-    def initialize(file, line, interval = INTERVAL)
-      @file = file
-      @line = line
-
-      @start_line = [line - interval, 1].max
-      @end_line = line + interval
-
-      @code_hash = {}
+    def initialize(config)
+      @config = config
     end
 
     ##
-    # @return [Hash{Integer=>String}, nil] code hunk around the base line. When
-    #   an error occurrs, returns a zero key Hash
-    def to_h
-      return @code_hash unless @code_hash.empty?
-      return unless File.exist?(@file)
+    # @param [String] file The file to read
+    # @param [Integer] line The base line in the file
+    # @return [Hash{Integer=>String}, nil] lines of code around the base line
+    def get(file, line)
+      return unless File.exist?(file)
+
+      start_line = [line - NLINES, 1].max
+      end_line = line + NLINES
+      lines = {}
 
       begin
-        fetch_code
+        File.foreach(file).with_index(1) do |l, i|
+          next if i < start_line
+          break if i > end_line
+
+          lines[i] = l[0...MAX_LINE_LEN].rstrip
+        end
       rescue StandardError => ex
-        { 0 => ex }
+        @config.logger.error(
+          "#{self.class.name}##{__method__}: can't read code hunk for " \
+          "#{file}:#{line}: #{ex}"
+        )
       end
 
-      @code_hash
-    end
-
-    private
-
-    def fetch_code
-      File.foreach(@file).with_index(1) do |line, i|
-        next if i < @start_line
-        break if i > @end_line
-
-        @code_hash[i] = line[0...MAX_LINE_LEN].rstrip
-      end
+      return { 1 => '' } if lines.empty?
+      lines
     end
   end
 end
