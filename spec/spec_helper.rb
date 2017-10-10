@@ -9,10 +9,13 @@ require 'webrick'
 require 'English'
 require 'base64'
 
+require 'helpers'
+
 RSpec.configure do |c|
   c.order = 'random'
   c.color = true
   c.disable_monkey_patching!
+  c.include Helpers
 end
 
 Thread.abort_on_exception = true

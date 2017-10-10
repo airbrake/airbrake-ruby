@@ -73,6 +73,12 @@ module Airbrake
     attr_accessor :whitelist_keys
 
     ##
+    # @return [Boolean] true if the library should attach code hunks to each
+    #   frame in a backtrace, false otherwise
+    # @since v3.0.0
+    attr_accessor :code_hunks
+
+    ##
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
@@ -81,6 +87,7 @@ module Airbrake
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
+      self.code_hunks = false
 
       self.logger = Logger.new(STDOUT)
       logger.level = Logger::WARN

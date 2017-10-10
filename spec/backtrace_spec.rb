@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::Backtrace do
+  let(:config) do
+    Airbrake::Config.new.tap { |c| c.logger = Logger.new('/dev/null') }
+  end
+
   describe ".parse" do
     context "UNIX backtrace" do
       let(:parsed_backtrace) do
@@ -23,7 +27,7 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns a properly formatted array of hashes" do
         expect(
-          described_class.parse(AirbrakeTestError.new, Logger.new('/dev/null'))
+          described_class.parse(config, AirbrakeTestError.new)
         ).to eq(parsed_backtrace)
       end
     end
@@ -44,9 +48,7 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
-        ).to eq(parsed_backtrace)
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -71,7 +73,7 @@ RSpec.describe Airbrake::Backtrace do
         allow(described_class).to receive(:java_exception?).and_return(true)
 
         expect(
-          described_class.parse(JavaAirbrakeTestError.new, Logger.new('/dev/null'))
+          described_class.parse(config, JavaAirbrakeTestError.new)
         ).to eq(backtrace_array)
       end
     end
@@ -99,10 +101,7 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns a properly formatted array of hashes" do
         allow(described_class).to receive(:java_exception?).and_return(true)
-
-        expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
-        ).to eq(parsed_backtrace)
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -126,9 +125,7 @@ RSpec.describe Airbrake::Backtrace do
       let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(backtrace) } }
 
       it "returns a properly formatted array of hashes" do
-        expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
-        ).to eq(parsed_backtrace)
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -153,9 +150,7 @@ RSpec.describe Airbrake::Backtrace do
         end
 
         it "returns a properly formatted array of hashes" do
-          expect(
-            described_class.parse(ex, Logger.new('/dev/null'))
-          ).to eq(parsed_backtrace)
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
         end
       end
 
@@ -173,9 +168,7 @@ RSpec.describe Airbrake::Backtrace do
         end
 
         it "returns a properly formatted array of hashes" do
-          expect(
-            described_class.parse(ex, Logger.new('/dev/null'))
-          ).to eq(parsed_backtrace)
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
         end
       end
     end
@@ -187,15 +180,15 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns array of hashes where each unknown frame is marked as 'function'" do
         expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
+          described_class.parse(config, ex)
         ).to eq([file: nil, line: nil, function: 'a b c 1 23 321 .rb'])
       end
 
       it "logs unknown frames as errors" do
         out = StringIO.new
-        logger = Logger.new(out)
+        config.logger = Logger.new(out)
 
-        expect { described_class.parse(ex, logger) }.
+        expect { described_class.parse(config, ex) }.
           to change { out.string }.
           from('').
           to(/ERROR -- : can't parse 'a b c 1 23 321 .rb'/)
@@ -216,9 +209,7 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
-        ).to eq(parsed_backtrace)
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -241,9 +232,7 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns a properly formatted array of hashes" do
         stub_const('OCIError', AirbrakeTestError)
-        expect(
-          described_class.parse(ex, Logger.new('/dev/null'))
-        ).to eq(parsed_backtrace)
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -279,9 +268,7 @@ RSpec.describe Airbrake::Backtrace do
           stub_const('ExecJS::RuntimeError', AirbrakeTestError)
           stub_const('Airbrake::RUBY_20', false)
 
-          expect(
-            described_class.parse(ex, Logger.new('/dev/null'))
-          ).to eq(parsed_backtrace)
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
         end
       end
 
@@ -296,11 +283,43 @@ RSpec.describe Airbrake::Backtrace do
             stub_const('ExecJS::RuntimeError', NameError)
             stub_const('Airbrake::RUBY_20', true)
 
-            expect(
-              described_class.parse(ex, Logger.new('/dev/null'))
-            ).to eq(parsed_backtrace)
+            expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
           end
         end
+      end
+    end
+
+    context "when code hunks are enabled" do
+      let(:config) do
+        config = Airbrake::Config.new
+        config.logger = Logger.new('/dev/null')
+        config.code_hunks = true
+        config
+      end
+
+      let(:parsed_backtrace) do
+        [
+          {
+            file: File.join(fixture_path('code.rb')),
+            line: 94,
+            function: 'to_json',
+            code: {
+              92 => '      loop do',
+              93 => '        begin',
+              94 => '          json = @payload.to_json',
+              95 => '        rescue *JSON_EXCEPTIONS => ex',
+              # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+              96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
+              # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+            }
+          }
+        ]
+      end
+
+      it "attaches code to each frame" do
+        ex = RuntimeError.new
+        ex.set_backtrace([File.join(fixture_path('code.rb') + ":94:in `to_json'")])
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
   end
