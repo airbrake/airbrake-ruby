@@ -102,7 +102,7 @@ module Airbrake
     # @param [Exception] exception The exception, which contains a backtrace to
     #   parse
     # @return [Array<Hash{Symbol=>String,Integer}>] the parsed backtrace
-    def self.parse(exception, logger)
+    def self.parse(config, exception)
       return [] if exception.backtrace.nil? || exception.backtrace.none?
 
       regexp = best_regexp_for(exception)
@@ -111,14 +111,14 @@ module Airbrake
         frame = match_frame(regexp, stackframe)
 
         unless frame
-          logger.error(
+          config.logger.error(
             "can't parse '#{stackframe}' (please file an issue so we can fix " \
             "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
           )
           frame = { file: nil, line: nil, function: stackframe }
         end
 
-        stack_frame(frame)
+        stack_frame(config, frame)
       end
     end
 
@@ -176,10 +176,15 @@ module Airbrake
       end
       # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
-      def stack_frame(match)
-        { file: match[:file],
+      def stack_frame(config, match)
+        frame = {
+          file: match[:file],
           line: (Integer(match[:line]) if match[:line]),
-          function: match[:function] }
+          function: match[:function]
+        }
+
+        read_code_hunk(config.logger, frame) if config.code_hunks
+        frame
       end
 
       def match_frame(regexp, stackframe)
@@ -187,6 +192,21 @@ module Airbrake
         return match if match
 
         Patterns::GENERIC.match(stackframe)
+      end
+
+      def read_code_hunk(logger, frame)
+        code_hunk = Airbrake::CodeHunk.new(frame[:file], frame[:line]).to_h
+        return unless code_hunk
+
+        unless code_hunk.key?(0)
+          frame[:code_hunk] = code_hunk
+          return
+        end
+
+        logger.error(
+          "#{LOG_LABEL} error while reading code hunk `#{file}:#{line}'. " \
+          "Reason: #{code_hunk[0]}"
+        )
       end
     end
   end

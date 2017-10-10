@@ -25,6 +25,7 @@ require 'airbrake-ruby/filters/root_directory_filter'
 require 'airbrake-ruby/filters/thread_filter'
 require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
+require 'airbrake-ruby/code_hunk'
 
 ##
 # This module defines the Airbrake API. The user is meant to interact with
