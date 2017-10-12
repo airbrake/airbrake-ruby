@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug when HTTP headers couldn't be filtered
+  ([#257](https://github.com/airbrake/airbrake-ruby/pull/257))
+
 ### [v2.4.1][v2.4.1] (October 12, 2017)
 
 * Added support for code hunks. This feature is not officially released and

@@ -193,5 +193,35 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
         expect(notice[:context][:user]).to eq('[Filtered]')
       end
     end
+
+    context "and when it is a hash" do
+      let(:patterns) { ['name'] }
+
+      it "filters out individual user fields" do
+        notice[:context][:user] = { id: 1337, name: 'Bingo Bango' }
+        subject.call(notice)
+        expect(notice[:context][:user][:name]).to eq('[Filtered]')
+      end
+    end
+  end
+
+  context "when the headers key is present" do
+    let(:patterns) { ['headers'] }
+
+    it "filters out the headers" do
+      notice[:context][:headers] = { 'HTTP_COOKIE' => 'banana' }
+      subject.call(notice)
+      expect(notice[:context][:headers]).to eq('[Filtered]')
+    end
+
+    context "and when it is a hash" do
+      let(:patterns) { ['HTTP_COOKIE'] }
+
+      it "filters out individual header fields" do
+        notice[:context][:headers] = { 'HTTP_COOKIE' => 'banana' }
+        subject.call(notice)
+        expect(notice[:context][:headers]['HTTP_COOKIE']).to eq('[Filtered]')
+      end
+    end
   end
 end
