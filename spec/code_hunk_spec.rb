@@ -5,7 +5,9 @@ RSpec.describe Airbrake::CodeHunk do
 
   describe "#to_h" do
     context "when a file is empty" do
-      subject { described_class.new(config).get(fixture_path('empty_file.rb'), 1) }
+      subject do
+        described_class.new(config).get(fixture_path('empty_file.rb'), 1)
+      end
 
       it { is_expected.to eq(1 => '') }
     end
@@ -46,7 +48,9 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a file has less than NLINES lines before and after" do
-      subject { described_class.new(config).get(fixture_path('short_file.rb'), 2) }
+      subject do
+        described_class.new(config).get(fixture_path('short_file.rb'), 2)
+      end
 
       it do
         is_expected.to(
@@ -76,7 +80,9 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a line exceeds the length limit" do
-      subject { described_class.new(config).get(fixture_path('long_line.txt'), 1) }
+      subject do
+        described_class.new(config).get(fixture_path('long_line.txt'), 1)
+      end
 
       it "strips the line" do
         expect(subject[1]).to eq('l' + 'o' * 196 + 'ng')

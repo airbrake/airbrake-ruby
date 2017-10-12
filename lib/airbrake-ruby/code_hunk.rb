@@ -28,7 +28,7 @@ module Airbrake
       lines = {}
 
       begin
-        File.foreach(file).with_index(1) do |l, i|
+        get_from_cache(file).with_index(1) do |l, i|
           next if i < start_line
           break if i > end_line
 
@@ -43,6 +43,12 @@ module Airbrake
 
       return { 1 => '' } if lines.empty?
       lines
+    end
+
+    private
+
+    def get_from_cache(file)
+      Airbrake::FileCache[file] ||= File.foreach(file)
     end
   end
 end
