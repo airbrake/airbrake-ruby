@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.4.1][v2.4.1] (October 12, 2017)
+
+* Added support for code hunks. This feature is not officially released and
+  doesn't work yet ([#258](https://github.com/airbrake/airbrake-ruby/pull/258))
+
 ### [v2.4.0][v2.4.0] (September 20, 2017)
 
 * Started appending `$PROGRAM_NAME` to `environment`
@@ -356,3 +361,4 @@ Airbrake Ruby Changelog
 [v2.3.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.1
 [v2.3.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.2
 [v2.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.0
+[v2.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.1
