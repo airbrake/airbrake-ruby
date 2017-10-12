@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.4.2][v2.4.2] (October 12, 2017)
+
 * Fixed bug when HTTP headers couldn't be filtered
   ([#257](https://github.com/airbrake/airbrake-ruby/pull/257))
 
@@ -365,3 +367,4 @@ Airbrake Ruby Changelog
 [v2.3.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.3.2
 [v2.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.0
 [v2.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.1
+[v2.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.2
