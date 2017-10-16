@@ -207,7 +207,7 @@ RSpec.describe Airbrake::Notice do
 
     it "always contains environment/program_name" do
       expect(notice.to_json).
-        to match(%r|"environment":{"program_name":.+/exe/rspec.*|)
+        to match(%r|"environment":{"program_name":.+/rspec.*|)
     end
   end
 
