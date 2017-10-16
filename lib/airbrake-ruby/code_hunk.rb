@@ -37,7 +37,7 @@ module Airbrake
       rescue StandardError => ex
         @config.logger.error(
           "#{self.class.name}##{__method__}: can't read code hunk for " \
-          "#{file}:#{line}: #{ex}"
+          "#{file}:#{line}: #{ex}\n#{ex.backtrace}"
         )
       end
 
