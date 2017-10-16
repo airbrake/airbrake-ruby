@@ -75,7 +75,7 @@ module Airbrake
     ##
     # @return [Boolean] true if the library should attach code hunks to each
     #   frame in a backtrace, false otherwise
-    # @since v3.0.0
+    # @since v2.5.0
     attr_accessor :code_hunks
 
     ##
