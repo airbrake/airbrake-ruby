@@ -4,5 +4,5 @@
 module Airbrake
   ##
   # @return [String] the library version
-  AIRBRAKE_RUBY_VERSION = '2.5.0.rc.1'.freeze
+  AIRBRAKE_RUBY_VERSION = '2.5.0.rc.2'.freeze
 end
