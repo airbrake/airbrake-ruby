@@ -3,13 +3,25 @@ require 'spec_helper'
 RSpec.describe Airbrake::CodeHunk do
   let(:config) { Airbrake::Config.new }
 
+  after do
+    %w[empty_file.rb code.rb banana.rb short_file.rb long_line.txt].each do |f|
+      Airbrake::FileCache[fixture_path(f)] = nil
+    end
+  end
+
   describe "#to_h" do
-    context "when a file is empty" do
+    context "when file is empty" do
       subject do
         described_class.new(config).get(fixture_path('empty_file.rb'), 1)
       end
 
       it { is_expected.to eq(1 => '') }
+    end
+
+    context "when line is nil" do
+      subject { described_class.new(config).get(fixture_path('code.rb'), nil) }
+
+      it { is_expected.to be_nil }
     end
 
     context "when a file doesn't exist" do
@@ -91,7 +103,7 @@ RSpec.describe Airbrake::CodeHunk do
 
     context "when an error occurrs while fetching code" do
       before do
-        expect(File).to receive(:foreach).and_raise(Errno::EACCES)
+        expect(Airbrake::FileCache).to receive(:[]).and_raise(Errno::EACCES)
       end
 
       it "logs error and returns nil" do

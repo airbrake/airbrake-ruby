@@ -22,26 +22,11 @@ module Airbrake
     # @return [Hash{Integer=>String}, nil] lines of code around the base line
     def get(file, line)
       return unless File.exist?(file)
+      return unless line
 
-      start_line = [line - NLINES, 1].max
-      end_line = line + NLINES
-      lines = {}
-
-      begin
-        get_from_cache(file).with_index(1) do |l, i|
-          next if i < start_line
-          break if i > end_line
-
-          lines[i] = l[0...MAX_LINE_LEN].rstrip
-        end
-      rescue StandardError => ex
-        @config.logger.error(
-          "#{self.class.name}##{__method__}: can't read code hunk for " \
-          "#{file}:#{line}: #{ex}\n#{ex.backtrace}"
-        )
-      end
-
+      lines = get_lines(file, [line - NLINES, 1].max, line + NLINES) || {}
       return { 1 => '' } if lines.empty?
+
       lines
     end
 
@@ -49,6 +34,24 @@ module Airbrake
 
     def get_from_cache(file)
       Airbrake::FileCache[file] ||= File.foreach(file)
+    rescue StandardError => ex
+      @config.logger.error(
+        "#{self.class.name}: can't read code hunk for #{file}: #{ex}"
+      )
+      nil
+    end
+
+    def get_lines(file, start_line, end_line)
+      return unless (cached_file = get_from_cache(file))
+
+      lines = {}
+      cached_file.with_index(1) do |l, i|
+        next if i < start_line
+        break if i > end_line
+
+        lines[i] = l[0...MAX_LINE_LEN].rstrip
+      end
+      lines
     end
   end
 end
