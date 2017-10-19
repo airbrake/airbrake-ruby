@@ -297,29 +297,98 @@ RSpec.describe Airbrake::Backtrace do
         config
       end
 
-      let(:parsed_backtrace) do
-        [
-          {
-            file: File.join(fixture_path('code.rb')),
-            line: 94,
-            function: 'to_json',
-            code: {
-              92 => '      loop do',
-              93 => '        begin',
-              94 => '          json = @payload.to_json',
-              95 => '        rescue *JSON_EXCEPTIONS => ex',
-              # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
-              96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
-              # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+      context "and when root_directory is configured" do
+        before { config.root_directory = project_root_path('') }
+
+        let(:parsed_backtrace) do
+          [
+            {
+              file: project_root_path('code.rb'),
+              line: 94,
+              function: 'to_json',
+              code: {
+                92 => '      loop do',
+                93 => '        begin',
+                94 => '          json = @payload.to_json',
+                95 => '        rescue *JSON_EXCEPTIONS => ex',
+                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
+                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+              }
+            },
+            {
+              file: fixture_path('notroot.txt'),
+              line: 3,
+              function: 'pineapple'
             }
-          }
-        ]
+          ]
+        end
+
+        it "attaches code to those frames files of which match root_directory" do
+          ex = RuntimeError.new
+          backtrace = [
+            project_root_path('code.rb') + ":94:in `to_json'",
+            fixture_path('notroot.txt' + ":3:in `pineapple'")
+          ]
+          ex.set_backtrace(backtrace)
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        end
       end
 
-      it "attaches code to each frame" do
-        ex = RuntimeError.new
-        ex.set_backtrace([File.join(fixture_path('code.rb') + ":94:in `to_json'")])
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+      context "and when root_directory isn't configured" do
+        before do
+          config.root_directory = nil
+          stub_const('Airbrake::Backtrace::CODE_FRAME_LIMIT', 2)
+        end
+
+        let(:parsed_backtrace) do
+          [
+            {
+              file: project_root_path('code.rb'),
+              line: 94,
+              function: 'to_json',
+              code: {
+                92 => '      loop do',
+                93 => '        begin',
+                94 => '          json = @payload.to_json',
+                95 => '        rescue *JSON_EXCEPTIONS => ex',
+                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
+                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+              }
+            },
+            {
+              file: project_root_path('code.rb'),
+              line: 95,
+              function: 'to_json',
+              code: {
+                93 => '        begin',
+                94 => '          json = @payload.to_json',
+                95 => '        rescue *JSON_EXCEPTIONS => ex',
+                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
+                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+                97 => '        else'
+              }
+            },
+            {
+              file: project_root_path('code.rb'),
+              line: 96,
+              function: 'to_json'
+            }
+          ]
+        end
+
+        it "attaches code to first N frames" do
+          ex = RuntimeError.new
+          backtrace = [
+            project_root_path('code.rb') + ":94:in `to_json'",
+            project_root_path('code.rb') + ":95:in `to_json'",
+            project_root_path('code.rb') + ":96:in `to_json'"
+          ]
+          ex.set_backtrace(backtrace)
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        end
       end
     end
   end

@@ -97,6 +97,10 @@ module Airbrake
     end
 
     ##
+    # @return [Integer] how many first frames should include code hunks
+    CODE_FRAME_LIMIT = 10
+
+    ##
     # Parses an exception's backtrace.
     #
     # @param [Exception] exception The exception, which contains a backtrace to
@@ -104,22 +108,7 @@ module Airbrake
     # @return [Array<Hash{Symbol=>String,Integer}>] the parsed backtrace
     def self.parse(config, exception)
       return [] if exception.backtrace.nil? || exception.backtrace.none?
-
-      regexp = best_regexp_for(exception)
-
-      exception.backtrace.map do |stackframe|
-        unless (match = match_frame(regexp, stackframe))
-          config.logger.error(
-            "can't parse '#{stackframe}' (please file an issue so we can fix " \
-            "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
-          )
-          match = { file: nil, line: nil, function: stackframe }
-        end
-
-        frame = stack_frame(match)
-        populate_code(config, frame) if config.code_hunks
-        frame
-      end
+      parse_backtrace(config, exception)
     end
 
     ##
@@ -189,6 +178,33 @@ module Airbrake
         return match if match
 
         Patterns::GENERIC.match(stackframe)
+      end
+
+      def parse_backtrace(config, exception)
+        regexp = best_regexp_for(exception)
+
+        exception.backtrace.map.with_index do |stackframe, i|
+          unless (match = match_frame(regexp, stackframe))
+            config.logger.error(
+              "can't parse '#{stackframe}' (please file an issue so we can fix " \
+              "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
+            )
+            match = { file: nil, line: nil, function: stackframe }
+          end
+
+          frame = stack_frame(match)
+          next(frame) unless config.code_hunks
+
+          if config.root_directory
+            if frame[:file].start_with?(config.root_directory)
+              populate_code(config, frame)
+            end
+          elsif i < CODE_FRAME_LIMIT
+            populate_code(config, frame)
+          end
+
+          frame
+        end
       end
 
       def populate_code(config, frame)
