@@ -73,3 +73,6 @@ Performance/RegexpMatch:
 
 Layout/IndentHeredoc:
   Enabled: false
+
+Gemspec/OrderedDependencies:
+  Enabled: false
