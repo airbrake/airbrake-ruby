@@ -116,7 +116,9 @@ module Airbrake
           match = { file: nil, line: nil, function: stackframe }
         end
 
-        stack_frame(config, match)
+        frame = stack_frame(match)
+        populate_code(config, frame) if config.code_hunks
+        frame
       end
     end
 
@@ -174,15 +176,12 @@ module Airbrake
       end
       # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
-      def stack_frame(config, match)
-        frame = {
+      def stack_frame(match)
+        {
           file: match[:file],
           line: (Integer(match[:line]) if match[:line]),
           function: match[:function]
         }
-
-        populate_code(config, frame) if config.code_hunks
-        frame
       end
 
       def match_frame(regexp, stackframe)
