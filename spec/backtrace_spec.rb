@@ -335,6 +335,35 @@ RSpec.describe Airbrake::Backtrace do
         end
       end
 
+      context "and when root_directory is a Pathname" do
+        before { config.root_directory = Pathname.new(project_root_path('')) }
+
+        let(:parsed_backtrace) do
+          [
+            {
+              file: project_root_path('code.rb'),
+              line: 94,
+              function: 'to_json',
+              code: {
+                92 => '      loop do',
+                93 => '        begin',
+                94 => '          json = @payload.to_json',
+                95 => '        rescue *JSON_EXCEPTIONS => ex',
+                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
+                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+              }
+            }
+          ]
+        end
+
+        it "attaches code to those frames files of which match root_directory" do
+          ex = RuntimeError.new
+          ex.set_backtrace([project_root_path('code.rb') + ":94:in `to_json'"])
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        end
+      end
+
       context "and when root_directory isn't configured" do
         before do
           config.root_directory = nil

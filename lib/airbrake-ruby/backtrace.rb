@@ -182,6 +182,7 @@ module Airbrake
 
       def parse_backtrace(config, exception)
         regexp = best_regexp_for(exception)
+        root_directory = config.root_directory.to_s
 
         exception.backtrace.map.with_index do |stackframe, i|
           unless (match = match_frame(regexp, stackframe))
@@ -195,8 +196,8 @@ module Airbrake
           frame = stack_frame(match)
           next(frame) unless config.code_hunks
 
-          if config.root_directory
-            if frame[:file].start_with?(config.root_directory)
+          if !root_directory.empty?
+            if frame[:file].start_with?(root_directory)
               populate_code(config, frame)
             end
           elsif i < CODE_FRAME_LIMIT
