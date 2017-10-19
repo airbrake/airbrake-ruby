@@ -32,7 +32,6 @@ DESC
   s.add_development_dependency 'pry', '~> 0'
   s.add_development_dependency 'webmock', '~> 2.3'
   s.add_development_dependency 'benchmark-ips', '~> 2'
-  s.add_development_dependency 'rubocop', '~> 0.50'
 
   # Fixes build failure with public_suffix v3
   # https://circleci.com/gh/airbrake/airbrake-ruby/889
