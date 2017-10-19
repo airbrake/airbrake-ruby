@@ -108,17 +108,17 @@ module Airbrake
       regexp = best_regexp_for(exception)
 
       exception.backtrace.map do |stackframe|
-        frame = match_frame(regexp, stackframe)
-
-        unless frame
+        unless (match = match_frame(regexp, stackframe))
           config.logger.error(
             "can't parse '#{stackframe}' (please file an issue so we can fix " \
             "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
           )
-          frame = { file: nil, line: nil, function: stackframe }
+          match = { file: nil, line: nil, function: stackframe }
         end
 
-        stack_frame(config, frame)
+        frame = stack_frame(match)
+        populate_code(config, frame) if config.code_hunks
+        frame
       end
     end
 
@@ -176,15 +176,12 @@ module Airbrake
       end
       # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
-      def stack_frame(config, match)
-        frame = {
+      def stack_frame(match)
+        {
           file: match[:file],
           line: (Integer(match[:line]) if match[:line]),
           function: match[:function]
         }
-
-        populate_code(config, frame) if config.code_hunks
-        frame
       end
 
       def match_frame(regexp, stackframe)
