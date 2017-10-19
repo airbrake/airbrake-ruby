@@ -108,17 +108,15 @@ module Airbrake
       regexp = best_regexp_for(exception)
 
       exception.backtrace.map do |stackframe|
-        frame = match_frame(regexp, stackframe)
-
-        unless frame
+        unless (match = match_frame(regexp, stackframe))
           config.logger.error(
             "can't parse '#{stackframe}' (please file an issue so we can fix " \
             "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
           )
-          frame = { file: nil, line: nil, function: stackframe }
+          match = { file: nil, line: nil, function: stackframe }
         end
 
-        stack_frame(config, frame)
+        stack_frame(config, match)
       end
     end
 
