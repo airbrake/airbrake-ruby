@@ -373,6 +373,18 @@ See documentation about
 [blacklisting using Proc objects](#using-procs-to-delay-filters-configuration).
 It's identical.
 
+#### code_hunks
+
+Code hunks are lines of code surrounding each backtrace frame. When
+`root_directory` is set to some value, code hunks are collected only for frames
+inside that directory. If `root_directory` isn't configured, then first ten code
+hunks are collected. By default, it's set to `true`.
+
+```
+Airbrake.configure do |c|
+  c.code_hunks = false
+end
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do

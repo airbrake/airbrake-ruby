@@ -165,12 +165,20 @@ module Airbrake
       end
       # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
-      def stack_frame(match)
-        {
-          file: match[:file],
-          line: (Integer(match[:line]) if match[:line]),
-          function: match[:function]
-        }
+      def stack_frame(config, regexp, stackframe)
+        if (match = match_frame(regexp, stackframe))
+          return {
+            file: match[:file],
+            line: (Integer(match[:line]) if match[:line]),
+            function: match[:function]
+          }
+        end
+
+        config.logger.error(
+          "can't parse '#{stackframe}' (please file an issue so we can fix " \
+          "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
+        )
+        { file: nil, line: nil, function: stackframe }
       end
 
       def match_frame(regexp, stackframe)
@@ -185,16 +193,8 @@ module Airbrake
         root_directory = config.root_directory.to_s
 
         exception.backtrace.map.with_index do |stackframe, i|
-          unless (match = match_frame(regexp, stackframe))
-            config.logger.error(
-              "can't parse '#{stackframe}' (please file an issue so we can fix " \
-              "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
-            )
-            match = { file: nil, line: nil, function: stackframe }
-          end
-
-          frame = stack_frame(match)
-          next(frame) unless config.code_hunks
+          frame = stack_frame(config, regexp, stackframe)
+          next(frame) if config.code_hunks.nil? || frame[:file].nil?
 
           if !root_directory.empty?
             if frame[:file].start_with?(root_directory)
