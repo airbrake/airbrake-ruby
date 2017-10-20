@@ -87,7 +87,7 @@ module Airbrake
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
-      self.code_hunks = false
+      self.code_hunks = true
 
       self.logger = Logger.new(STDOUT)
       logger.level = Logger::WARN

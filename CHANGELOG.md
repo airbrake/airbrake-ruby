@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added code hunks support (surrounding lines around every stack frame)
+  ([#273](https://github.com/airbrake/airbrake-ruby/pull/273))
+
 ### [v2.4.2][v2.4.2] (October 12, 2017)
 
 * Fixed bug when HTTP headers couldn't be filtered
