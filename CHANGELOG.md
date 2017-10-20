@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.5.0][v2.5.0] (October 20, 2017)
+
 * Added code hunks support (surrounding lines around every stack frame)
   ([#273](https://github.com/airbrake/airbrake-ruby/pull/273))
 
@@ -371,3 +373,4 @@ Airbrake Ruby Changelog
 [v2.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.0
 [v2.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.1
 [v2.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.2
+[v2.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.5.0
