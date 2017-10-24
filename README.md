@@ -47,6 +47,7 @@ Key features
 * Support for fatal exceptions (the ones that terminate your program)
 * Support for custom exception attributes<sup>[[link](#custom-exception-attributes)]</sup>
 * Severity support<sup>[[link](#setting-severity)]</sup>
+* Support for code hunks (lines of code surrounding each backtrace frame)<sup>[[link](#code_hunks)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -380,10 +381,15 @@ Code hunks are lines of code surrounding each backtrace frame. When
 inside that directory. If `root_directory` isn't configured, then first ten code
 hunks are collected. By default, it's set to `true`.
 
-```
+```ruby
 Airbrake.configure do |c|
   c.code_hunks = false
 end
+```
+
+Note: this feature is not available for the free plan. However, you still can
+send code hunks. Once you upgrade to a paid plan, old code hunks that you've
+sent while being on the free plan would appear in the dashboard.
 
 ### Asynchronous Airbrake options
 
