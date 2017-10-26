@@ -131,6 +131,7 @@ module Airbrake
 
       def filter_context_key(notice, key)
         return unless notice[:context][key]
+        return if notice[:context][key] == FILTERED
         return filter_hash(notice[:context][key]) unless should_filter?(key)
 
         notice[:context][key] = FILTERED

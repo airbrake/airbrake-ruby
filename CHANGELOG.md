@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed the bug when both `whitelist_keys` and `blacklist_keys` are specified
+  ([#277](https://github.com/airbrake/airbrake-ruby/pull/277))
+
 ### [v2.5.0][v2.5.0] (October 20, 2017)
 
 * Added code hunks support (surrounding lines around every stack frame)
