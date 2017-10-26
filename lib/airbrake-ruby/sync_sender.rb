@@ -66,6 +66,7 @@ module Airbrake
       Net::HTTP::Post.new(uri.request_uri).tap do |req|
         req.body = notice.to_json
 
+        req['Authorization'] = "Bearer #{@config.project_key}"
         req['Content-Type'] = CONTENT_TYPE
         req['User-Agent'] =
           "#{Airbrake::Notice::NOTIFIER[:name]}/#{Airbrake::AIRBRAKE_RUBY_VERSION}" \

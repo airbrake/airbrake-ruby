@@ -118,7 +118,7 @@ module Airbrake
       @endpoint ||=
         begin
           self.host = ('https://' << host) if host !~ %r{\Ahttps?://}
-          api = "api/v3/projects/#{project_id}/notices?key=#{project_key}"
+          api = "api/v3/projects/#{project_id}/notices"
           URI.join(host, api)
         end
     end

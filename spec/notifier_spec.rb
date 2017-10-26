@@ -8,10 +8,7 @@ RSpec.describe Airbrake::Notifier do
   let(:project_id) { 105138 }
   let(:project_key) { 'fd04e13d806a90f96614ad8e529b2822' }
   let(:localhost) { 'http://localhost:8080' }
-
-  let(:endpoint) do
-    "https://airbrake.io/api/v3/projects/#{project_id}/notices?key=#{project_key}"
-  end
+  let(:endpoint) { "https://airbrake.io/api/v3/projects/#{project_id}/notices" }
 
   let(:airbrake_params) do
     { project_id: project_id,

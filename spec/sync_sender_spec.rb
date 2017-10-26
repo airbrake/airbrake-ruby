@@ -14,7 +14,15 @@ RSpec.describe Airbrake::SyncSender do
   describe "#send" do
     let(:promise) { Airbrake::Promise.new }
     let(:stdout) { StringIO.new }
-    let(:config) { Airbrake::Config.new(logger: Logger.new(stdout)) }
+
+    let(:config) do
+      Airbrake::Config.new(
+        project_id: 1,
+        project_key: 'banana',
+        logger: Logger.new(stdout)
+      )
+    end
+
     let(:sender) { described_class.new(config) }
     let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
 
@@ -25,6 +33,21 @@ RSpec.describe Airbrake::SyncSender do
       expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('error' => '**Airbrake: HTTP error: foo')
       expect(stdout.string).to match(/ERROR -- : .+ HTTP error: foo/)
+    end
+
+    it "passes project key as a token in the Authorization header" do
+      stub_request(:post, 'https://airbrake.io/api/v3/projects/1/notices').
+        to_return(body: '{}')
+      sender.send(notice, promise)
+
+      expect(
+        a_request(:post, 'https://airbrake.io/api/v3/projects/1/notices').with(
+          headers: {
+            'Authorization' => 'Bearer banana',
+            'Content-Type' => 'application/json'
+          }
+        )
+      ).to have_been_made.once
     end
 
     context "when request body is nil" do
@@ -50,7 +73,7 @@ RSpec.describe Airbrake::SyncSender do
     end
 
     context "when IP is rate limited" do
-      let(:endpoint) { %r{https://airbrake.io/api/v3/projects/notices} }
+      let(:endpoint) { %r{https://airbrake.io/api/v3/projects/1/notices} }
 
       before do
         stub_request(:post, endpoint).to_return(
