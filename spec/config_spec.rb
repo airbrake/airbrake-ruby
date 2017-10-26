@@ -241,7 +241,7 @@ RSpec.describe Airbrake::Config do
         it "sets the endpoint with the slug" do
           config.host = 'https://localhost/bingo/'
           expect(config.endpoint.to_s).
-            to eq('https://localhost/bingo/api/v3/projects/1/notices?key=2')
+            to eq('https://localhost/bingo/api/v3/projects/1/notices')
         end
       end
 
@@ -249,7 +249,7 @@ RSpec.describe Airbrake::Config do
         it "sets the endpoint without the slug" do
           config.host = 'https://localhost/bingo'
           expect(config.endpoint.to_s).
-            to eq('https://localhost/api/v3/projects/1/notices?key=2')
+            to eq('https://localhost/api/v3/projects/1/notices')
         end
       end
     end

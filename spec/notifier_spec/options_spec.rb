@@ -10,7 +10,7 @@ RSpec.describe Airbrake::Notifier do
   let(:localhost) { 'http://localhost:8080' }
 
   let(:endpoint) do
-    "https://airbrake.io/api/v3/projects/#{project_id}/notices?key=#{project_key}"
+    "https://airbrake.io/api/v3/projects/#{project_id}/notices"
   end
 
   let(:airbrake_params) do
@@ -39,7 +39,7 @@ RSpec.describe Airbrake::Notifier do
           end
         end
 
-        path = '/api/v3/projects/105138/notices?key=fd04e13d806a90f96614ad8e529b2822'
+        path = '/api/v3/projects/105138/notices'
 
         context "given a full host" do
           include_examples('endpoint', localhost = 'http://localhost:8080',
@@ -150,7 +150,7 @@ RSpec.describe Airbrake::Notifier do
 
         # rubocop:disable Metrics/LineLength
         expect(proxied_request.request_line).
-          to eq("POST http://localhost:#{proxy.config[:Port]}/api/v3/projects/105138/notices?key=fd04e13d806a90f96614ad8e529b2822 HTTP/1.1\r\n")
+          to eq("POST http://localhost:#{proxy.config[:Port]}/api/v3/projects/105138/notices HTTP/1.1\r\n")
         # rubocop:enable Metrics/LineLength
       end
     end

@@ -5,6 +5,9 @@ Airbrake Ruby Changelog
 
 * Fixed the bug when both `whitelist_keys` and `blacklist_keys` are specified
   ([#277](https://github.com/airbrake/airbrake-ruby/pull/277))
+* Started passing project key through the `Authorization` header instead of the
+  `key` query parameter
+  ([#278](https://github.com/airbrake/airbrake-ruby/pull/278))
 
 ### [v2.5.0][v2.5.0] (October 20, 2017)
 
