@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.5.1][v2.5.1] (October 26, 2017)
+
 * Fixed the bug when both `whitelist_keys` and `blacklist_keys` are specified
   ([#277](https://github.com/airbrake/airbrake-ruby/pull/277))
 * Started passing project key through the `Authorization` header instead of the
@@ -380,3 +382,4 @@ Airbrake Ruby Changelog
 [v2.4.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.1
 [v2.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.2
 [v2.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.5.0
+[v2.5.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.5.1
