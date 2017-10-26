@@ -226,5 +226,25 @@ RSpec.describe Airbrake::Notifier do
         include_examples 'sent notice', environment: :development
       end
     end
+
+    describe ":blacklist_keys" do
+      # Fixes https://github.com/airbrake/airbrake-ruby/issues/276
+      context "when specified along with :whitelist_keys" do
+        context "and when context payload is present" do
+          it "sends a notice" do
+            params = {
+              blacklist_keys: %i[password password_confirmation],
+              whitelist_keys: [:email, /user/i, 'account_id']
+            }
+            airbrake = described_class.new(airbrake_params.merge(params))
+            notice = airbrake.build_notice(ex)
+            notice[:context][:headers] = 'banana'
+            airbrake.notify_sync(notice)
+
+            expect(a_request(:post, endpoint)).to have_been_made
+          end
+        end
+      end
+    end
   end
 end
