@@ -101,6 +101,7 @@ module Airbrake
     end
 
     def truncate_hash(hash, seen)
+      hash = hash.dup if hash.frozen?
       hash.each_with_index do |(key, val), idx|
         if idx < @max_size
           hash[key] = truncate(val, seen)

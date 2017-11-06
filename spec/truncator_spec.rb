@@ -373,6 +373,31 @@ RSpec.describe Airbrake::Truncator do
           expect(params).to eq(bish: [['bongo'], ['bongo']])
         end
       end
+
+      context "which have been frozen" do
+        let(:params) do
+          {
+            bingo: 'bango' * 2000,
+            bongo: 'bish',
+            bash: 'bosh' * 1000,
+            bish: {
+              bingo: 'bango' * 10_000
+            }.freeze
+          }.freeze
+        end
+
+        it "allows truncation" do
+          expect(params[:bingo].length).to eq(10_000)
+          expect(params[:bongo].length).to eq(4)
+          expect(params[:bash].length).to eq(4000)
+
+          truncated_params = @truncator.truncate_object(params)
+
+          expect(truncated_params[:bingo].length).to eq(max_len)
+          expect(truncated_params[:bongo].length).to eq(4)
+          expect(truncated_params[:bash].length).to eq(max_len)
+        end
+      end
     end
 
     describe "unicode payload" do
