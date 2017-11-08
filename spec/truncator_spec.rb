@@ -1,437 +1,214 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::Truncator do
-  let(:max_size) { 1000 }
-  let(:truncated_len) { '[Truncated]'.length }
-  let(:max_len) { max_size + truncated_len }
-
-  before do
-    @truncator = described_class.new(max_size)
+  def multiply_by_2_max_len(chr)
+    chr * 2 * max_len
   end
 
-  describe "#truncate_object" do
-    describe "error backtrace" do
-      let(:error) do
-        { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
-      end
+  describe "#truncate" do
+    let(:max_size) { 3 }
+    let(:truncated) { '[Truncated]' }
+    let(:max_len) { max_size + truncated.length }
 
-      before do
-        backtrace = Array.new(size) do
-          { file: 'foo.rb', line: 23, function: '<main>' }
-        end
+    subject { described_class.new(max_size).truncate(object) }
 
-        @error = error.merge(backtrace: backtrace)
-        described_class.new(max_size).truncate_object(@error)
-      end
+    context "given a frozen string" do
+      let(:object) { multiply_by_2_max_len('a') }
 
-      context "when long" do
-        let(:size) { 2003 }
-
-        it "truncates the backtrace to the max size" do
-          expect(@error[:backtrace].size).to eq(1000)
-        end
-      end
-
-      context "when short" do
-        let(:size) { 999 }
-
-        it "does not truncate the backtrace" do
-          expect(@error[:backtrace].size).to eq(size)
-        end
+      it "returns a new truncated frozen string" do
+        expect(subject.length).to eq(max_len)
+        expect(subject).to be_frozen
       end
     end
 
-    describe "error message" do
-      let(:error) do
-        { type: 'AirbrakeTestError', message: 'App crashed!', backtrace: [] }
+    context "given a frozen hash of strings" do
+      let(:object) do
+        {
+          banana: multiply_by_2_max_len('a'),
+          kiwi: multiply_by_2_max_len('b'),
+          strawberry: 'c',
+          shrimp: 'd'
+        }.freeze
       end
 
-      before do
-        @error = error.merge(message: message)
-        described_class.new(max_size).truncate_object(@error)
-      end
+      it "returns a new truncated frozen hash" do
+        expect(subject.size).to eq(max_size)
+        expect(subject).to be_frozen
 
-      context "when long" do
-        let(:message) { 'App crashed!' * 2000 }
-
-        it "truncates the message" do
-          expect(@error[:message].length).to eq(max_len)
-        end
-      end
-
-      context "when short" do
-        let(:message) { 'App crashed!' }
-        let(:msg_len) { message.length }
-
-        it "doesn't truncate the message" do
-          expect(@error[:message].length).to eq(msg_len)
-        end
+        expect(subject).to eq(
+          banana: 'aaa[Truncated]', kiwi: 'bbb[Truncated]', strawberry: 'c'
+        )
+        expect(subject[:banana]).to be_frozen
+        expect(subject[:kiwi]).to be_frozen
+        expect(subject[:strawberry]).not_to be_frozen
       end
     end
 
-    describe "given a hash with short values" do
-      let(:params) do
-        { bingo: 'bango', bongo: 'bish', bash: 'bosh' }
+    context "given a frozen array of strings" do
+      let(:object) do
+        [
+          multiply_by_2_max_len('a'),
+          'b',
+          multiply_by_2_max_len('c'),
+          'd'
+        ].freeze
       end
 
-      it "doesn't get truncated" do
-        @truncator.truncate_object(params)
-        expect(params).to eq(bingo: 'bango', bongo: 'bish', bash: 'bosh')
-      end
-    end
+      it "returns a new truncated frozen array" do
+        expect(subject.size).to eq(max_size)
+        expect(subject).to be_frozen
 
-    describe "given a hash with a lot of elements" do
-      context "the elements of which are also hashes with a lot of elements" do
-        let(:params) do
-          Hash[(0...4124).each_cons(2).to_a].tap do |h|
-            h[0] = Hash[(0...4124).each_cons(2).to_a]
-          end
-        end
-
-        it "truncates all the hashes to the max allowed size" do
-          expect(params.size).to eq(4123)
-          expect(params[0].size).to eq(4123)
-
-          @truncator.truncate_object(params)
-
-          expect(params.size).to eq(1000)
-          expect(params[0].size).to eq(1000)
-        end
+        expect(subject).to eq(['aaa[Truncated]', 'b', 'ccc[Truncated]'])
+        expect(subject[0]).to be_frozen
+        expect(subject[1]).not_to be_frozen
+        expect(subject[2]).to be_frozen
       end
     end
 
-    describe "given a set with a lot of elements" do
-      context "the elements of which are also sets with a lot of elements" do
-        let(:params) do
-          row = (0...4124).each_cons(2)
-          set = Set.new(row.to_a.unshift(row.to_a))
-          { bingo: set }
-        end
-
-        it "truncates all the sets to the max allowed size" do
-          expect(params[:bingo].size).to eq(4124)
-          expect(params[:bingo].to_a[0].size).to eq(4123)
-
-          @truncator.truncate_object(params)
-
-          expect(params[:bingo].size).to eq(1000)
-          expect(params[:bingo].to_a[0].size).to eq(1000)
-        end
+    context "given a frozen set of strings" do
+      let(:object) do
+        Set.new([
+          multiply_by_2_max_len('a'),
+          'b',
+          multiply_by_2_max_len('c'),
+          'd'
+        ]).freeze
       end
 
-      context "including recursive sets" do
-        let(:params) do
-          a = Set.new
-          a << a << :bango
-          { bingo: a }
-        end
+      it "returns a new truncated frozen array" do
+        expect(subject.size).to eq(max_size)
+        expect(subject).to be_frozen
 
-        it "prevents recursion" do
-          @truncator.truncate_object(params)
-
-          expect(params).to eq(bingo: Set.new(['[Circular]', :bango]))
-        end
+        expect(subject).to eq(
+          Set.new(['aaa[Truncated]', 'b', 'ccc[Truncated]'])
+        )
+        expect(subject).to be_frozen
       end
     end
 
-    describe "given an array with a lot of elements" do
-      context "the elements of which are also arrays with a lot of elements" do
-        let(:params) do
-          row = (0...4124).each_cons(2)
-          { bingo: row.to_a.unshift(row.to_a) }
+    context "given an arbitrary frozen object that responds to #to_json" do
+      let(:object) do
+        obj = Object.new
+        def obj.to_json
+          '{"object":"shrimp"}'
         end
+        obj.freeze
+      end
 
-        it "truncates all the arrays to the max allowed size" do
-          expect(params[:bingo].size).to eq(4124)
-          expect(params[:bingo][0].size).to eq(4123)
+      it "converts the object to truncated JSON" do
+        expect(subject.length).to eq(max_len)
+        expect(subject).to be_frozen
 
-          @truncator.truncate_object(params)
-
-          expect(params[:bingo].size).to eq(1000)
-          expect(params[:bingo][0].size).to eq(1000)
-        end
+        expect(subject).to eq('{"o[Truncated]')
       end
     end
 
-    describe "given a hash with long values" do
-      context "which are strings" do
-        let(:params) do
-          { bingo: 'bango' * 2000, bongo: 'bish', bash: 'bosh' * 1000 }
-        end
-
-        it "truncates only long strings" do
-          expect(params[:bingo].length).to eq(10_000)
-          expect(params[:bongo].length).to eq(4)
-          expect(params[:bash].length).to eq(4000)
-
-          @truncator.truncate_object(params)
-
-          expect(params[:bingo].length).to eq(max_len)
-          expect(params[:bongo].length).to eq(4)
-          expect(params[:bash].length).to eq(max_len)
-        end
+    context "given an arbitrary object that doesn't respond to #to_json" do
+      let(:object) do
+        obj = Object.new
+        allow(obj).to receive(:to_json).
+          and_raise(Airbrake::Notice::JSON_EXCEPTIONS.first)
+        obj
       end
 
-      context "which are arrays" do
-        context "of long strings" do
-          let(:params) do
-            { bingo: ['foo', 'bango' * 2000, 'bar', 'piyo' * 2000, 'baz'],
-              bongo: 'bish',
-              bash: 'bosh' * 1000 }
-          end
-
-          it "truncates long strings in the array, but not short ones" do
-            expect(params[:bingo].map(&:length)).to eq([3, 10_000, 3, 8_000, 3])
-            expect(params[:bongo].length).to eq(4)
-            expect(params[:bash].length).to eq(4000)
-
-            @truncator.truncate_object(params)
-
-            expect(params[:bingo].map(&:length)).to eq([3, max_len, 3, max_len, 3])
-            expect(params[:bongo].length).to eq(4)
-            expect(params[:bash].length).to eq(max_len)
-          end
-        end
-
-        context "of short strings" do
-          let(:params) do
-            { bingo: %w[foo bar baz], bango: 'bongo', bish: 'bash' }
-          end
-
-          it "truncates long strings in the array, but not short ones" do
-            @truncator.truncate_object(params)
-            expect(params).
-              to eq(bingo: %w[foo bar baz], bango: 'bongo', bish: 'bash')
-          end
-        end
-
-        context "of hashes" do
-          context "with long strings" do
-            let(:params) do
-              { bingo: [{}, { bango: 'bongo', hoge: { fuga: 'piyo' * 2000 } }],
-                bish: 'bash',
-                bosh: 'foo' }
-            end
-
-            it "truncates the long string" do
-              expect(params[:bingo][1][:hoge][:fuga].length).to eq(8000)
-
-              @truncator.truncate_object(params)
-
-              expect(params[:bingo][0]).to eq({})
-              expect(params[:bingo][1][:bango]).to eq('bongo')
-              expect(params[:bingo][1][:hoge][:fuga].length).to eq(max_len)
-              expect(params[:bish]).to eq('bash')
-              expect(params[:bosh]).to eq('foo')
-            end
-          end
-
-          context "with short strings" do
-            let(:params) do
-              { bingo: [{}, { bango: 'bongo', hoge: { fuga: 'piyo' } }],
-                bish: 'bash',
-                bosh: 'foo' }
-            end
-
-            it "doesn't truncate the short string" do
-              expect(params[:bingo][1][:hoge][:fuga].length).to eq(4)
-
-              @truncator.truncate_object(params)
-
-              expect(params[:bingo][0]).to eq({})
-              expect(params[:bingo][1][:bango]).to eq('bongo')
-              expect(params[:bingo][1][:hoge][:fuga].length).to eq(4)
-              expect(params[:bish]).to eq('bash')
-              expect(params[:bosh]).to eq('foo')
-            end
-          end
-
-          context "with strings that equal to max_size" do
-            before do
-              @truncator = described_class.new(max_size)
-            end
-
-            let(:params) { { unicode: '1111' } }
-            let(:max_size) { params[:unicode].size }
-
-            it "is doesn't truncate the string" do
-              @truncator.truncate_object(params)
-
-              expect(params[:unicode].length).to eq(max_size)
-              expect(params[:unicode]).to match(/\A1{#{max_size}}\z/)
-            end
-          end
-        end
-
-        context "of recursive hashes" do
-          let(:params) do
-            a = { bingo: {} }
-            a[:bingo][:bango] = a
-          end
-
-          it "prevents recursion" do
-            @truncator.truncate_object(params)
-
-            expect(params).to eq(bingo: { bango: '[Circular]' })
-          end
-        end
-
-        context "of arrays" do
-          context "with long strings" do
-            let(:params) do
-              { bingo: ['bango', ['bongo', ['bish' * 2000]]],
-                bish: 'bash',
-                bosh: 'foo' }
-            end
-
-            it "truncates only the long string" do
-              expect(params[:bingo][1][1][0].length).to eq(8000)
-
-              @truncator.truncate_object(params)
-
-              expect(params[:bingo][1][1][0].length).to eq(max_len)
-            end
-          end
-        end
-
-        context "of recursive arrays" do
-          let(:params) do
-            a = []
-            a << a << :bango
-            { bingo: a }
-          end
-
-          it "prevents recursion" do
-            @truncator.truncate_object(params)
-
-            expect(params).to eq(bingo: ['[Circular]', :bango])
-          end
-        end
-      end
-
-      context "which are arbitrary objects" do
-        context "with default #to_s" do
-          let(:params) { { bingo: Object.new } }
-
-          it "converts the object to a safe string" do
-            @truncator.truncate_object(params)
-
-            expect(params[:bingo]).to include('Object')
-          end
-        end
-
-        context "with redefined #to_s" do
-          let(:params) do
-            obj = Object.new
-
-            def obj.to_s
-              'bango' * 2000
-            end
-
-            { bingo: obj }
-          end
-
-          it "truncates the string if it's too long" do
-            @truncator.truncate_object(params)
-
-            expect(params[:bingo].length).to eq(max_len)
-          end
-        end
-
-        context "with other owner than Kernel" do
-          let(:params) do
-            mod = Module.new do
-              def to_s
-                "I am a fancy object" * 2000
-              end
-            end
-
-            klass = Class.new { include mod }
-
-            { bingo: klass.new }
-          end
-
-          it "truncates the string it if it's long" do
-            @truncator.truncate_object(params)
-
-            expect(params[:bingo].length).to eq(max_len)
-          end
-        end
-      end
-
-      context "multiple copies of the same object" do
-        let(:params) do
-          bingo = []
-          bango = ['bongo']
-          bingo << bango << bango
-          { bish: bingo }
-        end
-
-        it "are not being truncated" do
-          @truncator.truncate_object(params)
-
-          expect(params).to eq(bish: [['bongo'], ['bongo']])
-        end
+      it "converts the object to a truncated string" do
+        expect(subject.length).to eq(max_len)
+        expect(subject).to eq('#<O[Truncated]')
       end
     end
 
-    describe "unicode payload" do
-      before do
-        @truncator = described_class.new(max_size - 1)
-      end
-
-      describe "truncation" do
-        let(:params) { { unicode: "€€€€" } }
-        let(:max_size) { params[:unicode].length }
-
-        it "is performed correctly" do
-          @truncator.truncate_object(params)
-
-          expect(params[:unicode].length).to eq(max_len - 1)
-          expect(params[:unicode]).to match(/\A€{#{max_size - 1}}\[Truncated\]\z/)
-        end
-      end
-
-      describe "string encoding conversion" do
-        let(:params) { { unicode: "bad string€\xAE" } }
-        let(:max_size) { 100 }
-
-        it "converts strings to valid UTF-8" do
-          @truncator.truncate_object(params)
-
-          expect(params[:unicode]).to match(/\Abad string€[�\?]\z/)
-          expect { params.to_json }.not_to raise_error
-        end
-
-        it "converts ASCII-8BIT strings with invalid characters to UTF-8 correctly" do
-          # Shenanigans to get a bad ASCII-8BIT string. Direct conversion raises error.
-          encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
-          bad_string = Base64.decode64(encoded)
-
-          params = { unicode: bad_string }
-
-          @truncator.truncate_object(params)
-
-          expect(params[:unicode]).to match(/[�\?]{4}/)
-        end
-
-        it "doesn't fail when string is frozen" do
-          encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
-          bad_string = Base64.decode64(encoded).freeze
-
-          params = { unicode: bad_string }
-
-          @truncator.truncate_object(params)
-
-          expect(params[:unicode]).to match(/[�\?]{4}/)
-        end
+    shared_examples 'self returning objects' do |object|
+      it "returns the passed object" do
+        expect(described_class.new(max_size).truncate(object)).to eql(object)
       end
     end
 
-    describe "given a non-recursible object" do
-      it "raises error" do
-        expect { @truncator.truncate_object(:bingo) }.
-          to raise_error(Airbrake::Error, /cannot truncate object/)
+    [1, true, false, :symbol, nil].each do |object|
+      include_examples 'self returning objects', object
+    end
+
+    context "given a recursive array" do
+      let(:object) do
+        a = %w[aaaaa bb]
+        a << a
+        a << 'c'
+        a
+      end
+
+      it "prevents recursion" do
+        expect(subject).to eq(['aaa[Truncated]', 'bb', '[Circular]'])
+      end
+    end
+
+    context "given a recursive array with recursive hashes" do
+      let(:object) do
+        a = []
+        a << a
+
+        h = {}
+        h[:k] = h
+        a << h << 'aaaa'
+      end
+
+      it "prevents recursion" do
+        expect(subject).to eq(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]'])
+        expect(subject).to be_frozen
+      end
+    end
+
+    context "given a recursive set with recursive arrays" do
+      let(:object) do
+        s = Set.new
+        s << s
+
+        h = {}
+        h[:k] = h
+        s << h << 'aaaa'
+      end
+
+      it "prevents recursion" do
+        expect(subject).to eq(
+          Set.new(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]'])
+        )
+        expect(subject).to be_frozen
+      end
+    end
+
+    context "given a hash with long strings" do
+      let(:object) do
+        {
+          a: multiply_by_2_max_len('a'),
+          b: multiply_by_2_max_len('b'),
+          c: { d: multiply_by_2_max_len('d'), e: 'e' }
+        }
+      end
+
+      it "truncates the long strings" do
+        expect(subject).to eq(
+          a: 'aaa[Truncated]', b: 'bbb[Truncated]', c: { d: 'ddd[Truncated]', e: 'e' }
+        )
+        expect(subject).to be_frozen
+      end
+    end
+
+    context "given a string with valid unicode characters" do
+      let(:object) { "€€€€€" }
+
+      it "truncates the string" do
+        expect(subject).to eq("€€€[Truncated]")
+      end
+    end
+
+    context "given an ASCII-8BIT string with invalid characters" do
+      let(:object) do
+        # Shenanigans to get a bad ASCII-8BIT string. Direct conversion raises error.
+        encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
+        Base64.decode64(encoded).freeze
+      end
+
+      it "converts and truncates the string to UTF-8" do
+        expect(subject).to eq("���[Truncated]")
+        expect(subject).to be_frozen
       end
     end
   end

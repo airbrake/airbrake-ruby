@@ -1,53 +1,34 @@
 module Airbrake
-  ##
   # This class is responsible for truncation of too big objects. Mainly, you
   # should use it for simple objects such as strings, hashes, & arrays.
   #
   # @api private
   # @since v1.0.0
   class Truncator
-    ##
     # @return [Hash] the options for +String#encode+
     ENCODING_OPTIONS = { invalid: :replace, undef: :replace }.freeze
 
-    ##
     # @return [String] the temporary encoding to be used when fixing invalid
     #   strings with +ENCODING_OPTIONS+
     TEMP_ENCODING = 'utf-16'.freeze
 
-    ##
     # @param [Integer] max_size maximum size of hashes, arrays and strings
     def initialize(max_size)
       @max_size = max_size
     end
 
-    ##
-    # Performs deep truncation of arrays, hashes and sets. Uses a
+    # Performs deep truncation of arrays, hashes, sets & strings. Uses a
     # placeholder for recursive objects (`[Circular]`).
     #
-    # @param [Hash,Array,Set] object The object to truncate
-    # @param [Hash] seen The hash that helps to detect recursion
-    # @return [void]
-    def truncate_object(object, seen = {})
-      return seen[object] if seen[object]
-
-      seen[object] = '[Circular]'.freeze
-      truncated =
-        if object.is_a?(Hash)
-          truncate_hash(object, seen)
-        elsif object.is_a?(Array)
-          truncate_array(object, seen)
-        elsif object.is_a?(Set)
-          truncate_set(object, seen)
-        else
-          raise Airbrake::Error,
-                "cannot truncate object: #{object} (#{object.class})"
-        end
-      seen[object] = truncated
+    # @param [Object] object The object to truncate
+    # @param [Set] seen The cache that helps to detect recursion
+    # @return [Object] truncated object
+    def truncate(object, seen = Set.new)
+      return '[Circular]'.freeze if seen.include?(object)
+      truncate_object(object, seen << object)
     end
 
-    ##
-    # Reduces maximum allowed size of the truncated object.
+    # Reduces maximum allowed size of hashes, arrays, sets & strings by half.
     # @return [Integer] current +max_size+ value
     def reduce_max_size
       @max_size /= 2
@@ -55,67 +36,68 @@ module Airbrake
 
     private
 
-    def truncate(val, seen)
-      case val
-      when String
-        truncate_string(val)
-      when Array, Hash, Set
-        truncate_object(val, seen)
-      when Numeric, TrueClass, FalseClass, Symbol, NilClass
-        val
+    def truncate_object(object, seen)
+      case object
+      when Hash then truncate_hash(object, seen)
+      when Array then truncate_array(object, seen)
+      when Set then truncate_set(object, seen)
+      when String then truncate_string(object)
+      when Numeric, TrueClass, FalseClass, Symbol, NilClass then object
       else
-        stringified_val =
-          begin
-            val.to_json
-          rescue *Notice::JSON_EXCEPTIONS
-            val.to_s
-          end
-        truncate_string(stringified_val)
+        truncate_string(stringify_object(object))
       end
     end
 
     def truncate_string(str)
-      str = replace_invalid_characters!(str)
-      return str if str.length <= @max_size
-      str.slice(0, @max_size) + '[Truncated]'.freeze
+      fixed_str = replace_invalid_characters(str)
+      return fixed_str if fixed_str.length <= @max_size
+      (fixed_str.slice(0, @max_size) + '[Truncated]').freeze
     end
 
-    ##
-    # Replaces invalid characters in string with arbitrary encoding.
+    def stringify_object(object)
+      object.to_json
+    rescue *Notice::JSON_EXCEPTIONS
+      object.to_s
+    end
+
+    def truncate_hash(hash, seen)
+      truncated_hash = {}
+      hash.each_with_index do |(key, val), idx|
+        break if idx + 1 > @max_size
+        truncated_hash[key] = truncate(val, seen)
+      end
+
+      truncated_hash.freeze
+    end
+
+    def truncate_array(array, seen)
+      array.slice(0, @max_size).map! { |elem| truncate(elem, seen) }.freeze
+    end
+
+    def truncate_set(set, seen)
+      truncated_set = Set.new
+
+      set.each do |elem|
+        truncated_set << truncate(elem, seen)
+        break if truncated_set.size >= @max_size
+      end
+
+      truncated_set.freeze
+    end
+
+    # Replaces invalid characters in a string with arbitrary encoding.
     #
     # @param [String] str The string to replace characters
     # @return [String] a UTF-8 encoded string
-    # @note This method mutates +str+ unless it's frozen,
-    #   in which case it creates a duplicate
     # @see https://github.com/flori/json/commit/3e158410e81f94dbbc3da6b7b35f4f64983aa4e3
-    def replace_invalid_characters!(str)
+    def replace_invalid_characters(str)
       encoding = str.encoding
       utf8_string = (encoding == Encoding::UTF_8 || encoding == Encoding::ASCII)
       return str if utf8_string && str.valid_encoding?
 
-      str = str.dup if str.frozen?
-      str.encode!(TEMP_ENCODING, ENCODING_OPTIONS) if utf8_string
-      str.encode!('utf-8', ENCODING_OPTIONS)
-    end
-
-    def truncate_hash(hash, seen)
-      hash.each_with_index do |(key, val), idx|
-        if idx < @max_size
-          hash[key] = truncate(val, seen)
-        else
-          hash.delete(key)
-        end
-      end
-    end
-
-    def truncate_array(array, seen)
-      array.slice(0, @max_size).map! { |val| truncate(val, seen) }
-    end
-
-    def truncate_set(set, seen)
-      set.keep_if.with_index { |_val, idx| idx < @max_size }.map! do |val|
-        truncate(val, seen)
-      end
+      temp_str = str.dup
+      temp_str.encode!(TEMP_ENCODING, ENCODING_OPTIONS) if utf8_string
+      temp_str.encode!('utf-8', ENCODING_OPTIONS)
     end
   end
 end
