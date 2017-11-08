@@ -25,11 +25,9 @@ module Airbrake
     # Performs deep truncation of arrays, hashes and sets. Uses a
     # placeholder for recursive objects (`[Circular]`).
     #
-    # @param [Hash,Array] object The object to truncate
+    # @param [Hash,Array,Set] object The object to truncate
     # @param [Hash] seen The hash that helps to detect recursion
     # @return [void]
-    # @note This method is public to simplify testing. You probably want to use
-    #   {truncate_notice} instead
     def truncate_object(object, seen = {})
       return seen[object] if seen[object]
 
