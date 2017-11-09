@@ -180,7 +180,9 @@ module Airbrake
     end
 
     def truncate
-      TRUNCATABLE_KEYS.each { |key| @truncator.truncate_object(self[key]) }
+      TRUNCATABLE_KEYS.each do |key|
+        @payload[key] = @truncator.truncate(@payload[key])
+      end
 
       new_max_size = @truncator.reduce_max_size
       if new_max_size == 0

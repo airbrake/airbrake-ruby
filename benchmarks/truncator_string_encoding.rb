@@ -101,7 +101,7 @@ best_case = BenchmarkCase.best
 # Make sure we never truncate strings,
 # because this is irrelevant to this benchmark.
 MAX_PAYLOAD_SIZE = 1_000_000
-truncator = Airbrake::Truncator.new(MAX_PAYLOAD_SIZE, Logger.new('/dev/null'))
+truncator = Airbrake::Truncator.new(MAX_PAYLOAD_SIZE)
 
 Benchmark.bmbm do |bm|
   bm.report("(worst case utf8)  Truncator#truncate_string") do

@@ -18,17 +18,11 @@ TRUNCATOR_MAX_SIZE = 500
 # Reduce the logger overhead.
 LOGGER = Logger.new('/dev/null')
 
-truncate_error_payload = Payload.generate
-truncate_object_payload = Payload.generate
-
-truncator = Airbrake::Truncator.new(TRUNCATOR_MAX_SIZE, LOGGER)
+truncate_payload = Payload.generate
+truncator = Airbrake::Truncator.new(TRUNCATOR_MAX_SIZE)
 
 Benchmark.bm do |bm|
-  bm.report("Truncator#truncate_error ") do
-    truncate_error_payload.each { |error| truncator.truncate_error(error) }
-  end
-
-  bm.report("Truncator#truncate_object") do
-    truncate_object_payload.each { |error| truncator.truncate_object(error) }
+  bm.report("Truncator#truncate") do
+    truncate_payload.each { |error| truncator.truncate(error) }
   end
 end

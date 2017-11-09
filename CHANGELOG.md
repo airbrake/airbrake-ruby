@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Reworked truncation to not mutate given payload (params) and made it freeze it
+  after the truncation is done (to prevent future mutations)
+  ([#283](https://github.com/airbrake/airbrake-ruby/pull/283))
+
 ### [v2.5.1][v2.5.1] (October 26, 2017)
 
 * Fixed the bug when both `whitelist_keys` and `blacklist_keys` are specified
