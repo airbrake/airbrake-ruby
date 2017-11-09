@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.6.0][v2.6.0] (November 9, 2017)
+
 * Reworked truncation to not mutate given payload (params) and made it freeze it
   after the truncation is done (to prevent future mutations)
   ([#283](https://github.com/airbrake/airbrake-ruby/pull/283))
@@ -387,3 +389,4 @@ Airbrake Ruby Changelog
 [v2.4.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.4.2
 [v2.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.5.0
 [v2.5.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.5.1
+[v2.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.0
