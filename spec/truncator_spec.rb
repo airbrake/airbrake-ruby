@@ -211,5 +211,28 @@ RSpec.describe Airbrake::Truncator do
         expect(subject).to be_frozen
       end
     end
+
+    context "given an array with hashes and hash-like objects with identical keys" do
+      let(:hashie) { Class.new(Hash) }
+
+      let(:object) do
+        {
+          errors: [
+            { file: 'a' },
+            hashie.new.merge(file: 'bcde')
+          ]
+        }
+      end
+
+      it "truncates values" do
+        expect(subject).to eq(
+          errors: [
+            { file: 'a' },
+            hashie.new.merge(file: 'bcd[Truncated]')
+          ]
+        )
+        expect(subject).to be_frozen
+      end
+    end
   end
 end
