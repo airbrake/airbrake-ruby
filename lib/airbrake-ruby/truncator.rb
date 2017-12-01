@@ -12,6 +12,15 @@ module Airbrake
     #   strings with +ENCODING_OPTIONS+
     TEMP_ENCODING = 'utf-16'.freeze
 
+    # @return [String] what to append when something is a circular reference
+    CIRCULAR = '[Circular]'.freeze
+
+    # @return [String] what to append when something is truncated
+    TRUNCATED = '[Truncated]'.freeze
+
+    # @return [Array<Class>] The types that can contain references to itself
+    CIRCULAR_TYPES = [Array, Hash, Set].freeze
+
     # @param [Integer] max_size maximum size of hashes, arrays and strings
     def initialize(max_size)
       @max_size = max_size
@@ -24,7 +33,10 @@ module Airbrake
     # @param [Set] seen The cache that helps to detect recursion
     # @return [Object] truncated object
     def truncate(object, seen = Set.new)
-      return '[Circular]'.freeze if seen.include?(object)
+      if seen.include?(object)
+        return CIRCULAR if CIRCULAR_TYPES.any? { |t| object.is_a?(t) }
+        return object
+      end
       truncate_object(object, seen << object)
     end
 
@@ -51,7 +63,7 @@ module Airbrake
     def truncate_string(str)
       fixed_str = replace_invalid_characters(str)
       return fixed_str if fixed_str.length <= @max_size
-      (fixed_str.slice(0, @max_size) + '[Truncated]').freeze
+      (fixed_str.slice(0, @max_size) + TRUNCATED).freeze
     end
 
     def stringify_object(object)
