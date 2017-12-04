@@ -33,11 +33,11 @@ module Airbrake
     # @param [Set] seen The cache that helps to detect recursion
     # @return [Object] truncated object
     def truncate(object, seen = Set.new)
-      if seen.include?(object)
+      if seen.include?(object.object_id)
         return CIRCULAR if CIRCULAR_TYPES.any? { |t| object.is_a?(t) }
         return object
       end
-      truncate_object(object, seen << object)
+      truncate_object(object, seen << object.object_id)
     end
 
     # Reduces maximum allowed size of hashes, arrays, sets & strings by half.

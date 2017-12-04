@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Additional fixes for circular references in the new truncator
+  ([#288](https://github.com/airbrake/airbrake-ruby/pull/288)). Again, if you're
+  on v2.6, please upgrade as soon as possible
+
 ### [v2.6.1][v2.6.1] (December 1, 2017)
 
 * Fixed circular references in the new truncator
