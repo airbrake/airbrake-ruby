@@ -219,6 +219,7 @@ RSpec.describe Airbrake::Truncator do
         {
           errors: [
             { file: 'a' },
+            { file: 'a' },
             hashie.new.merge(file: 'bcde')
           ]
         }
@@ -227,6 +228,7 @@ RSpec.describe Airbrake::Truncator do
       it "truncates values" do
         expect(subject).to eq(
           errors: [
+            { file: 'a' },
             { file: 'a' },
             hashie.new.merge(file: 'bcd[Truncated]')
           ]
