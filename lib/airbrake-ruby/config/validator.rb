@@ -18,7 +18,7 @@ module Airbrake
       # @return [String]
       WRONG_ENV_TYPE_MSG = "the 'environment' option must be configured " \
                            "with a Symbol (or String), but '%s' was provided: " \
-                           "%s".freeze
+                           '%s'.freeze
 
       ##
       # @return [Array<Class>] the list of allowed types to configure the

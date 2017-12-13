@@ -197,9 +197,7 @@ module Airbrake
           next(frame) if config.code_hunks.nil? || frame[:file].nil?
 
           if !root_directory.empty?
-            if frame[:file].start_with?(root_directory)
-              populate_code(config, frame)
-            end
+            populate_code(config, frame) if frame[:file].start_with?(root_directory)
           elsif i < CODE_FRAME_LIMIT
             populate_code(config, frame)
           end
