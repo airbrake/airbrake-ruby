@@ -546,6 +546,20 @@ Airbrake.add_filter do |notice|
 end
 ```
 
+##### Optional filters
+
+Some filters are not added by default because the information that they attach
+is useful only for a specific type apps. You have to include such filters
+manually. The list of optional filters include:
+
+* Airbrake::Filters::ThreadFilter
+
+Including them is as easy as:
+
+```ruby
+Airbrake.add_filter(Airbrake::Filters::ThreadFilter.new)
+```
+
 ##### Using classes for building filters
 
 For more complex filters you can use the special API. Simply pass an object that
