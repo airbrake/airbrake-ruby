@@ -464,9 +464,7 @@ RSpec.describe Airbrake::Notifier do
   describe "#add_filter" do
     it "filters notices" do
       @airbrake.add_filter do |notice|
-        if notice[:params][:password]
-          notice[:params][:password] = '[Filtered]'.freeze
-        end
+        notice[:params][:password] = '[Filtered]'.freeze if notice[:params][:password]
       end
 
       @airbrake.notify_sync(ex, password: 's4kr4t')

@@ -29,9 +29,7 @@ module Airbrake
     def initialize(user_config)
       @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
 
-      unless @config.valid?
-        raise Airbrake::Error, @config.validation_error_message
-      end
+      raise Airbrake::Error, @config.validation_error_message unless @config.valid?
 
       @filter_chain = FilterChain.new
       add_default_filters
@@ -126,9 +124,7 @@ module Airbrake
       @filter_chain.refine(notice)
       yield notice if block_given? && !notice.ignored?
 
-      if notice.ignored?
-        return promise.reject("#{notice} was marked as ignored")
-      end
+      return promise.reject("#{notice} was marked as ignored") if notice.ignored?
 
       sender.send(notice, promise)
     end

@@ -41,9 +41,7 @@ module Airbrake
     # @raise [Airbrake::Error] when invoked more than one time
     def close
       threads = @mutex.synchronize do
-        if closed?
-          raise Airbrake::Error, 'attempted to close already closed sender'
-        end
+        raise Airbrake::Error, 'attempted to close already closed sender' if closed?
 
         unless @unsent.empty?
           msg = "#{LOG_LABEL} waiting to send #{@unsent.size} unsent notice(s)..."
