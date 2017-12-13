@@ -548,13 +548,15 @@ end
 
 ##### Optional filters
 
-Some filters are not added by default because the information that they attach
-is useful only for a specific type apps. You have to include such filters
-manually. The list of optional filters include:
+The library adds a few filters by default. However, some of them are optional
+and not added. This is because such filters are overly specific and may not suit
+every type of application, so there's no need to include them only to clutter
+the notice object. You have to include such filters manually, if you think you
+need them. The list of optional filters include:
 
 * Airbrake::Filters::ThreadFilter
 
-Including them is as easy as:
+Adding them is as easy as:
 
 ```ruby
 Airbrake.add_filter(Airbrake::Filters::ThreadFilter.new)
