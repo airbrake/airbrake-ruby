@@ -152,10 +152,6 @@ RSpec.describe Airbrake::Notifier do
             /"params":{"bingo":\["bango"\],"bongo":"bish".*}/
           )
         end
-
-        it "features 'params/thread'" do
-          expect_a_request_with_body(/"params":{.*"thread":{.*}/)
-        end
       end
     end
 

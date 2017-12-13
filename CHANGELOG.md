@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Stopped gathering thread information by default
+  ([#292](https://github.com/airbrake/airbrake-ruby/pull/292))
+
 ### [v2.6.2][v2.6.2] (December 4, 2017)
 
 * Additional fixes for circular references in the new truncator

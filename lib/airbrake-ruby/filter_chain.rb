@@ -11,8 +11,10 @@ module Airbrake
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
       Airbrake::Filters::SystemExitFilter,
-      Airbrake::Filters::GemRootFilter,
-      Airbrake::Filters::ThreadFilter
+      Airbrake::Filters::GemRootFilter
+
+      # Optional filters (must be included by users):
+      # Airbrake::Filters::ThreadFilter
     ].freeze
 
     ##
