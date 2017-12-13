@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.7.0][v2.7.0] (December 13, 2017)
+
 * Stopped gathering thread information by default
   ([#292](https://github.com/airbrake/airbrake-ruby/pull/292))
 
@@ -407,3 +409,4 @@ Airbrake Ruby Changelog
 [v2.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.0
 [v2.6.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.1
 [v2.6.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.2
+[v2.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.0
