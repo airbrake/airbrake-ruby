@@ -165,7 +165,7 @@ RSpec.describe Airbrake do
 
       expect(filters.size).to eq(3)
 
-      described_class.add_filter{}
+      described_class.add_filter {}
 
       expect(filters.size).to eq(4)
       expect(filters.last).to be_a(Proc)

@@ -77,12 +77,5 @@ Layout/IndentHeredoc:
 Gemspec/OrderedDependencies:
   Enabled: false
 
-Gemspec/RequiredRubyVersion:
-  Enabled: false
-
-# Broken behaviour: https://github.com/bbatsov/rubocop/issues/5224
-Layout/EmptyLinesAroundArguments:
-  Enabled: false
-
 Style/FormatStringToken:
   Enabled: false
