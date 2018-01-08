@@ -194,7 +194,7 @@ module Airbrake
 
         exception.backtrace.map.with_index do |stackframe, i|
           frame = stack_frame(config, regexp, stackframe)
-          next(frame) if config.code_hunks.nil? || frame[:file].nil?
+          next(frame) if !config.code_hunks || frame[:file].nil?
 
           if !root_directory.empty?
             populate_code(config, frame) if frame[:file].start_with?(root_directory)
