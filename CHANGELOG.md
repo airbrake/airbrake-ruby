@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.7.1][v2.7.1] (January 8, 2018)
+
 * Fixed disabling of code hunks. It was impossible to disable them
   ([#295](https://github.com/airbrake/airbrake-ruby/pull/295))
 
@@ -413,3 +415,4 @@ Airbrake Ruby Changelog
 [v2.6.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.1
 [v2.6.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.2
 [v2.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.0
+[v2.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.1
