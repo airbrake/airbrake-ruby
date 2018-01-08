@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed disabling of code hunks. It was impossible to disable them
+  ([#295](https://github.com/airbrake/airbrake-ruby/pull/295))
+
 ### [v2.7.0][v2.7.0] (December 13, 2017)
 
 * Stopped gathering thread information by default

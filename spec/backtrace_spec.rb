@@ -420,5 +420,35 @@ RSpec.describe Airbrake::Backtrace do
         end
       end
     end
+
+    context "when code hunks are disabled" do
+      let(:config) do
+        config = Airbrake::Config.new
+        config.logger = Logger.new('/dev/null')
+        config.code_hunks = false
+        config
+      end
+
+      context "and when root_directory is configured" do
+        before { config.root_directory = project_root_path('') }
+
+        let(:parsed_backtrace) do
+          [
+            {
+              file: project_root_path('code.rb'),
+              line: 94,
+              function: 'to_json'
+            }
+          ]
+        end
+
+        it "doesn't attach code to frames" do
+          ex = RuntimeError.new
+          backtrace = [project_root_path('code.rb') + ":94:in `to_json'"]
+          ex.set_backtrace(backtrace)
+          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        end
+      end
+    end
   end
 end
