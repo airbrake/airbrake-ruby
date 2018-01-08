@@ -156,7 +156,7 @@ RSpec.describe Airbrake::Notice do
       end
 
       describe "object replacement with its string version" do
-        let(:klass) { Class.new{} }
+        let(:klass) { Class.new {} }
         let(:ex) { AirbrakeTestError.new }
         let(:params) { { bingo: [Object.new, klass.new] } }
         let(:notice) { described_class.new(Airbrake::Config.new, ex, params) }

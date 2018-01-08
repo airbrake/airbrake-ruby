@@ -7,7 +7,7 @@ RSpec.describe Airbrake::Promise do
 
     context "when it is not resolved" do
       it "returns self" do
-        expect(subject.then{}).to eq(subject)
+        expect(subject.then {}).to eq(subject)
       end
 
       it "doesn't call the resolve callbacks yet" do
@@ -19,7 +19,7 @@ RSpec.describe Airbrake::Promise do
     context "when it is resolved" do
       shared_examples "then specs" do
         it "returns self" do
-          expect(subject.then{}).to eq(subject)
+          expect(subject.then {}).to eq(subject)
         end
 
         it "yields the resolved value" do
@@ -74,7 +74,7 @@ RSpec.describe Airbrake::Promise do
 
     context "when it is not rejected" do
       it "returns self" do
-        expect(subject.then{}).to eq(subject)
+        expect(subject.then {}).to eq(subject)
       end
 
       it "doesn't call the reject callbacks yet" do
@@ -86,7 +86,7 @@ RSpec.describe Airbrake::Promise do
     context "when it is rejected" do
       shared_examples "rescue specs" do
         it "returns self" do
-          expect(subject.rescue{}).to eq(subject)
+          expect(subject.rescue {}).to eq(subject)
         end
 
         it "yields the rejected value" do
