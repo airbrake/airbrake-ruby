@@ -225,6 +225,15 @@ RSpec.describe Airbrake::Notifier do
       context "when the current env is set and notify envs aren't" do
         include_examples 'sent notice', environment: :development
       end
+
+      context "when ignore_environments specifies a Regexp pattern" do
+        params = {
+          environment: :testing,
+          ignore_environments: ['staging', /test.+/]
+        }
+
+        include_examples 'ignored notice', params
+      end
     end
 
     describe ":blacklist_keys" do
