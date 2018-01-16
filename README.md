@@ -268,7 +268,7 @@ means Airbrake Ruby sends exceptions occurring in all environments.
 
 ```ruby
 Airbrake.configure do |c|
-  c.ignore_environments = [:test]
+  c.ignore_environments = [:production, /test.+/]
 end
 ```
 

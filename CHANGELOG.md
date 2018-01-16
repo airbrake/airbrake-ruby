@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added support for Regexps for the `ignore_environments` option
+  ([#299](https://github.com/airbrake/airbrake-ruby/pull/299))
+
 ### [v2.7.1][v2.7.1] (January 8, 2018)
 
 * Fixed disabling of code hunks. It was impossible to disable them

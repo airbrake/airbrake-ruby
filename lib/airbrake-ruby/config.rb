@@ -50,9 +50,9 @@ module Airbrake
     attr_accessor :environment
 
     ##
-    # @return [Array<String, Symbol>] the array of environments that forbids
-    #   sending exceptions when the application is running in them. Other
-    #   possible environments not listed in the array will allow sending
+    # @return [Array<String,Symbol,Regexp>] the array of environments that
+    #   forbids sending exceptions when the application is running in them.
+    #   Other possible environments not listed in the array will allow sending
     #   occurring exceptions.
     attr_accessor :ignore_environments
 
@@ -168,7 +168,14 @@ module Airbrake
                     "'ignore_environments' has no effect")
       end
 
-      ignore_environments.map(&:to_s).include?(environment.to_s)
+      env = environment.to_s
+      ignore_environments.any? do |pattern|
+        if pattern.is_a?(Regexp)
+          env.match(pattern)
+        else
+          env == pattern.to_s
+        end
+      end
     end
 
     private
