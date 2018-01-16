@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.8.0][v2.8.0] (January 16, 2018)
+
 * Added support for Regexps for the `ignore_environments` option
   ([#299](https://github.com/airbrake/airbrake-ruby/pull/299))
 
@@ -419,3 +421,4 @@ Airbrake Ruby Changelog
 [v2.6.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.6.2
 [v2.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.0
 [v2.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.1
+[v2.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.0
