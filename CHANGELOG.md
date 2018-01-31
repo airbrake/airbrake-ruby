@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.8.1][v2.8.1] (January 31, 2018)
+
 * Blacklisted the `vendor/bundle` path for code hunks. This fixes unwanted code
   hunk reporting for gems inside `root_directory`, which causes every notice to
   go over the notice limit.
@@ -427,3 +429,4 @@ Airbrake Ruby Changelog
 [v2.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.0
 [v2.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.1
 [v2.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.0
+[v2.8.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.1
