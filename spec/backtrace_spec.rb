@@ -320,6 +320,11 @@ RSpec.describe Airbrake::Backtrace do
               file: fixture_path('notroot.txt'),
               line: 3,
               function: 'pineapple'
+            },
+            {
+              file: project_root_path('vendor/bundle/ignored_file.rb'),
+              line: 2,
+              function: 'ignore_me'
             }
           ]
         end
@@ -328,7 +333,8 @@ RSpec.describe Airbrake::Backtrace do
           ex = RuntimeError.new
           backtrace = [
             project_root_path('code.rb') + ":94:in `to_json'",
-            fixture_path('notroot.txt' + ":3:in `pineapple'")
+            fixture_path('notroot.txt' + ":3:in `pineapple'"),
+            project_root_path('vendor/bundle/ignored_file.rb') + ":2:in `ignore_me'"
           ]
           ex.set_backtrace(backtrace)
           expect(described_class.parse(config, ex)).to eq(parsed_backtrace)

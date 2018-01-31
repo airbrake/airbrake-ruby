@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Blacklisted the `vendor/bundle` path for code hunks. This fixes unwanted code
+  hunk reporting for gems inside `root_directory`, which causes every notice to
+  go over the notice limit.
+  ([#302](https://github.com/airbrake/airbrake-ruby/pull/302))
+
 ### [v2.8.0][v2.8.0] (January 16, 2018)
 
 * Added support for Regexps for the `ignore_environments` option
