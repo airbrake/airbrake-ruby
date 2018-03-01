@@ -33,7 +33,6 @@ Key features
 * Awesome performance (check out our benchmarks)<sup>[[link](#running-benchmarks)]</sup>
 * Asynchronous exception reporting<sup>[[link](#asynchronous-airbrake-options)]</sup>
 * Promise support<sup>[[link](#promise)]</sup>
-* Flexible logging support (configure your own logger)<sup>[[link](#logger)]</sup>
 * Flexible configuration options (configure as many Airbrake notifers in one
   application as you want)<sup>[[link](#configuration)]</sup>
 * Support for proxying<sup>[[link](#proxy)]</sup>
