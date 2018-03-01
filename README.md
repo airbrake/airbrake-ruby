@@ -29,12 +29,10 @@ automatically_, integrations with Resque, Sidekiq, Delayed Job and many more.
 Key features
 ------------
 
-* Uses the new Airbrake JSON API (v3)<sup>[[link][notice-v3]]</sup>
 * Simple, consistent and easy-to-use library API<sup>[[link](#api)]</sup>
 * Awesome performance (check out our benchmarks)<sup>[[link](#running-benchmarks)]</sup>
 * Asynchronous exception reporting<sup>[[link](#asynchronous-airbrake-options)]</sup>
 * Promise support<sup>[[link](#promise)]</sup>
-* Flexible logging support (configure your own logger)<sup>[[link](#logger)]</sup>
 * Flexible configuration options (configure as many Airbrake notifers in one
   application as you want)<sup>[[link](#configuration)]</sup>
 * Support for proxying<sup>[[link](#proxy)]</sup>
@@ -820,7 +818,6 @@ The project uses the MIT License. See LICENSE.md for details.
 [airbrake.io]: https://airbrake.io
 [airbrake-gem]: https://github.com/airbrake/airbrake
 [semver2]: http://semver.org/spec/v2.0.0.html
-[notice-v3]: https://airbrake.io/docs/#create-notice-v3
 [project-idkey]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/project-id-key.png
 [issues]: https://github.com/airbrake/airbrake-ruby/issues
 [twitter]: https://twitter.com/airbrake
