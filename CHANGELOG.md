@@ -5,7 +5,7 @@ Airbrake Ruby Changelog
 
 ### [v2.8.2][v2.8.2] (March 5, 2018)
 
-* Fixed bug where params inside arrays params couldn't be
+* Fixed bug where params inside arrays couldn't be
   blacklisted/whitelisted
   ([#306](https://github.com/airbrake/airbrake-ruby/pull/306))
 
