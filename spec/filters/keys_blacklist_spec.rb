@@ -60,6 +60,17 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
     )
   end
 
+  context "when a pattern is a Array of Hash" do
+    include_examples(
+      'pattern matching',
+      ['bingo'],
+      [
+        { array: [bingo: 'bango'] },
+        { array: [bingo: '[Filtered]'] }
+      ]
+    )
+  end
+
   context "when a Proc pattern was provided" do
     context "along with normal keys" do
       include_examples(
