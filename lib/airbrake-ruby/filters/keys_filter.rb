@@ -78,6 +78,8 @@ module Airbrake
             hash[key] = FILTERED
           elsif hash[key].is_a?(Hash)
             filter_hash(hash[key])
+          elsif hash[key].is_a?(Array)
+            hash[key].each { |h| filter_hash(h) }
           end
         end
       end
