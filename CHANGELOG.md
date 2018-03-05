@@ -3,6 +3,12 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.8.2][v2.8.2] (March 5, 2018)
+
+* Fixed bug where params inside arrays params couldn't be
+  blacklisted/whitelisted
+  ([#306](https://github.com/airbrake/airbrake-ruby/pull/306))
+
 ### [v2.8.1][v2.8.1] (January 31, 2018)
 
 * Blacklisted the `vendor/bundle` path for code hunks. This fixes unwanted code
@@ -430,3 +436,4 @@ Airbrake Ruby Changelog
 [v2.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.7.1
 [v2.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.0
 [v2.8.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.1
+[v2.8.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.2
