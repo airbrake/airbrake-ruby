@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.8.3][v2.8.3] (March 12, 2018)
+
 * Fixed bug introduced in v2.8.2 in blacklist/whitelist filtering. All
   v2.8.2 users must upgrade to the recent version
   ([#309](https://github.com/airbrake/airbrake-ruby/pull/309))
@@ -441,3 +443,4 @@ Airbrake Ruby Changelog
 [v2.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.0
 [v2.8.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.1
 [v2.8.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.2
+[v2.8.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.3
