@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug introduced in v2.8.2 in blacklist/whitelist filtering. All
+  v2.8.2 users must upgrade to the recent version
+  ([#309](https://github.com/airbrake/airbrake-ruby/pull/309))
+
 ### [v2.8.2][v2.8.2] (March 5, 2018)
 
 * Fixed bug where params inside arrays couldn't be

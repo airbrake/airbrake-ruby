@@ -65,8 +65,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       'pattern matching',
       ['bingo'],
       [
-        { array: [bingo: 'bango'] },
-        { array: [bingo: '[Filtered]'] }
+        { array: [{ bingo: 'bango' }, []] },
+        { array: [{ bingo: '[Filtered]' }, []] }
       ]
     )
   end
