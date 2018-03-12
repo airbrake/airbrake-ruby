@@ -73,6 +73,8 @@ module Airbrake
       private
 
       def filter_hash(hash)
+        return hash unless hash.is_a?(Hash)
+
         hash.each_key do |key|
           if should_filter?(key.to_s)
             hash[key] = FILTERED
