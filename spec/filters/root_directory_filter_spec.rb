@@ -26,9 +26,9 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
       eq(
         [
           { file: "/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb" },
-          { file: "[PROJECT_ROOT]/gems/rspec-core-3.3.2/lib/rspec/core/configuration.rb " },
+          { file: "/PROJECT_ROOT/gems/rspec-core-3.3.2/lib/rspec/core/configuration.rb " },
           { file: "/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb" },
-          { file: "[PROJECT_ROOT]/gems/rspec-core-3.3.2/exe/rspec" }
+          { file: "/PROJECT_ROOT/gems/rspec-core-3.3.2/exe/rspec" }
         ]
       )
     )

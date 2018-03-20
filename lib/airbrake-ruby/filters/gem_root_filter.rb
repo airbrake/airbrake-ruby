@@ -5,7 +5,7 @@ module Airbrake
     class GemRootFilter
       ##
       # @return [String]
-      GEM_ROOT_LABEL = '[GEM_ROOT]'.freeze
+      GEM_ROOT_LABEL = '/GEM_ROOT'.freeze
 
       ##
       # @return [Integer]
