@@ -75,7 +75,7 @@ RSpec.describe Airbrake::Notifier do
 
         expect(
           a_request(:post, endpoint).
-          with(body: %r|{"file":"\[PROJECT_ROOT\]/airbrake/ruby/spec/airbrake_spec.+|)
+          with(body: %r|{"file":"/PROJECT_ROOT/airbrake/ruby/spec/airbrake_spec.+|)
         ).to have_been_made.once
       end
 

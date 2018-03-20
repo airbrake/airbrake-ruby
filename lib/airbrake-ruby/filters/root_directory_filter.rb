@@ -5,7 +5,7 @@ module Airbrake
     class RootDirectoryFilter
       ##
       # @return [String]
-      PROJECT_ROOT_LABEL = '[PROJECT_ROOT]'.freeze
+      PROJECT_ROOT_LABEL = '/PROJECT_ROOT'.freeze
 
       ##
       # @return [Integer]

@@ -81,7 +81,7 @@ RSpec.describe Airbrake do
           # rubocop:disable Metrics/LineLength
           expected_body = %r|
             {"errors":\[{"type":"RuntimeError","message":"bingo","backtrace":\[
-            {"file":"\[PROJECT_ROOT\]/spec/airbrake_spec.rb","line":\d+,"function":"[\w/\s\(\)<>]+","code".+},
+            {"file":"/PROJECT_ROOT/spec/airbrake_spec.rb","line":\d+,"function":"[\w/\s\(\)<>]+","code".+},
             {"file":"\[GEM_ROOT\]/gems/rspec-core-.+/.+","line":\d+,"function":"[\w/\s\(\)<>]+".+
           |x
           # rubocop:enable Metrics/LineLength
