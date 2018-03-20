@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Changed format for `[GEM_ROOT]` & `[PROJECT_ROOT]` placeholders to
+  `/GEM_ROOT` & `/PROJECT_ROOT` respectively. This improves searching
+  capabilities in the Airbrake
+  dashboard. ([#311](https://github.com/airbrake/airbrake-ruby/pull/311))
+
 ### [v2.8.3][v2.8.3] (March 12, 2018)
 
 * Fixed bug introduced in v2.8.2 in blacklist/whitelist filtering. All
