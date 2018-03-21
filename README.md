@@ -431,7 +431,8 @@ Airbrake[:my_notifier] #=> Airbrake::Notifier
 If the notifier is not configured, returns an instance of
 `Airbrake::NilNotifier` (a no-op version of `Airbrake::Notifier`).
 
-#### Airbrake.notify
+#### Airbrake.notify 
+Note: Just be aware when using the `Airbrake.notify` inside a Thread. Please check the [issue](https://github.com/airbrake/airbrake-ruby/issues/312).
 
 Sends an exception to Airbrake asynchronously.
 
