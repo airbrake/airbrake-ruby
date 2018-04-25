@@ -163,16 +163,20 @@ RSpec.describe Airbrake do
       filter_chain = notifier.instance_variable_get(:@filter_chain)
       filters = filter_chain.instance_variable_get(:@filters)
 
-      expect(filters.size).to eq(3)
+      expect(filters.size).to eq(4)
 
       described_class.add_filter {}
 
-      expect(filters.size).to eq(4)
+      expect(filters.size).to eq(5)
       expect(filters.last).to be_a(Proc)
     end
   end
 
   describe ".build_notice" do
     include_examples 'non-configured notifier handling', :build_notice
+  end
+
+  describe ".merge_context" do
+    include_examples 'non-configured notifier handling', :merge_context
   end
 end

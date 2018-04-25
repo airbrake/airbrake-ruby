@@ -614,4 +614,15 @@ RSpec.describe Airbrake::Notifier do
     subject { described_class.new(airbrake_params) }
     it { is_expected.to be_configured }
   end
+
+  describe "#merge_context" do
+    it "merges the provided context with the notice object" do
+      @airbrake.merge_context(apples: 'oranges')
+      @airbrake.notify_sync('oops')
+      expect(
+        a_request(:post, endpoint).
+        with(body: /"params":{"airbrake_context":{"apples":"oranges"}/)
+      ).to have_been_made.once
+    end
+  end
 end
