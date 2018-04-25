@@ -80,14 +80,16 @@ module Airbrake
     # @return [Boolean] true if an instance wasn't closed, but has no workers
     # @see https://goo.gl/oydz8h Example of at_exit that prevents exit
     def has_workers?
-      return false if @closed
+      @mutex.synchronize do
+        return false if @closed
 
-      if @pid != Process.pid && @workers.list.empty?
-        @pid = Process.pid
-        spawn_workers
+        if @pid != Process.pid && @workers.list.empty?
+          @pid = Process.pid
+          spawn_workers
+        end
+
+        !@closed && @workers.list.any?
       end
-
-      !@closed && @workers.list.any?
     end
 
     private
