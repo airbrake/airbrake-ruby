@@ -31,6 +31,8 @@ module Airbrake
 
       raise Airbrake::Error, @config.validation_error_message unless @config.valid?
 
+      @context = {}
+
       @filter_chain = FilterChain.new
       add_default_filters
 
@@ -98,6 +100,12 @@ module Airbrake
       @config.valid?
     end
 
+    ##
+    # @macro see_public_api_method
+    def merge_context(context)
+      @context.merge!(context)
+    end
+
     private
 
     def convert_to_exception(ex)
@@ -162,6 +170,8 @@ module Airbrake
         )
       end
 
+      @filter_chain.add_filter(Airbrake::Filters::ContextFilter.new(@context))
+
       return unless (root_directory = @config.root_directory)
       @filter_chain.add_filter(
         Airbrake::Filters::RootDirectoryFilter.new(root_directory)
@@ -190,5 +200,7 @@ module Airbrake
     def configured?
       false
     end
+
+    def merge_context(_context); end
   end
 end

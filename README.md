@@ -46,6 +46,7 @@ Key features
 * Support for custom exception attributes<sup>[[link](#custom-exception-attributes)]</sup>
 * Severity support<sup>[[link](#setting-severity)]</sup>
 * Support for code hunks (lines of code surrounding each backtrace frame)<sup>[[link](#code_hunks)]</sup>
+* Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -636,6 +637,65 @@ Checks whether the notifier is configured or not:
 
 ```ruby
 Airbrake.configured? #=> false
+```
+
+#### Airbrake.merge_context
+
+Merges the provided context Hash with the notifier context. Upon a
+[`notify/notify_sync`](#airbrakenotify) call the notifier context is attached to
+the notice object under the `params/airbrake_context` key.
+
+After the error is attached, the notifier context is cleared, allowing other
+`notify` calls to start with a clean slate.
+
+This method is specifically useful when you want to attach variables from
+different scopes during the execution of your program and then send them to
+Airbrake on error.
+
+```ruby
+class MerryGrocer
+  def load_fruits(fruits)
+    Airbrake.merge_context(fruits: fruits)
+  end
+
+  def deliver_fruits
+    Airbrake.notify('fruitception')
+  end
+
+  def load_veggies
+    Airbrake.merge_context(veggies: veggies)
+  end
+
+  def deliver_veggies
+    Airbrake.notify('veggieboom!')
+  end
+end
+
+grocer = MerryGrocer.new
+
+# The context is added to `notice[:params][:airbrake_context]`.
+Airbrake.add_filter do |notice|
+  puts "Context: #{notice[:params][:airbrake_context] || 'empty'}"
+end
+
+# Load some fruits to the context.
+grocer.load_fruits(%w(mango banana apple))
+
+# Deliver the fruits. Note that we are not passing anything, `deliver_fruits`
+# knows that we loaded something.
+grocer.deliver_fruits
+#=> Context: ['mango', 'banana', 'apple']
+
+# Load some vegetables and deliver them to Airbrake. Note that the fruits have
+# been delivered and therefore the grocer doesn't have them anymore. We merge
+# veggies with the new context.
+grocer.load_veggies(%w(cabbage carrot onion))
+grocer.deliver_veggies
+#=> Context: ['cabbage', 'carrot', 'onion']
+
+# The context is empty again, feel free to load more.
+grocer.deliver_veggies
+#=> Context: empty
 ```
 
 ### Notice

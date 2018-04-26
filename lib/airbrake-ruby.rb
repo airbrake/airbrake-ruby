@@ -23,6 +23,7 @@ require 'airbrake-ruby/filters/gem_root_filter'
 require 'airbrake-ruby/filters/system_exit_filter'
 require 'airbrake-ruby/filters/root_directory_filter'
 require 'airbrake-ruby/filters/thread_filter'
+require 'airbrake-ruby/filters/context_filter'
 require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 require 'airbrake-ruby/code_hunk'
@@ -267,6 +268,55 @@ module Airbrake
     # @return [void]
     def create_deploy(deploy_params)
       @notifiers[:default].create_deploy(deploy_params)
+    end
+
+    ##
+    # Merges +context+ with the current context.
+    #
+    # The context will be attached to the notice object upon a notify call and
+    # cleared after it's attached. The context data is attached to the
+    # `params/airbrake_context` key.
+    #
+    # @example
+    #   class MerryGrocer
+    #     def load_fruits(fruits)
+    #       Airbrake.merge_context(fruits: fruits)
+    #     end
+    #
+    #     def deliver_fruits
+    #       Airbrake.notify('fruitception')
+    #     end
+    #
+    #     def load_veggies
+    #       Airbrake.merge_context(veggies: veggies)
+    #     end
+    #
+    #     def deliver_veggies
+    #       Airbrake.notify('veggieboom!')
+    #     end
+    #   end
+    #
+    #   grocer = MerryGrocer.new
+    #
+    #   # Load some fruits to the context.
+    #   grocer.load_fruits(%w(mango banana apple))
+    #
+    #   # Deliver the fruits. Note that we are not passing anything,
+    #   # `deliver_fruits` knows that we loaded something.
+    #   grocer.deliver_fruits
+    #
+    #   # Load some vegetables and deliver them to Airbrake. Note that the
+    #   # fruits have been delivered and therefore the grocer doesn't have them
+    #   # anymore. We merge veggies with the new context.
+    #   grocer.load_veggies(%w(cabbage carrot onion))
+    #   grocer.deliver_veggies
+    #
+    #   # The context is empty again, feel free to load more.
+    #
+    # @param [Hash{Symbol=>Object}] context
+    # @return [void]
+    def merge_context(context)
+      @notifiers[:default].merge_context(context)
     end
   end
 end
