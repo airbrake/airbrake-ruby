@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.9.0][v2.9.0] (April 26, 2018)
+
 * Changed format for `[GEM_ROOT]` & `[PROJECT_ROOT]` placeholders to
   `/GEM_ROOT` & `/PROJECT_ROOT` respectively. This improves searching
   capabilities in the Airbrake
@@ -10,6 +12,9 @@ Airbrake Ruby Changelog
 * Fixed `TypeError: can't move to the enclosed thread group` when
   using `notify` at the same time from multiple threads
   ([#316](https://github.com/airbrake/airbrake-ruby/pull/316))
+* Added `Airbrake.merge_context` that allows reporting data on different scopes
+  along with the error
+  ([#317](https://github.com/airbrake/airbrake-ruby/pull/317))
 
 ### [v2.8.3][v2.8.3] (March 12, 2018)
 
@@ -452,3 +457,4 @@ Airbrake Ruby Changelog
 [v2.8.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.1
 [v2.8.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.2
 [v2.8.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.8.3
+[v2.9.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.9.0
