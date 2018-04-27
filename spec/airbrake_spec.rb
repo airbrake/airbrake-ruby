@@ -1,182 +1,113 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake do
-  let(:endpoint) { 'https://airbrake.io/api/v3/projects/113743/notices' }
-
-  let!(:notifier) do
-    described_class.configure do |c|
-      c.project_id = 113743
-      c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
+  describe ".[]" do
+    it "returns a NilNotifier" do
+      expect(described_class[:test]).to be_an(Airbrake::NilNotifier)
     end
   end
 
-  before do
-    stub_request(:post, endpoint).to_return(status: 201, body: '{}')
-  end
-
-  after do
-    described_class.instance_variable_set(
-      :@notifiers,
-      Hash.new(Airbrake::NilNotifier.new)
-    )
-  end
-
-  shared_examples 'non-configured notifier handling' do |method|
-    it "returns nil if there is no configured notifier when using #{method}" do
-      described_class.instance_variable_set(
-        :@notifiers,
-        Hash.new(Airbrake::NilNotifier.new)
-      )
-      expect(described_class.__send__(method, 'bingo')).to be_nil
-    end
-  end
-
-  describe ".notify" do
-    include_examples 'non-configured notifier handling', :notify
-
-    it "sends exceptions asynchronously" do
-      described_class.notify('bingo')
-      sleep 2
-      expect(a_request(:post, endpoint)).to have_been_made.once
-    end
-
-    it "yields a notice" do
-      described_class.notify('bongo') do |notice|
-        notice[:params][:bingo] = :bango
-      end
-
-      sleep 1
-
-      expect(
-        a_request(:post, endpoint).
-        with(body: /params":{.*"bingo":"bango".*}/)
-      ).to have_been_made.once
-    end
-  end
-
-  describe ".notify_sync" do
-    include_examples 'non-configured notifier handling', :notify_sync
-
-    it "sends exceptions synchronously" do
-      expect(described_class.notify_sync('bingo')).to be_a(Hash)
-      expect(a_request(:post, endpoint)).to have_been_made.once
-    end
-
-    it "yields a notice" do
-      described_class.notify_sync('bongo') do |notice|
-        notice[:params][:bingo] = :bango
-      end
-
-      expect(
-        a_request(:post, endpoint).
-        with(body: /params":{.*"bingo":"bango".*}/)
-      ).to have_been_made.once
-    end
-
-    describe "clean backtrace" do
-      shared_examples 'backtrace building' do |msg, argument|
-        it(msg) do
-          described_class.notify_sync(argument)
-
-          # rubocop:disable Metrics/LineLength
-          expected_body = %r|
-            {"errors":\[{"type":"RuntimeError","message":"bingo","backtrace":\[
-            {"file":"/PROJECT_ROOT/spec/airbrake_spec.rb","line":\d+,"function":"[\w/\s\(\)<>]+","code".+},
-            {"file":"/GEM_ROOT/gems/rspec-core-.+/.+","line":\d+,"function":"[\w/\s\(\)<>]+".+
-          |x
-          # rubocop:enable Metrics/LineLength
-
-          expect(
-            a_request(:post, endpoint).
-            with(body: expected_body)
-          ).to have_been_made.once
-        end
-      end
-
-      context "given a String" do
-        include_examples(
-          'backtrace building',
-          'converts it to a RuntimeException and builds a fake backtrace',
-          'bingo'
-        )
-      end
-
-      context "given an Exception with missing backtrace" do
-        include_examples(
-          'backtrace building',
-          'builds a backtrace for it and sends the notice',
-          RuntimeError.new('bingo')
-        )
-      end
-    end
+  let(:default_notifier) do
+    described_class.instance_variable_get(:@notifiers)[:default]
   end
 
   describe ".configure" do
-    context "given an argument" do
-      it "configures a notifier with the given name" do
-        described_class.configure(:bingo) do |c|
-          c.project_id = 123
-          c.project_key = '321'
+    let(:config_params) { { project_id: 1, project_key: 'abc' } }
+
+    after { described_class.instance_variable_get(:@notifiers).clear }
+
+    it "yields the config" do
+      expect do |b|
+        begin
+          described_class.configure(&b)
+        rescue Airbrake::Error
+          nil
         end
+      end.to yield_with_args(Airbrake::Config)
+    end
 
-        notifiers = described_class.instance_variable_get(:@notifiers)
-
-        expect(notifiers).to be_a(Hash)
-        expect(notifiers.keys).to eq(%i[default bingo])
-        expect(notifiers.values).to all(satisfy { |v| v.is_a?(Airbrake::Notifier) })
+    context "when invoked with a notifier name" do
+      it "sets notifier name to the provided name" do
+        described_class.configure(:test) { |c| c.merge(config_params) }
+        expect(described_class[:test]).to be_an(Airbrake::Notifier)
       end
+    end
 
-      it "raises error when a notifier of the given type was already configured" do
-        described_class.configure(:bingo) do |c|
-          c.project_id = 123
-          c.project_key = '321'
-        end
+    context "when invoked without a notifier name" do
+      it "defaults to the :default notifier name" do
+        described_class.configure { |c| c.merge(config_params) }
+        expect(described_class[:default]).to be_an(Airbrake::Notifier)
+      end
+    end
 
+    context "when invoked twice with the same notifier name" do
+      it "raises Airbrake::Error" do
+        described_class.configure { |c| c.merge(config_params) }
         expect do
-          described_class.configure(:bingo) do |c|
-            c.project_id = 123
-            c.project_key = '321'
-          end
-        end.to raise_error(Airbrake::Error,
-                           "the 'bingo' notifier was already configured")
+          described_class.configure { |c| c.merge(config_params) }
+        end.to raise_error(
+          Airbrake::Error, "the 'default' notifier was already configured"
+        )
       end
     end
   end
 
   describe ".configured?" do
-    before do
-      described_class.instance_variable_set(
-        :@notifiers,
-        Hash.new(Airbrake::NilNotifier.new)
-      )
+    it "forwards 'configured?' to the notifier" do
+      expect(default_notifier).to receive(:configured?)
+      described_class.configured?
     end
+  end
 
-    it "returns false" do
-      expect(described_class).not_to be_configured
+  describe ".notify" do
+    it "forwards 'notify' to the notifier" do
+      block = proc {}
+      expect(default_notifier).to receive(:notify).with('ex', foo: 'bar', &block)
+      described_class.notify('ex', foo: 'bar', &block)
+    end
+  end
+
+  describe ".notify_sync" do
+    it "forwards 'notify_sync' to the notifier" do
+      block = proc {}
+      expect(default_notifier).to receive(:notify).with('ex', foo: 'bar', &block)
+      described_class.notify('ex', foo: 'bar', &block)
     end
   end
 
   describe ".add_filter" do
-    include_examples 'non-configured notifier handling', :add_filter
-
-    it "adds filters with help of blocks" do
-      filter_chain = notifier.instance_variable_get(:@filter_chain)
-      filters = filter_chain.instance_variable_get(:@filters)
-
-      expect(filters.size).to eq(4)
-
-      described_class.add_filter {}
-
-      expect(filters.size).to eq(5)
-      expect(filters.last).to be_a(Proc)
+    it "forwards 'add_filter' to the notifier" do
+      block = proc {}
+      expect(default_notifier).to receive(:add_filter).with(nil, &block)
+      described_class.add_filter(&block)
     end
   end
 
   describe ".build_notice" do
-    include_examples 'non-configured notifier handling', :build_notice
+    it "forwards 'build_notice' to the notifier" do
+      expect(default_notifier).to receive(:build_notice).with('ex', foo: 'bar')
+      described_class.build_notice('ex', foo: 'bar')
+    end
+  end
+
+  describe ".close" do
+    it "forwards 'close' to the notifier" do
+      expect(default_notifier).to receive(:close)
+      described_class.close
+    end
+  end
+
+  describe ".create_deploy" do
+    it "forwards 'create_deploy' to the notifier" do
+      expect(default_notifier).to receive(:create_deploy).with(foo: 'bar')
+      described_class.create_deploy(foo: 'bar')
+    end
   end
 
   describe ".merge_context" do
-    include_examples 'non-configured notifier handling', :merge_context
+    it "forwards 'merge_context' to the notifier" do
+      expect(default_notifier).to receive(:merge_context).with(foo: 'bar')
+      described_class.merge_context(foo: 'bar')
+    end
   end
 end
