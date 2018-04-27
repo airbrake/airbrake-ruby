@@ -662,7 +662,7 @@ class MerryGrocer
     Airbrake.notify('fruitception')
   end
 
-  def load_veggies
+  def load_veggies(veggies)
     Airbrake.merge_context(veggies: veggies)
   end
 
