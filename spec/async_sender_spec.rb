@@ -117,6 +117,15 @@ RSpec.describe Airbrake::AsyncSender do
       @sender.close
       expect(@sender).not_to have_workers
     end
+
+    it "respawns workers on fork()", skip: %w[jruby rbx].include?(RUBY_ENGINE) do
+      pid = fork do
+        expect(@sender).to have_workers
+      end
+      Process.wait(pid)
+      @sender.close
+      expect(@sender).not_to have_workers
+    end
   end
 
   describe "#spawn_workers" do

@@ -25,6 +25,38 @@ RSpec.describe Airbrake::SyncSender do
 
     let(:sender) { described_class.new(config) }
     let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
+    let(:endpoint) { 'https://airbrake.io/api/v3/projects/1/notices' }
+
+    before { stub_request(:post, endpoint).to_return(body: '{}') }
+
+    it "sets the Content-Type header to JSON" do
+      sender.send(notice, promise)
+      expect(
+        a_request(:post, endpoint).with(
+          headers: { 'Content-Type' => 'application/json' }
+        )
+      ).to have_been_made.once
+    end
+
+    it "sets the User-Agent header to the notifier slug" do
+      sender.send(notice, promise)
+      expect(
+        a_request(:post, endpoint).with(
+          headers: {
+            'User-Agent' => %r{airbrake-ruby/\d+\.\d+\.\d+ Ruby/\d+\.\d+\.\d+}
+          }
+        )
+      ).to have_been_made.once
+    end
+
+    it "sets the Authorization header to the project key" do
+      sender.send(notice, promise)
+      expect(
+        a_request(:post, endpoint).with(
+          headers: { 'Authorization' => 'Bearer banana' }
+        )
+      ).to have_been_made.once
+    end
 
     it "catches exceptions raised while sending" do
       https = double("foo")
@@ -33,21 +65,6 @@ RSpec.describe Airbrake::SyncSender do
       expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('error' => '**Airbrake: HTTP error: foo')
       expect(stdout.string).to match(/ERROR -- : .+ HTTP error: foo/)
-    end
-
-    it "passes project key as a token in the Authorization header" do
-      stub_request(:post, 'https://airbrake.io/api/v3/projects/1/notices').
-        to_return(body: '{}')
-      sender.send(notice, promise)
-
-      expect(
-        a_request(:post, 'https://airbrake.io/api/v3/projects/1/notices').with(
-          headers: {
-            'Authorization' => 'Bearer banana',
-            'Content-Type' => 'application/json'
-          }
-        )
-      ).to have_been_made.once
     end
 
     context "when request body is nil" do
