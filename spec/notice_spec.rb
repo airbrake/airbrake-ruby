@@ -189,6 +189,86 @@ RSpec.describe Airbrake::Notice do
       end
     end
 
+    context "given a closed IO object" do
+      context "and when it is not monkey-patched by ActiveSupport" do
+        it "is not getting truncated" do
+          notice[:params] = { obj: IO.new(0).tap(&:close) }
+          expect(notice.to_json).to match(/"obj":"#<IO:0x.+>"/)
+        end
+      end
+
+      context "and when it is monkey-patched by ActiveSupport" do
+        # Instances of this class contain a closed IO object assigned to an
+        # instance variable. Normally, the JSON gem, which we depend on can
+        # parse closed IO objects. However, because ActiveSupport monkey-patches
+        # #to_json and calls #to_a on them, they raise IOError when we try to
+        # serialize them.
+        #
+        # @see https://goo.gl/0A3xNC
+        class ObjectWithIoIvars
+          def initialize
+            @bongo = Tempfile.new('bongo').tap(&:close)
+          end
+
+          # @raise [NotImplementedError] when inside a Rails environment
+          def to_json(*)
+            raise NotImplementedError
+          end
+        end
+
+        # @see ObjectWithIoIvars
+        class ObjectWithNestedIoIvars
+          def initialize
+            @bish = ObjectWithIoIvars.new
+          end
+
+          # @see ObjectWithIoIvars#to_json
+          def to_json(*)
+            raise NotImplementedError
+          end
+        end
+
+        context "and also when it's a closed Tempfile" do
+          it "doesn't fail" do
+            notice[:params] = { obj: Tempfile.new('bongo').tap(&:close) }
+            expect(notice.to_json).to match(/"obj":"#<(Temp)?file:0x.+>"/i)
+          end
+        end
+
+        context "and also when it's an IO ivar" do
+          it "doesn't fail" do
+            notice[:params] = { obj: ObjectWithIoIvars.new }
+            expect(notice.to_json).to match(/"obj":".+ObjectWithIoIvars.+"/)
+          end
+
+          context "and when it's deeply nested inside a hash" do
+            it "doesn't fail" do
+              notice[:params] = { a: { b: { c: ObjectWithIoIvars.new } } }
+              expect(notice.to_json).to match(
+                /"params":{"a":{"b":{"c":".+ObjectWithIoIvars.+"}}.*}/
+              )
+            end
+          end
+
+          context "and when it's deeply nested inside an array" do
+            it "doesn't fail" do
+              notice[:params] = { a: [[ObjectWithIoIvars.new]] }
+              expect(notice.to_json).to match(
+                /"params":{"a":\[\[".+ObjectWithIoIvars.+"\]\].*}/
+              )
+            end
+          end
+        end
+
+        context "and also when it's a non-IO ivar, which contains an IO ivar itself" do
+          it "doesn't fail" do
+            notice[:params] = { obj: ObjectWithNestedIoIvars.new }
+            expect(notice.to_json).to match(/"obj":".+ObjectWithNested.+"/)
+          end
+        end
+      end
+    end
+
     it "overwrites the 'notifier' payload with the default values" do
       notice[:notifier] = { name: 'bingo', bango: 'bongo' }
 
@@ -208,6 +288,20 @@ RSpec.describe Airbrake::Notice do
     it "always contains environment/program_name" do
       expect(notice.to_json).
         to match(%r|"environment":{"program_name":.+/rspec.*|)
+    end
+
+    it "contains errors" do
+      expect(notice.to_json).
+        to match(/"errors":\[{"type":"AirbrakeTestError","message":"App crash/)
+    end
+
+    it "contains a backtrace" do
+      expect(notice.to_json).
+        to match(%r|"backtrace":\[{"file":"/home/.+/spec/spec_helper.rb"|)
+    end
+
+    it "contains params" do
+      expect(notice.to_json).to match(/"params":{"bingo":"1"}/)
     end
   end
 
