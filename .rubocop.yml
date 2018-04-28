@@ -82,3 +82,6 @@ Style/FormatStringToken:
 
 Naming/UncommunicativeMethodParamName:
   Enabled: false
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
