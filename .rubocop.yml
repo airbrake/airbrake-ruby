@@ -79,3 +79,6 @@ Gemspec/OrderedDependencies:
 
 Style/FormatStringToken:
   Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
