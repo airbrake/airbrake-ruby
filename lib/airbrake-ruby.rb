@@ -83,6 +83,31 @@ module Airbrake
   JRUBY = (RUBY_ENGINE == 'jruby')
 
   ##
+  # NilNotifier is a no-op notifier, which mimics +Airbrake::Notifier+ and
+  # serves only for the purpose of making the library API easier to use.
+  #
+  # @since 2.1.0
+  class NilNotifier
+    def notify(_exception, _params = {}, &block); end
+
+    def notify_sync(_exception, _params = {}, &block); end
+
+    def add_filter(_filter = nil, &_block); end
+
+    def build_notice(_exception, _params = {}); end
+
+    def close; end
+
+    def create_deploy(_deploy_params); end
+
+    def configured?
+      false
+    end
+
+    def merge_context(_context); end
+  end
+
+  ##
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances. If a notifier is not
   # assigned to the hash, then it returns a null object (NilNotifier).
