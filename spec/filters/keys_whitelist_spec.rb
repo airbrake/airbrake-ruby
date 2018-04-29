@@ -146,31 +146,25 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
     end
 
     context "and it is recursive" do
-      let(:patterns) { %w[bingo bango] }
+      let(:patterns) { ['bingo'] }
 
-      it "errors when nested hashes are not filtered" do
-        bongo = { bingo: {} }
-        bongo[:bingo][:bango] = bongo
+      it "raises error (MRI)", skip: (
+        # MRI 2.3 & 2.4 may segfault on Circle CI. Example build:
+        # https://circleci.com/workflow-run/c112358c-e7bf-4789-9eb2-4891ea84da68
+        RUBY_ENGINE == 'ruby' && RUBY_VERSION =~ /\A2\.[34]\.\d+\z/
+      ) do
+        bongo = {}
+        bongo[:bingo] = bongo
         notice[:params] = bongo
 
-        if RUBY_ENGINE == 'jruby'
-          # JRuby might raise two different exceptions, which represent the
-          # same thing. One is a Java exception, the other is a Ruby
-          # exception. It's probably a JRuby bug:
-          # https://github.com/jruby/jruby/issues/1903
-          begin
-            expect do
-              subject.call(notice)
-            end.to raise_error(SystemStackError)
-          rescue RSpec::Expectations::ExpectationNotMetError
-            expect do
-              subject.call(notice)
-            end.to raise_error(java.lang.StackOverflowError)
-          end
-        else
-          expect do
-            subject.call(notice)
-          end.to raise_error(SystemStackError)
+        begin
+          expect { subject.call(notice) }.to raise_error(SystemStackError)
+        rescue RSpec::Expectations::ExpectationNotMetError => ex
+          # JRuby might raise two different exceptions, which represent the same
+          # thing. One is a Java exception, the other is a Ruby exception.
+          # Likely a bug: https://github.com/jruby/jruby/issues/1903
+          raise ex unless RUBY_ENGINE == 'jruby'
+          expect { subject.call(notice) }.to raise_error(java.lang.StackOverflowError)
         end
       end
     end
