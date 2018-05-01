@@ -28,6 +28,12 @@ module Airbrake
     attr_accessor :app_version
 
     ##
+    # @return [Hash{String=>String}] arbitrary versions that your app wants to
+    #   track
+    # @since v2.10.0
+    attr_accessor :versions
+
+    ##
     # @return [Integer] the max number of notices that can be queued up
     attr_accessor :queue_size
 
@@ -107,6 +113,8 @@ module Airbrake
         (defined?(Bundler) && Bundler.root) ||
         Dir.pwd
       )
+
+      self.versions = {}
 
       merge(user_config)
     end

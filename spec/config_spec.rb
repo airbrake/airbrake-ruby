@@ -25,6 +25,10 @@ RSpec.describe Airbrake::Config do
         expect(config.app_version).to be_nil
       end
 
+      it "sets the default versions" do
+        expect(config.versions).to be_empty
+      end
+
       it "sets the default host" do
         expect(config.host).to eq('https://airbrake.io')
       end

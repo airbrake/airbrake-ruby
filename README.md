@@ -222,6 +222,21 @@ Airbrake.configure do |c|
 end
 ```
 
+#### versions
+
+A hash of arbitrary versions that your application uses that you want to
+track (Rails, Linux kernel, API version, etc.). By default, it's empty.
+
+```ruby
+Airbrake.configure do |c|
+  c.versions = {
+    'Rails' => '5.2.0',
+    'bundler' => '1.16.1',
+    'LinuxKernel' => '4.4.0-97-generic'
+  }
+end
+```
+
 #### host
 
 By default, it is set to `airbrake.io`. A `host` is a web address containing a

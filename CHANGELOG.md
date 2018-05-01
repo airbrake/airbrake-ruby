@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added the `versions` option
+  ([#327](https://github.com/airbrake/airbrake-ruby/pull/327))
+
 ### [v2.9.0][v2.9.0] (April 26, 2018)
 
 * Changed format for `[GEM_ROOT]` & `[PROJECT_ROOT]` placeholders to
