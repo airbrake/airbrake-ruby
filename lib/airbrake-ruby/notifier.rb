@@ -171,6 +171,9 @@ module Airbrake
       end
 
       @filter_chain.add_filter(Airbrake::Filters::ContextFilter.new(@context))
+      @filter_chain.add_filter(
+        Airbrake::Filters::ExceptionAttributesFilter.new(@config.logger)
+      )
 
       return unless (root_directory = @config.root_directory)
       @filter_chain.add_filter(

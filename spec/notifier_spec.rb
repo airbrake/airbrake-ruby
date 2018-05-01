@@ -18,6 +18,12 @@ RSpec.describe Airbrake::Notifier do
         described_class.new(user_params)
       end
 
+      it "appends the exception attributes filter" do
+        expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
+          .with(instance_of(Airbrake::Filters::ExceptionAttributesFilter))
+        described_class.new(user_params)
+      end
+
       context "when user config has some whitelist keys" do
         it "appends the whitelist filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)

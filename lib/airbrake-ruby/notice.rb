@@ -78,8 +78,6 @@ module Airbrake
       }
       @stash = { exception: exception }
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
-
-      extract_custom_attributes(exception)
     end
 
     ##
@@ -194,30 +192,6 @@ module Airbrake
       end
 
       new_max_size
-    end
-
-    def extract_custom_attributes(exception)
-      return unless exception.respond_to?(:to_airbrake)
-      attributes = nil
-
-      begin
-        attributes = exception.to_airbrake
-      rescue StandardError => ex
-        @config.logger.error(
-          "#{LOG_LABEL} #{exception.class}#to_airbrake failed: #{ex.class}: #{ex}"
-        )
-      end
-
-      return unless attributes
-
-      begin
-        @payload.merge!(attributes)
-      rescue TypeError
-        @config.logger.error(
-          "#{LOG_LABEL} #{exception.class}#to_airbrake failed:" \
-          " #{attributes} must be a Hash"
-        )
-      end
     end
   end
 end
