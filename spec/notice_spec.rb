@@ -30,6 +30,23 @@ RSpec.describe Airbrake::Notice do
       end
     end
 
+    context "when versions is empty" do
+      it "doesn't set the 'versions' payload" do
+        expect(notice.to_json).not_to match(
+          /"context":{"versions":{"dep":"1.2.3"}}/
+        )
+      end
+    end
+
+    context "when versions is not empty" do
+      it "sets the 'versions' payload" do
+        notice[:context][:versions] = { 'dep' => '1.2.3' }
+        expect(notice.to_json).to match(
+          /"context":{.*"versions":{"dep":"1.2.3"}.*}/
+        )
+      end
+    end
+
     context "truncation" do
       shared_examples 'payloads' do |size, msg|
         it msg do

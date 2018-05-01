@@ -159,6 +159,7 @@ module Airbrake
     def context
       {
         version: @config.app_version,
+        versions: @config.versions,
         # We ensure that root_directory is always a String, so it can always be
         # converted to JSON in a predictable manner (when it's a Pathname and in
         # Rails environment, it converts to unexpected JSON).
