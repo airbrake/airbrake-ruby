@@ -1,6 +1,5 @@
 module Airbrake
   module Filters
-    ##
     # This is a filter helper that endows a class ability to filter notices'
     # payload based on the return value of the +should_filter?+ method that a
     # class that includes this module must implement.
@@ -9,30 +8,24 @@ module Airbrake
     # @see KeysWhitelist
     # @see KeysBlacklist
     module KeysFilter
-      ##
       # @return [String] The label to replace real values of filtered payload
       FILTERED = '[Filtered]'.freeze
 
-      ##
       # @return [Array<String,Symbol,Regexp>] the array of classes instances of
       #   which can compared with payload keys
       VALID_PATTERN_CLASSES = [String, Symbol, Regexp].freeze
 
-      ##
       # @return [Array<Symbol>] parts of a Notice's payload that can be modified
       #   by blacklist/whitelist filters
       FILTERABLE_KEYS = %i[environment session params].freeze
 
-      ##
       # @return [Array<Symbol>] parts of a Notice's *context* payload that can
       #   be modified by blacklist/whitelist filters
       FILTERABLE_CONTEXT_KEYS = %i[user headers].freeze
 
-      ##
       # @return [Integer]
       attr_reader :weight
 
-      ##
       # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
@@ -44,7 +37,6 @@ module Airbrake
         @valid_patterns = false
       end
 
-      ##
       # This is a mandatory method required by any filter integrated with
       # FilterChain.
       #
@@ -64,7 +56,6 @@ module Airbrake
         filter_url(notice)
       end
 
-      ##
       # @raise [NotImplementedError] if called directly
       def should_filter?(_key)
         raise NotImplementedError, 'method must be implemented in the included class'

@@ -1,6 +1,5 @@
 require_relative 'benchmark_helpers'
 
-##
 # Generates example errors that should be truncated.
 class Payload
   def self.generate

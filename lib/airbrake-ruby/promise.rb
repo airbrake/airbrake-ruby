@@ -1,5 +1,4 @@
 module Airbrake
-  ##
   # Represents a simplified promise object (similar to promises found in
   # JavaScript), which allows chaining callbacks that are executed when the
   # promise is either resolved or rejected.
@@ -8,7 +7,6 @@ module Airbrake
   # @see https://github.com/ruby-concurrency/concurrent-ruby/blob/master/lib/concurrent/promise.rb
   # @since v1.7.0
   class Promise
-    ##
     # @api private
     # @return [Hash<String,String>] either successful response containing the
     #   +id+ key or unsuccessful response containing the +error+ key
@@ -22,7 +20,6 @@ module Airbrake
       @mutex = Mutex.new
     end
 
-    ##
     # Attaches a callback to be executed when the promise is resolved.
     #
     # @example
@@ -46,7 +43,6 @@ module Airbrake
       self
     end
 
-    ##
     # Attaches a callback to be executed when the promise is rejected.
     #
     # @example
@@ -68,7 +64,6 @@ module Airbrake
       self
     end
 
-    ##
     # Resolves the promise.
     #
     # @example
@@ -85,7 +80,6 @@ module Airbrake
       self
     end
 
-    ##
     # Rejects the promise.
     #
     # @example

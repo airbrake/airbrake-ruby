@@ -1,14 +1,11 @@
 module Airbrake
-  ##
   # Represents a small hunk of code consisting of a base line and a couple lines
   # around it
   # @api private
   class CodeHunk
-    ##
     # @return [Integer] the maximum length of a line
     MAX_LINE_LEN = 200
 
-    ##
     # @return [Integer] how many lines should be read around the base line
     NLINES = 2
 
@@ -16,7 +13,6 @@ module Airbrake
       @config = config
     end
 
-    ##
     # @param [String] file The file to read
     # @param [Integer] line The base line in the file
     # @return [Hash{Integer=>String}, nil] lines of code around the base line

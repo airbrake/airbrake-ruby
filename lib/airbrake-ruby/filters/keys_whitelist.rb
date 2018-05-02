@@ -1,6 +1,5 @@
 module Airbrake
   module Filters
-    ##
     # A default Airbrake notice filter. Filters everything in the payload of a
     # notice, but specified keys.
     #
@@ -34,7 +33,6 @@ module Airbrake
         @weight = -100
       end
 
-      ##
       # @return [Boolean] true if the key doesn't match any pattern, false
       #   otherwise.
       def should_filter?(key)

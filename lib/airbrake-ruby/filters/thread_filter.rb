@@ -1,14 +1,11 @@
 module Airbrake
   module Filters
-    ##
     # Attaches thread & fiber local variables along with general thread
     # information.
     class ThreadFilter
-      ##
       # @return [Integer]
       attr_reader :weight
 
-      ##
       # @return [Array<Class>] the list of classes that can be safely converted
       #   to JSON
       SAFE_CLASSES = [
@@ -21,7 +18,6 @@ module Airbrake
         Numeric
       ].freeze
 
-      ##
       # Variables starting with this prefix are not attached to a notice.
       # @see https://github.com/airbrake/airbrake-ruby/issues/229
       # @return [String]

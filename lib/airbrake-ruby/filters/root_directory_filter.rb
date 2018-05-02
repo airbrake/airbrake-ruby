@@ -1,13 +1,10 @@
 module Airbrake
   module Filters
-    ##
     # Replaces root directory with a label.
     class RootDirectoryFilter
-      ##
       # @return [String]
       PROJECT_ROOT_LABEL = '/PROJECT_ROOT'.freeze
 
-      ##
       # @return [Integer]
       attr_reader :weight
 

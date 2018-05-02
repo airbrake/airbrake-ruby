@@ -3,39 +3,33 @@ require_relative 'benchmark_helpers'
 require 'securerandom'
 require 'base64'
 
-##
 # Generates various strings for the benchmark.
 module StringGenerator
   STRLEN = 32
 
   class << self
-    ##
     # @return [String] a UTF-8 string with valid encoding and characters
     def utf8
       SecureRandom.hex(STRLEN).encode('utf-8')
     end
 
-    ##
     # @return [String] a UTF-8 string with invalid encoding and characters.
     def invalid_utf8
       [invalid_string, invalid_string, invalid_string].join("").encode('utf-8')
     end
 
-    ##
     # @return [String] a UTF-8 string with valid encoding and charaters from
     #   unicode
     def unicode_utf8
       "ü ö ä Ä Ü Ö ß привет €25.00 한글".encode('utf-8')
     end
 
-    ##
     # @return [String] an ASCII-8BIT string with valid encoding and random
     #   charaters
     def ascii_8bit_string
       SecureRandom.random_bytes(STRLEN).encode('ascii-8bit')
     end
 
-    ##
     # @return [String] an ASCII-8BIT string with valid encoding and invalid
     #   charaters (which means it can't be converted to UTF-8 with plain
     #   +String#encode+
@@ -51,10 +45,8 @@ module StringGenerator
   end
 end
 
-##
 # Generates arrays of strings for the benchmark.
 module BenchmarkCase
-  ##
   # @return [Integer] number of strings to generate
   MAX = 100_000
 

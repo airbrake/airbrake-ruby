@@ -1,19 +1,15 @@
 module Airbrake
-  ##
   # Extremely simple global cache.
   #
   # @api private
   # @since v2.4.1
   module FileCache
-    ##
     # @return [Integer]
     MAX_SIZE = 50
 
-    ##
     # @return [Mutex]
     MUTEX = Mutex.new
 
-    ##
     # Associates the value given by +value+ with the key given by +key+. Deletes
     # entries that exceed +MAX_SIZE+.
     #
@@ -27,7 +23,6 @@ module Airbrake
       end
     end
 
-    ##
     # Retrieve an object from the cache.
     #
     # @param [Object] key
@@ -38,7 +33,6 @@ module Airbrake
       end
     end
 
-    ##
     # Checks whether the cache is empty. Needed only for the test suite.
     #
     # @return [Boolean]

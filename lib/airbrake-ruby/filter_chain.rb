@@ -1,5 +1,4 @@
 module Airbrake
-  ##
   # Represents the mechanism for filtering notices. Defines a few default
   # filters.
   #
@@ -7,7 +6,6 @@ module Airbrake
   # @api private
   # @since v1.0.0
   class FilterChain
-    ##
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
       Airbrake::Filters::SystemExitFilter,
@@ -17,7 +15,6 @@ module Airbrake
       # Airbrake::Filters::ThreadFilter
     ].freeze
 
-    ##
     # @return [Integer]
     DEFAULT_WEIGHT = 0
 
@@ -26,7 +23,6 @@ module Airbrake
       DEFAULT_FILTERS.each { |f| add_filter(f.new) }
     end
 
-    ##
     # Adds a filter to the filter chain. Sorts filters by weight.
     #
     # @param [#call] filter The filter object (proc, class, module, etc)
@@ -37,7 +33,6 @@ module Airbrake
       end.reverse!
     end
 
-    ##
     # Applies all the filters in the filter chain to the given notice. Does not
     # filter ignored notices.
     #

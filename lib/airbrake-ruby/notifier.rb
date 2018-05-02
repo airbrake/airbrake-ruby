@@ -1,16 +1,13 @@
 module Airbrake
-  ##
   # This class is reponsible for sending notices to Airbrake. It supports
   # synchronous and asynchronous delivery.
   #
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   class Notifier
-    ##
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
 
-    ##
     # Creates a new Airbrake notifier with the given config options.
     #
     # @example Configuring with a Hash
@@ -40,29 +37,24 @@ module Airbrake
       @sync_sender = SyncSender.new(@config)
     end
 
-    ##
     # @!macro see_public_api_method
     #   @see Airbrake.$0
 
-    ##
     # @macro see_public_api_method
     def notify(exception, params = {}, &block)
       send_notice(exception, params, default_sender, &block)
     end
 
-    ##
     # @macro see_public_api_method
     def notify_sync(exception, params = {}, &block)
       send_notice(exception, params, @sync_sender, &block).value
     end
 
-    ##
     # @macro see_public_api_method
     def add_filter(filter = nil, &block)
       @filter_chain.add_filter(block_given? ? block : filter)
     end
 
-    ##
     # @macro see_public_api_method
     def build_notice(exception, params = {})
       if @async_sender.closed?
@@ -78,13 +70,11 @@ module Airbrake
       end
     end
 
-    ##
     # @macro see_public_api_method
     def close
       @async_sender.close
     end
 
-    ##
     # @macro see_public_api_method
     def create_deploy(deploy_params)
       deploy_params[:environment] ||= @config.environment
@@ -94,13 +84,11 @@ module Airbrake
       promise
     end
 
-    ##
     # @macro see_public_api_method
     def configured?
       @config.valid?
     end
 
-    ##
     # @macro see_public_api_method
     def merge_context(context)
       @context.merge!(context)
