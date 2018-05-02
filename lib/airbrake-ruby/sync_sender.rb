@@ -1,23 +1,19 @@
 module Airbrake
-  ##
   # Responsible for sending notices to Airbrake synchronously. Supports proxies.
   #
   # @see AsyncSender
   # @api private
   # @since v1.0.0
   class SyncSender
-    ##
     # @return [String] body for HTTP requests
     CONTENT_TYPE = 'application/json'.freeze
 
-    ##
     # @param [Airbrake::Config] config
     def initialize(config)
       @config = config
       @rate_limit_reset = Time.now
     end
 
-    ##
     # Sends a POST request to the given +endpoint+ with the +notice+ payload.
     #
     # @param [Airbrake::Notice] notice

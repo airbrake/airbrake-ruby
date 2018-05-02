@@ -1,13 +1,10 @@
 module Airbrake
   module Filters
-    ##
     # Skip over SystemExit exceptions, because they're just noise.
     class SystemExitFilter
-      ##
       # @return [String]
       SYSTEM_EXIT_TYPE = 'SystemExit'.freeze
 
-      ##
       # @return [Integer]
       attr_reader :weight
 

@@ -1,11 +1,9 @@
 module Airbrake
-  ##
   # Represents a chunk of information that is meant to be either sent to
   # Airbrake or ignored completely.
   #
   # @since v1.0.0
   class Notice
-    ##
     # @return [Hash{Symbol=>String}] the information about the notifier library
     NOTIFIER = {
       name: 'airbrake-ruby'.freeze,
@@ -13,7 +11,6 @@ module Airbrake
       url: 'https://github.com/airbrake/airbrake-ruby'.freeze
     }.freeze
 
-    ##
     # @return [Hash{Symbol=>String,Hash}] the information to be displayed in the
     #   Context tab in the dashboard
     CONTEXT = {
@@ -22,16 +19,13 @@ module Airbrake
       notifier: NOTIFIER
     }.freeze
 
-    ##
     # @return [Integer] the maxium size of the JSON payload in bytes
     MAX_NOTICE_SIZE = 64000
 
-    ##
     # @return [Integer] the maximum size of hashes, arrays and strings in the
     #   notice.
     PAYLOAD_MAX_SIZE = 10000
 
-    ##
     # @return [Array<StandardError>] the list of possible exceptions that might
     #   be raised when an object is converted to JSON
     JSON_EXCEPTIONS = [
@@ -45,20 +39,16 @@ module Airbrake
     #   {Airbrake::Notice#[]=}
     WRITABLE_KEYS = %i[notifier context environment session params].freeze
 
-    ##
     # @return [Array<Symbol>] parts of a Notice's payload that can be modified
     #   by the truncator
     TRUNCATABLE_KEYS = %i[errors environment session params].freeze
 
-    ##
     # @return [String] the name of the host machine
     HOSTNAME = Socket.gethostname.freeze
 
-    ##
     # @return [String]
     DEFAULT_SEVERITY = 'error'.freeze
 
-    ##
     # @since v1.7.0
     # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
     #   in filters
@@ -80,7 +70,6 @@ module Airbrake
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
     end
 
-    ##
     # Converts the notice to JSON. Calls +to_json+ on each object inside
     # notice's payload. Truncates notices, JSON representation of which is
     # bigger than {MAX_NOTICE_SIZE}.
@@ -100,7 +89,6 @@ module Airbrake
       end
     end
 
-    ##
     # Ignores a notice. Ignored notices never reach the Airbrake dashboard.
     #
     # @return [void]
@@ -110,7 +98,6 @@ module Airbrake
       @payload = nil
     end
 
-    ##
     # Checks whether the notice was ignored.
     #
     # @return [Boolean]
@@ -119,19 +106,17 @@ module Airbrake
       @payload.nil?
     end
 
-    ##
     # Reads a value from notice's payload.
-    # @return [Object]
     #
+    # @return [Object]
     # @raise [Airbrake::Error] if the notice is ignored
     def [](key)
       raise_if_ignored
       @payload[key]
     end
 
-    ##
-    # Writes a value to the payload hash. Restricts unrecognized
-    # writes.
+    # Writes a value to the payload hash. Restricts unrecognized writes.
+    #
     # @example
     #   notice[:params][:my_param] = 'foobar'
     #

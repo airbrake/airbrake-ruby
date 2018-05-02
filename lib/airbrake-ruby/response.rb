@@ -1,20 +1,16 @@
 module Airbrake
-  ##
   # Parses responses coming from the Airbrake API. Handles HTTP errors by
   # logging them.
   #
   # @api private
   # @since v1.0.0
   module Response
-    ##
     # @return [Integer] the limit of the response body
     TRUNCATE_LIMIT = 100
 
-    ##
     # @return [Integer] HTTP code returned when an IP sends over 10k/min notices
     TOO_MANY_REQUESTS = 429
 
-    ##
     # Parses HTTP responses from the Airbrake API.
     #
     # @param [Net::HTTPResponse] response

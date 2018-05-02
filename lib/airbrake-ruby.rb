@@ -31,7 +31,6 @@ require 'airbrake-ruby/notifier'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
 
-##
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
 # {configure} the default notifier.
@@ -66,25 +65,20 @@ require 'airbrake-ruby/file_cache'
 # @see Airbrake::Notifier
 # @since v1.0.0
 module Airbrake
-  ##
   # The general error that this library uses when it wants to raise.
   Error = Class.new(StandardError)
 
-  ##
   # @return [String] the label to be prepended to the log output
   LOG_LABEL = '**Airbrake:'.freeze
 
-  ##
   # @return [Boolean] true if current Ruby is Ruby 2.0.*. The result is used
   #   for special cases where we need to work around older implementations
   RUBY_20 = RUBY_VERSION.start_with?('2.0')
 
-  ##
   # @return [Boolean] true if current Ruby is JRuby. The result is used for
   #  special cases where we need to work around older implementations
   JRUBY = (RUBY_ENGINE == 'jruby')
 
-  ##
   # NilNotifier is a no-op notifier, which mimics +Airbrake::Notifier+ and
   # serves only for the purpose of making the library API easier to use.
   #
@@ -109,14 +103,12 @@ module Airbrake
     def merge_context(_context); end
   end
 
-  ##
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances. If a notifier is not
   # assigned to the hash, then it returns a null object (NilNotifier).
   @notifiers = Hash.new(NilNotifier.new)
 
   class << self
-    ##
     # Retrieves configured notifiers.
     #
     # @example
@@ -128,7 +120,6 @@ module Airbrake
       @notifiers[notifier_name]
     end
 
-    ##
     # Configures a new +notifier+ with the given name. If the name is not given,
     # configures the default notifier.
     #
@@ -165,14 +156,12 @@ module Airbrake
       end
     end
 
-    ##
     # @return [Boolean] true if the notifier was configured, false otherwise
     # @since 2.3.0
     def configured?
       @notifiers[:default].configured?
     end
 
-    ##
     # Sends an exception to Airbrake asynchronously.
     #
     # @example Sending an exception
@@ -198,7 +187,6 @@ module Airbrake
       @notifiers[:default].notify(exception, params, &block)
     end
 
-    ##
     # Sends an exception to Airbrake synchronously.
     #
     # @example
@@ -219,7 +207,6 @@ module Airbrake
       @notifiers[:default].notify_sync(exception, params, &block)
     end
 
-    ##
     # Runs a callback before {.notify} or {.notify_sync} kicks in. This is
     # useful if you want to ignore specific notices or filter the data the
     # notice contains.
@@ -249,7 +236,6 @@ module Airbrake
       @notifiers[:default].add_filter(filter, &block)
     end
 
-    ##
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
     # value only for a specific notice. When you're done modifying the notice,
     # send it with {.notify} or {.notify_sync}.
@@ -268,7 +254,6 @@ module Airbrake
       @notifiers[:default].build_notice(exception, params)
     end
 
-    ##
     # Makes the notifier a no-op, which means you cannot use the {.notify} and
     # {.notify_sync} methods anymore. It also stops the notifier's worker
     # threads.
@@ -282,7 +267,6 @@ module Airbrake
       @notifiers[:default].close
     end
 
-    ##
     # Pings the Airbrake Deploy API endpoint about the occurred deploy. This
     # method is used by the airbrake gem for various integrations.
     #
@@ -297,7 +281,6 @@ module Airbrake
       @notifiers[:default].create_deploy(deploy_params)
     end
 
-    ##
     # Merges +context+ with the current context.
     #
     # The context will be attached to the notice object upon a notify call and

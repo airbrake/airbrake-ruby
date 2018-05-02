@@ -1,13 +1,10 @@
 module Airbrake
   module Filters
-    ##
     # Replaces paths to gems with a placeholder.
     class GemRootFilter
-      ##
       # @return [String]
       GEM_ROOT_LABEL = '/GEM_ROOT'.freeze
 
-      ##
       # @return [Integer]
       attr_reader :weight
 
