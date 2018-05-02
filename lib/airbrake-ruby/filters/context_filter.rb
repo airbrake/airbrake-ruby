@@ -15,6 +15,7 @@ module Airbrake
         @mutex = Mutex.new
       end
 
+      # @macro call_filter
       def call(notice)
         @mutex.synchronize do
           return if @context.empty?

@@ -1,4 +1,6 @@
 module Airbrake
+  # Namespace for all standard filters. Custom filters can also go under this
+  # namespace.
   module Filters
     # This is a filter helper that endows a class ability to filter notices'
     # payload based on the return value of the +should_filter?+ method that a
@@ -7,6 +9,7 @@ module Airbrake
     # @see Notice
     # @see KeysWhitelist
     # @see KeysBlacklist
+    # @api private
     module KeysFilter
       # @return [String] The label to replace real values of filtered payload
       FILTERED = '[Filtered]'.freeze
@@ -37,12 +40,13 @@ module Airbrake
         @valid_patterns = false
       end
 
-      # This is a mandatory method required by any filter integrated with
-      # FilterChain.
+      # @!macro call_filter
+      #   This is a mandatory method required by any filter integrated with
+      #   FilterChain.
       #
-      # @param [Notice] notice the notice to be filtered
-      # @return [void]
-      # @see FilterChain
+      #   @param [Notice] notice the notice to be filtered
+      #   @return [void]
+      #   @see FilterChain
       def call(notice)
         unless @valid_patterns
           eval_proc_patterns!

@@ -1,6 +1,7 @@
 module Airbrake
   module Filters
     # Replaces paths to gems with a placeholder.
+    # @api private
     class GemRootFilter
       # @return [String]
       GEM_ROOT_LABEL = '/GEM_ROOT'.freeze
@@ -12,6 +13,7 @@ module Airbrake
         @weight = 120
       end
 
+      # @macro call_filter
       def call(notice)
         return unless defined?(Gem)
 

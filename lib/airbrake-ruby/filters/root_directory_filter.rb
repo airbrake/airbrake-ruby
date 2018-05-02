@@ -1,6 +1,7 @@
 module Airbrake
   module Filters
     # Replaces root directory with a label.
+    # @api private
     class RootDirectoryFilter
       # @return [String]
       PROJECT_ROOT_LABEL = '/PROJECT_ROOT'.freeze
@@ -13,6 +14,7 @@ module Airbrake
         @weight = 100
       end
 
+      # @macro call_filter
       def call(notice)
         notice[:errors].each do |error|
           error[:backtrace].each do |frame|

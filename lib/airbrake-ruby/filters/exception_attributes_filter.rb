@@ -2,12 +2,16 @@ module Airbrake
   module Filters
     # ExceptionAttributesFilter attempts to call `#to_airbrake` on the stashed
     # exception and attaches returned data to the notice object.
+    #
+    # @api private
+    # @since v2.10.0
     class ExceptionAttributesFilter
       def initialize(logger)
         @logger = logger
         @weight = 118
       end
 
+      # @macro call_filter
       def call(notice)
         exception = notice.stash[:exception]
         return unless exception.respond_to?(:to_airbrake)

@@ -25,6 +25,7 @@ module Airbrake
     #
     # @see KeysWhitelist
     # @see KeysFilter
+    # @api private
     class KeysBlacklist
       include KeysFilter
 
