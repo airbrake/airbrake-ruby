@@ -2,6 +2,7 @@ module Airbrake
   module Filters
     # Attaches thread & fiber local variables along with general thread
     # information.
+    # @api private
     class ThreadFilter
       # @return [Integer]
       attr_reader :weight
@@ -27,6 +28,7 @@ module Airbrake
         @weight = 110
       end
 
+      # @macro call_filter
       def call(notice)
         th = Thread.current
         thread_info = {}

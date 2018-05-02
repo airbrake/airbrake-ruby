@@ -54,6 +54,7 @@ module Airbrake
     #   in filters
     attr_reader :stash
 
+    # @api private
     def initialize(config, exception, params = {})
       @config = config
 
@@ -75,6 +76,7 @@ module Airbrake
     # bigger than {MAX_NOTICE_SIZE}.
     #
     # @return [Hash{String=>String}, nil]
+    # @api private
     def to_json
       loop do
         begin
