@@ -79,27 +79,38 @@ module Airbrake
   #  special cases where we need to work around older implementations
   JRUBY = (RUBY_ENGINE == 'jruby')
 
+  # @!macro see_public_api_method
+  #   @see Airbrake.$0
+
   # NilNotifier is a no-op notifier, which mimics +Airbrake::Notifier+ and
   # serves only for the purpose of making the library API easier to use.
   #
   # @since 2.1.0
   class NilNotifier
+    # @macro see_public_api_method
     def notify(_exception, _params = {}, &block); end
 
+    # @macro see_public_api_method
     def notify_sync(_exception, _params = {}, &block); end
 
+    # @macro see_public_api_method
     def add_filter(_filter = nil, &_block); end
 
+    # @macro see_public_api_method
     def build_notice(_exception, _params = {}); end
 
+    # @macro see_public_api_method
     def close; end
 
+    # @macro see_public_api_method
     def create_deploy(_deploy_params); end
 
+    # @macro see_public_api_method
     def configured?
       false
     end
 
+    # @macro see_public_api_method
     def merge_context(_context); end
   end
 
@@ -114,7 +125,8 @@ module Airbrake
     # @example
     #   Airbrake[:my_notifier].notify('oops')
     #
-    # @return [Airbrake::Notifier, nil]
+    # @param [Symbol] notifier_name the name of the notifier you want to use
+    # @return [Airbrake::Notifier, NilClass]
     # @since v1.8.0
     def [](notifier_name)
       @notifiers[notifier_name]
