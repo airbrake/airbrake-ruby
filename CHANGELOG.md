@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Added the `versions` option
   ([#327](https://github.com/airbrake/airbrake-ruby/pull/327))
+* Added `DependencyFilter` (optional)
+  ([#328](https://github.com/airbrake/airbrake-ruby/pull/328))
 
 ### [v2.9.0][v2.9.0] (April 26, 2018)
 
