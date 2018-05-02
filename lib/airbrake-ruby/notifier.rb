@@ -38,9 +38,6 @@ module Airbrake
       @sync_sender = SyncSender.new(@config)
     end
 
-    # @!macro see_public_api_method
-    #   @see Airbrake.$0
-
     # @macro see_public_api_method
     def notify(exception, params = {}, &block)
       send_notice(exception, params, default_sender, &block)
