@@ -47,6 +47,7 @@ Key features
 * Severity support<sup>[[link](#setting-severity)]</sup>
 * Support for code hunks (lines of code surrounding each backtrace frame)<sup>[[link](#code_hunks)]</sup>
 * Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
+* Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -568,12 +569,21 @@ every type of application, so there's no need to include them only to clutter
 the notice object. You have to include such filters manually, if you think you
 need them. The list of optional filters include:
 
-* Airbrake::Filters::ThreadFilter
+###### Airbrake::Filters::ThreadFilter
 
-Adding them is as easy as:
+Attaches thread & fiber local variables along with general thread information.
 
 ```ruby
 Airbrake.add_filter(Airbrake::Filters::ThreadFilter.new)
+```
+
+###### Airbrake::Filters::DependencyFilter
+
+Attaches loaded dependencies to the notice object (under
+`context/versions/dependencies`).
+
+```ruby
+Airbrake.add_filter(Airbrake::Filters::DependencyFilter.new)
 ```
 
 ##### Using classes for building filters
