@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `GitRevisionFilter`
+  ([#333](https://github.com/airbrake/airbrake-ruby/pull/333))
+
 ### [v2.10.0][v2.10.0] (May 3, 2018)
 
 * Added the `versions` option
