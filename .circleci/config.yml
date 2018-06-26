@@ -77,9 +77,9 @@ jobs:
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
-  "jruby-9.1.16":
+  "jruby-9.2.0.0":
     docker:
-      - image: circleci/jruby:9.1.16.0
+      - image: circleci/jruby:9.2.0.0
     working_directory: ~/airbrake-ruby
     steps:
       - <<: *repo_restore_cache
@@ -109,6 +109,6 @@ workflows:
       - "ruby-2.5":
           requires:
             - lint
-      - "jruby-9.1.16":
+      - "jruby-9.2.0.0":
           requires:
             - lint
