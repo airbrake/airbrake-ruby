@@ -143,6 +143,7 @@ module Airbrake
       clean_bt
     end
 
+    # rubocop:disable Metrics/AbcSize
     def add_default_filters
       if (whitelist_keys = @config.whitelist_keys).any?
         @filter_chain.add_filter(
@@ -165,6 +166,11 @@ module Airbrake
       @filter_chain.add_filter(
         Airbrake::Filters::RootDirectoryFilter.new(root_directory)
       )
+
+      @filter_chain.add_filter(
+        Airbrake::Filters::GitRevisionFilter.new(root_directory)
+      )
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
