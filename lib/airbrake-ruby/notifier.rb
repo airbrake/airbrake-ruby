@@ -76,9 +76,12 @@ module Airbrake
     # @macro see_public_api_method
     def create_deploy(deploy_params)
       deploy_params[:environment] ||= @config.environment
-      path = "api/v4/projects/#{@config.project_id}/deploys?key=#{@config.project_key}"
       promise = Airbrake::Promise.new
-      @sync_sender.send(deploy_params, promise, URI.join(@config.host, path))
+      @sync_sender.send(
+        deploy_params,
+        promise,
+        URI.join(@config.host, "api/v4/projects/#{@config.project_id}/deploys")
+      )
       promise
     end
 

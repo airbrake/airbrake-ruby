@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Stopped passing project id on `Airbrake.create_deploy` as a query param
+  ([#339](https://github.com/airbrake/airbrake-ruby/pull/339))
+
 ### [v2.11.0][v2.11.0] (June 27, 2018)
 
 * Added `GitRevisionFilter`
