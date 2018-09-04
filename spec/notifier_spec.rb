@@ -393,7 +393,7 @@ RSpec.describe Airbrake::Notifier do
 
   describe "#create_deploy" do
     it "returns a promise" do
-      stub_request(:post, "https://airbrake.io/api/v4/projects/1/deploys?key=abc")
+      stub_request(:post, 'https://airbrake.io/api/v4/projects/1/deploys')
         .to_return(status: 201, body: '')
       expect(subject.create_deploy({})).to be_an(Airbrake::Promise)
     end
@@ -403,7 +403,7 @@ RSpec.describe Airbrake::Notifier do
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
           { environment: 'barenv' },
           instance_of(Airbrake::Promise),
-          URI('https://airbrake.io/api/v4/projects/1/deploys?key=abc')
+          URI('https://airbrake.io/api/v4/projects/1/deploys')
         )
         described_class.new(
           user_params.merge(environment: 'fooenv')
@@ -416,7 +416,7 @@ RSpec.describe Airbrake::Notifier do
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
           { environment: 'fooenv' },
           instance_of(Airbrake::Promise),
-          URI('https://airbrake.io/api/v4/projects/1/deploys?key=abc')
+          URI('https://airbrake.io/api/v4/projects/1/deploys')
         )
         subject.create_deploy(environment: 'fooenv')
       end
