@@ -449,5 +449,15 @@ RSpec.describe Airbrake::Notifier do
       subject.merge_context(apples: 'oranges')
     end
   end
+
+  describe "#inc_request" do
+    it "forwards 'inc_request' to RouteSender" do
+      t = Time.now
+      expect_any_instance_of(Airbrake::RouteSender).to receive(:inc_request).with(
+        'GET', '/foo', 200, 1000, t
+      )
+      subject.inc_request('GET', '/foo', 200, 1000, t)
+    end
+  end
 end
 # rubocop:enable Layout/DotPosition

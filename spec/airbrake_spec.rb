@@ -110,4 +110,14 @@ RSpec.describe Airbrake do
       described_class.merge_context(foo: 'bar')
     end
   end
+
+  describe ".inc_request" do
+    it "forwards 'inc_request' to the notifier" do
+      t = Time.now
+      expect(default_notifier).to receive(:inc_request).with(
+        'GET', '/foo', 200, 1000, t
+      )
+      described_class.inc_request('GET', '/foo', 200, 1000, t)
+    end
+  end
 end

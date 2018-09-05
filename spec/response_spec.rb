@@ -5,10 +5,12 @@ RSpec.describe Airbrake::Response do
     let(:out) { StringIO.new }
     let(:logger) { Logger.new(out) }
 
-    context "when response code is 201" do
-      it "logs response body" do
-        described_class.parse(OpenStruct.new(code: 201, body: '{}'), logger)
-        expect(out.string).to match(/Airbrake: {}/)
+    [200, 201].each do |code|
+      context "when response code is #{code}" do
+        it "logs response body" do
+          described_class.parse(OpenStruct.new(code: code, body: '{}'), logger)
+          expect(out.string).to match(/Airbrake: Airbrake::Response \(#{code}\): {}/)
+        end
       end
     end
 

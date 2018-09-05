@@ -4,6 +4,7 @@ require 'json'
 require 'thread'
 require 'set'
 require 'socket'
+require 'time'
 
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/config'
@@ -33,6 +34,7 @@ require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
+require 'airbrake-ruby/route_sender'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
@@ -115,6 +117,9 @@ module Airbrake
 
     # @macro see_public_api_method
     def merge_context(_context); end
+
+    # @macro see_public_api_method
+    def inc_request(method, route, status_code, dur, time); end
   end
 
   # A Hash that holds all notifiers. The keys of the Hash are notifier
@@ -342,6 +347,28 @@ module Airbrake
     # @return [void]
     def merge_context(context)
       @notifiers[:default].merge_context(context)
+    end
+
+    # Increments request count of a certain +route+ that was invoked with
+    # +method+, and returned +status_code+ at +time+ and took +dur+
+    # milliseconds.
+    #
+    # After a certain amount of time (n seconds) the aggregated route
+    # information will be sent to Airbrake.
+    #
+    # @example
+    #   Airbrake.inc_request('POST', '/thing/:id/create', 200, 123, Time.now)
+    #
+    # @param [String] method The HTTP method that was invoked
+    # @param [String] route The route that was invoked
+    # @param [Integer] status_code The respose code that the route returned
+    # @param [Float] dur How much time the processing of the request took in
+    #   milliseconds
+    # @param [Time] time When the request happened
+    # @return [void]
+    # @since v2.13.0
+    def inc_request(method, route, status_code, dur, time)
+      @notifiers[:default].inc_request(method, route, status_code, dur, time)
     end
   end
 end

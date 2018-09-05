@@ -16,16 +16,19 @@ module Airbrake
     # @param [Net::HTTPResponse] response
     # @param [Logger] logger
     # @return [Hash{String=>String}] parsed response
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.parse(response, logger)
       code = response.code.to_i
       body = response.body
 
       begin
         case code
+        when 200
+          logger.debug("#{LOG_LABEL} #{name} (#{code}): #{body}")
+          { response.msg => response.body }
         when 201
           parsed_body = JSON.parse(body)
-          logger.debug("#{LOG_LABEL} #{parsed_body}")
+          logger.debug("#{LOG_LABEL} #{name} (#{code}): #{parsed_body}")
           parsed_body
         when 400, 401, 403, 420
           parsed_body = JSON.parse(body)
@@ -47,7 +50,7 @@ module Airbrake
         { 'error' => ex.inspect }
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def self.truncated_body(body)
       if body.nil?
