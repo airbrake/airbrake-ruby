@@ -5,6 +5,14 @@ Airbrake Ruby Changelog
 
 * Stopped passing project id on `Airbrake.create_deploy` as a query param
   ([#339](https://github.com/airbrake/airbrake-ruby/pull/339))
+* Changed the endpoint that Airbrake Ruby sends errors to.
+
+  Before: `https://airbrake.io/api/v4/projects/PROJECT_ID/notices`
+
+  After: `https://api.airbrake.io/api/v4/projects/PROJECT_ID/notices`
+
+  The endpoint neither accepts anything new nor removes existing functionality.
+  ([#340](https://github.com/airbrake/airbrake-ruby/pull/340))
 
 ### [v2.11.0][v2.11.0] (June 27, 2018)
 

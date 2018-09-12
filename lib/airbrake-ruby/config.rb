@@ -98,7 +98,7 @@ module Airbrake
 
       self.project_id = user_config[:project_id]
       self.project_key = user_config[:project_key]
-      self.host = 'https://airbrake.io'
+      self.host = 'https://api.airbrake.io'
 
       self.ignore_environments = []
 

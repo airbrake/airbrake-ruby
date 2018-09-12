@@ -25,7 +25,7 @@ RSpec.describe Airbrake::SyncSender do
 
     let(:sender) { described_class.new(config) }
     let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
-    let(:endpoint) { 'https://airbrake.io/api/v3/projects/1/notices' }
+    let(:endpoint) { 'https://api.airbrake.io/api/v3/projects/1/notices' }
 
     before { stub_request(:post, endpoint).to_return(body: '{}') }
 
@@ -90,7 +90,7 @@ RSpec.describe Airbrake::SyncSender do
     end
 
     context "when IP is rate limited" do
-      let(:endpoint) { %r{https://airbrake.io/api/v3/projects/1/notices} }
+      let(:endpoint) { %r{https://api.airbrake.io/api/v3/projects/1/notices} }
 
       before do
         stub_request(:post, endpoint).to_return(
