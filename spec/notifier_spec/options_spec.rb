@@ -10,7 +10,7 @@ RSpec.describe Airbrake::Notifier do
   let(:localhost) { 'http://localhost:8080' }
 
   let(:endpoint) do
-    "https://airbrake.io/api/v3/projects/#{project_id}/notices"
+    "https://api.airbrake.io/api/v3/projects/#{project_id}/notices"
   end
 
   let(:airbrake_params) do

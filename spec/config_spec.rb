@@ -30,7 +30,7 @@ RSpec.describe Airbrake::Config do
       end
 
       it "sets the default host" do
-        expect(config.host).to eq('https://airbrake.io')
+        expect(config.host).to eq('https://api.airbrake.io')
       end
 
       it "sets the default endpoint" do
