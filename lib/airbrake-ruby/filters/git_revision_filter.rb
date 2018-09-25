@@ -13,16 +13,24 @@ module Airbrake
       # @param [String] root_directory
       def initialize(root_directory)
         @git_path = File.join(root_directory, '.git')
+        @revision = nil
         @weight = 116
       end
 
       # @macro call_filter
       def call(notice)
         return if notice[:context].key?(:revision)
+
+        if @revision
+          notice[:context][:revision] = @revision
+          return
+        end
+
         return unless File.exist?(@git_path)
 
-        revision = find_revision
-        notice[:context][:revision] = revision if revision
+        @revision = find_revision
+        return unless @revision
+        notice[:context][:revision] = @revision
       end
 
       private
