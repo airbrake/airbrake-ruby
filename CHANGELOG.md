@@ -20,6 +20,9 @@ Airbrake Ruby Changelog
   Note: this feature is enabled only for certain accounts. Further details as to
   how to use it will be published in the README once it's released to everybody.
 
+* Cached revision of `GitRevisionFilter`, so we don't repeatedly
+  read the file ([#342](https://github.com/airbrake/airbrake-ruby/pull/342))
+
 ### [v2.11.0][v2.11.0] (June 27, 2018)
 
 * Added `GitRevisionFilter`
