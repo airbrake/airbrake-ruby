@@ -32,7 +32,7 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
     end
 
     it "attaches last checkouted email" do
-      expect(notice[:context][:lastCheckout][:email]).to match(/\A\w+@\w+\z/)
+      expect(notice[:context][:lastCheckout][:email]).to match(/\A\w+@\w+\.?\w+?\z/)
     end
 
     it "attaches last checkouted revision" do
