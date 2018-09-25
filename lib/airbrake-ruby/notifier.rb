@@ -166,12 +166,16 @@ module Airbrake
       )
 
       return unless (root_directory = @config.root_directory)
-      @filter_chain.add_filter(
-        Airbrake::Filters::RootDirectoryFilter.new(root_directory)
-      )
+      [
+        Airbrake::Filters::RootDirectoryFilter,
+        Airbrake::Filters::GitRevisionFilter,
+        Airbrake::Filters::GitRepositoryFilter
+      ].each do |filter|
+        @filter_chain.add_filter(filter.new(root_directory))
+      end
 
       @filter_chain.add_filter(
-        Airbrake::Filters::GitRevisionFilter.new(root_directory)
+        Airbrake::Filters::GitLastCheckoutFilter.new(@config.logger, root_directory)
       )
     end
     # rubocop:enable Metrics/AbcSize
