@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.12.0][v2.12.0] (October 11, 2018)
+
 * Stopped passing project id on `Airbrake.create_deploy` as a query param
   ([#339](https://github.com/airbrake/airbrake-ruby/pull/339))
 * Changed the endpoint that Airbrake Ruby sends errors to.
@@ -496,3 +498,4 @@ Airbrake Ruby Changelog
 [v2.9.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.9.0
 [v2.10.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.10.0
 [v2.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.11.0
+[v2.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.12.0
