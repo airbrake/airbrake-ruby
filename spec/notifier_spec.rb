@@ -129,17 +129,25 @@ RSpec.describe Airbrake::Notifier do
       end
     end
 
-    context "when a notice is ignored" do
+    context "when a notice is ignored via a filter" do
       before { subject.add_filter(&:ignore!) }
 
-      it "doesn't yield the notice" do
+      it "yields the notice" do
         expect { |b| subject.notify('ex', &b) }
-          .not_to yield_with_args(Airbrake::Notice)
+          .to yield_with_args(Airbrake::Notice)
       end
 
       it "returns a rejected promise" do
         value = subject.notify('ex').value
         expect(value['error']).to match(/was marked as ignored/)
+      end
+    end
+
+    context "when a notice is ignored via an inline filter" do
+      before { subject.add_filter { raise AirbrakeTestError } }
+
+      it "doesn't invoke regular filters" do
+        expect { subject.notify('ex', &:ignore!) }.not_to raise_error
       end
     end
 
@@ -221,17 +229,25 @@ RSpec.describe Airbrake::Notifier do
       end
     end
 
-    context "when a notice is ignored" do
+    context "when a notice is ignored via a filter" do
       before { subject.add_filter(&:ignore!) }
 
-      it "doesn't yield the notice" do
+      it "yields the notice" do
         expect { |b| subject.notify_sync('ex', &b) }
-          .not_to yield_with_args(Airbrake::Notice)
+          .to yield_with_args(Airbrake::Notice)
       end
 
       it "returns an error hash" do
         response = subject.notify_sync('ex')
         expect(response['error']).to match(/was marked as ignored/)
+      end
+    end
+
+    context "when a notice is ignored via an inline filter" do
+      before { subject.add_filter { raise AirbrakeTestError } }
+
+      it "doesn't invoke regular filters" do
+        expect { subject.notify('ex', &:ignore!) }.not_to raise_error
       end
     end
 
