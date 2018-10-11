@@ -22,6 +22,10 @@ Airbrake Ruby Changelog
 
 * Cached revision of `GitRevisionFilter`, so we don't repeatedly
   read the file ([#342](https://github.com/airbrake/airbrake-ruby/pull/342))
+* Changed the order of execution of inline filters (added via `Airbrake.notify
+  do ... end`) and the `Airbrake.add_filter` filters. Now the former is being
+  executed first (used to be executed last)
+  ([#345](https://github.com/airbrake/airbrake-ruby/pull/345))
 
 ### [v2.11.0][v2.11.0] (June 27, 2018)
 

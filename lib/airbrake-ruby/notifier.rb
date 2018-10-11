@@ -118,8 +118,8 @@ module Airbrake
       end
 
       notice = build_notice(exception, params)
+      yield notice if block_given?
       @filter_chain.refine(notice)
-      yield notice if block_given? && !notice.ignored?
 
       return promise.reject("#{notice} was marked as ignored") if notice.ignored?
 
