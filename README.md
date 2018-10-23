@@ -2,7 +2,6 @@ Airbrake Ruby
 =============
 
 [![Circle Build Status](https://circleci.com/gh/airbrake/airbrake-ruby.svg?style=shield)](https://circleci.com/gh/airbrake/airbrake-ruby)
-[![Travis Build Status](https://travis-ci.org/airbrake/airbrake-ruby.svg?branch=master)](https://travis-ci.org/airbrake/airbrake-ruby)
 [![Code Climate](https://codeclimate.com/github/airbrake/airbrake-ruby.svg)](https://codeclimate.com/github/airbrake/airbrake-ruby)
 [![Gem Version](https://badge.fury.io/rb/airbrake-ruby.svg)](http://badge.fury.io/rb/airbrake-ruby)
 [![Documentation Status](http://inch-ci.org/github/airbrake/airbrake-ruby.svg?branch=master)](http://inch-ci.org/github/airbrake/airbrake-ruby)
