@@ -30,7 +30,7 @@ RSpec.describe Airbrake::SyncSender do
     before { stub_request(:post, endpoint).to_return(body: '{}') }
 
     it "sets the Content-Type header to JSON" do
-      sender.send(notice, promise)
+      sender.send({}, promise)
       expect(
         a_request(:post, endpoint).with(
           headers: { 'Content-Type' => 'application/json' }
@@ -39,7 +39,7 @@ RSpec.describe Airbrake::SyncSender do
     end
 
     it "sets the User-Agent header to the notifier slug" do
-      sender.send(notice, promise)
+      sender.send({}, promise)
       expect(
         a_request(:post, endpoint).with(
           headers: {
@@ -50,7 +50,7 @@ RSpec.describe Airbrake::SyncSender do
     end
 
     it "sets the Authorization header to the project key" do
-      sender.send(notice, promise)
+      sender.send({}, promise)
       expect(
         a_request(:post, endpoint).with(
           headers: { 'Authorization' => 'Bearer banana' }
@@ -62,13 +62,13 @@ RSpec.describe Airbrake::SyncSender do
       https = double("foo")
       allow(sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
-      expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
+      expect(sender.send({}, promise)).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('error' => '**Airbrake: HTTP error: foo')
       expect(stdout.string).to match(/ERROR -- : .+ HTTP error: foo/)
     end
 
     context "when request body is nil" do
-      it "doesn't send a notice" do
+      it "doesn't send data" do
         expect_any_instance_of(Airbrake::Truncator).
           to receive(:reduce_max_size).and_return(0)
 
@@ -84,8 +84,8 @@ RSpec.describe Airbrake::SyncSender do
 
         expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
         expect(promise.value).
-          to match('error' => '**Airbrake: notice was not sent because of missing body')
-        expect(stdout.string).to match(/ERROR -- : .+ notice was not sent/)
+          to match('error' => '**Airbrake: data was not sent because of missing body')
+        expect(stdout.string).to match(/ERROR -- : .+ data was not sent/)
       end
     end
 
@@ -102,11 +102,11 @@ RSpec.describe Airbrake::SyncSender do
 
       it "returns error" do
         p1 = Airbrake::Promise.new
-        sender.send(notice, p1)
+        sender.send({}, p1)
         expect(p1.value).to match('error' => '**Airbrake: IP is rate limited')
 
         p2 = Airbrake::Promise.new
-        sender.send(notice, p2)
+        sender.send({}, p2)
         expect(p2.value).to match('error' => '**Airbrake: IP is rate limited')
 
         # Wait for X-RateLimit-Delay and then make a new request to make sure p2
@@ -114,10 +114,28 @@ RSpec.describe Airbrake::SyncSender do
         sleep 1
 
         p3 = Airbrake::Promise.new
-        sender.send(notice, p3)
+        sender.send({}, p3)
         expect(p3.value).to match('error' => '**Airbrake: IP is rate limited')
 
         expect(a_request(:post, endpoint)).to have_been_made.twice
+      end
+    end
+
+    context "when the provided method is :put" do
+      before { stub_request(:put, endpoint).to_return(status: 200, body: '') }
+
+      it "PUTs the request" do
+        sender = described_class.new(config, :put)
+        sender.send({}, promise)
+        expect(a_request(:put, endpoint)).to have_been_made
+      end
+    end
+
+    context "when the provided method is :post" do
+      it "POSTs the request" do
+        sender = described_class.new(config, :post)
+        sender.send({}, promise)
+        expect(a_request(:post, endpoint)).to have_been_made
       end
     end
   end

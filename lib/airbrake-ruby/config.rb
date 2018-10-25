@@ -83,6 +83,12 @@ module Airbrake
     # @since v2.5.0
     attr_accessor :code_hunks
 
+    # @return [Integer] how many seconds to wait before sending collected route
+    #   stats
+    # @api public
+    # @since v2.13.0
+    attr_accessor :route_stats_flush_period
+
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
@@ -113,6 +119,7 @@ module Airbrake
       )
 
       self.versions = {}
+      self.route_stats_flush_period = 15
 
       merge(user_config)
     end

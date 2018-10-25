@@ -402,9 +402,19 @@ Airbrake.configure do |c|
 end
 ```
 
-Note: this feature is not available for the free plan. However, you still can
-send code hunks. Once you upgrade to a paid plan, old code hunks that you've
-sent while being on the free plan would appear in the dashboard.
+#### route_stats_flush_period
+
+By default, it's set to `15`. When `Airbrake.inc_request` is invoked, then
+Airbrake Ruby waits 15 seconds trying to collect route stats. After this delay
+it sends all route stats in a batch using only one web request. Setting this
+value allows speeding up or slowing down this process. Zero value means no
+delay.
+
+```ruby
+Airbrake.configure do |c|
+  c.route_stats_flush_period = 0
+end
+```
 
 ### Asynchronous Airbrake options
 

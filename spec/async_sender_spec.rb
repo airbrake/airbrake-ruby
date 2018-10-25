@@ -21,7 +21,7 @@ RSpec.describe Airbrake::AsyncSender do
       sender.close
 
       log = stdout.string.split("\n")
-      notices_sent    = log.grep(/\*\*Airbrake: \{\}/).size
+      notices_sent    = log.grep(/\*\*Airbrake: Airbrake::Response \(201\): \{\}/).size
       notices_dropped = log.grep(/\*\*Airbrake:.*not.*delivered/).size
       expect(notices_sent).to be >= queue_size
       expect(notices_sent + notices_dropped).to eq(notices_count)
@@ -60,7 +60,7 @@ RSpec.describe Airbrake::AsyncSender do
 
       it "prints the correct number of log messages" do
         log = @stderr.string.split("\n")
-        notices_sent    = log.grep(/\*\*Airbrake: \{\}/).size
+        notices_sent    = log.grep(/\*\*Airbrake: Airbrake::Response \(201\): \{\}/).size
         notices_dropped = log.grep(/\*\*Airbrake:.*not.*delivered/).size
         expect(notices_sent).to be >= @sender.instance_variable_get(:@unsent).max
         expect(notices_sent + notices_dropped).to eq(300)

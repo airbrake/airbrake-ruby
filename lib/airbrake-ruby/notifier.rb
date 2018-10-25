@@ -36,6 +36,8 @@ module Airbrake
 
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
+
+      @route_sender = RouteSender.new(@config)
     end
 
     # @macro see_public_api_method
@@ -93,6 +95,11 @@ module Airbrake
     # @macro see_public_api_method
     def merge_context(context)
       @context.merge!(context)
+    end
+
+    # @macro see_public_api_method
+    def inc_request(*args)
+      @route_sender.inc_request(*args)
     end
 
     private

@@ -1,5 +1,6 @@
 module Airbrake
-  # Responsible for sending notices to Airbrake synchronously. Supports proxies.
+  # Responsible for sending data to Airbrake synchronously via PUT or POST
+  # methods. Supports proxies.
   #
   # @see AsyncSender
   # @api private
@@ -9,21 +10,22 @@ module Airbrake
     CONTENT_TYPE = 'application/json'.freeze
 
     # @param [Airbrake::Config] config
-    def initialize(config)
+    def initialize(config, method = :post)
       @config = config
+      @method = method
       @rate_limit_reset = Time.now
     end
 
-    # Sends a POST request to the given +endpoint+ with the +notice+ payload.
+    # Sends a POST or PUT request to the given +endpoint+ with the +data+ payload.
     #
-    # @param [Airbrake::Notice] notice
-    # @param [Airbrake::Notice] endpoint
+    # @param [#to_json] data
+    # @param [URI::HTTPS] endpoint
     # @return [Hash{String=>String}] the parsed HTTP response
-    def send(notice, promise, endpoint = @config.endpoint)
+    def send(data, promise, endpoint = @config.endpoint)
       return promise if rate_limited_ip?(promise)
 
       response = nil
-      req = build_post_request(endpoint, notice)
+      req = build_request(endpoint, data)
 
       return promise if missing_body?(req, promise)
 
@@ -58,16 +60,27 @@ module Airbrake
       end
     end
 
-    def build_post_request(uri, notice)
-      Net::HTTP::Post.new(uri.request_uri).tap do |req|
-        req.body = notice.to_json
+    def build_request(uri, data)
+      req =
+        if @method == :put
+          Net::HTTP::Put.new(uri.request_uri)
+        else
+          Net::HTTP::Post.new(uri.request_uri)
+        end
 
-        req['Authorization'] = "Bearer #{@config.project_key}"
-        req['Content-Type'] = CONTENT_TYPE
-        req['User-Agent'] =
-          "#{Airbrake::Notice::NOTIFIER[:name]}/#{Airbrake::AIRBRAKE_RUBY_VERSION}" \
-          " Ruby/#{RUBY_VERSION}"
-      end
+      build_request_body(req, data)
+    end
+
+    def build_request_body(req, data)
+      req.body = data.to_json
+
+      req['Authorization'] = "Bearer #{@config.project_key}"
+      req['Content-Type'] = CONTENT_TYPE
+      req['User-Agent'] =
+        "#{Airbrake::Notice::NOTIFIER[:name]}/#{Airbrake::AIRBRAKE_RUBY_VERSION}" \
+        " Ruby/#{RUBY_VERSION}"
+
+      req
     end
 
     def proxy_params
@@ -87,7 +100,7 @@ module Airbrake
       missing = req.body.nil?
 
       if missing
-        reason = "#{LOG_LABEL} notice was not sent because of missing body"
+        reason = "#{LOG_LABEL} data was not sent because of missing body"
         @config.logger.error(reason)
         promise.reject(reason)
       end
