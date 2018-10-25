@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v2.13.0.rc.1][v2.13.0.rc.1] (October 26, 2018)
+
+* Added support for route stats
+  ([#348](https://github.com/airbrake/airbrake-ruby/pull/348))
+
 ### [v2.12.0][v2.12.0] (October 11, 2018)
 
 * Stopped passing project id on `Airbrake.create_deploy` as a query param
@@ -499,3 +504,4 @@ Airbrake Ruby Changelog
 [v2.10.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.10.0
 [v2.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.11.0
 [v2.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.12.0
+[v2.13.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.13.0.rc.1
