@@ -9,6 +9,12 @@ module Airbrake
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
 
+    # @return [String] inspect output template
+    INSPECT_TEMPLATE =
+      "#<#{self}:0x%<id>s project_id=\"%<project_id>s\" " \
+      "project_key=\"%<project_key>s\" " \
+      "host=\"%<host>s\" filter_chain=%<filter_chain>s>".freeze
+
     # Creates a new Airbrake notifier with the given config options.
     #
     # @example Configuring with a Hash
@@ -30,13 +36,9 @@ module Airbrake
       raise Airbrake::Error, @config.validation_error_message unless @config.valid?
 
       @context = {}
-
-      @filter_chain = FilterChain.new
-      add_default_filters
-
+      @filter_chain = FilterChain.new(@config, @context)
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
-
       @route_sender = RouteSender.new(@config)
     end
 
@@ -102,6 +104,29 @@ module Airbrake
       @route_sender.inc_request(*args)
     end
 
+    # @return [String] customized inspect to lessen the amount of clutter
+    def inspect
+      format(
+        INSPECT_TEMPLATE,
+        id: (object_id << 1).to_s(16).rjust(16, '0'),
+        project_id: @config.project_id,
+        project_key: @config.project_key,
+        host: @config.host,
+        filter_chain: @filter_chain.inspect
+      )
+    end
+
+    # @return [String] {#inspect} for PrettyPrint
+    def pretty_print(q)
+      q.text("#<#{self.class}:0x#{(object_id << 1).to_s(16).rjust(16, '0')} ")
+      q.text(
+        "project_id=\"#{@config.project_id}\" project_key=\"#{@config.project_key}\" " \
+        "host=\"#{@config.host}\" filter_chain="
+      )
+      q.pp(@filter_chain)
+      q.text('>')
+    end
+
     private
 
     def convert_to_exception(ex)
@@ -152,39 +177,5 @@ module Airbrake
       return caller_copy if clean_bt.empty?
       clean_bt
     end
-
-    # rubocop:disable Metrics/AbcSize
-    def add_default_filters
-      if (whitelist_keys = @config.whitelist_keys).any?
-        @filter_chain.add_filter(
-          Airbrake::Filters::KeysWhitelist.new(@config.logger, whitelist_keys)
-        )
-      end
-
-      if (blacklist_keys = @config.blacklist_keys).any?
-        @filter_chain.add_filter(
-          Airbrake::Filters::KeysBlacklist.new(@config.logger, blacklist_keys)
-        )
-      end
-
-      @filter_chain.add_filter(Airbrake::Filters::ContextFilter.new(@context))
-      @filter_chain.add_filter(
-        Airbrake::Filters::ExceptionAttributesFilter.new(@config.logger)
-      )
-
-      return unless (root_directory = @config.root_directory)
-      [
-        Airbrake::Filters::RootDirectoryFilter,
-        Airbrake::Filters::GitRevisionFilter,
-        Airbrake::Filters::GitRepositoryFilter
-      ].each do |filter|
-        @filter_chain.add_filter(filter.new(root_directory))
-      end
-
-      @filter_chain.add_filter(
-        Airbrake::Filters::GitLastCheckoutFilter.new(@config.logger, root_directory)
-      )
-    end
-    # rubocop:enable Metrics/AbcSize
   end
 end

@@ -459,5 +459,35 @@ RSpec.describe Airbrake::Notifier do
       subject.inc_request('GET', '/foo', 200, 1000, t)
     end
   end
+
+  describe "#inspect" do
+    it "displays object information" do
+      expect(subject.inspect).to match(/
+        #<Airbrake::Notifier:0x\w+\s
+          project_id="\d+"\s
+          project_key=".+"\s
+          host="http.+"\s
+          filter_chain=\[.+\]>
+      /x)
+    end
+  end
+
+  describe "#pretty_print" do
+    it "displays object information in a beautiful way" do
+      q = PP.new
+
+      # Guarding is needed to fix JRuby failure:
+      # NoMethodError: undefined method `[]' for nil:NilClass
+      q.guard_inspect_key { subject.pretty_print(q) }
+
+      expect(q.output).to match(/
+        #<Airbrake::Notifier:0x\w+\s
+          project_id="\d+"\s
+          project_key=".+"\s
+          host="http.+"\s
+          filter_chain=\[\n\s\s
+      /x)
+    end
+  end
 end
 # rubocop:enable Layout/DotPosition
