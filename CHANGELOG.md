@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Made `Airbrake::Notifier#inspect` less verbose
+  ([#350](https://github.com/airbrake/airbrake-ruby/pull/350))
+
 ### [v2.13.0.rc.1][v2.13.0.rc.1] (October 26, 2018)
 
 * Added support for route stats
