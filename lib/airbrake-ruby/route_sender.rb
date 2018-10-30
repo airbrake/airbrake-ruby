@@ -1,20 +1,76 @@
+require 'tdigest'
+require 'base64'
+
 module Airbrake
   # RouteSender aggregates information about requests and periodically sends
   # collected data to Airbrake.
   # @since v2.13.0
   class RouteSender
+    # Monkey-patch https://github.com/castle/tdigest to pack with Big Endian
+    # (instead of Little Endian) since our backend wants it.
+    #
+    # @see https://github.com/castle/tdigest/blob/master/lib/tdigest/tdigest.rb
+    # @since v2.13.0
+    # @api private
+    module TDigestBigEndianness
+      refine TDigest::TDigest do
+        # rubocop:disable Metrics/AbcSize
+        def as_small_bytes
+          size = @centroids.size
+          output = [self.class::SMALL_ENCODING, compression, size]
+          x = 0
+          # delta encoding allows saving 4-bytes floats
+          mean_arr = @centroids.map do |_, c|
+            val = c.mean - x
+            x = c.mean
+            val
+          end
+          output += mean_arr
+          # Variable length encoding of numbers
+          c_arr = @centroids.each_with_object([]) do |(_, c), arr|
+            k = 0
+            n = c.n
+            while n < 0 || n > 0x7f
+              b = 0x80 | (0x7f & n)
+              arr << b
+              n = n >> 7
+              k += 1
+              raise 'Unreasonable large number' if k > 6
+            end
+            arr << n
+          end
+          output += c_arr
+          output.pack("NGNg#{size}C#{size}")
+        end
+        # rubocop:enable Metrics/AbcSize
+      end
+    end
+
+    using TDigestBigEndianness
+
     # The key that represents a route.
     RouteKey = Struct.new(:method, :route, :statusCode, :time)
 
     # RouteStat holds data that describes a route's performance.
-    RouteStat = Struct.new(:count, :sum, :sumsq, :min, :max) do
+    RouteStat = Struct.new(:count, :sum, :sumsq, :tdigest) do
       # @param [Integer] count The number of requests
       # @param [Float] sum The sum of request duration in milliseconds
       # @param [Float] sumsq The squared sum of request duration in milliseconds
-      # @param [Float] min The minimal request duration
-      # @param [Float] max The maximum request duration
-      def initialize(count: 0, sum: 0.0, sumsq: 0.0, min: 0.0, max: 0.0)
-        super(count, sum, sumsq, min, max)
+      # @param [TDigest::TDigest] tdigest
+      def initialize(count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest::TDigest.new)
+        super(count, sum, sumsq, tdigest)
+      end
+
+      # @return [Hash{String=>Object}] the route stat as a hash with compressed
+      #   and serialized as binary base64 tdigest
+      def to_h
+        tdigest.compress!
+        {
+          'count' => count,
+          'sum' => sum,
+          'sumsq' => sumsq,
+          'tDigest' => Base64.strict_encode64(tdigest.as_small_bytes)
+        }
       end
     end
 
@@ -66,8 +122,7 @@ module Airbrake
       stat.sum += ms
       stat.sumsq += ms * ms
 
-      stat.min = ms if ms < stat.min || stat.min == 0
-      stat.max = ms if ms > stat.max
+      stat.tdigest.push(ms)
     end
 
     def schedule_flush(promise)
