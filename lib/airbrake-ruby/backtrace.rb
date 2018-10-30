@@ -83,10 +83,6 @@ module Airbrake
           #{RUBY}
         )
       \z/x
-
-      # @return [Regexp] +EXECJS+ pattern without named captures and
-      #   uncommon frames
-      EXECJS_SIMPLIFIED = /\A.+ \(.+:\d+:\d+\)\z/
     end
 
     # @return [Integer] how many first frames should include code hunks
@@ -136,24 +132,13 @@ module Airbrake
         defined?(OCIError) && exception.is_a?(OCIError)
       end
 
-      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       def execjs_exception?(exception)
         return false unless defined?(ExecJS::RuntimeError)
         return true if exception.is_a?(ExecJS::RuntimeError)
-
-        if Airbrake::RUBY_20
-          # Ruby <2.1 doesn't support Exception#cause. We work around this by
-          # parsing backtraces. It's slow, so we check only a few first frames.
-          exception.backtrace[0..2].each do |frame|
-            return true if frame =~ Patterns::EXECJS_SIMPLIFIED
-          end
-        elsif exception.cause && exception.cause.is_a?(ExecJS::RuntimeError)
-          return true
-        end
+        return true if exception.cause && exception.cause.is_a?(ExecJS::RuntimeError)
 
         false
       end
-      # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
       def stack_frame(config, regexp, stackframe)
         if (match = match_frame(regexp, stackframe))

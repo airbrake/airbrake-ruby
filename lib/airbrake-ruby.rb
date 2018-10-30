@@ -76,10 +76,6 @@ module Airbrake
   # @return [String] the label to be prepended to the log output
   LOG_LABEL = '**Airbrake:'.freeze
 
-  # @return [Boolean] true if current Ruby is Ruby 2.0.*. The result is used
-  #   for special cases where we need to work around older implementations
-  RUBY_20 = RUBY_VERSION.start_with?('2.0')
-
   # @return [Boolean] true if current Ruby is JRuby. The result is used for
   #  special cases where we need to work around older implementations
   JRUBY = (RUBY_ENGINE == 'jruby')

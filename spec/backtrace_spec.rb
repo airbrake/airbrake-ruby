@@ -248,6 +248,8 @@ RSpec.describe Airbrake::Backtrace do
          "/opt/rubies/ruby-2.3.1/lib/ruby/2.3.0/benchmark.rb:308:in `realtime'"]
       end
 
+      let(:ex) { ExecJS::RuntimeError.new.tap { |e| e.set_backtrace(bt) } }
+
       let(:parsed_backtrace) do
         [{ file: '(execjs)', line: 6692, function: 'compile' },
          { file: '<anonymous>', line: 1, function: 'eval' },
@@ -261,31 +263,9 @@ RSpec.describe Airbrake::Backtrace do
            function: 'realtime' }]
       end
 
-      context "when not on Ruby 2.0" do
-        let(:ex) { ExecJS::RuntimeError.new.tap { |e| e.set_backtrace(bt) } }
-
-        it "returns a properly formatted array of hashes" do
-          stub_const('ExecJS::RuntimeError', AirbrakeTestError)
-          stub_const('Airbrake::RUBY_20', false)
-
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
-        end
-      end
-
-      context "when on Ruby 2.0" do
-        context "and when exception's class isn't ExecJS" do
-          let(:ex) do
-            ActionView::Template::Error.new.tap { |e| e.set_backtrace(bt) }
-          end
-
-          it "returns a properly formatted array of hashes" do
-            stub_const('ActionView::Template::Error', AirbrakeTestError)
-            stub_const('ExecJS::RuntimeError', NameError)
-            stub_const('Airbrake::RUBY_20', true)
-
-            expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
-          end
-        end
+      it "returns a properly formatted array of hashes" do
+        stub_const('ExecJS::RuntimeError', AirbrakeTestError)
+        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
       end
     end
 

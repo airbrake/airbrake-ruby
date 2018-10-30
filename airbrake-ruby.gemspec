@@ -25,7 +25,7 @@ DESC
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
   s.test_files   = Dir.glob('spec/**/*')
 
-  s.required_ruby_version = '>= 2.0'
+  s.required_ruby_version = '>= 2.1'
 
   s.add_dependency 'tdigest', '= 0.1.1'
 
