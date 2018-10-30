@@ -5,7 +5,7 @@ RSpec.describe Airbrake::Response do
     let(:out) { StringIO.new }
     let(:logger) { Logger.new(out) }
 
-    [200, 201].each do |code|
+    [200, 201, 204].each do |code|
       context "when response code is #{code}" do
         it "logs response body" do
           described_class.parse(OpenStruct.new(code: code, body: '{}'), logger)

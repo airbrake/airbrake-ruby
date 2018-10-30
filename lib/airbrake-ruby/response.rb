@@ -23,7 +23,7 @@ module Airbrake
 
       begin
         case code
-        when 200
+        when 200, 204
           logger.debug("#{LOG_LABEL} #{name} (#{code}): #{body}")
           { response.msg => response.body }
         when 201
