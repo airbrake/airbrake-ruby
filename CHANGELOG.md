@@ -3,8 +3,14 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0.rc.2][v3.0.0.rc.2] (October 30, 2018)
+
+* **Dropped support for Ruby 2.0**
+  ([#352](https://github.com/airbrake/airbrake-ruby/pull/352))
 * Made `Airbrake::Notifier#inspect` less verbose
   ([#350](https://github.com/airbrake/airbrake-ruby/pull/350))
+* Added new dependency `tdigest`. Started sending tdigests to the backend
+  ([#351](https://github.com/airbrake/airbrake-ruby/pull/351))
 
 ### [v2.13.0.rc.1][v2.13.0.rc.1] (October 26, 2018)
 
@@ -508,3 +514,4 @@ Airbrake Ruby Changelog
 [v2.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.11.0
 [v2.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.12.0
 [v2.13.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.13.0.rc.1
+[v3.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.2
