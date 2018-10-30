@@ -4,13 +4,13 @@ require 'base64'
 module Airbrake
   # RouteSender aggregates information about requests and periodically sends
   # collected data to Airbrake.
-  # @since v2.13.0
+  # @since v3.0.0
   class RouteSender
     # Monkey-patch https://github.com/castle/tdigest to pack with Big Endian
     # (instead of Little Endian) since our backend wants it.
     #
     # @see https://github.com/castle/tdigest/blob/master/lib/tdigest/tdigest.rb
-    # @since v2.13.0
+    # @since v3.0.0
     # @api private
     module TDigestBigEndianness
       refine TDigest::TDigest do

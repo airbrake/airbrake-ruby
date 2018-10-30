@@ -362,7 +362,7 @@ module Airbrake
     #   milliseconds
     # @param [Time] time When the request happened
     # @return [void]
-    # @since v2.13.0
+    # @since v3.0.0
     def inc_request(method, route, status_code, dur, time)
       @notifiers[:default].inc_request(method, route, status_code, dur, time)
     end
