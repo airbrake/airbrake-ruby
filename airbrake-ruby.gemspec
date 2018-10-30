@@ -9,12 +9,11 @@ Gem::Specification.new do |s|
 Airbrake Ruby is a plain Ruby notifier for Airbrake (https://airbrake.io), the
 leading exception reporting service. Airbrake Ruby provides minimalist API that
 enables the ability to send any Ruby exception to the Airbrake dashboard. The
-library is extremely lightweight, contains no dependencies and perfectly suits
-plain Ruby applications. For apps that are built with Rails, Sinatra or any
-other Rack-compliant web framework we offer the airbrake gem
-(https://github.com/airbrake/airbrake). It has additional features such as
-reporting of any unhandled exceptions automatically, integrations with Resque,
-Sidekiq, Delayed Job and many more.
+library is extremely lightweight and it perfectly suits plain Ruby applications.
+For apps that are built with Rails, Sinatra or any other Rack-compliant web
+framework we offer the airbrake gem (https://github.com/airbrake/airbrake). It
+has additional features such as reporting of any unhandled exceptions
+automatically, integrations with Resque, Sidekiq, Delayed Job and many more.
 DESC
   s.author      = 'Airbrake Technologies, Inc.'
   s.email       = 'support@airbrake.io'
@@ -25,7 +24,7 @@ DESC
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
   s.test_files   = Dir.glob('spec/**/*')
 
-  s.required_ruby_version = '>= 2.0'
+  s.required_ruby_version = '>= 2.1'
 
   s.add_dependency 'tdigest', '= 0.1.1'
 

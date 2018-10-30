@@ -19,11 +19,11 @@ Introduction
 _Airbrake Ruby_ is a plain Ruby notifier for [Airbrake][airbrake.io], the
 leading exception reporting service. Airbrake Ruby provides minimalist API that
 enables the ability to send _any_ Ruby exception to the Airbrake dashboard. The
-library is extremely lightweight, contains _no_ dependencies and perfectly suits
-plain Ruby applications. For apps that are built with _Rails_, _Sinatra_ or any
-other Rack-compliant web framework we offer the [`airbrake`][airbrake-gem] gem.
-It has additional features such as _reporting of any unhandled exceptions
-automatically_, integrations with Resque, Sidekiq, Delayed Job and many more.
+library is extremely lightweight and it perfectly suits plain Ruby applications.
+For apps that are built with _Rails_, _Sinatra_ or any other Rack-compliant web
+framework we offer the [`airbrake`][airbrake-gem] gem.  It has additional
+features such as _reporting of any unhandled exceptions automatically_,
+integrations with Resque, Sidekiq, Delayed Job and many more.
 
 Key features
 ------------
