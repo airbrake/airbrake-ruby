@@ -56,8 +56,10 @@ module Airbrake
       # @param [Integer] count The number of requests
       # @param [Float] sum The sum of request duration in milliseconds
       # @param [Float] sumsq The squared sum of request duration in milliseconds
-      # @param [TDigest::TDigest] tdigest
-      def initialize(count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest::TDigest.new)
+      # @param [TDigest::TDigest] tdigest By default, the compression is 20
+      def initialize(
+        count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest::TDigest.new(0.05)
+      )
         super(count, sum, sumsq, tdigest)
       end
 
