@@ -49,7 +49,7 @@ module Airbrake
     using TDigestBigEndianness
 
     # The key that represents a route.
-    RouteKey = Struct.new(:method, :route, :statusCode, :time)
+    RouteKey = Struct.new(:method, :route, :status_code, :time)
 
     # RouteStat holds data that describes a route's performance.
     RouteStat = Struct.new(:count, :sum, :sumsq, :tdigest) do
@@ -71,7 +71,7 @@ module Airbrake
           'count' => count,
           'sum' => sum,
           'sumsq' => sumsq,
-          'tDigest' => Base64.strict_encode64(tdigest.as_small_bytes)
+          'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes)
         }
       end
     end
@@ -156,7 +156,7 @@ module Airbrake
       @sender.send(
         { routes: routes.map { |k, v| k.to_h.merge(v.to_h) } },
         promise,
-        URI.join(@config.host, "api/v4/projects/#{@config.project_id}/routes-stats")
+        URI.join(@config.host, "api/v5/projects/#{@config.project_id}/routes-stats")
       )
     end
   end
