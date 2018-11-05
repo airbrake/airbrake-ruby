@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0.rc.3][v3.0.0.rc.3] (November 6, 2018)
+
+* Set tdigest compression to 20
+  ([#354](https://github.com/airbrake/airbrake-ruby/pull/354))
+
 ### [v3.0.0.rc.2][v3.0.0.rc.2] (October 30, 2018)
 
 * **Dropped support for Ruby 2.0**
@@ -515,3 +520,4 @@ Airbrake Ruby Changelog
 [v2.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.12.0
 [v2.13.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.13.0.rc.1
 [v3.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.2
+[v3.0.0.rc.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.3
