@@ -48,10 +48,10 @@ RSpec.describe Airbrake::RouteSender do
             {"routes":\[
               {"method":"GET","route":"/foo","statusCode":200,
                "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":24.0,
-               "sumsq":576.0,"tDigest":"AAAAAkBZAAAAAAAAAAAAAUHAAAAB"},
+               "sumsq":576.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
               {"method":"GET","route":"/foo","statusCode":200,
                "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":10.0,
-               "sumsq":100.0,"tDigest":"AAAAAkBZAAAAAAAAAAAAAUEgAAAB"}\]}
+               "sumsq":100.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
           \z|x
         )
       ).to have_been_made
@@ -67,10 +67,10 @@ RSpec.describe Airbrake::RouteSender do
             {"routes":\[
               {"method":"GET","route":"/foo","statusCode":200,
                "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":24.0,
-               "sumsq":576.0,"tDigest":"AAAAAkBZAAAAAAAAAAAAAUHAAAAB"},
+               "sumsq":576.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
               {"method":"POST","route":"/foo","statusCode":200,
                "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":10.0,
-               "sumsq":100.0,"tDigest":"AAAAAkBZAAAAAAAAAAAAAUEgAAAB"}\]}
+               "sumsq":100.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
           \z|x
         )
       ).to have_been_made
