@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::RouteSender do
-  let(:endpoint) { 'https://api.airbrake.io/api/v4/projects/1/routes-stats' }
+  let(:endpoint) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
 
   let(:config) do
     Airbrake::Config.new(
@@ -46,12 +46,12 @@ RSpec.describe Airbrake::RouteSender do
         a_request(:put, endpoint).with(
           body: %r|\A
             {"routes":\[
-              {"method":"GET","route":"/foo","statusCode":200,
+              {"method":"GET","route":"/foo","status_code":200,
                "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":24.0,
-               "sumsq":576.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
-              {"method":"GET","route":"/foo","statusCode":200,
+               "sumsq":576.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
+              {"method":"GET","route":"/foo","status_code":200,
                "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":10.0,
-               "sumsq":100.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
+               "sumsq":100.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
           \z|x
         )
       ).to have_been_made
@@ -65,12 +65,12 @@ RSpec.describe Airbrake::RouteSender do
         a_request(:put, endpoint).with(
           body: %r|\A
             {"routes":\[
-              {"method":"GET","route":"/foo","statusCode":200,
+              {"method":"GET","route":"/foo","status_code":200,
                "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":24.0,
-               "sumsq":576.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
-              {"method":"POST","route":"/foo","statusCode":200,
+               "sumsq":576.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
+              {"method":"POST","route":"/foo","status_code":200,
                "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":10.0,
-               "sumsq":100.0,"tDigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
+               "sumsq":100.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
           \z|x
         )
       ).to have_been_made
