@@ -2,5 +2,5 @@
 # More information: http://semver.org/
 module Airbrake
   # @return [String] the library version
-  AIRBRAKE_RUBY_VERSION = '3.0.0.rc.3'.freeze
+  AIRBRAKE_RUBY_VERSION = '3.0.0.rc.4'.freeze
 end
