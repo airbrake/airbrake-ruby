@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Updated `/routes-stats` API to v5
+  ([#355](https://github.com/airbrake/airbrake-ruby/pull/355))
+
 ### [v3.0.0.rc.3][v3.0.0.rc.3] (November 6, 2018)
 
 * Set tdigest compression to 20
@@ -521,3 +524,4 @@ Airbrake Ruby Changelog
 [v2.13.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.13.0.rc.1
 [v3.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.2
 [v3.0.0.rc.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.3
+[v3.0.0.rc.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.3
