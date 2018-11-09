@@ -100,8 +100,8 @@ module Airbrake
     end
 
     # @macro see_public_api_method
-    def inc_request(*args)
-      @route_sender.inc_request(*args)
+    def notify_request(request_info)
+      @route_sender.notify_request(request_info)
     end
 
     # @return [String] customized inspect to lessen the amount of clutter

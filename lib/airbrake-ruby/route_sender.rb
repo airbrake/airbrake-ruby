@@ -87,14 +87,18 @@ module Airbrake
     end
 
     # @macro see_public_api_method
-    def inc_request(method, route, status_code, dur, tm)
-      route = create_route_key(method, route, status_code, tm)
-
+    def notify_request(request_info)
+      route = create_route_key(
+        request_info[:method],
+        request_info[:route],
+        request_info[:status_code],
+        utc_truncate_minutes(request_info[:start_time])
+      )
       promise = Airbrake::Promise.new
 
       @mutex.synchronize do
         @routes[route] ||= RouteStat.new
-        increment_stats(@routes[route], dur)
+        increment_stats(request_info, @routes[route])
 
         if @flush_period > 0
           schedule_flush(promise)
@@ -117,10 +121,10 @@ module Airbrake
       RouteKey.new(method, route, status_code, time.rfc3339)
     end
 
-    def increment_stats(stat, dur)
+    def increment_stats(request_info, stat)
       stat.count += 1
 
-      ms = dur.to_f
+      ms = (request_info[:end_time] || Time.now) - request_info[:start_time]
       stat.sum += ms
       stat.sumsq += ms * ms
 
@@ -158,6 +162,12 @@ module Airbrake
         promise,
         URI.join(@config.host, "api/v5/projects/#{@config.project_id}/routes-stats")
       )
+    end
+
+    def utc_truncate_minutes(time)
+      time_array = time.to_a
+      time_array[0] = 0
+      Time.utc(*time_array)
     end
   end
 end

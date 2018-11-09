@@ -115,7 +115,7 @@ module Airbrake
     def merge_context(_context); end
 
     # @macro see_public_api_method
-    def inc_request(method, route, status_code, dur, time); end
+    def notify_request(request_info); end
   end
 
   # A Hash that holds all notifiers. The keys of the Hash are notifier
@@ -345,26 +345,32 @@ module Airbrake
       @notifiers[:default].merge_context(context)
     end
 
-    # Increments request count of a certain +route+ that was invoked with
-    # +method+, and returned +status_code+ at +time+ and took +dur+
-    # milliseconds.
+    # Increments request statistics of a certain +route+ that was invoked on
+    # +start_time+ and ended on +end_time+ with +method+, and returned
+    # +status_code+.
     #
     # After a certain amount of time (n seconds) the aggregated route
     # information will be sent to Airbrake.
     #
     # @example
-    #   Airbrake.inc_request('POST', '/thing/:id/create', 200, 123, Time.now)
+    #   Airbrake.notify_request(
+    #     method: 'POST',
+    #     route: '/thing/:id/create',
+    #     status_code: 200,
+    #     start_time: timestamp,
+    #     end_time: Time.now
+    #   )
     #
-    # @param [String] method The HTTP method that was invoked
-    # @param [String] route The route that was invoked
-    # @param [Integer] status_code The respose code that the route returned
-    # @param [Float] dur How much time the processing of the request took in
-    #   milliseconds
-    # @param [Time] time When the request happened
+    # @param [Hash{Symbol=>Object}] request_info
+    # @option request_info [String] :method The HTTP method that was invoked
+    # @option request_info [String] :route The route that was invoked
+    # @option request_info [Integer] :status_code The respose code that the route returned
+    # @option request_info [Date] :start_time When the request started
+    # @option request_info [Time] :end_time When the request ended (optional)
     # @return [void]
     # @since v3.0.0
-    def inc_request(method, route, status_code, dur, time)
-      @notifiers[:default].inc_request(method, route, status_code, dur, time)
+    def notify_request(request_info)
+      @notifiers[:default].notify_request(request_info)
     end
   end
 end

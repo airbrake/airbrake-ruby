@@ -404,7 +404,7 @@ end
 
 #### route_stats_flush_period
 
-By default, it's set to `15`. When `Airbrake.inc_request` is invoked, then
+By default, it's set to `15`. When `Airbrake.notify_request` is invoked, then
 Airbrake Ruby waits 15 seconds trying to collect route stats. After this delay
 it sends all route stats in a batch using only one web request. Setting this
 value allows speeding up or slowing down this process. Zero value means no
