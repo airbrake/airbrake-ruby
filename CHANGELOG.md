@@ -3,6 +3,13 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0.rc.5][v3.0.0.rc.5] (November 12, 2018)
+
+* Renamed `Airbrake.inc_request` to `Airbrake.notify_request` and changed its
+  signature ([#358](https://github.com/airbrake/airbrake-ruby/pull/358))
+
+### [v3.0.0.rc.4][v3.0.0.rc.4] (November 6, 2018)
+
 * Updated `/routes-stats` API to v5
   ([#355](https://github.com/airbrake/airbrake-ruby/pull/355))
 
@@ -524,4 +531,5 @@ Airbrake Ruby Changelog
 [v2.13.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v2.13.0.rc.1
 [v3.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.2
 [v3.0.0.rc.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.3
-[v3.0.0.rc.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.3
+[v3.0.0.rc.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.4
+[v3.0.0.rc.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.5
