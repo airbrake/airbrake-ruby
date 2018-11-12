@@ -111,13 +111,17 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe ".inc_request" do
-    it "forwards 'inc_request' to the notifier" do
-      t = Time.now
-      expect(default_notifier).to receive(:inc_request).with(
-        'GET', '/foo', 200, 1000, t
-      )
-      described_class.inc_request('GET', '/foo', 200, 1000, t)
+  describe ".notify_request" do
+    it "forwards 'notify_request' to the notifier" do
+      params = {
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
+        end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
+      }
+      expect(default_notifier).to receive(:notify_request).with(params)
+      described_class.notify_request(params)
     end
   end
 end

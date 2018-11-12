@@ -450,13 +450,18 @@ RSpec.describe Airbrake::Notifier do
     end
   end
 
-  describe "#inc_request" do
-    it "forwards 'inc_request' to RouteSender" do
-      t = Time.now
-      expect_any_instance_of(Airbrake::RouteSender).to receive(:inc_request).with(
-        'GET', '/foo', 200, 1000, t
-      )
-      subject.inc_request('GET', '/foo', 200, 1000, t)
+  describe "#notify_request" do
+    it "forwards 'notify_request' to RouteSender" do
+      params = {
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
+        end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
+      }
+      expect_any_instance_of(Airbrake::RouteSender)
+        .to receive(:notify_request).with(params)
+      subject.notify_request(params)
     end
   end
 

@@ -13,7 +13,7 @@ RSpec.describe Airbrake::RouteSender do
 
   subject { described_class.new(config) }
 
-  describe "#inc_request" do
+  describe "#notify_request" do
     before do
       stub_request(:put, endpoint).to_return(status: 200, body: '')
     end
@@ -22,7 +22,12 @@ RSpec.describe Airbrake::RouteSender do
     after { sleep 0.2 }
 
     it "rounds time to the floor minute" do
-      subject.inc_request('GET', '/foo', 200, 24, Time.new(2018, 1, 1, 0, 0, 20, 0))
+      subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
+      )
       sleep 0.2
       expect(
         a_request(:put, endpoint).with(body: /"time":"2018-01-01T00:00:00\+00:00"/)
@@ -30,8 +35,18 @@ RSpec.describe Airbrake::RouteSender do
     end
 
     it "increments routes with the same key" do
-      subject.inc_request('GET', '/foo', 200, 24, Time.new(2018, 1, 1, 0, 0, 20, 0))
-      subject.inc_request('GET', '/foo', 200, 24, Time.new(2018, 1, 1, 0, 0, 50, 0))
+      subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
+      )
+      subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
+      )
       sleep 0.2
       expect(
         a_request(:put, endpoint).with(body: /"count":2/)
@@ -39,45 +54,74 @@ RSpec.describe Airbrake::RouteSender do
     end
 
     it "groups routes by time" do
-      subject.inc_request('GET', '/foo', 200, 24, Time.new(2018, 1, 1, 0, 0, 20, 0))
-      subject.inc_request('GET', '/foo', 200, 10, Time.new(2018, 1, 1, 0, 1, 20, 0))
+      subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 0, 49, 0),
+        end_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
+      )
+      subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 1, 49, 0),
+        end_time: Time.new(2018, 1, 1, 0, 1, 55, 0)
+      )
       sleep 0.2
       expect(
         a_request(:put, endpoint).with(
           body: %r|\A
             {"routes":\[
               {"method":"GET","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":24.0,
-               "sumsq":576.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
+               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":1.0,
+               "sumsq":1.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAT\+AAAAB"},
               {"method":"GET","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":10.0,
-               "sumsq":100.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
+               "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":6.0,
+               "sumsq":36.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUDAAAAB"}\]}
           \z|x
         )
       ).to have_been_made
     end
 
     it "groups routes by route key" do
-      subject.inc_request('GET', '/foo', 200, 24, Time.new(2018, 1, 1, 0, 0, 20, 0))
-      subject.inc_request('POST', '/foo', 200, 10, Time.new(2018, 1, 1, 0, 0, 20, 0))
+      subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+        end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+      )
+      subject.notify_request(
+        method: 'POST',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+        end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+      )
       sleep 0.2
       expect(
         a_request(:put, endpoint).with(
           body: %r|\A
             {"routes":\[
               {"method":"GET","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":24.0,
-               "sumsq":576.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUHAAAAB"},
+               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60.0,
+               "sumsq":3600.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUJwAAAB"},
               {"method":"POST","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":10.0,
-               "sumsq":100.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUEgAAAB"}\]}
+               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60.0,
+               "sumsq":3600.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUJwAAAB"}\]}
           \z|x
         )
       ).to have_been_made
     end
 
     it "returns a promise" do
-      promise = subject.inc_request('GET', '/foo', 200, 24, Time.new)
+      promise = subject.notify_request(
+        method: 'GET',
+        route: '/foo',
+        status_code: 200,
+        start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
+      )
       sleep 0.2
       expect(promise).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('' => nil)
