@@ -74,11 +74,11 @@ RSpec.describe Airbrake::RouteSender do
           body: %r|\A
             {"routes":\[
               {"method":"GET","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":1.0,
-               "sumsq":1.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAT\+AAAAB"},
+               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":1000.0,
+               "sumsq":1000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUR6AAAB"},
               {"method":"GET","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":6.0,
-               "sumsq":36.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUDAAAAB"}\]}
+               "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":6000.0,
+               "sumsq":36000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUW7gAAB"}\]}
           \z|x
         )
       ).to have_been_made
@@ -105,11 +105,11 @@ RSpec.describe Airbrake::RouteSender do
           body: %r|\A
             {"routes":\[
               {"method":"GET","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60.0,
-               "sumsq":3600.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUJwAAAB"},
+               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60000.0,
+               "sumsq":3600000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"},
               {"method":"POST","route":"/foo","status_code":200,
-               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60.0,
-               "sumsq":3600.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUJwAAAB"}\]}
+               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60000.0,
+               "sumsq":3600000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"}\]}
           \z|x
         )
       ).to have_been_made

@@ -124,7 +124,9 @@ module Airbrake
     def increment_stats(request_info, stat)
       stat.count += 1
 
-      ms = (request_info[:end_time] || Time.now) - request_info[:start_time]
+      end_time = request_info[:end_time] || Time.new
+      ms = (end_time - request_info[:start_time]) * 1000
+
       stat.sum += ms
       stat.sumsq += ms * ms
 
