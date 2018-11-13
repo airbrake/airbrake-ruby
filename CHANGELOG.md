@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0.rc.6][v3.0.0.rc.6] (November 13, 2018)
+
+* Fixed incorrect route statistics reporting (seconds instead of milliseconds)
+  ([#360](https://github.com/airbrake/airbrake-ruby/pull/360))
+
 ### [v3.0.0.rc.5][v3.0.0.rc.5] (November 12, 2018)
 
 * Renamed `Airbrake.inc_request` to `Airbrake.notify_request` and changed its
@@ -533,3 +538,4 @@ Airbrake Ruby Changelog
 [v3.0.0.rc.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.3
 [v3.0.0.rc.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.4
 [v3.0.0.rc.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.5
+[v3.0.0.rc.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.6
