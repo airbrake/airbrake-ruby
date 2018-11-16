@@ -250,6 +250,15 @@ Airbrake.configure do |c|
 end
 ```
 
+If your backend is hosted behind a subpath such as `http://localhost:8080/api`,
+make sure to append a trailing slash to the end of the URL:
+
+```ruby
+Airbrake.configure do |c|
+  c.host = 'http://localhost:8080/api/' # Note the trailing slash
+end
+```
+
 #### root_directory
 
 Configures the root directory of your project. Expects a String or a Pathname,
