@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0.rc.7][v3.0.0.rc.7] (November 19, 2018)
+
+* Possibly fixed the problem where `RouteSender` sends routes with 0 count
+  ([#362](https://github.com/airbrake/airbrake-ruby/pull/362))
+
 ### [v3.0.0.rc.6][v3.0.0.rc.6] (November 13, 2018)
 
 * Fixed incorrect route statistics reporting (seconds instead of milliseconds)
@@ -539,3 +544,4 @@ Airbrake Ruby Changelog
 [v3.0.0.rc.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.4
 [v3.0.0.rc.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.5
 [v3.0.0.rc.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.6
+[v3.0.0.rc.7]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.7
