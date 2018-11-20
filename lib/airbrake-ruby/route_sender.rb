@@ -142,9 +142,9 @@ module Airbrake
           routes = @routes
           @routes = {}
           @thread = nil
-
-          send(routes, promise)
         end
+
+        send(routes, promise)
       end
 
       # Setting a name is needed to test the timer.
