@@ -49,7 +49,7 @@ module Airbrake
     using TDigestBigEndianness
 
     # The key that represents a route.
-    RouteKey = Struct.new(:method, :route, :status_code, :time)
+    RouteKey = Struct.new(:method, :route, :statusCode, :time)
 
     # RouteStat holds data that describes a route's performance.
     RouteStat = Struct.new(:count, :sum, :sumsq, :tdigest) do
