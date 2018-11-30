@@ -1,3 +1,5 @@
+require 'date'
+
 module Airbrake
   module Filters
     # Attaches git checkout info to `context`. The info includes:
