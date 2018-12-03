@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added the `route_stats` option, which enables/disables route stat
+  collection. Route stat collection also respects current environment now, which
+  means the notifier won't be collecting route information for ignored
+  environments ([#369](https://github.com/airbrake/airbrake-ruby/pull/369))
+
 ### [v3.0.0.rc.8][v3.0.0.rc.8] (November 21, 2018)
 
 * Reverted the fix applied in v3.0.0.rc.7 because it didn't do what it claimed

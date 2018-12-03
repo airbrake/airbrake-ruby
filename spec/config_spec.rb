@@ -79,6 +79,10 @@ RSpec.describe Airbrake::Config do
         expect(config.whitelist_keys).to be_empty
       end
 
+      it "enables route stats by default" do
+        expect(config.route_stats).to be_truthy
+      end
+
       it "sets the default route_stats_flush_period" do
         expect(config.route_stats_flush_period).to eq(15)
       end

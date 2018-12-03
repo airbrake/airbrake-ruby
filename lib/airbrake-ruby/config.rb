@@ -83,6 +83,12 @@ module Airbrake
     # @since v2.5.0
     attr_accessor :code_hunks
 
+    # @return [Boolean] true if the library should send route stats information
+    #   to Airbrake, false otherwise
+    # @api public
+    # @since v3.0.0
+    attr_accessor :route_stats
+
     # @return [Integer] how many seconds to wait before sending collected route
     #   stats
     # @api public
@@ -91,6 +97,7 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
+    # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
       @validator = Config::Validator.new(self)
 
@@ -119,10 +126,12 @@ module Airbrake
       )
 
       self.versions = {}
+      self.route_stats = true
       self.route_stats_flush_period = 15
 
       merge(user_config)
     end
+    # rubocop:enable Metrics/AbcSize
 
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address

@@ -451,17 +451,40 @@ RSpec.describe Airbrake::Notifier do
   end
 
   describe "#notify_request" do
-    it "forwards 'notify_request' to RouteSender" do
-      params = {
+    let(:params) do
+      {
         method: 'GET',
         route: '/foo',
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
         end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
       }
+    end
+
+    it "forwards 'notify_request' to RouteSender" do
       expect_any_instance_of(Airbrake::RouteSender)
-        .to receive(:notify_request).with(params)
+        .to receive(:notify_request).with(params, instance_of(Airbrake::Promise))
       subject.notify_request(params)
+    end
+
+    context "when route stats are disabled" do
+      it "doesn't send route stats" do
+        notifier = described_class.new(user_params.merge(route_stats: false))
+        expect_any_instance_of(Airbrake::RouteSender)
+          .not_to receive(:notify_request)
+        notifier.notify_request(params)
+      end
+    end
+
+    context "when current environment is ignored" do
+      it "doesn't send route stats" do
+        notifier = described_class.new(
+          user_params.merge(environment: 'test', ignore_environments: %w[test])
+        )
+        expect_any_instance_of(Airbrake::RouteSender)
+          .not_to receive(:notify_request)
+        notifier.notify_request(params)
+      end
     end
   end
 

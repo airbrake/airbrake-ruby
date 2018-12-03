@@ -290,6 +290,8 @@ Setting this option allows Airbrake to filter exceptions occurring in unwanted
 environments such as `:test`. By default, it is equal to an empty Array, which
 means Airbrake Ruby sends exceptions occurring in all environments.
 
+This will also disable route stat collection for matched environments.
+
 ```ruby
 Airbrake.configure do |c|
   c.ignore_environments = [:production, /test.+/]
@@ -408,6 +410,18 @@ hunks are collected. By default, it's set to `true`.
 ```ruby
 Airbrake.configure do |c|
   c.code_hunks = false
+end
+```
+
+#### route_stats
+
+Configures route stats collection. By default, it's set to `true`. When set to
+`false`, `Airbrake.notify_request` won't have an effect. The call would always
+return a rejected promise.
+
+```ruby
+Airbrake.configure do |c|
+  c.route_stats = false
 end
 ```
 
