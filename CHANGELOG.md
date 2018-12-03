@@ -3,10 +3,14 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0.rc.9][v3.0.0.rc.9] (December 3, 2018)
+
 * Added the `route_stats` option, which enables/disables route stat
   collection. Route stat collection also respects current environment now, which
   means the notifier won't be collecting route information for ignored
   environments ([#369](https://github.com/airbrake/airbrake-ruby/pull/369))
+* Fixed `NoMethodError` in `GitLastCheckoutFilter`
+  ([#368](https://github.com/airbrake/airbrake-ruby/pull/368))
 
 ### [v3.0.0.rc.8][v3.0.0.rc.8] (November 21, 2018)
 
@@ -556,3 +560,4 @@ Airbrake Ruby Changelog
 [v3.0.0.rc.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.6
 [v3.0.0.rc.7]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.7
 [v3.0.0.rc.8]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.8
+[v3.0.0.rc.9]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.9
