@@ -87,14 +87,14 @@ module Airbrake
     end
 
     # @macro see_public_api_method
-    def notify_request(request_info)
+    # @param [Airbrake::Promise] promise
+    def notify_request(request_info, promise = Airbrake::Promise.new)
       route = create_route_key(
         request_info[:method],
         request_info[:route],
         request_info[:status_code],
         utc_truncate_minutes(request_info[:start_time])
       )
-      promise = Airbrake::Promise.new
 
       @mutex.synchronize do
         @routes[route] ||= RouteStat.new
