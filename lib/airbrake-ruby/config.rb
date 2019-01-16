@@ -126,7 +126,7 @@ module Airbrake
       )
 
       self.versions = {}
-      self.route_stats = true
+      self.route_stats = false
       self.route_stats_flush_period = 15
 
       merge(user_config)
