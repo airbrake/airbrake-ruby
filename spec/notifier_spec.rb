@@ -3,7 +3,12 @@ require 'spec_helper'
 # rubocop:disable Layout/DotPosition
 RSpec.describe Airbrake::Notifier do
   let(:user_params) do
-    { project_id: 1, project_key: 'abc', logger: Logger.new('/dev/null') }
+    {
+      project_id: 1,
+      project_key: 'abc',
+      logger: Logger.new('/dev/null'),
+      route_stats: true
+    }
   end
 
   subject { described_class.new(user_params) }

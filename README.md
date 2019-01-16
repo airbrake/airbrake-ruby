@@ -48,6 +48,7 @@ Key features
 * Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
 * Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
 * Automatic and manual deploy tracking <sup>[[link](#airbrakecreate_deploy)]</sup>
+* Performance monitoring for web applications (route statistics) <sup>[[link](#route_stats)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -415,13 +416,15 @@ end
 
 #### route_stats
 
-Configures route stats collection. By default, it's set to `true`. When set to
-`false`, `Airbrake.notify_request` won't have an effect. The call would always
-return a rejected promise.
+Configures route performance statistics collection (route name, response time,
+status code, etc). This statistics is displayed on the Performance tab of your
+project. By default, it's disabled.
+
+The statistics is sent via [`Airbrake.notify_request`](#airbrakenotify_request).
 
 ```ruby
 Airbrake.configure do |c|
-  c.route_stats = false
+  c.route_stats = true
 end
 ```
 
@@ -741,6 +744,27 @@ grocer.deliver_veggies
 grocer.deliver_veggies
 #=> Context: empty
 ```
+
+#### Airbrake.notify_request
+
+Sends performance statistics to Airbrake. The performance statistics is
+displayed on the Performance tab of your project.
+
+```ruby
+Airbrake.notify_request(
+  method: 'GET',
+  route: '/things/1',
+  status_code: 200,
+  start_time: Time.new - 200,
+  end_time: Time.new
+)
+```
+
+When [`config.route_stats = false`](#route_stats), it always returns a rejected
+promise.
+
+When [`config.route_stats = true`](#route_stats), then it aggregates statistics
+and sends as a batch every 15 seconds.
 
 ### Notice
 
