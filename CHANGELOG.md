@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.0.0][v3.0.0] (January 16, 2019)
+
+* Disabled `route_stats` by default. If you were using our release candidate
+  gems, all you need to do is to set it to `true` in your config.
+
 ### [v3.0.0.rc.9][v3.0.0.rc.9] (December 3, 2018)
 
 * Added the `route_stats` option, which enables/disables route stat
@@ -561,3 +566,4 @@ Airbrake Ruby Changelog
 [v3.0.0.rc.7]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.7
 [v3.0.0.rc.8]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.8
 [v3.0.0.rc.9]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.9
+[v3.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0
