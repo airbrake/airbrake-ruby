@@ -26,11 +26,18 @@ module Airbrake
       add_default_filters
     end
 
-    # Adds a filter to the filter chain. Sorts filters by weight.
+    # Adds a filter to the filter chain. Sorts filters by weight. When passed
+    # `filter` is of a class that has already been registered in the filter
+    # chain, this new filter replaces the old one.
     #
     # @param [#call] filter The filter object (proc, class, module, etc)
     # @return [void]
     def add_filter(filter)
+      if !filter.is_a?(Proc) && (name = filter.class.name)
+        index = @filters.index { |f| f.class.name == name }
+        @filters.delete_at(index) if index
+      end
+
       @filters = (@filters << filter).sort_by do |f|
         f.respond_to?(:weight) ? f.weight : DEFAULT_WEIGHT
       end.reverse!

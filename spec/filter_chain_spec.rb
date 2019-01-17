@@ -47,4 +47,38 @@ RSpec.describe Airbrake::FilterChain do
       subject.refine(notice)
     end
   end
+
+  describe "#add_filter" do
+    let(:filter) do
+      Class.new do
+        class << self
+          def name
+            'FooFilter'
+          end
+        end
+
+        def initialize(foo)
+          @foo = foo
+        end
+
+        def call(notice)
+          notice[:params][:foo] << @foo
+        end
+      end
+    end
+
+    it "replaces old filter with a new one when the same class owns it" do
+      notice[:params][:foo] = []
+
+      f1 = filter.new(1)
+      subject.add_filter(f1)
+
+      f2 = filter.new(2)
+      subject.add_filter(f2)
+
+      subject.refine(notice)
+
+      expect(notice[:params][:foo]).to eq([2])
+    end
+  end
 end
