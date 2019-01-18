@@ -98,6 +98,9 @@ module Airbrake
     def add_filter(_filter = nil, &_block); end
 
     # @macro see_public_api_method
+    def delete_filter(_filter_class); end
+
+    # @macro see_public_api_method
     def build_notice(_exception, _params = {}); end
 
     # @macro see_public_api_method
@@ -115,7 +118,7 @@ module Airbrake
     def merge_context(_context); end
 
     # @macro see_public_api_method
-    def notify_request(request_info); end
+    def notify_request(_request_info); end
   end
 
   # A Hash that holds all notifiers. The keys of the Hash are notifier
@@ -247,9 +250,25 @@ module Airbrake
     # @yieldparam [Airbrake::Notice]
     # @yieldreturn [void]
     # @return [void]
-    # @note Once a filter was added, there's no way to delete it
     def add_filter(filter = nil, &block)
       @notifiers[:default].add_filter(filter, &block)
+    end
+
+    # Deletes a filter added via {Airbrake#add_filter}.
+    #
+    # @example
+    #   # Add a MyFilter filter (we pass an instance here).
+    #   Airbrake.add_filter(MyFilter.new)
+    #
+    #   # Delete the filter (we pass class name here).
+    #   Airbrake.delete_filter(MyFilter)
+    #
+    # @param [Class] filter_class The class of the filter you want to delete
+    # @return [void]
+    # @since v3.1.0
+    # @note This method cannot delete filters assigned via the Proc form.
+    def delete_filter(filter_class)
+      @notifiers[:default].delete_filter(filter_class)
     end
 
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
