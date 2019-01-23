@@ -3,6 +3,12 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.1.0][v3.1.0] (January 23, 2019)
+
+* Added `Airbrake.delete_filter`, which can be used for deleting filters added
+  via `Airbrake.add_filter`
+  ([#376](https://github.com/airbrake/airbrake-ruby/pull/376))
+
 ### [v3.0.0][v3.0.0] (January 16, 2019)
 
 * Disabled `route_stats` by default. If you were using our release candidate
@@ -568,3 +574,4 @@ Airbrake Ruby Changelog
 [v3.0.0.rc.8]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.8
 [v3.0.0.rc.9]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.9
 [v3.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0
+[v3.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.1.0
