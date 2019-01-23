@@ -583,6 +583,20 @@ Airbrake.add_filter do |notice|
 end
 ```
 
+#### Airbrake.delete_filter
+
+Deletes a filter added via [`add_filter`](#airbrakeadd_filter). Expects a class name of the filter.
+
+```ruby
+# Add a MyFilter filter (we pass an instance here).
+Airbrake.add_filter(MyFilter.new)
+
+# Delete the filter (we pass class name here).
+Airbrake.delete_filter(MyFilter)
+```
+
+Note: This method cannot delete filters assigned via the Proc form.
+
 ##### Optional filters
 
 The library adds a few filters by default. However, some of them are optional

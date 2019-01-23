@@ -5,6 +5,7 @@ module Airbrake
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   # @api private
+  # rubocop:disable Metrics/ClassLength
   class Notifier
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
@@ -55,6 +56,11 @@ module Airbrake
     # @macro see_public_api_method
     def add_filter(filter = nil, &block)
       @filter_chain.add_filter(block_given? ? block : filter)
+    end
+
+    # @macro see_public_api_method
+    def delete_filter(filter_class)
+      @filter_chain.delete_filter(filter_class)
     end
 
     # @macro see_public_api_method
@@ -188,4 +194,5 @@ module Airbrake
       clean_bt
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

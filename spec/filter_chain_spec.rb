@@ -47,4 +47,43 @@ RSpec.describe Airbrake::FilterChain do
       subject.refine(notice)
     end
   end
+
+  describe "#delete_filter" do
+    let(:filter) do
+      Class.new do
+        class << self
+          def name
+            'FooFilter'
+          end
+        end
+
+        def initialize(foo)
+          @foo = foo
+        end
+
+        def call(notice)
+          notice[:params][:foo] << @foo
+        end
+      end
+    end
+
+    it "deletes a class filter" do
+      notice[:params][:foo] = []
+
+      f1 = filter.new(1)
+      subject.add_filter(f1)
+
+      foo_filter_mock = double
+      expect(foo_filter_mock).to(
+        receive(:name).at_least(:once).and_return('FooFilter')
+      )
+      subject.delete_filter(foo_filter_mock)
+
+      f2 = filter.new(2)
+      subject.add_filter(f2)
+
+      subject.refine(notice)
+      expect(notice[:params][:foo]).to eq([2])
+    end
+  end
 end

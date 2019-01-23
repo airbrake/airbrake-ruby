@@ -36,6 +36,16 @@ module Airbrake
       end.reverse!
     end
 
+    # Deletes a filter from the the filter chain.
+    #
+    # @param [Class] filter_class The class of the filter you want to delete
+    # @return [void]
+    # @since v3.1.0
+    def delete_filter(filter_class)
+      index = @filters.index { |f| f.class.name == filter_class.name }
+      @filters.delete_at(index) if index
+    end
+
     # Applies all the filters in the filter chain to the given notice. Does not
     # filter ignored notices.
     #
