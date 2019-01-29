@@ -41,6 +41,7 @@ module Airbrake
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
       @route_sender = RouteSender.new(@config)
+      @query_sender = QuerySender.new(@config)
     end
 
     # @macro see_public_api_method
@@ -118,6 +119,21 @@ module Airbrake
       end
 
       @route_sender.notify_request(request_info, promise)
+    end
+
+    # @macro see_public_api_method
+    def notify_query(query_info)
+      promise = Airbrake::Promise.new
+
+      if @config.ignored_environment?
+        return promise.reject("The '#{@config.environment}' environment is ignored")
+      end
+
+      unless @config.route_stats
+        return promise.reject("The Route Stats feature is disabled")
+      end
+
+      @query_sender.notify_query(query_info, promise)
     end
 
     # @return [String] customized inspect to lessen the amount of clutter
