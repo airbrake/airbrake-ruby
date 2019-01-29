@@ -34,6 +34,7 @@ require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
+require 'airbrake-ruby/tdigest_big_endianness'
 require 'airbrake-ruby/route_sender'
 
 # This module defines the Airbrake API. The user is meant to interact with
