@@ -153,11 +153,12 @@ module Airbrake
     end
 
     def send(routes, promise)
-      if routes.none?
-        raise "#{self.class.name}##{__method__}: routes cannot be empty. Race?"
-      end
+      signature = "#{self.class.name}##{__method__}"
+      raise "#{signature}: routes cannot be empty. Race?" if routes.none?
 
-      @config.logger.debug("#{LOG_LABEL} RouteStats#send: #{routes}")
+      @config.logger.debug(
+        "#{LOG_LABEL} #{signature}: #{routes}"
+      )
 
       @sender.send(
         { routes: routes.map { |k, v| k.to_h.merge(v.to_h) } },
