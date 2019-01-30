@@ -40,7 +40,6 @@ module Airbrake
       @filter_chain = FilterChain.new(@config, @context)
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
-      @route_sender = RouteNotifier.new(@config)
       @query_sender = QueryNotifier.new(@config)
     end
 
@@ -104,21 +103,6 @@ module Airbrake
     # @macro see_public_api_method
     def merge_context(context)
       @context.merge!(context)
-    end
-
-    # @macro see_public_api_method
-    def notify_request(request_info)
-      promise = Airbrake::Promise.new
-
-      if @config.ignored_environment?
-        return promise.reject("The '#{@config.environment}' environment is ignored")
-      end
-
-      unless @config.performance_stats
-        return promise.reject("The Performance Stats feature is disabled")
-      end
-
-      @route_sender.notify_request(request_info, promise)
     end
 
     # @macro see_public_api_method

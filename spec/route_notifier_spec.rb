@@ -7,19 +7,27 @@ RSpec.describe Airbrake::RouteNotifier do
     Airbrake::Config.new(
       project_id: 1,
       project_key: 'banana',
+      performance_stats: true,
       performance_stats_flush_period: 0
     )
   end
 
   subject { described_class.new(config) }
 
-  describe "#notify_request" do
+  describe "#initialize" do
+    it "raises error if config is invalid" do
+      expect { described_class.new(Airbrake::Config.new(project_id: 1)) }.
+        to raise_error(Airbrake::Error)
+    end
+  end
+
+  describe "#notify" do
     before do
       stub_request(:put, endpoint).to_return(status: 200, body: '')
     end
 
     it "rounds time to the floor minute" do
-      subject.notify_request(
+      subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
@@ -31,13 +39,13 @@ RSpec.describe Airbrake::RouteNotifier do
     end
 
     it "increments routes with the same key" do
-      subject.notify_request(
+      subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
       )
-      subject.notify_request(
+      subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
@@ -49,14 +57,14 @@ RSpec.describe Airbrake::RouteNotifier do
     end
 
     it "groups routes by time" do
-      subject.notify_request(
+      subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 0, 49, 0),
         end_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
       )
-      subject.notify_request(
+      subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
@@ -79,14 +87,14 @@ RSpec.describe Airbrake::RouteNotifier do
     end
 
     it "groups routes by route key" do
-      subject.notify_request(
+      subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
       )
-      subject.notify_request(
+      subject.notify(
         method: 'POST',
         route: '/foo',
         status_code: 200,
@@ -109,7 +117,7 @@ RSpec.describe Airbrake::RouteNotifier do
     end
 
     it "returns a promise" do
-      promise = subject.notify_request(
+      promise = subject.notify(
         method: 'GET',
         route: '/foo',
         status_code: 200,
