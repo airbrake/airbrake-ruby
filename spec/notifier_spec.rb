@@ -504,8 +504,8 @@ RSpec.describe Airbrake::Notifier do
       }
     end
 
-    it "forwards 'notify_query' to QuerySender" do
-      expect_any_instance_of(Airbrake::QuerySender)
+    it "forwards 'notify_query' to QueryNotifier" do
+      expect_any_instance_of(Airbrake::QueryNotifier)
         .to receive(:notify_query).with(params, instance_of(Airbrake::Promise))
       subject.notify_query(params)
     end
@@ -513,7 +513,7 @@ RSpec.describe Airbrake::Notifier do
     context "when performance stats are disabled" do
       it "doesn't send query stats" do
         notifier = described_class.new(user_params.merge(performance_stats: false))
-        expect_any_instance_of(Airbrake::QuerySender)
+        expect_any_instance_of(Airbrake::QueryNotifier)
           .not_to receive(:notify_query)
         notifier.notify_query(params)
       end
@@ -524,7 +524,7 @@ RSpec.describe Airbrake::Notifier do
         notifier = described_class.new(
           user_params.merge(environment: 'test', ignore_environments: %w[test])
         )
-        expect_any_instance_of(Airbrake::QuerySender)
+        expect_any_instance_of(Airbrake::QueryNotifier)
           .not_to receive(:notify_query)
         notifier.notify_query(params)
       end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Airbrake::QuerySender do
+RSpec.describe Airbrake::QueryNotifier do
   let(:endpoint) { 'https://api.airbrake.io/api/v5/projects/1/queries-stats' }
 
   let(:config) do

@@ -41,7 +41,7 @@ module Airbrake
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
       @route_sender = RouteNotifier.new(@config)
-      @query_sender = QuerySender.new(@config)
+      @query_sender = QueryNotifier.new(@config)
     end
 
     # @macro see_public_api_method

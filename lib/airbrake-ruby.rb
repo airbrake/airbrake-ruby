@@ -36,7 +36,7 @@ require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
 require 'airbrake-ruby/tdigest_big_endianness'
 require 'airbrake-ruby/route_notifier'
-require 'airbrake-ruby/query_sender'
+require 'airbrake-ruby/query_notifier'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
