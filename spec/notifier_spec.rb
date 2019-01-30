@@ -466,8 +466,8 @@ RSpec.describe Airbrake::Notifier do
       }
     end
 
-    it "forwards 'notify_request' to RouteSender" do
-      expect_any_instance_of(Airbrake::RouteSender)
+    it "forwards 'notify_request' to RouteNotifier" do
+      expect_any_instance_of(Airbrake::RouteNotifier)
         .to receive(:notify_request).with(params, instance_of(Airbrake::Promise))
       subject.notify_request(params)
     end
@@ -475,7 +475,7 @@ RSpec.describe Airbrake::Notifier do
     context "when performance stats are disabled" do
       it "doesn't send route stats" do
         notifier = described_class.new(user_params.merge(performance_stats: false))
-        expect_any_instance_of(Airbrake::RouteSender)
+        expect_any_instance_of(Airbrake::RouteNotifier)
           .not_to receive(:notify_request)
         notifier.notify_request(params)
       end
@@ -486,7 +486,7 @@ RSpec.describe Airbrake::Notifier do
         notifier = described_class.new(
           user_params.merge(environment: 'test', ignore_environments: %w[test])
         )
-        expect_any_instance_of(Airbrake::RouteSender)
+        expect_any_instance_of(Airbrake::RouteNotifier)
           .not_to receive(:notify_request)
         notifier.notify_request(params)
       end
@@ -524,7 +524,7 @@ RSpec.describe Airbrake::Notifier do
         notifier = described_class.new(
           user_params.merge(environment: 'test', ignore_environments: %w[test])
         )
-        expect_any_instance_of(Airbrake::RouteSender)
+        expect_any_instance_of(Airbrake::QuerySender)
           .not_to receive(:notify_query)
         notifier.notify_query(params)
       end

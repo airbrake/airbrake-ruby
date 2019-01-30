@@ -2,10 +2,10 @@ require 'tdigest'
 require 'base64'
 
 module Airbrake
-  # RouteSender aggregates information about requests and periodically sends
+  # RouteNotifier aggregates information about requests and periodically sends
   # collected data to Airbrake.
   # @since v3.0.0
-  class RouteSender
+  class RouteNotifier
     using TDigestBigEndianness
 
     # The key that represents a route.

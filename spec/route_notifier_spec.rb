@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Airbrake::RouteSender do
+RSpec.describe Airbrake::RouteNotifier do
   let(:endpoint) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
 
   let(:config) do
