@@ -2,10 +2,10 @@ require 'tdigest'
 require 'base64'
 
 module Airbrake
-  # QuerySender aggregates information about SQL queries and periodically sends
+  # QueryNotifier aggregates information about SQL queries and periodically sends
   # collected data to Airbrake.
   # @since v3.2.0
-  class QuerySender
+  class QueryNotifier
     using TDigestBigEndianness
 
     # The key that represents a query event.

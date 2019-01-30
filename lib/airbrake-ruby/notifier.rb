@@ -40,8 +40,8 @@ module Airbrake
       @filter_chain = FilterChain.new(@config, @context)
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
-      @route_sender = RouteSender.new(@config)
-      @query_sender = QuerySender.new(@config)
+      @route_sender = RouteNotifier.new(@config)
+      @query_sender = QueryNotifier.new(@config)
     end
 
     # @macro see_public_api_method
