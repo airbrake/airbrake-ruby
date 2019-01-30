@@ -86,7 +86,7 @@ module Airbrake
   #   @see Airbrake.$0
 
   # NilNotifier is a no-op notifier, which mimics +Airbrake::Notifier+ and
-  # serves only for the purpose of making the library API easier to use.
+  # serves only the purpose of making the library API easier to use.
   #
   # @since 2.1.0
   class NilNotifier
@@ -120,16 +120,28 @@ module Airbrake
     def merge_context(_context); end
 
     # @macro see_public_api_method
-    def notify_request(_request_info); end
-
-    # @macro see_public_api_method
     def notify_query(_query_info); end
+  end
+
+  # NilRouteNotifier is a no-op notifier, which mimics +Airbrake::RouteNotifier+
+  # and serves only the purpose of making the library API easier to use.
+  #
+  # @since 3.1.0
+  class NilRouteNotifier
+    # @see Airbrake.notify_request
+    def notify(_request_info); end
   end
 
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances. If a notifier is not
   # assigned to the hash, then it returns a null object (NilNotifier).
   @notifiers = Hash.new(NilNotifier.new)
+
+  # A Hash that holds all route notifiers. The keys of the Hash are notifier
+  # names, the values are Airbrake::RouteNotifier instances. If a route notifier
+  # is not assigned to the hash, then it returns a null object
+  # (NilRouteNotifier).
+  @route_notifiers = Hash.new(NilRouteNotifier.new)
 
   class << self
     # Retrieves configured notifiers.
@@ -177,6 +189,7 @@ module Airbrake
               "the '#{notifier_name}' notifier was already configured"
       else
         @notifiers[notifier_name] = Notifier.new(config)
+        @route_notifiers[notifier_name] = RouteNotifier.new(config)
       end
     end
 
@@ -394,7 +407,7 @@ module Airbrake
     # @return [void]
     # @since v3.0.0
     def notify_request(request_info)
-      @notifiers[:default].notify_request(request_info)
+      @route_notifiers[:default].notify(request_info)
     end
 
     # Increments SQL statistics of a certain +query+ that was invoked on

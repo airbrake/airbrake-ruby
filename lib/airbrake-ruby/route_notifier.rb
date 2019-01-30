@@ -5,6 +5,7 @@ module Airbrake
   # RouteNotifier aggregates information about requests and periodically sends
   # collected data to Airbrake.
   # @since v3.0.0
+  # @api private
   class RouteNotifier
     using TDigestBigEndianness
 
@@ -37,10 +38,13 @@ module Airbrake
     end
 
     # @param [Airbrake::Config] config
-    def initialize(config)
-      @config = config
-      @flush_period = config.performance_stats_flush_period
-      @sender = SyncSender.new(config, :put)
+    def initialize(user_config)
+      @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
+
+      raise Airbrake::Error, @config.validation_error_message unless @config.valid?
+
+      @flush_period = @config.performance_stats_flush_period
+      @sender = SyncSender.new(@config, :put)
       @routes = {}
       @thread = nil
       @mutex = Mutex.new
@@ -48,7 +52,15 @@ module Airbrake
 
     # @macro see_public_api_method
     # @param [Airbrake::Promise] promise
-    def notify_request(request_info, promise = Airbrake::Promise.new)
+    def notify(request_info, promise = Airbrake::Promise.new)
+      if @config.ignored_environment?
+        return promise.reject("The '#{@config.environment}' environment is ignored")
+      end
+
+      unless @config.performance_stats
+        return promise.reject("The Performance Stats feature is disabled")
+      end
+
       route = create_route_key(
         request_info[:method],
         request_info[:route],
