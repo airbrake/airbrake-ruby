@@ -48,7 +48,7 @@ Key features
 * Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
 * Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
 * Automatic and manual deploy tracking <sup>[[link](#airbrakecreate_deploy)]</sup>
-* Performance monitoring for web applications (route statistics) <sup>[[link](#route_stats)]</sup>
+* Performance monitoring for web applications (route statistics, SQL queries) <sup>[[link](#performance_stats)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
@@ -291,7 +291,7 @@ Setting this option allows Airbrake to filter exceptions occurring in unwanted
 environments such as `:test`. By default, it is equal to an empty Array, which
 means Airbrake Ruby sends exceptions occurring in all environments.
 
-This will also disable route stat collection for matched environments.
+This will also disable performance stat collection for matched environments.
 
 ```ruby
 Airbrake.configure do |c|
@@ -414,17 +414,20 @@ Airbrake.configure do |c|
 end
 ```
 
-#### route_stats
+#### performance_stats
 
-Configures route performance statistics collection (route name, response time,
-status code, etc). This statistics is displayed on the Performance tab of your
-project. By default, it's disabled.
+Configures performance statistics collection (routes, SQL queries) This
+statistics is displayed on the Performance tab of your project. By default, it's
+disabled.
 
-The statistics is sent via [`Airbrake.notify_request`](#airbrakenotify_request).
+The statistics is sent via:
+
+* [`Airbrake.notify_request`](#airbrakenotify_request)
+* [`Airbrake.notify_query`](#airbrakenotify_query)
 
 ```ruby
 Airbrake.configure do |c|
-  c.route_stats = true
+  c.performance_stats = true
 end
 ```
 
@@ -774,11 +777,11 @@ Airbrake.notify_request(
 )
 ```
 
-When [`config.route_stats = false`](#route_stats), it always returns a rejected
-promise.
+When [`config.performance_stats = false`](#performance_stats), it always returns
+a rejected promise.
 
-When [`config.route_stats = true`](#route_stats), then it aggregates statistics
-and sends as a batch every 15 seconds.
+When [`config.performance_stats = true`](#performance_stats), then it aggregates
+statistics and sends as a batch every 15 seconds.
 
 #### Airbrake.notify_query
 
@@ -795,11 +798,11 @@ Airbrake.notify_query(
 )
 ```
 
-When [`config.route_stats = false`](#route_stats), it always returns a rejected
-promise.
+When [`config.performance_stats = false`](#performance_stats), it always returns
+a rejected promise.
 
-When [`config.route_stats = true`](#route_stats), then it aggregates statistics
-and sends as a batch every 15 seconds.
+When [`config.performance_stats = true`](#performance_stats), then it aggregates
+statistics and sends as a batch every 15 seconds.
 
 ### Notice
 

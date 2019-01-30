@@ -36,7 +36,7 @@ module Airbrake
 
     def initialize(config)
       @config = config
-      @flush_period = config.route_stats_flush_period
+      @flush_period = config.performance_stats_flush_period
       @sender = SyncSender.new(config, :put)
       @queries = {}
       @thread = nil

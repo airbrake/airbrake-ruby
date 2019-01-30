@@ -7,7 +7,7 @@ RSpec.describe Airbrake::RouteSender do
     Airbrake::Config.new(
       project_id: 1,
       project_key: 'banana',
-      route_stats_flush_period: 0
+      performance_stats_flush_period: 0
     )
   end
 
@@ -17,9 +17,6 @@ RSpec.describe Airbrake::RouteSender do
     before do
       stub_request(:put, endpoint).to_return(status: 200, body: '')
     end
-
-    # Let the request finish.
-    after { sleep 0.2 }
 
     it "rounds time to the floor minute" do
       subject.notify_request(
