@@ -7,7 +7,7 @@ RSpec.describe Airbrake::RouteSender do
     Airbrake::Config.new(
       project_id: 1,
       project_key: 'banana',
-      route_stats_flush_period: 0.1
+      route_stats_flush_period: 0
     )
   end
 
@@ -28,7 +28,6 @@ RSpec.describe Airbrake::RouteSender do
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
       )
-      sleep 0.2
       expect(
         a_request(:put, endpoint).with(body: /"time":"2018-01-01T00:00:00\+00:00"/)
       ).to have_been_made
@@ -47,7 +46,6 @@ RSpec.describe Airbrake::RouteSender do
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
       )
-      sleep 0.2
       expect(
         a_request(:put, endpoint).with(body: /"count":2/)
       ).to have_been_made
@@ -68,7 +66,6 @@ RSpec.describe Airbrake::RouteSender do
         start_time: Time.new(2018, 1, 1, 0, 1, 49, 0),
         end_time: Time.new(2018, 1, 1, 0, 1, 55, 0)
       )
-      sleep 0.2
       expect(
         a_request(:put, endpoint).with(
           body: %r|\A
@@ -99,7 +96,6 @@ RSpec.describe Airbrake::RouteSender do
         start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
       )
-      sleep 0.2
       expect(
         a_request(:put, endpoint).with(
           body: %r|\A
@@ -122,7 +118,6 @@ RSpec.describe Airbrake::RouteSender do
         status_code: 200,
         start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
       )
-      sleep 0.2
       expect(promise).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('' => nil)
     end
