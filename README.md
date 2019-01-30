@@ -780,6 +780,27 @@ promise.
 When [`config.route_stats = true`](#route_stats), then it aggregates statistics
 and sends as a batch every 15 seconds.
 
+#### Airbrake.notify_query
+
+Sends SQL performance statistics to Airbrake. The performance statistics is
+displayed on the Performance tab of your project.
+
+```ruby
+Airbrake.notify_query(
+  method: 'GET',
+  route: '/things/1',
+  query: 'SELECT * FROM foos',
+  start_time: Time.new - 200,
+  end_time: Time.new
+)
+```
+
+When [`config.route_stats = false`](#route_stats), it always returns a rejected
+promise.
+
+When [`config.route_stats = true`](#route_stats), then it aggregates statistics
+and sends as a batch every 15 seconds.
+
 ### Notice
 
 #### Notice#ignore!

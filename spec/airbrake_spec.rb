@@ -124,4 +124,18 @@ RSpec.describe Airbrake do
       described_class.notify_request(params)
     end
   end
+
+  describe ".notify_query" do
+    it "forwards 'notify_query' to the notifier" do
+      params = {
+        method: 'GET',
+        route: '/foo',
+        query: 'SELECT * FROM foos',
+        start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
+        end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
+      }
+      expect(default_notifier).to receive(:notify_query).with(params)
+      described_class.notify_query(params)
+    end
+  end
 end

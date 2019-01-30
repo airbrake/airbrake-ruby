@@ -34,7 +34,9 @@ require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/notifier'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
+require 'airbrake-ruby/tdigest_big_endianness'
 require 'airbrake-ruby/route_sender'
+require 'airbrake-ruby/query_sender'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
@@ -119,6 +121,9 @@ module Airbrake
 
     # @macro see_public_api_method
     def notify_request(_request_info); end
+
+    # @macro see_public_api_method
+    def notify_query(_query_info); end
   end
 
   # A Hash that holds all notifiers. The keys of the Hash are notifier
@@ -390,6 +395,36 @@ module Airbrake
     # @since v3.0.0
     def notify_request(request_info)
       @notifiers[:default].notify_request(request_info)
+    end
+
+    # Increments SQL statistics of a certain +query+ that was invoked on
+    # +start_time+ and finished on +end_time+. When +method+ and +route+ are
+    # provided, the query is grouped by these parameters.
+    #
+    # After a certain amount of time (n seconds) the aggregated query
+    # information will be sent to Airbrake.
+    #
+    # @example
+    #   Airbrake.notify_query(
+    #     method: 'GET',
+    #     route: '/things',
+    #     query: 'SELECT * FROM things',
+    #     start_time: timestamp,
+    #     end_time: Time.now
+    #   )
+    #
+    # @param [Hash{Symbol=>Object}] query_info
+    # @option request_info [String] :method The HTTP method that triggered this
+    #   SQL query (optional)
+    # @option request_info [String] :route The route that triggered this SQL
+    #    query (optional)
+    # @option request_info [String] :query The query that was executed
+    # @option request_info [Date] :start_time When the query started executing
+    # @option request_info [Time] :end_time When the query finished (optional)
+    # @return [void]
+    # @since v3.1.0
+    def notify_query(query_info)
+      @notifiers[:default].notify_query(query_info)
     end
   end
 end
