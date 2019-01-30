@@ -7,7 +7,7 @@ RSpec.describe Airbrake::Notifier do
       project_id: 1,
       project_key: 'abc',
       logger: Logger.new('/dev/null'),
-      route_stats: true
+      performance_stats: true
     }
   end
 
@@ -472,9 +472,9 @@ RSpec.describe Airbrake::Notifier do
       subject.notify_request(params)
     end
 
-    context "when route stats are disabled" do
+    context "when performance stats are disabled" do
       it "doesn't send route stats" do
-        notifier = described_class.new(user_params.merge(route_stats: false))
+        notifier = described_class.new(user_params.merge(performance_stats: false))
         expect_any_instance_of(Airbrake::RouteSender)
           .not_to receive(:notify_request)
         notifier.notify_request(params)
@@ -510,9 +510,9 @@ RSpec.describe Airbrake::Notifier do
       subject.notify_query(params)
     end
 
-    context "when route stats are disabled" do
+    context "when performance stats are disabled" do
       it "doesn't send query stats" do
-        notifier = described_class.new(user_params.merge(route_stats: false))
+        notifier = described_class.new(user_params.merge(performance_stats: false))
         expect_any_instance_of(Airbrake::QuerySender)
           .not_to receive(:notify_query)
         notifier.notify_query(params)

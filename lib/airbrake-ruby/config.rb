@@ -83,17 +83,17 @@ module Airbrake
     # @since v2.5.0
     attr_accessor :code_hunks
 
-    # @return [Boolean] true if the library should send route stats information
-    #   to Airbrake, false otherwise
+    # @return [Boolean] true if the library should send performance stats
+    #   information to Airbrake (routes, SQL queries), false otherwise
     # @api public
-    # @since v3.0.0
-    attr_accessor :route_stats
+    # @since v3.1.0
+    attr_accessor :performance_stats
 
     # @return [Integer] how many seconds to wait before sending collected route
     #   stats
     # @api public
-    # @since v3.0.0
-    attr_accessor :route_stats_flush_period
+    # @since v3.1.0
+    attr_accessor :performance_stats_flush_period
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
@@ -126,8 +126,8 @@ module Airbrake
       )
 
       self.versions = {}
-      self.route_stats = false
-      self.route_stats_flush_period = 15
+      self.performance_stats = false
+      self.performance_stats_flush_period = 15
 
       merge(user_config)
     end
@@ -193,6 +193,38 @@ module Airbrake
           env == pattern.to_s
         end
       end
+    end
+
+    def route_stats
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
+        "Use 'performance_stats' instead"
+      )
+      @performance_stats
+    end
+
+    def route_stats=(value)
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
+        "Use 'performance_stats_flush_period' instead"
+      )
+      @performance_stats = value
+    end
+
+    def route_stats_flush_period
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats_flush_period' option is deprecated. " \
+        "Use 'performance_stats_flush_period' instead"
+      )
+      @performance_stats_flush_period
+    end
+
+    def route_stats_flush_period=(value)
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats_flush_period' option is deprecated. " \
+        "Use 'performance_stats' instead"
+      )
+      @performance_stats_flush_period = value
     end
 
     private

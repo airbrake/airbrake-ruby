@@ -114,8 +114,8 @@ module Airbrake
         return promise.reject("The '#{@config.environment}' environment is ignored")
       end
 
-      unless @config.route_stats
-        return promise.reject("The Route Stats feature is disabled")
+      unless @config.performance_stats
+        return promise.reject("The Performance Stats feature is disabled")
       end
 
       @route_sender.notify_request(request_info, promise)
@@ -129,8 +129,8 @@ module Airbrake
         return promise.reject("The '#{@config.environment}' environment is ignored")
       end
 
-      unless @config.route_stats
-        return promise.reject("The Route Stats feature is disabled")
+      unless @config.performance_stats
+        return promise.reject("The Performance Stats feature is disabled")
       end
 
       @query_sender.notify_query(query_info, promise)

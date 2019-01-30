@@ -7,7 +7,7 @@ RSpec.describe Airbrake::QuerySender do
     Airbrake::Config.new(
       project_id: 1,
       project_key: 'banana',
-      route_stats_flush_period: 0
+      performance_stats_flush_period: 0
     )
   end
 
