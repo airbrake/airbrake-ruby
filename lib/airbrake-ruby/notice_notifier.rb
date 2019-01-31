@@ -15,25 +15,28 @@ module Airbrake
       "project_key=\"%<project_key>s\" " \
       "host=\"%<host>s\" filter_chain=%<filter_chain>s>".freeze
 
-    # Creates a new Airbrake notifier with the given config options.
+    # Creates a new notice notifier with the given config options.
     #
-    # @example Configuring with a Hash
-    #   airbrake = Airbrake.new(project_id: 123, project_key: '321')
-    #
-    # @example Configuring with an Airbrake::Config
+    # @example
     #   config = Airbrake::Config.new
     #   config.project_id = 123
     #   config.project_key = '321'
-    #   airbake = Airbrake.new(config)
+    #   notice_notifier = Airbrake::NoticeNotifier.new(config)
     #
-    # @param [Hash, Airbrake::Config] user_config The config that contains
-    #   information about how the notifier should operate
-    # @raise [Airbrake::Error] when either +project_id+ or +project_key+
-    #   is missing (or both)
-    def initialize(user_config)
-      @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
-
-      raise Airbrake::Error, @config.validation_error_message unless @config.valid?
+    # @param [Airbrake::Config] config
+    def initialize(config)
+      @config =
+        if config.is_a?(Config)
+          config
+        else
+          loc = caller_locations(1..1).first
+          signature = "#{self.class.name}##{__method__}"
+          warn(
+            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
+            'is deprecated. Pass `Airbrake::Config` instead'
+          )
+          Config.new(config)
+        end
 
       @context = {}
       @filter_chain = FilterChain.new(@config, @context)

@@ -215,6 +215,8 @@ module Airbrake
     # @return [void]
     # @raise [Airbrake::Error] when trying to reconfigure already
     #   existing notifier
+    # @raise [Airbrake::Error] when either +project_id+ or +project_key+
+    #   is missing (or both)
     # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
     def configure(notifier_name = :default)
@@ -223,12 +225,14 @@ module Airbrake
       if @notice_notifiers.key?(notifier_name)
         raise Airbrake::Error,
               "the '#{notifier_name}' notifier was already configured"
-      else
-        @notice_notifiers[notifier_name] = NoticeNotifier.new(config)
-        @route_notifiers[notifier_name] = RouteNotifier.new(config)
-        @query_notifiers[notifier_name] = QueryNotifier.new(config)
-        @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
       end
+
+      raise Airbrake::Error, config.validation_error_message unless config.valid?
+
+      @notice_notifiers[notifier_name] = NoticeNotifier.new(config)
+      @route_notifiers[notifier_name] = RouteNotifier.new(config)
+      @query_notifiers[notifier_name] = QueryNotifier.new(config)
+      @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
