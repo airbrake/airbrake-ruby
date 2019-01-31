@@ -3,18 +3,18 @@ require 'spec_helper'
 RSpec.describe Airbrake do
   describe ".[]" do
     it "returns a NilNotifier" do
-      expect(described_class[:test]).to be_an(Airbrake::NilNotifier)
+      expect(described_class[:test]).to be_an(Airbrake::NilNoticeNotifier)
     end
   end
 
   let(:default_notifier) do
-    described_class.instance_variable_get(:@notifiers)[:default]
+    described_class[:default]
   end
 
   describe ".configure" do
     let(:config_params) { { project_id: 1, project_key: 'abc' } }
 
-    after { described_class.instance_variable_get(:@notifiers).clear }
+    after { described_class.instance_variable_get(:@notice_notifiers).clear }
 
     it "yields the config" do
       expect do |b|
@@ -26,17 +26,17 @@ RSpec.describe Airbrake do
       end.to yield_with_args(Airbrake::Config)
     end
 
-    context "when invoked with a notifier name" do
-      it "sets notifier name to the provided name" do
+    context "when invoked with a notice notifier name" do
+      it "sets notice notifier name to the provided name" do
         described_class.configure(:test) { |c| c.merge(config_params) }
-        expect(described_class[:test]).to be_an(Airbrake::Notifier)
+        expect(described_class[:test]).to be_an(Airbrake::NoticeNotifier)
       end
     end
 
     context "when invoked without a notifier name" do
       it "defaults to the :default notifier name" do
         described_class.configure { |c| c.merge(config_params) }
-        expect(described_class[:default]).to be_an(Airbrake::Notifier)
+        expect(described_class[:default]).to be_an(Airbrake::NoticeNotifier)
       end
     end
 

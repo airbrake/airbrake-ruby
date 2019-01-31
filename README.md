@@ -467,11 +467,11 @@ API
 Retrieves a configured notifier.
 
 ```ruby
-Airbrake[:my_notifier] #=> Airbrake::Notifier
+Airbrake[:my_notifier] #=> Airbrake::NoticeNotifier
 ```
 
 If the notifier is not configured, returns an instance of
-`Airbrake::NilNotifier` (a no-op version of `Airbrake::Notifier`).
+`Airbrake::NilNotifier` (a no-op version of `Airbrake::NoticeNotifier`).
 
 #### Airbrake.notify
 

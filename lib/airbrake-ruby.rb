@@ -31,10 +31,10 @@ require 'airbrake-ruby/filters/git_revision_filter'
 require 'airbrake-ruby/filters/git_repository_filter'
 require 'airbrake-ruby/filters/git_last_checkout_filter'
 require 'airbrake-ruby/filter_chain'
-require 'airbrake-ruby/notifier'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
 require 'airbrake-ruby/tdigest_big_endianness'
+require 'airbrake-ruby/notice_notifier'
 require 'airbrake-ruby/route_notifier'
 require 'airbrake-ruby/query_notifier'
 require 'airbrake-ruby/deploy_notifier'
@@ -70,7 +70,7 @@ require 'airbrake-ruby/deploy_notifier'
 #   params = {}
 #   Airbrake[:my_other_project].notify('Oops', params)
 #
-# @see Airbrake::Notifier
+# @see Airbrake::NoticeNotifier
 # @since v1.0.0
 module Airbrake
   # The general error that this library uses when it wants to raise.
@@ -86,11 +86,12 @@ module Airbrake
   # @!macro see_public_api_method
   #   @see Airbrake.$0
 
-  # NilNotifier is a no-op notifier, which mimics +Airbrake::Notifier+ and
-  # serves only the purpose of making the library API easier to use.
+  # NilNoticeNotifier is a no-op notice notifier, which mimics
+  # +Airbrake::NoticeNotifier+ and serves only the purpose of making the library
+  # API easier to use.
   #
   # @since 2.1.0
-  class NilNotifier
+  class NilNoticeNotifier
     # @macro see_public_api_method
     def notify(_exception, _params = {}, &block); end
 
@@ -121,6 +122,14 @@ module Airbrake
     def merge_context(_context); end
   end
 
+  # @deprecated Use {Airbrake::NoticeNotifier} instead
+  Notifier = NoticeNotifier
+  deprecate_constant(:Notifier) if respond_to?(:deprecate_constant)
+
+  # @deprecated Use {Airbrake::NilNoticeNotifier} instead
+  NilNotifier = NilNoticeNotifier
+  deprecate_constant(:NilNotifier) if respond_to?(:deprecate_constant)
+
   # NilRouteNotifier is a no-op notifier, which mimics {Airbrake::RouteNotifier}
   # and serves only the purpose of making the library API easier to use.
   #
@@ -149,10 +158,10 @@ module Airbrake
     def notify(_deploy_info); end
   end
 
-  # A Hash that holds all notifiers. The keys of the Hash are notifier
-  # names, the values are Airbrake::Notifier instances. If a notifier is not
-  # assigned to the hash, then it returns a null object (NilNotifier).
-  @notifiers = Hash.new(NilNotifier.new)
+  # A Hash that holds all notifiers. The keys of the Hash are notifier names,
+  # the values are {Airbrake::NoticeNotifier} instances. If a notifier is not
+  # assigned to the hash, then it returns a null object (NilNoticeNotifier).
+  @notice_notifiers = Hash.new(NilNoticeNotifier.new)
 
   # A Hash that holds all route notifiers. The keys of the Hash are notifier
   # names, the values are {Airbrake::QueryNotifier} instances. If a route
@@ -178,11 +187,12 @@ module Airbrake
     # @example
     #   Airbrake[:my_notifier].notify('oops')
     #
-    # @param [Symbol] notifier_name the name of the notifier you want to use
-    # @return [Airbrake::Notifier, NilClass]
+    # @param [Symbol] notifier_name the name of the notice notifier you want to
+    #   use
+    # @return [Airbrake::NoticeNotifier, NilClass]
     # @since v1.8.0
     def [](notifier_name)
-      @notifiers[notifier_name]
+      @notice_notifiers[notifier_name]
     end
 
     # Configures a new +notifier+ with the given name. If the name is not given,
@@ -213,11 +223,11 @@ module Airbrake
     def configure(notifier_name = :default)
       yield config = Airbrake::Config.new
 
-      if @notifiers.key?(notifier_name)
+      if @notice_notifiers.key?(notifier_name)
         raise Airbrake::Error,
               "the '#{notifier_name}' notifier was already configured"
       else
-        @notifiers[notifier_name] = Notifier.new(config)
+        @notice_notifiers[notifier_name] = NoticeNotifier.new(config)
         @route_notifiers[notifier_name] = RouteNotifier.new(config)
         @query_notifiers[notifier_name] = QueryNotifier.new(config)
         @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
@@ -227,7 +237,7 @@ module Airbrake
     # @return [Boolean] true if the notifier was configured, false otherwise
     # @since 2.3.0
     def configured?
-      @notifiers[:default].configured?
+      @notice_notifiers[:default].configured?
     end
 
     # Sends an exception to Airbrake asynchronously.
@@ -252,7 +262,7 @@ module Airbrake
     # @return [Airbrake::Promise]
     # @see .notify_sync
     def notify(exception, params = {}, &block)
-      @notifiers[:default].notify(exception, params, &block)
+      @notice_notifiers[:default].notify(exception, params, &block)
     end
 
     # Sends an exception to Airbrake synchronously.
@@ -272,7 +282,7 @@ module Airbrake
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
     def notify_sync(exception, params = {}, &block)
-      @notifiers[:default].notify_sync(exception, params, &block)
+      @notice_notifiers[:default].notify_sync(exception, params, &block)
     end
 
     # Runs a callback before {.notify} or {.notify_sync} kicks in. This is
@@ -300,7 +310,7 @@ module Airbrake
     # @yieldreturn [void]
     # @return [void]
     def add_filter(filter = nil, &block)
-      @notifiers[:default].add_filter(filter, &block)
+      @notice_notifiers[:default].add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_filter}.
@@ -317,7 +327,7 @@ module Airbrake
     # @since v3.1.0
     # @note This method cannot delete filters assigned via the Proc form.
     def delete_filter(filter_class)
-      @notifiers[:default].delete_filter(filter_class)
+      @notice_notifiers[:default].delete_filter(filter_class)
     end
 
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
@@ -335,12 +345,12 @@ module Airbrake
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
     def build_notice(exception, params = {})
-      @notifiers[:default].build_notice(exception, params)
+      @notice_notifiers[:default].build_notice(exception, params)
     end
 
-    # Makes the notifier a no-op, which means you cannot use the {.notify} and
-    # {.notify_sync} methods anymore. It also stops the notifier's worker
-    # threads.
+    # Makes the notice notifier a no-op, which means you cannot use the
+    # {.notify} and {.notify_sync} methods anymore. It also stops the notice
+    # notifier's worker threads.
     #
     # @example
     #   Airbrake.close
@@ -348,7 +358,7 @@ module Airbrake
     #
     # @return [void]
     def close
-      @notifiers[:default].close
+      @notice_notifiers[:default].close
     end
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy. This
@@ -410,7 +420,7 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] context
     # @return [void]
     def merge_context(context)
-      @notifiers[:default].merge_context(context)
+      @notice_notifiers[:default].merge_context(context)
     end
 
     # Increments request statistics of a certain +route+ that was invoked on

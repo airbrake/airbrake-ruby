@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # rubocop:disable Layout/DotPosition
-RSpec.describe Airbrake::Notifier do
+RSpec.describe Airbrake::NoticeNotifier do
   let(:user_params) do
     {
       project_id: 1,
@@ -426,7 +426,7 @@ RSpec.describe Airbrake::Notifier do
   describe "#inspect" do
     it "displays object information" do
       expect(subject.inspect).to match(/
-        #<Airbrake::Notifier:0x\w+\s
+        #<Airbrake::NoticeNotifier:0x\w+\s
           project_id="\d+"\s
           project_key=".+"\s
           host="http.+"\s
@@ -444,7 +444,7 @@ RSpec.describe Airbrake::Notifier do
       q.guard_inspect_key { subject.pretty_print(q) }
 
       expect(q.output).to match(/
-        #<Airbrake::Notifier:0x\w+\s
+        #<Airbrake::NoticeNotifier:0x\w+\s
           project_id="\d+"\s
           project_key=".+"\s
           host="http.+"\s
