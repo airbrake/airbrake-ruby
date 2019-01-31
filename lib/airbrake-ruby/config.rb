@@ -68,13 +68,13 @@ module Airbrake
     # @return [Array<String, Symbol, Regexp>] the keys, which should be
     #   filtered
     # @api public
-    # @since 1.2.0
+    # @since v1.2.0
     attr_accessor :blacklist_keys
 
     # @return [Array<String, Symbol, Regexp>] the keys, which shouldn't be
     #   filtered
     # @api public
-    # @since 1.2.0
+    # @since v1.2.0
     attr_accessor :whitelist_keys
 
     # @return [Boolean] true if the library should attach code hunks to each
