@@ -8,10 +8,20 @@ module Airbrake
   # - version
   # @since v3.2.0
   class DeployNotifier
-    def initialize(user_config)
-      @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
-
-      raise Airbrake::Error, @config.validation_error_message unless @config.valid?
+    # @param [Airbrake::Config] config
+    def initialize(config)
+      @config =
+        if config.is_a?(Config)
+          config
+        else
+          loc = caller_locations(1..1).first
+          signature = "#{self.class.name}##{__method__}"
+          warn(
+            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
+            'is deprecated. Pass `Airbrake::Config` instead'
+          )
+          Config.new(config)
+        end
 
       @sender = SyncSender.new(@config)
     end

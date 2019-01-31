@@ -13,27 +13,31 @@ RSpec.describe Airbrake::NoticeNotifier do
     "https://api.airbrake.io/api/v3/projects/#{project_id}/notices"
   end
 
-  let(:airbrake_params) do
+  let(:user_params) do
     { project_id: project_id,
       project_key: project_key,
       logger: Logger.new(StringIO.new) }
   end
 
+  let(:params) { {} }
   let(:ex) { AirbrakeTestError.new }
+  let(:config) { Airbrake::Config.new(user_params.merge(params)) }
+
+  subject { described_class.new(config) }
 
   before do
     stub_request(:post, endpoint).to_return(status: 201, body: '{}')
-    @airbrake = described_class.new(airbrake_params)
   end
 
   describe "options" do
     describe ":host" do
       context "when custom" do
         shared_examples 'endpoint' do |host, endpoint, title|
+          let(:params) { { host: host } }
+
           example(title) do
             stub_request(:post, endpoint).to_return(status: 201, body: '{}')
-            @airbrake = described_class.new(airbrake_params.merge(host: host))
-            @airbrake.notify_sync(ex)
+            subject.notify_sync(ex)
 
             expect(a_request(:post, endpoint)).to have_been_made.once
           end
@@ -68,9 +72,10 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
 
     describe ":root_directory" do
+      let(:params) { { root_directory: '/home/kyrylo/code' } }
+
       it "filters out frames" do
-        params = airbrake_params.merge(root_directory: '/home/kyrylo/code')
-        airbrake = described_class.new(params)
+        airbrake = described_class.new(config)
         airbrake.notify_sync(ex)
 
         expect(
@@ -81,11 +86,10 @@ RSpec.describe Airbrake::NoticeNotifier do
 
       context "when present and is a" do
         shared_examples 'root directory' do |dir|
-          it "being included into the notice's payload" do
-            params = airbrake_params.merge(root_directory: dir)
-            airbrake = described_class.new(params)
-            airbrake.notify_sync(ex)
+          let(:params) { { root_directory: dir } }
 
+          it "being included into the notice's payload" do
+            subject.notify_sync(ex)
             expect(
               a_request(:post, endpoint).
               with(body: %r{"rootDirectory":"/bingo/bango"})
@@ -121,6 +125,13 @@ RSpec.describe Airbrake::NoticeNotifier do
           password: 'password' }
       end
 
+      let(:params) do
+        {
+          proxy: proxy_params,
+          host: "http://localhost:#{proxy.config[:Port]}"
+        }
+      end
+
       before do
         proxy.mount_proc '/' do |req, res|
           requests << req
@@ -129,13 +140,6 @@ RSpec.describe Airbrake::NoticeNotifier do
         end
 
         Thread.new { proxy.start }
-
-        params = airbrake_params.merge(
-          proxy: proxy_params,
-          host: "http://localhost:#{proxy.config[:Port]}"
-        )
-
-        @airbrake = described_class.new(params)
       end
 
       after { proxy.stop }
@@ -147,7 +151,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             "safe to run this test on 2.6+ once we upgrade to Webmock 3.5+"
           )
         end
-        @airbrake.notify_sync(ex)
+        subject.notify_sync(ex)
 
         proxied_request = requests.pop(true)
 
@@ -163,11 +167,10 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     describe ":environment" do
       context "when present" do
-        it "being included into the notice's payload" do
-          params = airbrake_params.merge(environment: :production)
-          airbrake = described_class.new(params)
-          airbrake.notify_sync(ex)
+        let(:params) { { environment: :production } }
 
+        it "being included into the notice's payload" do
+          subject.notify_sync(ex)
           expect(
             a_request(:post, endpoint).
             with(body: /"context":{.*"environment":"production".*}/)
@@ -178,19 +181,19 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     describe ":ignore_environments" do
       shared_examples 'sent notice' do |params|
-        it "sends a notice" do
-          airbrake = described_class.new(airbrake_params.merge(params))
-          airbrake.notify_sync(ex)
+        let(:params) { params }
 
+        it "sends a notice" do
+          subject.notify_sync(ex)
           expect(a_request(:post, endpoint)).to have_been_made
         end
       end
 
       shared_examples 'ignored notice' do |params|
-        it "ignores exceptions occurring in envs that were not configured" do
-          airbrake = described_class.new(airbrake_params.merge(params))
-          airbrake.notify_sync(ex)
+        let(:params) { params }
 
+        it "ignores exceptions occurring in envs that were not configured" do
+          subject.notify_sync(ex)
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end
@@ -213,10 +216,8 @@ RSpec.describe Airbrake::NoticeNotifier do
         include_examples 'ignored notice', params
 
         it "returns early and doesn't try to parse the given exception" do
-          airbrake = described_class.new(airbrake_params.merge(params))
-
           expect(Airbrake::Notice).not_to receive(:new)
-          expect(airbrake.notify_sync(ex)).
+          expect(subject.notify_sync(ex)).
             to eq('error' => "The 'development' environment is ignored")
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
@@ -246,15 +247,17 @@ RSpec.describe Airbrake::NoticeNotifier do
       # Fixes https://github.com/airbrake/airbrake-ruby/issues/276
       context "when specified along with :whitelist_keys" do
         context "and when context payload is present" do
-          it "sends a notice" do
-            params = {
+          let(:params) do
+            {
               blacklist_keys: %i[password password_confirmation],
               whitelist_keys: [:email, /user/i, 'account_id']
             }
-            airbrake = described_class.new(airbrake_params.merge(params))
-            notice = airbrake.build_notice(ex)
+          end
+
+          it "sends a notice" do
+            notice = subject.build_notice(ex)
             notice[:context][:headers] = 'banana'
-            airbrake.notify_sync(notice)
+            subject.notify_sync(notice)
 
             expect(a_request(:post, endpoint)).to have_been_made
           end

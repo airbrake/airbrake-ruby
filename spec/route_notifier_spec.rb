@@ -14,13 +14,6 @@ RSpec.describe Airbrake::RouteNotifier do
 
   subject { described_class.new(config) }
 
-  describe "#initialize" do
-    it "raises error if config is invalid" do
-      expect { described_class.new(Airbrake::Config.new(project_id: 1)) }.
-        to raise_error(Airbrake::Error)
-    end
-  end
-
   describe "#notify" do
     before do
       stub_request(:put, endpoint).to_return(status: 200, body: '')
@@ -129,7 +122,9 @@ RSpec.describe Airbrake::RouteNotifier do
 
     it "doesn't send route stats when performance stats are disabled" do
       notifier = described_class.new(
-        project_id: 1, project_key: '2', performance_stats: false
+        Airbrake::Config.new(
+          project_id: 1, project_key: '2', performance_stats: false
+        )
       )
       promise = notifier.notify(
         method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
@@ -142,8 +137,10 @@ RSpec.describe Airbrake::RouteNotifier do
 
     it "doesn't send route stats when current environment is ignored" do
       notifier = described_class.new(
-        project_id: 1, project_key: '2', performance_stats: true,
-        environment: 'test', ignore_environments: %w[test]
+        Airbrake::Config.new(
+          project_id: 1, project_key: '2', performance_stats: true,
+          environment: 'test', ignore_environments: %w[test]
+        )
       )
       promise = notifier.notify(
         method: 'GET', route: '/foo', status_code: 200, start_time: Time.new

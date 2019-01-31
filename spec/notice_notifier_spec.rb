@@ -11,7 +11,9 @@ RSpec.describe Airbrake::NoticeNotifier do
     }
   end
 
-  subject { described_class.new(user_params) }
+  let(:params) { {} }
+  let(:config) { Airbrake::Config.new(user_params.merge(params)) }
+  subject { described_class.new(config) }
 
   describe "#new" do
     describe "default filter addition" do
@@ -20,20 +22,22 @@ RSpec.describe Airbrake::NoticeNotifier do
       it "appends the context filter" do
         expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
           .with(instance_of(Airbrake::Filters::ContextFilter))
-        described_class.new(user_params)
+        subject
       end
 
       it "appends the exception attributes filter" do
         expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
           .with(instance_of(Airbrake::Filters::ExceptionAttributesFilter))
-        described_class.new(user_params)
+        subject
       end
 
       context "when user config has some whitelist keys" do
+        let(:params) { { whitelist_keys: %w[foo] } }
+
         it "appends the whitelist filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysWhitelist))
-          described_class.new(user_params.merge(whitelist_keys: ['foo']))
+          described_class.new(config)
         end
       end
 
@@ -41,15 +45,17 @@ RSpec.describe Airbrake::NoticeNotifier do
         it "doesn't append the whitelist filter" do
           expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysWhitelist))
-          described_class.new(user_params)
+          described_class.new(config)
         end
       end
 
       context "when user config has some blacklist keys" do
+        let(:params) { { blacklist_keys: %w[bar] } }
+
         it "appends the blacklist filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysBlacklist))
-          described_class.new(user_params.merge(blacklist_keys: ['bar']))
+          described_class.new(config)
         end
       end
 
@@ -57,15 +63,17 @@ RSpec.describe Airbrake::NoticeNotifier do
         it "doesn't append the blacklist filter" do
           expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysBlacklist))
-          described_class.new(user_params)
+          described_class.new(config)
         end
       end
 
       context "when user config specifies a root directory" do
+        let(:params) { { root_directory: '/foo' } }
+
         it "appends the root directory filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::RootDirectoryFilter))
-          described_class.new(user_params.merge(root_directory: '/foo'))
+          described_class.new(config)
         end
       end
 
@@ -75,26 +83,8 @@ RSpec.describe Airbrake::NoticeNotifier do
             .and_return(nil)
           expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::RootDirectoryFilter))
-          described_class.new(user_params)
+          described_class.new(config)
         end
-      end
-    end
-
-    context "when user config doesn't contain a project id" do
-      let(:user_config) { { project_id: nil } }
-
-      it "raises error" do
-        expect { described_class.new(user_config) }
-          .to raise_error(Airbrake::Error, ':project_id is required')
-      end
-    end
-
-    context "when user config doesn't contain a project key" do
-      let(:user_config) { { project_id: 1, project_key: nil } }
-
-      it "raises error" do
-        expect { described_class.new(user_config) }
-          .to raise_error(Airbrake::Error, ':project_key is required')
       end
     end
   end
@@ -102,7 +92,7 @@ RSpec.describe Airbrake::NoticeNotifier do
   describe "#notify" do
     let(:endpoint) { 'https://api.airbrake.io/api/v3/projects/1/notices' }
 
-    subject { described_class.new(user_params) }
+    subject { described_class.new(Airbrake::Config.new(user_params)) }
 
     let(:body) do
       {
@@ -173,11 +163,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
 
     context "when the provided environment is ignored" do
-      subject do
-        described_class.new(
-          user_params.merge(environment: 'test', ignore_environments: ['test'])
-        )
-      end
+      let(:user_params) { { environment: 'test', ignore_environments: %w[test] } }
 
       it "doesn't send an notice" do
         expect_any_instance_of(Airbrake::AsyncSender).not_to receive(:send)
@@ -257,11 +243,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
 
     context "when the provided environment is ignored" do
-      subject do
-        described_class.new(
-          user_params.merge(environment: 'test', ignore_environments: ['test'])
-        )
-      end
+      let(:params) { { environment: 'test', ignore_environments: %w[test] } }
 
       it "doesn't send an notice" do
         expect_any_instance_of(Airbrake::SyncSender).not_to receive(:send)
