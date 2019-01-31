@@ -37,6 +37,7 @@ require 'airbrake-ruby/file_cache'
 require 'airbrake-ruby/tdigest_big_endianness'
 require 'airbrake-ruby/route_notifier'
 require 'airbrake-ruby/query_notifier'
+require 'airbrake-ruby/deploy_notifier'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
@@ -138,6 +139,16 @@ module Airbrake
     def notify(_query_info); end
   end
 
+  # NilDeployNotifier is a no-op notifier, which mimics
+  # {Airbrake::DeployNotifier} and serves only the purpose of making the library
+  # API easier to use.
+  #
+  # @since v3.1.0
+  class NilDeployNotifier
+    # @see Airbrake.create_deploy
+    def notify(_deploy_info); end
+  end
+
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances. If a notifier is not
   # assigned to the hash, then it returns a null object (NilNotifier).
@@ -150,10 +161,16 @@ module Airbrake
   @route_notifiers = Hash.new(NilRouteNotifier.new)
 
   # A Hash that holds all query notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::QueryNotifier} instances. If a route
+  # names, the values are {Airbrake::QueryNotifier} instances. If a query
   # notifier is not assigned to the hash, then it returns a null object
   # (NilQueryNotifier).
   @query_notifiers = Hash.new(NilQueryNotifier.new)
+
+  # A Hash that holds all deploy notifiers. The keys of the Hash are notifier
+  # names, the values are {Airbrake::DeployNotifier} instances. If a deploy
+  # notifier is not assigned to the hash, then it returns a null object
+  # (NilDeployNotifier).
+  @deploy_notifiers = Hash.new(NilDeployNotifier.new)
 
   class << self
     # Retrieves configured notifiers.
@@ -203,6 +220,7 @@ module Airbrake
         @notifiers[notifier_name] = Notifier.new(config)
         @route_notifiers[notifier_name] = RouteNotifier.new(config)
         @query_notifiers[notifier_name] = QueryNotifier.new(config)
+        @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
       end
     end
 
@@ -336,15 +354,15 @@ module Airbrake
     # Pings the Airbrake Deploy API endpoint about the occurred deploy. This
     # method is used by the airbrake gem for various integrations.
     #
-    # @param [Hash{Symbol=>String}] deploy_params The params for the API
-    # @option deploy_params [Symbol] :environment
-    # @option deploy_params [Symbol] :username
-    # @option deploy_params [Symbol] :repository
-    # @option deploy_params [Symbol] :revision
-    # @option deploy_params [Symbol] :version
+    # @param [Hash{Symbol=>String}] deploy_info The params for the API
+    # @option deploy_info [Symbol] :environment
+    # @option deploy_info [Symbol] :username
+    # @option deploy_info [Symbol] :repository
+    # @option deploy_info [Symbol] :revision
+    # @option deploy_info [Symbol] :version
     # @return [void]
-    def create_deploy(deploy_params)
-      @notifiers[:default].create_deploy(deploy_params)
+    def create_deploy(deploy_info)
+      @deploy_notifiers[:default].notify(deploy_info)
     end
 
     # Merges +context+ with the current context.

@@ -412,38 +412,6 @@ RSpec.describe Airbrake::Notifier do
     end
   end
 
-  describe "#create_deploy" do
-    it "returns a promise" do
-      stub_request(:post, 'https://api.airbrake.io/api/v4/projects/1/deploys')
-        .to_return(status: 201, body: '')
-      expect(subject.create_deploy({})).to be_an(Airbrake::Promise)
-    end
-
-    context "when environment is configured" do
-      it "prefers the passed environment to the config env" do
-        expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
-          { environment: 'barenv' },
-          instance_of(Airbrake::Promise),
-          URI('https://api.airbrake.io/api/v4/projects/1/deploys')
-        )
-        described_class.new(
-          user_params.merge(environment: 'fooenv')
-        ).create_deploy(environment: 'barenv')
-      end
-    end
-
-    context "when environment is not configured" do
-      it "sets the environment from the config" do
-        expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
-          { environment: 'fooenv' },
-          instance_of(Airbrake::Promise),
-          URI('https://api.airbrake.io/api/v4/projects/1/deploys')
-        )
-        subject.create_deploy(environment: 'fooenv')
-      end
-    end
-  end
-
   describe "#configured?" do
     it { is_expected.to be_configured }
   end
