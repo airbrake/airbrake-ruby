@@ -90,7 +90,7 @@ module Airbrake
   # +Airbrake::NoticeNotifier+ and serves only the purpose of making the library
   # API easier to use.
   #
-  # @since 2.1.0
+  # @since v2.1.0
   class NilNoticeNotifier
     # @macro see_public_api_method
     def notify(_exception, _params = {}, &block); end
@@ -130,7 +130,7 @@ module Airbrake
   # NilRouteNotifier is a no-op notifier, which mimics {Airbrake::RouteNotifier}
   # and serves only the purpose of making the library API easier to use.
   #
-  # @since 3.1.0
+  # @since v3.1.0
   class NilRouteNotifier
     # @see Airbrake.notify_request
     def notify(_request_info); end
@@ -139,7 +139,7 @@ module Airbrake
   # NilQueryNotifier is a no-op notifier, which mimics {Airbrake::QueryNotifier}
   # and serves only the purpose of making the library API easier to use.
   #
-  # @since 3.1.0
+  # @since v3.1.0
   class NilQueryNotifier
     # @see Airbrake.notify_query
     def notify(_query_info); end
@@ -232,7 +232,7 @@ module Airbrake
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
-    # @since 2.3.0
+    # @since v2.3.0
     def configured?
       @notice_notifiers[:default].configured?
     end
