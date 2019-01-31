@@ -5,7 +5,6 @@ module Airbrake
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   # @api private
-  # rubocop:disable Metrics/ClassLength
   class Notifier
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
@@ -40,7 +39,6 @@ module Airbrake
       @filter_chain = FilterChain.new(@config, @context)
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
-      @query_sender = QueryNotifier.new(@config)
     end
 
     # @macro see_public_api_method
@@ -103,21 +101,6 @@ module Airbrake
     # @macro see_public_api_method
     def merge_context(context)
       @context.merge!(context)
-    end
-
-    # @macro see_public_api_method
-    def notify_query(query_info)
-      promise = Airbrake::Promise.new
-
-      if @config.ignored_environment?
-        return promise.reject("The '#{@config.environment}' environment is ignored")
-      end
-
-      unless @config.performance_stats
-        return promise.reject("The Performance Stats feature is disabled")
-      end
-
-      @query_sender.notify_query(query_info, promise)
     end
 
     # @return [String] customized inspect to lessen the amount of clutter
@@ -194,5 +177,4 @@ module Airbrake
       clean_bt
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
