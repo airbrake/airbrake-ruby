@@ -1,11 +1,11 @@
 module Airbrake
-  # This class is reponsible for sending notices to Airbrake. It supports
+  # NoticeNotifier is reponsible for sending notices to Airbrake. It supports
   # synchronous and asynchronous delivery.
   #
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   # @api private
-  class Notifier
+  class NoticeNotifier
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
 
