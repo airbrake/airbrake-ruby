@@ -111,9 +111,6 @@ module Airbrake
     def close; end
 
     # @macro see_public_api_method
-    def create_deploy(_deploy_params); end
-
-    # @macro see_public_api_method
     def configured?
       false
     end
