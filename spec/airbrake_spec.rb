@@ -98,8 +98,12 @@ RSpec.describe Airbrake do
   end
 
   describe ".create_deploy" do
-    it "forwards 'create_deploy' to the notifier" do
-      expect(default_notifier).to receive(:create_deploy).with(foo: 'bar')
+    let(:default_notifier) do
+      described_class.instance_variable_get(:@deploy_notifiers)[:default]
+    end
+
+    it "calls 'notify' on the deploy notifier" do
+      expect(default_notifier).to receive(:notify).with(foo: 'bar')
       described_class.create_deploy(foo: 'bar')
     end
   end
