@@ -34,10 +34,14 @@ module Airbrake
       end
     end
 
-    def initialize(config)
-      @config = config
-      @flush_period = config.performance_stats_flush_period
-      @sender = SyncSender.new(config, :put)
+    # @param [Airbrake::Config, Hash] user_config
+    def initialize(user_config)
+      @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
+
+      raise Airbrake::Error, @config.validation_error_message unless @config.valid?
+
+      @flush_period = @config.performance_stats_flush_period
+      @sender = SyncSender.new(@config, :put)
       @queries = {}
       @thread = nil
       @mutex = Mutex.new
@@ -46,7 +50,15 @@ module Airbrake
     # @macro see_public_api_method
     # @param [Hash] query_info
     # @param [Airbrake::Promise] promise
-    def notify_query(query_info, promise = Airbrake::Promise.new)
+    def notify(query_info, promise = Airbrake::Promise.new)
+      if @config.ignored_environment?
+        return promise.reject("The '#{@config.environment}' environment is ignored")
+      end
+
+      unless @config.performance_stats
+        return promise.reject("The Performance Stats feature is disabled")
+      end
+
       query = create_query_key(
         query_info[:method],
         query_info[:route],

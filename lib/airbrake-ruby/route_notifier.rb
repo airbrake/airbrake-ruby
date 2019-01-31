@@ -37,7 +37,7 @@ module Airbrake
       end
     end
 
-    # @param [Airbrake::Config] config
+    # @param [Airbrake::Config, Hash] user_config
     def initialize(user_config)
       @config = (user_config.is_a?(Config) ? user_config : Config.new(user_config))
 

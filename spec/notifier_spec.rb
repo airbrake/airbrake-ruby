@@ -455,44 +455,6 @@ RSpec.describe Airbrake::Notifier do
     end
   end
 
-  describe "#notify_query" do
-    let(:params) do
-      {
-        method: 'GET',
-        route: '/foo',
-        query: 'SELECT * FROM foos',
-        start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
-        end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
-      }
-    end
-
-    it "forwards 'notify_query' to QueryNotifier" do
-      expect_any_instance_of(Airbrake::QueryNotifier)
-        .to receive(:notify_query).with(params, instance_of(Airbrake::Promise))
-      subject.notify_query(params)
-    end
-
-    context "when performance stats are disabled" do
-      it "doesn't send query stats" do
-        notifier = described_class.new(user_params.merge(performance_stats: false))
-        expect_any_instance_of(Airbrake::QueryNotifier)
-          .not_to receive(:notify_query)
-        notifier.notify_query(params)
-      end
-    end
-
-    context "when current environment is ignored" do
-      it "doesn't send query stats" do
-        notifier = described_class.new(
-          user_params.merge(environment: 'test', ignore_environments: %w[test])
-        )
-        expect_any_instance_of(Airbrake::QueryNotifier)
-          .not_to receive(:notify_query)
-        notifier.notify_query(params)
-      end
-    end
-  end
-
   describe "#inspect" do
     it "displays object information" do
       expect(subject.inspect).to match(/

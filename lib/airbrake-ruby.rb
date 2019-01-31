@@ -118,12 +118,9 @@ module Airbrake
 
     # @macro see_public_api_method
     def merge_context(_context); end
-
-    # @macro see_public_api_method
-    def notify_query(_query_info); end
   end
 
-  # NilRouteNotifier is a no-op notifier, which mimics +Airbrake::RouteNotifier+
+  # NilRouteNotifier is a no-op notifier, which mimics {Airbrake::RouteNotifier}
   # and serves only the purpose of making the library API easier to use.
   #
   # @since 3.1.0
@@ -132,16 +129,31 @@ module Airbrake
     def notify(_request_info); end
   end
 
+  # NilQueryNotifier is a no-op notifier, which mimics {Airbrake::QueryNotifier}
+  # and serves only the purpose of making the library API easier to use.
+  #
+  # @since 3.1.0
+  class NilQueryNotifier
+    # @see Airbrake.notify_query
+    def notify(_query_info); end
+  end
+
   # A Hash that holds all notifiers. The keys of the Hash are notifier
   # names, the values are Airbrake::Notifier instances. If a notifier is not
   # assigned to the hash, then it returns a null object (NilNotifier).
   @notifiers = Hash.new(NilNotifier.new)
 
   # A Hash that holds all route notifiers. The keys of the Hash are notifier
-  # names, the values are Airbrake::RouteNotifier instances. If a route notifier
-  # is not assigned to the hash, then it returns a null object
+  # names, the values are {Airbrake::QueryNotifier} instances. If a route
+  # notifier is not assigned to the hash, then it returns a null object
   # (NilRouteNotifier).
   @route_notifiers = Hash.new(NilRouteNotifier.new)
+
+  # A Hash that holds all query notifiers. The keys of the Hash are notifier
+  # names, the values are {Airbrake::QueryNotifier} instances. If a route
+  # notifier is not assigned to the hash, then it returns a null object
+  # (NilQueryNotifier).
+  @query_notifiers = Hash.new(NilQueryNotifier.new)
 
   class << self
     # Retrieves configured notifiers.
@@ -190,6 +202,7 @@ module Airbrake
       else
         @notifiers[notifier_name] = Notifier.new(config)
         @route_notifiers[notifier_name] = RouteNotifier.new(config)
+        @query_notifiers[notifier_name] = QueryNotifier.new(config)
       end
     end
 
@@ -437,7 +450,7 @@ module Airbrake
     # @return [void]
     # @since v3.1.0
     def notify_query(query_info)
-      @notifiers[:default].notify_query(query_info)
+      @query_notifiers[:default].notify(query_info)
     end
   end
 end
