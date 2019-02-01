@@ -1,6 +1,3 @@
-require 'tdigest'
-require 'base64'
-
 module Airbrake
   # QueryNotifier aggregates information about SQL queries and periodically sends
   # collected data to Airbrake.

@@ -1,6 +1,3 @@
-require 'tdigest'
-require 'base64'
-
 module Airbrake
   # RouteNotifier aggregates information about requests and periodically sends
   # collected data to Airbrake.
@@ -77,18 +74,6 @@ module Airbrake
       )
       # rubocop:enable Style/DateTime
       RouteKey.new(method, route, status_code, time.rfc3339)
-    end
-
-    def increment_stats(request_info, stat)
-      stat.count += 1
-
-      end_time = request_info[:end_time] || Time.new
-      ms = (end_time - request_info[:start_time]) * 1000
-
-      stat.sum += ms
-      stat.sumsq += ms * ms
-
-      stat.tdigest.push(ms)
     end
 
     def schedule_flush(promise)
