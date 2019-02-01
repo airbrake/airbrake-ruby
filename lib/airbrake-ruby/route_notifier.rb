@@ -12,31 +12,6 @@ module Airbrake
     # The key that represents a route.
     RouteKey = Struct.new(:method, :route, :statusCode, :time)
 
-    # RouteStat holds data that describes a route's performance.
-    RouteStat = Struct.new(:count, :sum, :sumsq, :tdigest) do
-      # @param [Integer] count The number of requests
-      # @param [Float] sum The sum of request duration in milliseconds
-      # @param [Float] sumsq The squared sum of request duration in milliseconds
-      # @param [TDigest::TDigest] tdigest By default, the compression is 20
-      def initialize(
-        count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest::TDigest.new(0.05)
-      )
-        super(count, sum, sumsq, tdigest)
-      end
-
-      # @return [Hash{String=>Object}] the route stat as a hash with compressed
-      #   and serialized as binary base64 tdigest
-      def to_h
-        tdigest.compress!
-        {
-          'count' => count,
-          'sum' => sum,
-          'sumsq' => sumsq,
-          'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes)
-        }
-      end
-    end
-
     # @param [Airbrake::Config] config
     def initialize(config)
       @config =
@@ -61,6 +36,7 @@ module Airbrake
 
     # @macro see_public_api_method
     # @param [Airbrake::Promise] promise
+    # rubocop:disable Metrics/AbcSize
     def notify(request_info, promise = Airbrake::Promise.new)
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")
@@ -78,8 +54,8 @@ module Airbrake
       )
 
       @mutex.synchronize do
-        @routes[route] ||= RouteStat.new
-        increment_stats(request_info, @routes[route])
+        @routes[route] ||= Airbrake::Stat.new
+        @routes[route].increment(request_info[:start_time], request_info[:end_time])
 
         if @flush_period > 0
           schedule_flush(promise)
@@ -90,6 +66,7 @@ module Airbrake
 
       promise
     end
+    # rubocop:enable Metrics/AbcSize
 
     private
 

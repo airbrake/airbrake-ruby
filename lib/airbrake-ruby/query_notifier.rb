@@ -6,33 +6,8 @@ module Airbrake
   # collected data to Airbrake.
   # @since v3.2.0
   class QueryNotifier
-    using TDigestBigEndianness
-
     # The key that represents a query event.
     QueryKey = Struct.new(:method, :route, :query, :time)
-
-    # QueryInfo holds data that describes a query's performance.
-    QueryInfo = Struct.new(:count, :sum, :sumsq, :tdigest) do
-      # @param [Integer] count The number of queries
-      # @param [Float] sum The sum of query duration in milliseconds
-      # @param [Float] sumsq The squared sum of query duration in milliseconds
-      # @param [TDigest::TDigest] tdigest By default, the compression is 20
-      def initialize(
-        count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest::TDigest.new(0.05)
-      )
-        super(count, sum, sumsq, tdigest)
-      end
-
-      def to_h
-        tdigest.compress!
-        {
-          'count' => count,
-          'sum' => sum,
-          'sumsq' => sumsq,
-          'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes)
-        }
-      end
-    end
 
     # @param [Airbrake::Config] config
     def initialize(config)
@@ -59,6 +34,7 @@ module Airbrake
     # @macro see_public_api_method
     # @param [Hash] query_info
     # @param [Airbrake::Promise] promise
+    # rubocop:disable Metrics/AbcSize
     def notify(query_info, promise = Airbrake::Promise.new)
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")
@@ -76,8 +52,8 @@ module Airbrake
       )
 
       @mutex.synchronize do
-        @queries[query] ||= QueryInfo.new
-        increment_stats(query_info, @queries[query])
+        @queries[query] ||= Airbrake::Stat.new
+        @queries[query].increment(query_info[:start_time], query_info[:end_time])
 
         if @flush_period > 0
           schedule_flush(promise)
@@ -88,6 +64,7 @@ module Airbrake
 
       promise
     end
+    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -98,18 +75,6 @@ module Airbrake
       )
       # rubocop:enable Style/DateTime
       QueryKey.new(method, route, query, time.rfc3339)
-    end
-
-    def increment_stats(query_info, stat)
-      stat.count += 1
-
-      end_time = query_info[:end_time] || Time.new
-      ms = (end_time - query_info[:start_time]) * 1000
-
-      stat.sum += ms
-      stat.sumsq += ms * ms
-
-      stat.tdigest.push(ms)
     end
 
     def schedule_flush(promise)

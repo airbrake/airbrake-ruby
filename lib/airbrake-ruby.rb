@@ -38,6 +38,7 @@ require 'airbrake-ruby/notice_notifier'
 require 'airbrake-ruby/route_notifier'
 require 'airbrake-ruby/query_notifier'
 require 'airbrake-ruby/deploy_notifier'
+require 'airbrake-ruby/stat'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
