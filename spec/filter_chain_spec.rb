@@ -1,12 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Airbrake::FilterChain do
-  subject { described_class.new(config, {}) }
-
-  let(:config) { Airbrake::Config.new }
-
   let(:notice) do
-    Airbrake::Notice.new(config, AirbrakeTestError.new)
+    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
   end
 
   describe "#refine" do

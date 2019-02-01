@@ -5,6 +5,7 @@ module Airbrake
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   # @api private
+  # rubocop:disable Metrics/ClassLength
   class NoticeNotifier
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
@@ -14,6 +15,15 @@ module Airbrake
       "#<#{self}:0x%<id>s project_id=\"%<project_id>s\" " \
       "project_key=\"%<project_key>s\" " \
       "host=\"%<host>s\" filter_chain=%<filter_chain>s>".freeze
+
+    # @return [Array<Class>] filters to be executed first
+    DEFAULT_FILTERS = [
+      Airbrake::Filters::SystemExitFilter,
+      Airbrake::Filters::GemRootFilter
+
+      # Optional filters (must be included by users):
+      # Airbrake::Filters::ThreadFilter
+    ].freeze
 
     # Creates a new notice notifier with the given config options.
     #
@@ -39,9 +49,11 @@ module Airbrake
         end
 
       @context = {}
-      @filter_chain = FilterChain.new(@config, @context)
+      @filter_chain = FilterChain.new
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
+
+      add_default_filters
     end
 
     # @macro see_public_api_method
@@ -167,5 +179,40 @@ module Airbrake
       return caller_copy if clean_bt.empty?
       clean_bt
     end
+
+    # rubocop:disable Metrics/AbcSize
+    def add_default_filters
+      DEFAULT_FILTERS.each { |f| add_filter(f.new) }
+
+      if (whitelist_keys = @config.whitelist_keys).any?
+        add_filter(
+          Airbrake::Filters::KeysWhitelist.new(@config.logger, whitelist_keys)
+        )
+      end
+
+      if (blacklist_keys = @config.blacklist_keys).any?
+        add_filter(
+          Airbrake::Filters::KeysBlacklist.new(@config.logger, blacklist_keys)
+        )
+      end
+
+      add_filter(Airbrake::Filters::ContextFilter.new(@context))
+      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new(@config.logger))
+
+      return unless (root_directory = @config.root_directory)
+      [
+        Airbrake::Filters::RootDirectoryFilter,
+        Airbrake::Filters::GitRevisionFilter,
+        Airbrake::Filters::GitRepositoryFilter
+      ].each do |filter|
+        add_filter(filter.new(root_directory))
+      end
+
+      add_filter(
+        Airbrake::Filters::GitLastCheckoutFilter.new(@config.logger, root_directory)
+      )
+    end
+    # rubocop:enable Metrics/AbcSize
   end
+  # rubocop:enable Metrics/ClassLength
 end

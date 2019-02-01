@@ -1,29 +1,44 @@
 module Airbrake
-  # Represents the mechanism for filtering notices. Defines a few default
-  # filters.
+  # FilterChain represents an ordered array of filters.
+  #
+  # A filter is an object that responds to <b>#call</b> (typically a Proc or a
+  # class that implements the call method). The <b>#call</b> method must accept
+  # exactly one argument: an object to be filtered.
+  #
+  # When you add a new filter to the chain, it gets inserted according to its
+  # <b>weight</b>. Smaller weight means the filter will be somewhere in the
+  # beginning of the array. Larger - in the end. If a filter doesn't implement
+  # weight, the chain assumes it's equal to 0.
+  #
+  # @example
+  #   class MyFilter
+  #     attr_reader :weight
+  #
+  #     def initialize
+  #       @weight = 1
+  #     end
+  #
+  #     def call(obj)
+  #       puts 'Filtering...'
+  #       obj[:data] = '[Filtered]'
+  #     end
+  #   end
+  #
+  #   filter_chain = FilterChain.new
+  #   filter_chain.add_filter(MyFilter)
+  #
+  #   filter_chain.refine(obj)
+  #   #=> Filtering...
   #
   # @see Airbrake.add_filter
   # @api private
   # @since v1.0.0
   class FilterChain
-    # @return [Array<Class>] filters to be executed first
-    DEFAULT_FILTERS = [
-      Airbrake::Filters::SystemExitFilter,
-      Airbrake::Filters::GemRootFilter
-
-      # Optional filters (must be included by users):
-      # Airbrake::Filters::ThreadFilter
-    ].freeze
-
     # @return [Integer]
     DEFAULT_WEIGHT = 0
 
-    def initialize(config, context)
-      @config = config
-      @context = context
+    def initialize
       @filters = []
-      DEFAULT_FILTERS.each { |f| add_filter(f.new) }
-      add_default_filters
     end
 
     # Adds a filter to the filter chain. Sorts filters by weight.
@@ -51,6 +66,7 @@ module Airbrake
     #
     # @param [Airbrake::Notice] notice The notice to be filtered
     # @return [void]
+    # @todo Make it work with anything, not only notices
     def refine(notice)
       @filters.each do |filter|
         break if notice.ignored?
@@ -75,39 +91,5 @@ module Airbrake
       end
       q.text(']')
     end
-
-    private
-
-    # rubocop:disable Metrics/AbcSize
-    def add_default_filters
-      if (whitelist_keys = @config.whitelist_keys).any?
-        add_filter(
-          Airbrake::Filters::KeysWhitelist.new(@config.logger, whitelist_keys)
-        )
-      end
-
-      if (blacklist_keys = @config.blacklist_keys).any?
-        add_filter(
-          Airbrake::Filters::KeysBlacklist.new(@config.logger, blacklist_keys)
-        )
-      end
-
-      add_filter(Airbrake::Filters::ContextFilter.new(@context))
-      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new(@config.logger))
-
-      return unless (root_directory = @config.root_directory)
-      [
-        Airbrake::Filters::RootDirectoryFilter,
-        Airbrake::Filters::GitRevisionFilter,
-        Airbrake::Filters::GitRepositoryFilter
-      ].each do |filter|
-        add_filter(filter.new(root_directory))
-      end
-
-      add_filter(
-        Airbrake::Filters::GitLastCheckoutFilter.new(@config.logger, root_directory)
-      )
-    end
-    # rubocop:enable Metrics/AbcSize
   end
 end
