@@ -66,12 +66,10 @@ module Airbrake
     private
 
     def create_query_key(method, route, query, tm)
-      # rubocop:disable Style/DateTime
-      time = DateTime.new(
-        tm.year, tm.month, tm.day, tm.hour, tm.min, 0, tm.zone || 0
+      time = Time.new(
+        tm.year, tm.month, tm.day, tm.hour, tm.min, 0, tm.utc_offset || 0
       )
-      # rubocop:enable Style/DateTime
-      QueryKey.new(method, route, query, time.rfc3339)
+      QueryKey.new(method, route, query, time.to_datetime.rfc3339)
     end
 
     def schedule_flush(promise)

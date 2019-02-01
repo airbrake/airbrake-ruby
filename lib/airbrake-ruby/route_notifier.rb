@@ -66,12 +66,10 @@ module Airbrake
     private
 
     def create_route_key(method, route, status_code, tm)
-      # rubocop:disable Style/DateTime
-      time = DateTime.new(
-        tm.year, tm.month, tm.day, tm.hour, tm.min, 0, tm.zone || 0
+      time = Time.new(
+        tm.year, tm.month, tm.day, tm.hour, tm.min, 0, tm.utc_offset || 0
       )
-      # rubocop:enable Style/DateTime
-      RouteKey.new(method, route, status_code, time.rfc3339)
+      RouteKey.new(method, route, status_code, time.to_datetime.rfc3339)
     end
 
     def schedule_flush(promise)
