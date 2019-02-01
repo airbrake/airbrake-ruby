@@ -4,8 +4,6 @@ module Airbrake
   # @since v3.0.0
   # @api private
   class RouteNotifier
-    using TDigestBigEndianness
-
     # The key that represents a route.
     RouteKey = Struct.new(:method, :route, :statusCode, :time)
 
