@@ -27,7 +27,7 @@ module Airbrake
       @flush_period = @config.performance_stats_flush_period
       @sender = SyncSender.new(@config, :put)
       @queries = {}
-      @thread = nil
+      @schedule_flush = nil
       @mutex = Mutex.new
     end
 
@@ -78,22 +78,18 @@ module Airbrake
     end
 
     def schedule_flush(promise)
-      @thread ||= Thread.new do
+      @schedule_flush ||= Thread.new do
         sleep(@flush_period)
 
         queries = nil
         @mutex.synchronize do
           queries = @queries
           @queries = {}
-          @thread = nil
+          @schedule_flush = nil
         end
 
         send(queries, promise)
       end
-
-      # Setting a name is needed to test the timer.
-      # Ruby <=2.2 doesn't support Thread#name, so we have this check.
-      @thread.name = 'query-stat-thread' if @thread.respond_to?(:name)
     end
 
     def send(queries, promise)
