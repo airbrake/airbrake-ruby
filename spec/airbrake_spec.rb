@@ -131,7 +131,7 @@ RSpec.describe Airbrake do
 
   describe ".notify_request" do
     let(:default_notifier) do
-      described_class.instance_variable_get(:@route_notifiers)[:default]
+      described_class.instance_variable_get(:@performance_notifiers)[:default]
     end
 
     it "calls 'notify' on the route notifier" do
@@ -142,14 +142,14 @@ RSpec.describe Airbrake do
         start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
         end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
       }
-      expect(default_notifier).to receive(:notify).with(params)
+      expect(default_notifier).to receive(:notify).with(Airbrake::Request.new(params))
       described_class.notify_request(params)
     end
   end
 
   describe ".notify_query" do
     let(:default_notifier) do
-      described_class.instance_variable_get(:@query_notifiers)[:default]
+      described_class.instance_variable_get(:@performance_notifiers)[:default]
     end
 
     it "calls 'notify' on the query notifier" do
@@ -160,7 +160,7 @@ RSpec.describe Airbrake do
         start_time: Time.new(2018, 1, 1, 0, 20, 0, 0),
         end_time: Time.new(2018, 1, 1, 0, 19, 0, 0)
       }
-      expect(default_notifier).to receive(:notify).with(params)
+      expect(default_notifier).to receive(:notify).with(Airbrake::Query.new(params))
       described_class.notify_query(params)
     end
   end

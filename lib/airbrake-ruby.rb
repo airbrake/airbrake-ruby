@@ -34,11 +34,12 @@ require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
 require 'airbrake-ruby/tdigest_big_endianness'
+require 'airbrake-ruby/hash_keyable'
+require 'airbrake-ruby/performance_notifier'
 require 'airbrake-ruby/notice_notifier'
-require 'airbrake-ruby/route_notifier'
-require 'airbrake-ruby/query_notifier'
 require 'airbrake-ruby/deploy_notifier'
 require 'airbrake-ruby/stat'
+require 'airbrake-ruby/time_truncate'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
@@ -128,22 +129,15 @@ module Airbrake
   NilNotifier = NilNoticeNotifier
   deprecate_constant(:NilNotifier) if respond_to?(:deprecate_constant)
 
-  # NilRouteNotifier is a no-op notifier, which mimics {Airbrake::RouteNotifier}
-  # and serves only the purpose of making the library API easier to use.
+  # NilPerformanceNotifier is a no-op notifier, which mimics
+  # {Airbrake::PerformanceNotifier} and serves only the purpose of making the
+  # library API easier to use.
   #
-  # @since v3.1.0
-  class NilRouteNotifier
+  # @since v3.2.0
+  class NilPerformanceNotifier
     # @see Airbrake.notify_request
-    def notify(_request_info); end
-  end
-
-  # NilQueryNotifier is a no-op notifier, which mimics {Airbrake::QueryNotifier}
-  # and serves only the purpose of making the library API easier to use.
-  #
-  # @since v3.1.0
-  class NilQueryNotifier
     # @see Airbrake.notify_query
-    def notify(_query_info); end
+    def notify(_performance_info); end
   end
 
   # NilDeployNotifier is a no-op notifier, which mimics
@@ -156,22 +150,16 @@ module Airbrake
     def notify(_deploy_info); end
   end
 
-  # A Hash that holds all notifiers. The keys of the Hash are notifier names,
-  # the values are {Airbrake::NoticeNotifier} instances. If a notifier is not
-  # assigned to the hash, then it returns a null object (NilNoticeNotifier).
+  # A Hash that holds all notice notifiers. The keys of the Hash are notifier
+  # names, the values are {Airbrake::NoticeNotifier} instances. If a notifier is
+  # not assigned to the hash, then it returns a null object (NilNoticeNotifier).
   @notice_notifiers = Hash.new(NilNoticeNotifier.new)
 
-  # A Hash that holds all route notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::QueryNotifier} instances. If a route
-  # notifier is not assigned to the hash, then it returns a null object
-  # (NilRouteNotifier).
-  @route_notifiers = Hash.new(NilRouteNotifier.new)
-
-  # A Hash that holds all query notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::QueryNotifier} instances. If a query
-  # notifier is not assigned to the hash, then it returns a null object
-  # (NilQueryNotifier).
-  @query_notifiers = Hash.new(NilQueryNotifier.new)
+  # A Hash that holds all performance notifiers. The keys of the Hash are
+  # notifier names, the values are {Airbrake::PerformanceNotifier} instances. If
+  # a notifier is not assigned to the hash, then it returns a null object
+  # (NilPerformanceNotifier).
+  @performance_notifiers = Hash.new(NilPerformanceNotifier.new)
 
   # A Hash that holds all deploy notifiers. The keys of the Hash are notifier
   # names, the values are {Airbrake::DeployNotifier} instances. If a deploy
@@ -231,8 +219,7 @@ module Airbrake
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
       @notice_notifiers[notifier_name] = NoticeNotifier.new(config)
-      @route_notifiers[notifier_name] = RouteNotifier.new(config)
-      @query_notifiers[notifier_name] = QueryNotifier.new(config)
+      @performance_notifiers[notifier_name] = PerformanceNotifier.new(config)
       @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
     end
 
@@ -450,7 +437,7 @@ module Airbrake
     # @return [void]
     # @since v3.0.0
     def notify_request(request_info)
-      @route_notifiers[:default].notify(request_info)
+      @performance_notifiers[:default].notify(Request.new(request_info))
     end
 
     # Increments SQL statistics of a certain +query+ that was invoked on
@@ -478,9 +465,9 @@ module Airbrake
     # @option request_info [Date] :start_time When the query started executing
     # @option request_info [Time] :end_time When the query finished (optional)
     # @return [void]
-    # @since v3.1.0
+    # @since v3.2.0
     def notify_query(query_info)
-      @query_notifiers[:default].notify(query_info)
+      @performance_notifiers[:default].notify(Query.new(query_info))
     end
   end
 end
