@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::RootDirectoryFilter do
   subject { described_class.new(root_directory) }
 

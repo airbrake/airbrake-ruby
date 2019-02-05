@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Backtrace do
   let(:config) do
     Airbrake::Config.new.tap { |c| c.logger = Logger.new('/dev/null') }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::AsyncSender do
   before do
     stub_request(:post, /.*/).to_return(status: 201, body: '{}')

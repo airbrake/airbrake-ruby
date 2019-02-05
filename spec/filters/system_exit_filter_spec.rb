@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::SystemExitFilter do
   it "marks SystemExit exceptions as ignored" do
     notice = Airbrake::Notice.new(Airbrake::Config.new, SystemExit.new)

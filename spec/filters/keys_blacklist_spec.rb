@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::KeysBlacklist do
   subject { described_class.new(Logger.new('/dev/null'), patterns) }
 

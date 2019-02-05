@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::FilterChain do
   let(:notice) do
     Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Truncator do
   def multiply_by_2_max_len(chr)
     chr * 2 * max_len

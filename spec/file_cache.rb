@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::FileCache do
   after do
     %i[banana mango].each { |k| described_class.delete(k) }

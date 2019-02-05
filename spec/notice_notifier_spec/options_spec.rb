@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::NoticeNotifier do
   def expect_a_request_with_body(body)
     expect(a_request(:post, endpoint).with(body: body)).to have_been_made.once

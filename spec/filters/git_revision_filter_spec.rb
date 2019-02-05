@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::GitRevisionFilter do
   subject { described_class.new('root/dir') }
 

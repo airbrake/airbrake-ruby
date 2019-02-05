@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Response do
   describe ".parse" do
     let(:out) { StringIO.new }

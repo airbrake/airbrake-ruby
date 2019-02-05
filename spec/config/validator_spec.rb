@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Config::Validator do
   subject { described_class.new(config) }
 
