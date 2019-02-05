@@ -15,12 +15,12 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
   subject { described_class.new(config) }
 
-  describe "#notify" do
-    before do
-      stub_request(:put, routes).to_return(status: 200, body: '')
-      stub_request(:put, queries).to_return(status: 200, body: '')
-    end
+  before do
+    stub_request(:put, routes).to_return(status: 200, body: '')
+    stub_request(:put, queries).to_return(status: 200, body: '')
+  end
 
+  describe "#notify" do
     it "rounds time to the floor minute" do
       subject.notify(
         Airbrake::Request.new(
@@ -207,6 +207,83 @@ RSpec.describe Airbrake::PerformanceNotifier do
         expect(a_request(:put, routes)).to have_been_made
         expect(a_request(:put, queries)).to have_been_made
       end
+    end
+
+    context "when an ignore filter was defined" do
+      before { subject.add_filter(&:ignore!) }
+
+      it "doesn't notify airbrake of requests" do
+        subject.notify(
+          Airbrake::Request.new(
+            method: 'GET',
+            route: '/foo',
+            status_code: 200,
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
+          )
+        )
+        expect(a_request(:put, routes)).not_to have_been_made
+      end
+
+      it "doesn't notify airbrake of queries" do
+        subject.notify(
+          Airbrake::Query.new(
+            method: 'POST',
+            route: '/foo',
+            query: 'SELECT * FROM things',
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
+          )
+        )
+        expect(a_request(:put, queries)).not_to have_been_made
+      end
+    end
+
+    context "when a filter that modifies payload was defined" do
+      before do
+        subject.add_filter do |resource|
+          resource.route = '[Filtered]'
+        end
+      end
+
+      it "notifies airbrake with modified payload" do
+        subject.notify(
+          Airbrake::Query.new(
+            method: 'POST',
+            route: '/foo',
+            query: 'SELECT * FROM things',
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
+          )
+        )
+        expect(
+          a_request(:put, queries).with(
+            body: /\A{"queries":\[{"method":"POST","route":"\[Filtered\]"/
+          )
+        ).to have_been_made
+      end
+    end
+  end
+
+  describe "#delete_filter" do
+    let(:filter) do
+      Class.new do
+        def call(resource)
+          resource.ignore!
+        end
+      end
+    end
+
+    before { subject.add_filter(filter.new) }
+
+    it "deletes a filter" do
+      subject.delete_filter(filter)
+      subject.notify(
+        Airbrake::Request.new(
+          method: 'POST',
+          route: '/foo',
+          status_code: 200,
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
+        )
+      )
+      expect(a_request(:put, routes)).to have_been_made
     end
   end
 end

@@ -49,6 +49,8 @@ module Airbrake
     # @return [String]
     DEFAULT_SEVERITY = 'error'.freeze
 
+    include Ignorable
+
     # @since v1.7.0
     # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
     #   in filters
@@ -89,23 +91,6 @@ module Airbrake
 
         break if truncate == 0
       end
-    end
-
-    # Ignores a notice. Ignored notices never reach the Airbrake dashboard.
-    #
-    # @return [void]
-    # @see #ignored?
-    # @note Ignored noticed can't be unignored
-    def ignore!
-      @payload = nil
-    end
-
-    # Checks whether the notice was ignored.
-    #
-    # @return [Boolean]
-    # @see #ignore!
-    def ignored?
-      @payload.nil?
     end
 
     # Reads a value from notice's payload.
@@ -158,11 +143,6 @@ module Airbrake
 
         severity: DEFAULT_SEVERITY
       }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
-    end
-
-    def raise_if_ignored
-      return unless ignored?
-      raise Airbrake::Error, 'cannot access ignored notice'
     end
 
     def truncate
