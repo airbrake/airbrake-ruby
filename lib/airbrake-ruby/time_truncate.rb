@@ -9,13 +9,9 @@ module Airbrake
     # @param [Time] time
     # @return [String]
     def self.utc_truncate_minutes(time)
-      time_array = time.to_a
-      time_array[0] = 0
-      tm = Time.utc(*time_array)
+      tm = time.getutc
 
-      Time.new(
-        tm.year, tm.month, tm.day, tm.hour, tm.min, 0, tm.utc_offset || 0
-      ).to_datetime.rfc3339
+      Time.utc(tm.year, tm.month, tm.day, tm.hour, tm.min).to_datetime.rfc3339
     end
   end
 end
