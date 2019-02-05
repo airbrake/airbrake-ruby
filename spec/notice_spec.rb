@@ -261,7 +261,7 @@ RSpec.describe Airbrake::Notice do
     it "raises error if notice is ignored" do
       notice.ignore!
       expect { notice[:params] }.
-        to raise_error(Airbrake::Error, 'cannot access ignored notice')
+        to raise_error(Airbrake::Error, 'cannot access ignored Airbrake::Notice')
     end
   end
 
@@ -275,7 +275,7 @@ RSpec.describe Airbrake::Notice do
     it "raises error if notice is ignored" do
       notice.ignore!
       expect { notice[:params] = {} }.
-        to raise_error(Airbrake::Error, 'cannot access ignored notice')
+        to raise_error(Airbrake::Error, 'cannot access ignored Airbrake::Notice')
     end
 
     it "raises error when trying to assign unrecognized key" do

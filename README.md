@@ -804,6 +804,22 @@ a rejected promise.
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
 
+#### Airbrake.add_performance_filter
+
+Adds a performance filter that filters performance data. Works exactly like
+[`Airbrake.add_filter`](#airbrakeadd_filter). The only difference is that
+instead of `Airbrake::Notice` it yields performance data (such as
+`Airbrake::Query` or `Airbrake::Request`). It's invoked after
+[`notify_request`](#airbrakenotify_request) or
+[`notify_query`](#airbrakenotify_query) (but [`notify`](#airbrakenotify) calls
+don't trigger it!).
+
+#### Airbrake.delete_performance_filter
+
+Deletes a performance filter added via
+[`Airbrake.add_performance_filter`](#airbrakeadd_performance_filter). Works
+exactly like [`Airbrake.delete_filter`](#airbrakedelete_filter).
+
 ### Notice
 
 #### Notice#ignore!

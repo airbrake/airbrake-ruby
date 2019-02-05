@@ -14,6 +14,7 @@ require 'airbrake-ruby/sync_sender'
 require 'airbrake-ruby/async_sender'
 require 'airbrake-ruby/response'
 require 'airbrake-ruby/nested_exception'
+require 'airbrake-ruby/ignorable'
 require 'airbrake-ruby/notice'
 require 'airbrake-ruby/backtrace'
 require 'airbrake-ruby/truncator'
@@ -138,6 +139,14 @@ module Airbrake
     # @see Airbrake.notify_request
     # @see Airbrake.notify_query
     def notify(_performance_info); end
+
+    # @see Airbrake.notify_request
+    # @see Airbrake.notify_query
+    def add_filter(_filter = nil, &_block); end
+
+    # @see Airbrake.notify_request
+    # @see Airbrake.notify_query
+    def delete_filter(_filter_class); end
   end
 
   # NilDeployNotifier is a no-op notifier, which mimics
@@ -436,6 +445,7 @@ module Airbrake
     # @option request_info [Time] :end_time When the request ended (optional)
     # @return [void]
     # @since v3.0.0
+    # @see Airbrake::PerformanceNotifier#notify
     def notify_request(request_info)
       @performance_notifiers[:default].notify(Request.new(request_info))
     end
@@ -466,8 +476,62 @@ module Airbrake
     # @option request_info [Time] :end_time When the query finished (optional)
     # @return [void]
     # @since v3.2.0
+    # @see Airbrake::PerformanceNotifier#notify
     def notify_query(query_info)
       @performance_notifiers[:default].notify(Query.new(query_info))
+    end
+
+    # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
+    # is useful if you want to ignore specific resources or filter the data the
+    # resource contains.
+    #
+    # @example Ignore all resources
+    #   Airbrake.add_performance_filter(&:ignore!)
+    # @example Filter sensitive data
+    #   Airbrake.add_performance_filter do |resource|
+    #     case resource
+    #     when Airbrake::Query
+    #       resource.route = '[Filtered]'
+    #     when Airbrake::Request
+    #       resource.query = '[Filtered]'
+    #     end
+    #   end
+    # @example Filter with help of a class
+    #   class MyFilter
+    #     def call(resource)
+    #       # ...
+    #     end
+    #   end
+    #
+    #   Airbrake.add_performance_filter(MyFilter.new)
+    #
+    # @param [#call] filter The filter object
+    # @yield [resource] The resource to filter
+    # @yieldparam [Airbrake::Query, Airbrake::Request]
+    # @yieldreturn [void]
+    # @return [void]
+    # @since v3.2.0
+    # @see Airbrake::PerformanceNotifier#add_filter
+    def add_performance_filter(filter = nil, &block)
+      @performance_notifiers[:default].add_filter(filter, &block)
+    end
+
+    # Deletes a filter added via {Airbrake#add_performance_filter}.
+    #
+    # @example
+    #   # Add a MyFilter filter (we pass an instance here).
+    #   Airbrake.add_performance_filter(MyFilter.new)
+    #
+    #   # Delete the filter (we pass class name here).
+    #   Airbrake.delete_performance_filter(MyFilter)
+    #
+    # @param [Class] filter_class The class of the filter you want to delete
+    # @return [void]
+    # @since v3.2.0
+    # @note This method cannot delete filters assigned via the Proc form.
+    # @see Airbrake::PerformanceNotifier#delete_filter
+    def delete_performance_filter(filter_class)
+      @performance_notifiers[:default].delete_filter(filter_class)
     end
   end
 end

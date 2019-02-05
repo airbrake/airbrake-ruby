@@ -23,11 +23,13 @@ module Airbrake
       @payload = {}
       @schedule_flush = nil
       @mutex = Mutex.new
+      @filter_chain = FilterChain.new
     end
 
-    # @macro see_public_api_method
     # @param [Hash] resource
     # @param [Airbrake::Promise] promise
+    # @see Airbrake.notify_query
+    # @see Airbrake.notify_request
     def notify(resource, promise = Airbrake::Promise.new)
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")
@@ -36,6 +38,9 @@ module Airbrake
       unless @config.performance_stats
         return promise.reject("The Performance Stats feature is disabled")
       end
+
+      @filter_chain.refine(resource)
+      return if resource.ignored?
 
       @mutex.synchronize do
         @payload[resource] ||= Airbrake::Stat.new
@@ -49,6 +54,16 @@ module Airbrake
       end
 
       promise
+    end
+
+    # @see Airbrake.add_performance_filter
+    def add_filter(filter = nil, &block)
+      @filter_chain.add_filter(block_given? ? block : filter)
+    end
+
+    # @see Airbrake.delete_performance_filter
+    def delete_filter(filter_class)
+      @filter_chain.delete_filter(filter_class)
     end
 
     private
@@ -90,12 +105,14 @@ module Airbrake
   # Request holds request data that powers route stats.
   #
   # @see Airbrake.notify_request
-  # @api private
+  # @api public
   # @since v3.2.0
   Request = Struct.new(:method, :route, :status_code, :start_time, :end_time) do
     include HashKeyable
+    include Ignorable
 
     def initialize(method:, route:, status_code:, start_time:, end_time: Time.now)
+      @ignored = false
       super(method, route, status_code, start_time, end_time)
     end
 
@@ -116,10 +133,11 @@ module Airbrake
   # Query holds SQL query data that powers SQL query collection.
   #
   # @see Airbrake.notify_query
-  # @api private
+  # @api public
   # @since v3.2.0
   Query = Struct.new(:method, :route, :query, :start_time, :end_time) do
     include HashKeyable
+    include Ignorable
 
     def initialize(method:, route:, query:, start_time:, end_time: Time.now)
       super(method, route, query, start_time, end_time)
