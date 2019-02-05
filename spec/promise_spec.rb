@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Promise do
   describe ".then" do
     let(:resolved_with) { [] }

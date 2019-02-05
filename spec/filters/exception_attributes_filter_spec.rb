@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
   describe "#call" do
     let(:out) { StringIO.new }

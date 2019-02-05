@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake do
   describe ".[]" do
     it "returns a NilNotifier" do

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::TimeTruncate do
   describe "#utc_truncate_minutes" do
     it "truncates time to the floor minute and returns an RFC3339 timestamp" do

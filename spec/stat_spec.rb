@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Stat do
   describe "#to_h" do
     it "converts to a hash" do

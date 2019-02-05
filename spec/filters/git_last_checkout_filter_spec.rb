@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
   subject { described_class.new(Logger.new(STDOUT), '.') }
 

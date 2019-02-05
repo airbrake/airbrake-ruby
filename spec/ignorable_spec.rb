@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Ignorable do
   let(:klass) do
     mod = subject

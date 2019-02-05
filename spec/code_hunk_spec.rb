@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::CodeHunk do
   let(:config) { Airbrake::Config.new }
 

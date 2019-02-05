@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # rubocop:disable Layout/DotPosition
 RSpec.describe Airbrake::NoticeNotifier do
   let(:user_params) do

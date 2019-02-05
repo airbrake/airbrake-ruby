@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Notice do
   let(:notice) do
     described_class.new(Airbrake::Config.new, AirbrakeTestError.new, bingo: '1')

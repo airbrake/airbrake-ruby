@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::Filters::GitRepositoryFilter do
   subject { described_class.new('.') }
 

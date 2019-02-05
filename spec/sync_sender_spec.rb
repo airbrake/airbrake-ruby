@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::SyncSender do
   describe "#build_https" do
     it "overrides Net::HTTP's open_timeout and read_timeout if timeout is specified" do

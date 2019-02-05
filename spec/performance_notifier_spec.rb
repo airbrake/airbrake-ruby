@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::PerformanceNotifier do
   let(:routes) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
   let(:queries) { 'https://api.airbrake.io/api/v5/projects/1/queries-stats' }

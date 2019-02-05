@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Airbrake::DeployNotifier do
   let(:user_params) { { project_id: 1, project_key: 'banana' } }
   let(:params) { {} }
