@@ -1,4 +1,3 @@
-require 'tdigest'
 require 'base64'
 
 module Airbrake
@@ -13,19 +12,14 @@ module Airbrake
   #   stat.increment(Time.now - 200)
   #   stat.to_h # Pack and serialize data so it can be transmitted.
   #
-  # @see https://github.com/castle/tdigest TDigest gem
   # @since v3.2.0
   Stat = Struct.new(:count, :sum, :sumsq, :tdigest) do
-    using TDigestBigEndianness
-
     # @param [Integer] count How many times this stat was incremented
     # @param [Float] sum The sum of duration in milliseconds
     # @param [Float] sumsq The squared sum of duration in milliseconds
     # @param [TDigest::TDigest] tdigest Packed durations. By default,
     #   compression is 20
-    def initialize(
-      count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest::TDigest.new(0.05)
-    )
+    def initialize(count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest.new(0.05))
       super(count, sum, sumsq, tdigest)
     end
 
