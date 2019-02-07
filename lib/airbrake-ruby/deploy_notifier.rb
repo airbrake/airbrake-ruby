@@ -6,6 +6,8 @@ module Airbrake
   # - repository
   # - revision
   # - version
+  #
+  # @api public
   # @since v3.2.0
   class DeployNotifier
     # @param [Airbrake::Config] config
