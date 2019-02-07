@@ -35,13 +35,13 @@ require 'airbrake-ruby/filters/sql_filter'
 require 'airbrake-ruby/filter_chain'
 require 'airbrake-ruby/code_hunk'
 require 'airbrake-ruby/file_cache'
-require 'airbrake-ruby/tdigest_big_endianness'
 require 'airbrake-ruby/hash_keyable'
 require 'airbrake-ruby/performance_notifier'
 require 'airbrake-ruby/notice_notifier'
 require 'airbrake-ruby/deploy_notifier'
 require 'airbrake-ruby/stat'
 require 'airbrake-ruby/time_truncate'
+require 'airbrake-ruby/tdigest'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
