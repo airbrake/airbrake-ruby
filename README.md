@@ -625,6 +625,24 @@ Attaches loaded dependencies to the notice object (under
 Airbrake.add_filter(Airbrake::Filters::DependencyFilter.new)
 ```
 
+###### Airbrake::Filters::SqlFilter
+
+Filters out sensitive data from queries that are sent via
+[`Airbrake.notify_query`](#airbrakenotify_query). Sensitive data is everything
+that is not table names or fields (e.g. column values and such).
+
+Accepts a parameter, which signifies SQL dialect being used. Supported dialects:
+
+* `:postgres`
+* `:mysql`
+* `:sqlite`
+* `:cassandra`
+* `:oracle`
+
+```ruby
+Airbrake.add_filter(Airbrake::Filters::SqlFilter.new(:postgres))
+```
+
 ##### Using classes for building filters
 
 For more complex filters you can use the special API. Simply pass an object that
