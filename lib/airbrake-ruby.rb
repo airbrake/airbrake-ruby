@@ -191,6 +191,17 @@ module Airbrake
       @notice_notifiers[notifier_name]
     end
 
+    # @return [Hash{Symbol=>Array<Object>}] a Hash with all configured notifiers
+    #   (notice, performance, deploy)
+    # @since v3.2.0
+    def notifiers
+      {
+        notice: @notice_notifiers,
+        performance: @performance_notifiers,
+        deploy: @deploy_notifiers
+      }
+    end
+
     # Configures a new +notifier+ with the given name. If the name is not given,
     # configures the default notifier.
     #

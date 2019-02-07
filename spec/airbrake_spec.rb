@@ -5,6 +5,14 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe ".notifiers" do
+    it "returns a Hash of notifiers" do
+      expect(described_class.notifiers).to eq(
+        notice: {}, performance: {}, deploy: {}
+      )
+    end
+  end
+
   let(:default_notifier) do
     described_class[:default]
   end
@@ -12,7 +20,11 @@ RSpec.describe Airbrake do
   describe ".configure" do
     let(:config_params) { { project_id: 1, project_key: 'abc' } }
 
-    after { described_class.instance_variable_get(:@notice_notifiers).clear }
+    after do
+      described_class.instance_variable_get(:@notice_notifiers).clear
+      described_class.instance_variable_get(:@performance_notifiers).clear
+      described_class.instance_variable_get(:@deploy_notifiers).clear
+    end
 
     it "yields the config" do
       expect do |b|
@@ -110,9 +122,7 @@ RSpec.describe Airbrake do
   end
 
   describe ".create_deploy" do
-    let(:default_notifier) do
-      described_class.instance_variable_get(:@deploy_notifiers)[:default]
-    end
+    let(:default_notifier) { described_class.notifiers[:deploy][:default] }
 
     it "calls 'notify' on the deploy notifier" do
       expect(default_notifier).to receive(:notify).with(foo: 'bar')
@@ -128,9 +138,7 @@ RSpec.describe Airbrake do
   end
 
   describe ".notify_request" do
-    let(:default_notifier) do
-      described_class.instance_variable_get(:@performance_notifiers)[:default]
-    end
+    let(:default_notifier) { described_class.notifiers[:performance][:default] }
 
     it "calls 'notify' on the route notifier" do
       params = {
@@ -146,9 +154,7 @@ RSpec.describe Airbrake do
   end
 
   describe ".notify_query" do
-    let(:default_notifier) do
-      described_class.instance_variable_get(:@performance_notifiers)[:default]
-    end
+    let(:default_notifier) { described_class.notifiers[:performance][:default] }
 
     it "calls 'notify' on the query notifier" do
       params = {

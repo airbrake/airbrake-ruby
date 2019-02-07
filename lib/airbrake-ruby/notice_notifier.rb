@@ -4,7 +4,7 @@ module Airbrake
   #
   # @see Airbrake::Config The list of options
   # @since v1.0.0
-  # @api private
+  # @api public
   # rubocop:disable Metrics/ClassLength
   class NoticeNotifier
     # @return [String] the label to be prepended to the log output

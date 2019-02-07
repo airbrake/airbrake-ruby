@@ -1,6 +1,8 @@
 module Airbrake
   # QueryNotifier aggregates information about SQL queries and periodically sends
   # collected data to Airbrake.
+  #
+  # @api public
   # @since v3.2.0
   class PerformanceNotifier
     # @param [Airbrake::Config] config
