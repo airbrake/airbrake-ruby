@@ -11,6 +11,7 @@ module Airbrake
       def initialize(root_directory)
         @git_path = File.join(root_directory, '.git')
         @repository = nil
+        @git_version = Gem::Version.new(`git --version`.split.last)
         @weight = 116
       end
 
@@ -25,7 +26,14 @@ module Airbrake
 
         return unless File.exist?(@git_path)
 
-        @repository = `cd #{@git_path} && git remote get-url origin`.chomp
+        @repository =
+          if @git_version >= Gem::Version.new('2.7.0')
+            `cd #{@git_path} && git remote get-url origin`.chomp
+          else
+            "`git remote get-url` is unsupported in git #{@git_version}. " \
+            'Consider an upgrade to 2.7+'
+          end
+
         return unless @repository
         notice[:context][:repository] = @repository
       end
