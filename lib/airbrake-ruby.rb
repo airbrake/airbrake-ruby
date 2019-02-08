@@ -154,7 +154,7 @@ module Airbrake
   # {Airbrake::DeployNotifier} and serves only the purpose of making the library
   # API easier to use.
   #
-  # @since v3.1.0
+  # @since v3.2.0
   class NilDeployNotifier
     # @see Airbrake.create_deploy
     def notify(_deploy_info); end

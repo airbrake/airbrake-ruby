@@ -3,6 +3,33 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.2.0][v3.2.0] (February 8, 2019)
+
+* Dropped `tdigest` dependency. Airbrake Ruby imports that code, instead
+  ([#400](https://github.com/airbrake/airbrake-ruby/pull/400))
+* Started depending on [rbtree3](https://rubygems.org/gems/rbtree3) instead of
+  [rbtree](https://rubygems.org/gems/rbtree), which fixed [`_dump': instance of
+  IO needed (TypeError)`](https://github.com/airbrake/airbrake/issues/894) when
+  trying to dump an RBTree
+  ([#400](https://github.com/airbrake/airbrake-ruby/pull/400))
+* Added `Airbrake.notify_query` to send SQL queries to Airbrake
+  ([#379](https://github.com/airbrake/airbrake-ruby/pull/376))
+* Added `Airbrake.add_performance_filter` and
+  `Airbrake.delete_performance_filter` to filter out sensitive SQL query and
+  route data ([#395](https://github.com/airbrake/airbrake-ruby/pull/395))
+* Added `Airbrake.notifiers` to access the new performance notifier
+  ([#398](https://github.com/airbrake/airbrake-ruby/pull/398))
+* Deprecated `config.route_stats` in favor of `config.performance_stats`
+  ([#381](https://github.com/airbrake/airbrake-ruby/pull/381))
+* Deprecated `Airbrake::Notifier` in favor of `Airbrake::NoticeNotifier`
+  ([#386](https://github.com/airbrake/airbrake-ruby/pull/386))
+* Fixed time truncation on `Airbrake.notify_request`, which wasn't respecting
+  UTC offset ([#394](https://github.com/airbrake/airbrake-ruby/pull/394))
+* Fixed bug where `GitRepositoryFilter` invokes `get-url`, which doesn't exist
+  on Git 2.6 and lower
+  ([#399](https://github.com/airbrake/airbrake-ruby/pull/399))
+  ([#404](https://github.com/airbrake/airbrake-ruby/pull/404))
+
 ### [v3.1.0][v3.1.0] (January 23, 2019)
 
 * Added `Airbrake.delete_filter`, which can be used for deleting filters added
@@ -575,3 +602,4 @@ Airbrake Ruby Changelog
 [v3.0.0.rc.9]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0.rc.9
 [v3.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0
 [v3.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.1.0
+[v3.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.0
