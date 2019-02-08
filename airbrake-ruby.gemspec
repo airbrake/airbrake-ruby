@@ -1,6 +1,6 @@
 require './lib/airbrake-ruby/version'
 
-jruby = RbConfig::CONFIG['ruby_install_name'] == 'jruby'
+java = RUBY_PLATFORM =~ /java/
 
 Gem::Specification.new do |s|
   s.name        = 'airbrake-ruby'
@@ -27,9 +27,9 @@ DESC
   s.test_files   = Dir.glob('spec/**/*')
 
   s.required_ruby_version = '>= 2.1'
-  s.platform = jruby ? 'java' : Gem::Platform::RUBY
+  s.platform = java ? 'java' : Gem::Platform::RUBY
 
-  if jruby
+  if java
     s.add_dependency 'rbtree-jruby', '~> 0.2.1'
   else
     s.add_dependency 'rbtree3', '~> 0.5.0'
