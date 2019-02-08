@@ -199,7 +199,7 @@ RSpec.describe Airbrake::TDigest do
       end
 
       it "has the parameters of the calling tdigest" do
-        vars = [:@delta, :@k, :@cs]
+        vars = [:@delta, :@k, :@cx]
         expected = Hash[vars.map { |v| [v, subject.instance_variable_get(v)] }]
         subject.merge!(@other)
         vars.each do |v|
