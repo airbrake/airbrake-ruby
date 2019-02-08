@@ -1,4 +1,3 @@
-# rubocop:disable all
 RSpec.describe Airbrake::TDigest do
   describe "byte serialization" do
     it "loads serialized data" do
@@ -82,9 +81,9 @@ RSpec.describe Airbrake::TDigest do
         subject.push(values)
         subject.compress!
 
-        0.step(1,0.1).each do |i|
+        0.step(1, 0.1).each do |i|
           q = subject.percentile(i)
-          maxerr = [maxerr, (i-q).abs].max
+          maxerr = [maxerr, (i - q).abs].max
         end
 
         expect(maxerr).to be < 0.01
@@ -94,38 +93,42 @@ RSpec.describe Airbrake::TDigest do
 
   describe "#push" do
     it "calls _cumulate so won't crash because of uninitialized mean_cumn" do
-      subject.push [125000000.0,
-        104166666.66666666,
-        135416666.66666666,
-        104166666.66666666,
-        104166666.66666666,
-        93750000.0,
-        125000000.0,
-        62500000.0,
-        114583333.33333333,
-        156250000.0,
-        124909090.90909092,
-        104090909.0909091,
-        135318181.81818184,
-        104090909.0909091,
-        104090909.0909091,
-        93681818.18181819,
-        124909090.90909092,
-        62454545.45454546,
-        114500000.00000001,
-        156136363.63636366,
-        123567567.56756756,
-        102972972.97297296,
-        133864864.86486486,
-        102972972.97297296,
-        102972972.97297296,
-        92675675.67567568,
-        123567567.56756756,
-        61783783.78378378,
-        113270270.27027026,
-        154459459.45945945,
-        123829787.23404256,
-        103191489.36170213]
+      subject.push(
+        [
+          125000000.0,
+          104166666.66666666,
+          135416666.66666666,
+          104166666.66666666,
+          104166666.66666666,
+          93750000.0,
+          125000000.0,
+          62500000.0,
+          114583333.33333333,
+          156250000.0,
+          124909090.90909092,
+          104090909.0909091,
+          135318181.81818184,
+          104090909.0909091,
+          104090909.0909091,
+          93681818.18181819,
+          124909090.90909092,
+          62454545.45454546,
+          114500000.00000001,
+          156136363.63636366,
+          123567567.56756756,
+          102972972.97297296,
+          133864864.86486486,
+          102972972.97297296,
+          102972972.97297296,
+          92675675.67567568,
+          123567567.56756756,
+          61783783.78378378,
+          113270270.27027026,
+          154459459.45945945,
+          123829787.23404256,
+          103191489.36170213
+        ]
+      )
     end
 
     it "does not blow up if data comes in sorted" do
@@ -162,14 +165,21 @@ RSpec.describe Airbrake::TDigest do
 
       it "has the parameters of the left argument (the calling tdigest)" do
         new_tdigest = subject + @other
-        expect(new_tdigest.instance_variable_get(:@delta)).to eq(subject.instance_variable_get(:@delta))
-        expect(new_tdigest.instance_variable_get(:@k)).to eq(subject.instance_variable_get(:@k))
-        expect(new_tdigest.instance_variable_get(:@cx)).to eq(subject.instance_variable_get(:@cx))
+        expect(new_tdigest.instance_variable_get(:@delta)).to eq(
+          subject.instance_variable_get(:@delta)
+        )
+        expect(new_tdigest.instance_variable_get(:@k)).to eq(
+          subject.instance_variable_get(:@k)
+        )
+        expect(new_tdigest.instance_variable_get(:@cx)).to eq(
+          subject.instance_variable_get(:@cx)
+        )
       end
 
-      it "results in a tdigest with number of centroids less than or equal to the combined centroids size" do
+      it "returns a tdigest with less than or equal centroids" do
         new_tdigest = subject + @other
-        expect(new_tdigest.centroids.size).to be <= subject.centroids.size + @other.centroids.size
+        expect(new_tdigest.centroids.size).
+          to be <= subject.centroids.size + @other.centroids.size
       end
 
       it "has the size of the two digests combined" do
@@ -196,7 +206,7 @@ RSpec.describe Airbrake::TDigest do
       end
 
       it "has the parameters of the calling tdigest" do
-        vars = [:@delta, :@k, :@cx]
+        vars = %i[@delta @k @cx]
         expected = Hash[vars.map { |v| [v, subject.instance_variable_get(v)] }]
         subject.merge!(@other)
         vars.each do |v|
@@ -204,7 +214,7 @@ RSpec.describe Airbrake::TDigest do
         end
       end
 
-      it "results in a tdigest with number of centroids less than or equal to the combined centroids size" do
+      it "returns a tdigest with less than or equal centroids" do
         combined_size = subject.centroids.size + @other.centroids.size
         subject.merge!(@other)
         expect(subject.centroids.size).to be <= combined_size
@@ -218,4 +228,3 @@ RSpec.describe Airbrake::TDigest do
     end
   end
 end
-# rubocop:enable all
