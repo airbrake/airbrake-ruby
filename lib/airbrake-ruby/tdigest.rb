@@ -1,6 +1,5 @@
 require 'rbtree'
 
-# rubocop:disable all
 module Airbrake
   # Ruby implementation of Ted Dunning's t-digest data structure.
   #
@@ -11,10 +10,14 @@ module Airbrake
   # @see https://github.com/castle/tdigest
   # @api private
   # @since v3.2.0
+  # rubocop:disable Metrics/ClassLength
   class TDigest
     VERBOSE_ENCODING = 1
     SMALL_ENCODING   = 2
 
+    # Centroid represents a number of data points.
+    # @api private
+    # @since v3.2.0
     class Centroid
       attr_accessor :mean, :n, :cumn, :mean_cumn
       def initialize(mean, n, cumn, mean_cumn = nil)
@@ -43,10 +46,8 @@ module Airbrake
     def +(other)
       # Uses delta, k and cx from the caller
       t = self.class.new(@delta, @k, @cx)
-      data = self.centroids.values + other.centroids.values
-      while data.length > 0
-        t.push_centroid(data.delete_at(rand(data.length)))
-      end
+      data = centroids.values + other.centroids.values
+      t.push_centroid(data.delete_at(rand(data.length))) while data.any?
       t
     end
 
@@ -61,6 +62,7 @@ module Airbrake
 
     # Pack with Big Endian (unlike Little Endian in Castle's version) since our
     # backend wants it.
+    # rubocop:disable Metrics/AbcSize
     def as_small_bytes
       size = @centroids.size
       output = [self.class::SMALL_ENCODING, compression, size]
@@ -88,6 +90,7 @@ module Airbrake
       output += c_arr
       output.pack("NGNg#{size}C#{size}")
     end
+    # rubocop:enable Metrics/AbcSize
 
     def as_json(_ = nil)
       @centroids.map { |_, c| c.as_json }
@@ -102,7 +105,7 @@ module Airbrake
     def bound_mean_cumn(cumn)
       last_c = nil
       bounds = []
-      matches = @centroids.each do |k, v|
+      @centroids.each_value do |v|
         if v.mean_cumn == cumn
           bounds << v
           break
@@ -156,6 +159,8 @@ module Airbrake
       self
     end
 
+    # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
     def p_rank(x)
       is_array = x.is_a? Array
       x = [x] unless is_array
@@ -176,20 +181,25 @@ module Airbrake
           lower, upper = bound
           mean_cumn = lower.mean_cumn
           if lower != upper
-            mean_cumn += (item - lower.mean) * (upper.mean_cumn - lower.mean_cumn) / (upper.mean - lower.mean)
+            mean_cumn += (item - lower.mean) * (upper.mean_cumn - lower.mean_cumn) \
+              / (upper.mean - lower.mean)
           end
           mean_cumn / @n
         end
       end
       is_array ? x : x.first
     end
+    # rubocop:enable Metrics/PerceivedComplexity, Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
 
+    # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize
     def percentile(p)
       is_array = p.is_a? Array
       p = [p] unless is_array
       p.map! do |item|
-        unless (0..1).include? item
-          fail ArgumentError, "p should be in [0,1], got #{item}"
+        unless (0..1).cover?(item)
+          raise ArgumentError, "p should be in [0,1], got #{item}"
         end
         if size == 0
           nil
@@ -210,6 +220,8 @@ module Airbrake
       end
       is_array ? p : p.first
     end
+    # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize
 
     def push(x, n = 1)
       x = [x] unless x.is_a? Array
@@ -236,6 +248,8 @@ module Airbrake
       @centroids.map { |_, c| c }
     end
 
+    # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
     def self.from_bytes(bytes)
       format, compression, size = bytes.unpack('LdL')
       tdigest = new(1 / compression)
@@ -244,7 +258,7 @@ module Airbrake
       case format
       when VERBOSE_ENCODING
         array = bytes[start_idx..-1].unpack("d#{size}L#{size}")
-        means, counts = array.each_slice(size).to_a if array.size > 0
+        means, counts = array.each_slice(size).to_a if array.any?
       when SMALL_ENCODING
         means = bytes[start_idx..(start_idx + 4 * size)].unpack("f#{size}")
         # Decode delta encoding of means
@@ -262,7 +276,7 @@ module Airbrake
           z = 0x7f & v
           shift = 7
           while (v & 0x80) != 0
-            fail 'Shift too large in decode' if shift > 28
+            raise 'Shift too large in decode' if shift > 28
             v = counts_bytes.shift || 0
             z += (v & 0x7f) << shift
             shift += 7
@@ -270,15 +284,17 @@ module Airbrake
           counts << z
         end
         # This shouldn't happen
-        fail 'Mismatch' unless counts.size == means.size
+        raise 'Mismatch' unless counts.size == means.size
       else
-        fail 'Unknown compression format'
+        raise 'Unknown compression format'
       end
-      if means && counts
-        means.zip(counts).each { |val| tdigest.push(val[0], val[1]) }
-      end
+
+      means.zip(counts).each { |val| tdigest.push(val[0], val[1]) } if means && counts
+
       tdigest
     end
+    # rubocop:enable Metrics/PerceivedComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize
 
     def self.from_json(array)
       tdigest = new
@@ -290,9 +306,7 @@ module Airbrake
     private
 
     def _add_weight(nearest, x, n)
-      unless x == nearest.mean
-        nearest.mean += n * (x - nearest.mean) / (nearest.n + n)
-      end
+      nearest.mean += n * (x - nearest.mean) / (nearest.n + n) unless x == nearest.mean
 
       _cumulate(false, true) if nearest.mean_cumn.nil?
 
@@ -303,6 +317,7 @@ module Airbrake
       nil
     end
 
+    # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
     def _cumulate(exact = false, force = false)
       unless force
         factor = if @last_cumulate == 0
@@ -310,7 +325,7 @@ module Airbrake
                  else
                    (@n.to_f / @last_cumulate)
                  end
-        return if @n == @last_cumulate || (!exact && @cx && @cx > (factor))
+        return if @n == @last_cumulate || (!exact && @cx && @cx > factor)
       end
 
       cumn = 0
@@ -321,7 +336,10 @@ module Airbrake
       @n = @last_cumulate = cumn
       nil
     end
+    # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
+    # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize
     def _digest(x, n)
       # Use 'first' and 'last' instead of min/max because of performance reasons
       # This works because RBTree is sorted
@@ -343,7 +361,7 @@ module Airbrake
       else
         p = nearest.mean_cumn.to_f / @n
         max_n = (4 * @n * @delta * p * (1 - p)).floor
-        if (max_n - nearest.n >= n)
+        if max_n - nearest.n >= n
           _add_weight(nearest, x, n)
         else
           _new_centroid(x, n, nearest.cumn)
@@ -356,12 +374,12 @@ module Airbrake
       # it may be due to values being inserted in sorted order.
       # We combat that by replaying the centroids in random order,
       # which is what compress! does
-      if @centroids.size > (@k / @delta)
-        compress!
-      end
+      compress! if @centroids.size > (@k / @delta)
 
       nil
     end
+    # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity,
+    # rubocop:enable Metrics/AbcSize
 
     def _new_centroid(x, n, cumn)
       c = Centroid.new(x, n, cumn)
@@ -369,5 +387,5 @@ module Airbrake
       c
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
-# ruboocp:enable all
