@@ -28,7 +28,7 @@ module Airbrake
 
         @repository =
           if @git_version >= Gem::Version.new('2.7.0')
-            `cd #{@git_path} && git remote get-url origin`.chomp
+            `cd #{@git_path} && git config --get remote.origin.url`.chomp
           else
             "`git remote get-url` is unsupported in git #{@git_version}. " \
             'Consider an upgrade to 2.7+'
