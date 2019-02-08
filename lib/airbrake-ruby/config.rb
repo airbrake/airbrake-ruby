@@ -86,13 +86,13 @@ module Airbrake
     # @return [Boolean] true if the library should send performance stats
     #   information to Airbrake (routes, SQL queries), false otherwise
     # @api public
-    # @since v3.1.0
+    # @since v3.2.0
     attr_accessor :performance_stats
 
     # @return [Integer] how many seconds to wait before sending collected route
     #   stats
     # @api public
-    # @since v3.1.0
+    # @since v3.2.0
     attr_accessor :performance_stats_flush_period
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
