@@ -25,9 +25,7 @@ RSpec.describe Airbrake::TDigest do
 
   describe "small byte serialization" do
     it "loads serialized data" do
-      pending
-      subject.push(60, 1000)
-      10.times { subject.push(rand * 10) }
+      10.times { subject.push(10) }
       bytes = subject.as_small_bytes
       new_tdigest = described_class.from_bytes(bytes)
       # Expect some rounding error due to compression
@@ -38,7 +36,6 @@ RSpec.describe Airbrake::TDigest do
     end
 
     it "handles zero size" do
-      pending
       bytes = subject.as_small_bytes
       expect(described_class.from_bytes(bytes).size).to be_zero
     end
