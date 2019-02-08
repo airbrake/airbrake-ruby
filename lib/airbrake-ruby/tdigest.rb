@@ -6,10 +6,14 @@ module Airbrake
   # This implementation is imported from https://github.com/castle/tdigest with
   # custom modifications. Huge thanks to Castle for the implementation :beer:
   #
+  # The difference is that we pack with Big Endian (unlike Native Endian in
+  # Castle's version). Our backend does not permit little endian.
+  #
   # @see https://github.com/tdunning/t-digest
   # @see https://github.com/castle/tdigest
   # @api private
   # @since v3.2.0
+  #
   # rubocop:disable Metrics/ClassLength
   class TDigest
     VERBOSE_ENCODING = 1
@@ -57,11 +61,9 @@ module Airbrake
       output = [VERBOSE_ENCODING, compression, size]
       output += @centroids.map { |_, c| c.mean }
       output += @centroids.map { |_, c| c.n }
-      output.pack("LdLd#{size}L#{size}")
+      output.pack("NGNG#{size}N#{size}")
     end
 
-    # Pack with Big Endian (unlike Little Endian in Castle's version) since our
-    # backend wants it.
     # rubocop:disable Metrics/AbcSize
     def as_small_bytes
       size = @centroids.size
@@ -251,16 +253,16 @@ module Airbrake
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
     # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
     def self.from_bytes(bytes)
-      format, compression, size = bytes.unpack('LdL')
+      format, compression, size = bytes.unpack('NGN')
       tdigest = new(1 / compression)
 
       start_idx = 16 # after header
       case format
       when VERBOSE_ENCODING
-        array = bytes[start_idx..-1].unpack("d#{size}L#{size}")
+        array = bytes[start_idx..-1].unpack("G#{size}N#{size}")
         means, counts = array.each_slice(size).to_a if array.any?
       when SMALL_ENCODING
-        means = bytes[start_idx..(start_idx + 4 * size)].unpack("f#{size}")
+        means = bytes[start_idx..(start_idx + 4 * size)].unpack("g#{size}")
         # Decode delta encoding of means
         x = 0
         means.map! do |m|
