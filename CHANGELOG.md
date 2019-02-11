@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed ``undefined method `notify_request'`` when calling
+  `Airbrake.notify_request` (added backwards compatibility)
+  ([#411](https://github.com/airbrake/airbrake-ruby/pull/411))
+
 ### [v3.2.1][v3.2.1] (Febuary 11, 2019)
 
 * Fixed `Malformed version number string` in `GitRepositoryFilter` when

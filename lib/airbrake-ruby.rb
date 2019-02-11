@@ -239,8 +239,13 @@ module Airbrake
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
-      @notice_notifiers[notifier_name] = NoticeNotifier.new(config)
-      @performance_notifiers[notifier_name] = PerformanceNotifier.new(config)
+      # TODO: Kludge to avoid
+      # https://github.com/airbrake/airbrake-ruby/issues/406
+      # Stop passing perf_notifier to NoticeNotifier as soon as possible.
+      perf_notifier = PerformanceNotifier.new(config)
+      @performance_notifiers[notifier_name] = perf_notifier
+      @notice_notifiers[notifier_name] = NoticeNotifier.new(config, perf_notifier)
+
       @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
     end
 

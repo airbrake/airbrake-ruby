@@ -34,7 +34,7 @@ module Airbrake
     #   notice_notifier = Airbrake::NoticeNotifier.new(config)
     #
     # @param [Airbrake::Config] config
-    def initialize(config)
+    def initialize(config, perf_notifier = nil)
       @config =
         if config.is_a?(Config)
           config
@@ -52,6 +52,7 @@ module Airbrake
       @filter_chain = FilterChain.new
       @async_sender = AsyncSender.new(@config)
       @sync_sender = SyncSender.new(@config)
+      @perf_notifier = perf_notifier
 
       add_default_filters
     end
@@ -64,6 +65,15 @@ module Airbrake
     # @macro see_public_api_method
     def notify_sync(exception, params = {}, &block)
       send_notice(exception, params, @sync_sender, &block).value
+    end
+
+    # @deprecated Update the airbrake gem to v8.1.0 or higher
+    def notify_request(request_info, promise = Promise.new)
+      @config.logger.info(
+        "#{LOG_LABEL} #{self.class}##{__method__} is deprecated. Update " \
+        'the airbrake gem to v8.1.0 or higher'
+      )
+      @perf_notifier.notify(Request.new(request_info), promise)
     end
 
     # @macro see_public_api_method
