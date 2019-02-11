@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.2.2][v3.2.2] (Febuary 11, 2019)
+
 * Fixed ``undefined method `notify_request'`` when calling
   `Airbrake.notify_request` (added backwards compatibility)
   ([#411](https://github.com/airbrake/airbrake-ruby/pull/411))
@@ -616,3 +618,4 @@ Airbrake Ruby Changelog
 [v3.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.1.0
 [v3.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.0
 [v3.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.1
+[v3.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.2
