@@ -3,6 +3,9 @@
 AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
+  Exclude:
+    - 'pkg/**/*'
+    - 'vendor/**/*'
 
 Metrics/MethodLength:
   Max: 25
