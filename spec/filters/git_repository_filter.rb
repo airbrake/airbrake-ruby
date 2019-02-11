@@ -5,6 +5,26 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
     Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
   end
 
+  describe "#initialize" do
+    it "parses standard git version" do
+      allow_any_instance_of(Kernel).
+        to receive(:`).and_return('git version 2.18.0')
+      expect { subject }.not_to raise_error
+    end
+
+    it "parses release candidate git version" do
+      allow_any_instance_of(Kernel).
+        to receive(:`).and_return('git version 2.21.0-rc0')
+      expect { subject }.not_to raise_error
+    end
+
+    it "parses git version with brackets" do
+      allow_any_instance_of(Kernel).
+        to receive(:`).and_return('git version 2.17.2 (Apple Git-113)')
+      expect { subject }.not_to raise_error
+    end
+  end
+
   context "when context/repository is defined" do
     it "doesn't attach anything to context/repository" do
       notice[:context][:repository] = 'git@github.com:kyrylo/test.git'

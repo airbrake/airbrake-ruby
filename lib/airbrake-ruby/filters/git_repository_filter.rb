@@ -11,7 +11,7 @@ module Airbrake
       def initialize(root_directory)
         @git_path = File.join(root_directory, '.git')
         @repository = nil
-        @git_version = Gem::Version.new(`git --version`.split.last)
+        @git_version = Gem::Version.new(`git --version`.split[2])
         @weight = 116
       end
 
