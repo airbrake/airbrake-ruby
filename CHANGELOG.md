@@ -3,6 +3,14 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.2.1][v3.2.1] (Febuary 11, 2019)
+
+* Fixed `Malformed version number string` in `GitRepositoryFilter` when
+  detecting Git version
+  ([#409](https://github.com/airbrake/airbrake-ruby/pull/409))
+* Fixed JRuby installing `rbtree3` instead of `rbtree-jruby`
+  ([#408](https://github.com/airbrake/airbrake-ruby/pull/408))
+
 ### [v3.2.0][v3.2.0] (February 8, 2019)
 
 * Dropped `tdigest` dependency. Airbrake Ruby imports that code, instead
@@ -603,3 +611,4 @@ Airbrake Ruby Changelog
 [v3.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.0.0
 [v3.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.1.0
 [v3.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.0
+[v3.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.1
