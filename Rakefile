@@ -14,7 +14,7 @@ namespace :ruby do
   spec = modify_base_gemspec do |s|
     # We keep this dependency in Gemfile, so we can run CI builds. When we
     # generate gems, duplicate dependencies are not allowed.
-    s.dependencies.delete_if { |d| d.name == 'rbtree3' }
+    s.dependencies.delete_if { |d| d.name == 'rbtree-jruby' || 'rbtree3' }
 
     s.platform = Gem::Platform::RUBY
     s.add_dependency('rbtree3', '~> 0.5')
@@ -30,7 +30,7 @@ namespace :jruby do
   spec = modify_base_gemspec do |s|
     # We keep this dependency in Gemfile, so we can run CI builds. When we
     # generate gems, duplicate dependencies are not allowed.
-    s.dependencies.delete_if { |d| d.name == 'rbtree-jruby' }
+    s.dependencies.delete_if { |d| d.name == 'rbtree-jruby' || 'rbtree3' }
 
     s.platform = 'java'
     s.add_dependency('rbtree-jruby', '~> 0.2')

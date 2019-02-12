@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.2.3][v3.2.3] (Feburary 12, 2019)
+
 * Fixed `no implicit conversion of Array into String` raised by
   `FilterChain#inspect` when no filters were added
   ([#414](https://github.com/airbrake/airbrake-ruby/pull/414))
@@ -623,3 +625,4 @@ Airbrake Ruby Changelog
 [v3.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.0
 [v3.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.1
 [v3.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.2
+[v3.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.3
