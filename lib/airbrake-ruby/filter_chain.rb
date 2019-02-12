@@ -76,7 +76,7 @@ module Airbrake
 
     # @return [String] customized inspect to lessen the amount of clutter
     def inspect
-      @filters.map(&:class)
+      @filters.map(&:class).to_s
     end
 
     # @return [String] {#inspect} for PrettyPrint
@@ -84,7 +84,7 @@ module Airbrake
       q.text('[')
 
       # Make nesting of the first element consistent on JRuby and MRI.
-      q.nest(2) { q.breakable }
+      q.nest(2) { q.breakable } if @filters.any?
 
       q.nest(2) do
         q.seplist(@filters) { |f| q.pp(f.class) }

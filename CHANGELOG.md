@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `no implicit conversion of Array into String` raised by
+  `FilterChain#inspect` when no filters were added
+  ([#414](https://github.com/airbrake/airbrake-ruby/pull/414))
+
 ### [v3.2.2][v3.2.2] (Febuary 11, 2019)
 
 * Fixed ``undefined method `notify_request'`` when calling
