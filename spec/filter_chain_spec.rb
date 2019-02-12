@@ -80,4 +80,15 @@ RSpec.describe Airbrake::FilterChain do
       expect(notice[:params][:foo]).to eq([2])
     end
   end
+
+  describe "#inspect" do
+    it "returns a string representation of an empty FilterChain" do
+      expect(subject.inspect).to eq('[]')
+    end
+
+    it "returns a string representation of a non-empty FilterChain" do
+      subject.add_filter(proc {})
+      expect(subject.inspect).to eq('[Proc]')
+    end
+  end
 end
