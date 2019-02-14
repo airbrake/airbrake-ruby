@@ -206,7 +206,7 @@ module Airbrake
     def route_stats=(value)
       logger.warn(
         "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
-        "Use 'performance_stats_flush_period' instead"
+        "Use 'performance_stats' instead"
       )
       @performance_stats = value
     end
