@@ -43,7 +43,7 @@ namespace :jruby do
 end
 
 desc 'Build all platform gems at once'
-task gems: %w[ruby:gem jruby:gem]
+task gems: %w[ruby:clobber_package ruby:gem jruby:gem]
 
 desc 'Build and push platform gems'
 task pushgems: :gems do
