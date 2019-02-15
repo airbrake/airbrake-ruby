@@ -50,4 +50,12 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
       )
     end
   end
+
+  context "when git is not in PATH" do
+    it "does not attach context/repository" do
+      ENV['PATH'] = ''
+      subject.call(notice)
+      expect(notice[:context][:repository]).to be_nil
+    end
+  end
 end

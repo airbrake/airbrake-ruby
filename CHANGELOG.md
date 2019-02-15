@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed ``undefined method `split' for nil:NilClass`` in `GitRepositoryFilter`
+  when `git` is not installed
+  ([#417](https://github.com/airbrake/airbrake-ruby/pull/417))
+
 ### [v3.2.3][v3.2.3] (Feburary 12, 2019)
 
 * Fixed `no implicit conversion of Array into String` raised by
