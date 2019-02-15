@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.2.4][v3.2.4] (Feburary 15, 2019)
+
 * Fixed ``undefined method `split' for nil:NilClass`` in `GitRepositoryFilter`
   when `git` is not installed
   ([#417](https://github.com/airbrake/airbrake-ruby/pull/417))
@@ -630,3 +632,4 @@ Airbrake Ruby Changelog
 [v3.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.1
 [v3.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.2
 [v3.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.3
+[v3.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.4
