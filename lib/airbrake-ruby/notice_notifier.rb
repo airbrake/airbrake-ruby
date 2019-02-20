@@ -7,9 +7,6 @@ module Airbrake
   # @api public
   # rubocop:disable Metrics/ClassLength
   class NoticeNotifier
-    # @return [String] the label to be prepended to the log output
-    LOG_LABEL = '**Airbrake:'.freeze
-
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
       Airbrake::Filters::SystemExitFilter,
