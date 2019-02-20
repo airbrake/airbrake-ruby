@@ -137,12 +137,24 @@ module Airbrake
   # @see Airbrake.notify_query
   # @api public
   # @since v3.2.0
-  Query = Struct.new(:method, :route, :query, :start_time, :end_time) do
+  # rubocop:disable Metrics/ParameterLists, Metrics/BlockLength
+  Query = Struct.new(
+    :method, :route, :query, :func, :file, :line, :start_time, :end_time
+  ) do
     include HashKeyable
     include Ignorable
 
-    def initialize(method:, route:, query:, start_time:, end_time: Time.now)
-      super(method, route, query, start_time, end_time)
+    def initialize(
+      method:,
+      route:,
+      query:,
+      func: nil,
+      file: nil,
+      line: nil,
+      start_time:,
+      end_time: Time.now
+    )
+      super(method, route, query, func, file, line, start_time, end_time)
     end
 
     def name
@@ -154,8 +166,12 @@ module Airbrake
         'method' => method,
         'route' => route,
         'query' => query,
-        'time' => TimeTruncate.utc_truncate_minutes(start_time)
+        'time' => TimeTruncate.utc_truncate_minutes(start_time),
+        'function' => func,
+        'file' => file,
+        'line' => line
       }
     end
+    # rubocop:enable Metrics/ParameterLists, Metrics/BlockLength
   end
 end

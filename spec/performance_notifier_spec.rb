@@ -19,6 +19,38 @@ RSpec.describe Airbrake::PerformanceNotifier do
   end
 
   describe "#notify" do
+    it "sends full query" do
+      subject.notify(
+        Airbrake::Query.new(
+          method: 'POST',
+          route: '/foo',
+          query: 'SELECT * FROM things',
+          func: 'foo',
+          file: 'foo.rb',
+          line: 123,
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+        )
+      )
+
+      expect(
+        a_request(:put, queries).with(body: %r|
+          \A{"queries":\[{
+            "method":"POST",
+            "route":"/foo",
+            "query":"SELECT\s\*\sFROM\sthings",
+            "time":"2018-01-01T00:49:00\+00:00",
+            "function":"foo",
+            "file":"foo.rb",
+            "line":123,
+            "count":1,
+            "sum":60000.0,
+            "sumsq":3600000000.0,
+            "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
+          }\]}\z|x)
+      ).to have_been_made
+    end
+
     it "rounds time to the floor minute" do
       subject.notify(
         Airbrake::Request.new(
