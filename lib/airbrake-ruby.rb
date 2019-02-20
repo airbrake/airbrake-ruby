@@ -43,7 +43,7 @@ require 'airbrake-ruby/stat'
 require 'airbrake-ruby/time_truncate'
 require 'airbrake-ruby/tdigest'
 require 'airbrake-ruby/query'
-require 'airbrake-ruby/route'
+require 'airbrake-ruby/request'
 
 # This module defines the Airbrake API. The user is meant to interact with
 # Airbrake via its public class methods. Before using the library, you must to
