@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Reduced clutter of `DeployNotifier` and `PerformanceNotifier` when
+  `inspect`ing ([#421](https://github.com/airbrake/airbrake-ruby/pull/421))
+
 ### [v3.2.5][v3.2.5] (Feburary 20, 2019)
 
 * Added the ability to attach caller location to `Airbrake::Query` (function,

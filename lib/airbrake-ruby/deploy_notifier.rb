@@ -10,6 +10,8 @@ module Airbrake
   # @api public
   # @since v3.2.0
   class DeployNotifier
+    include Inspectable
+
     # @param [Airbrake::Config] config
     def initialize(config)
       @config =
