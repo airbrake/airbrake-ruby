@@ -10,12 +10,6 @@ module Airbrake
     # @return [String] the label to be prepended to the log output
     LOG_LABEL = '**Airbrake:'.freeze
 
-    # @return [String] inspect output template
-    INSPECT_TEMPLATE =
-      "#<#{self}:0x%<id>s project_id=\"%<project_id>s\" " \
-      "project_key=\"%<project_key>s\" " \
-      "host=\"%<host>s\" filter_chain=%<filter_chain>s>".freeze
-
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
       Airbrake::Filters::SystemExitFilter,
@@ -24,6 +18,8 @@ module Airbrake
       # Optional filters (must be included by users):
       # Airbrake::Filters::ThreadFilter
     ].freeze
+
+    include Inspectable
 
     # Creates a new notice notifier with the given config options.
     #
@@ -114,29 +110,6 @@ module Airbrake
     # @macro see_public_api_method
     def merge_context(context)
       @context.merge!(context)
-    end
-
-    # @return [String] customized inspect to lessen the amount of clutter
-    def inspect
-      format(
-        INSPECT_TEMPLATE,
-        id: (object_id << 1).to_s(16).rjust(16, '0'),
-        project_id: @config.project_id,
-        project_key: @config.project_key,
-        host: @config.host,
-        filter_chain: @filter_chain.inspect
-      )
-    end
-
-    # @return [String] {#inspect} for PrettyPrint
-    def pretty_print(q)
-      q.text("#<#{self.class}:0x#{(object_id << 1).to_s(16).rjust(16, '0')} ")
-      q.text(
-        "project_id=\"#{@config.project_id}\" project_key=\"#{@config.project_key}\" " \
-        "host=\"#{@config.host}\" filter_chain="
-      )
-      q.pp(@filter_chain)
-      q.text('>')
     end
 
     private
