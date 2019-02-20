@@ -6,12 +6,14 @@ module Airbrake
   # @since v3.2.0
   # rubocop:disable Metrics/ParameterLists, Metrics/BlockLength
   Query = Struct.new(
-    :method, :route, :query, :func, :file, :line, :start_time, :end_time
+    :environment, :method, :route, :query, :func, :file, :line, :start_time,
+    :end_time
   ) do
     include HashKeyable
     include Ignorable
 
     def initialize(
+      environment: nil,
       method:,
       route:,
       query:,
@@ -21,7 +23,10 @@ module Airbrake
       start_time:,
       end_time: Time.now
     )
-      super(method, route, query, func, file, line, start_time, end_time)
+      super(
+        environment, method, route, query, func, file, line, start_time,
+        end_time
+      )
     end
 
     def name
@@ -30,6 +35,7 @@ module Airbrake
 
     def to_h
       {
+        'environment' => environment,
         'method' => method,
         'route' => route,
         'query' => query,
@@ -37,7 +43,7 @@ module Airbrake
         'function' => func,
         'file' => file,
         'line' => line
-      }
+      }.delete_if { |_key, val| val.nil? }
     end
     # rubocop:enable Metrics/ParameterLists, Metrics/BlockLength
   end

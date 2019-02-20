@@ -827,6 +827,7 @@ displayed on the Performance tab of your project.
 
 ```ruby
 Airbrake.notify_query(
+  environment: 'production', # optional
   method: 'GET',
   route: '/things/1',
   query: 'SELECT * FROM foos',

@@ -496,6 +496,7 @@ module Airbrake
     #   )
     #
     # @param [Hash{Symbol=>Object}] query_info
+    # @option request_info [String] :environment (optional)
     # @option request_info [String] :method The HTTP method that triggered this
     #   SQL query (optional)
     # @option request_info [String] :route The route that triggered this SQL
