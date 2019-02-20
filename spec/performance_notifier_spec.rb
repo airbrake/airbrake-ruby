@@ -22,6 +22,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     it "sends full query" do
       subject.notify(
         Airbrake::Query.new(
+          environment: 'development',
           method: 'POST',
           route: '/foo',
           query: 'SELECT * FROM things',
@@ -36,6 +37,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       expect(
         a_request(:put, queries).with(body: %r|
           \A{"queries":\[{
+            "environment":"development",
             "method":"POST",
             "route":"/foo",
             "query":"SELECT\s\*\sFROM\sthings",
@@ -43,6 +45,34 @@ RSpec.describe Airbrake::PerformanceNotifier do
             "function":"foo",
             "file":"foo.rb",
             "line":123,
+            "count":1,
+            "sum":60000.0,
+            "sumsq":3600000000.0,
+            "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
+          }\]}\z|x)
+      ).to have_been_made
+    end
+
+    it "sends full request" do
+      subject.notify(
+        Airbrake::Request.new(
+          environment: 'development',
+          method: 'POST',
+          route: '/foo',
+          status_code: 200,
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+        )
+      )
+
+      expect(
+        a_request(:put, routes).with(body: %r|
+          \A{"routes":\[{
+            "environment":"development",
+            "method":"POST",
+            "route":"/foo",
+            "statusCode":200,
+            "time":"2018-01-01T00:49:00\+00:00",
             "count":1,
             "sum":60000.0,
             "sumsq":3600000000.0,
