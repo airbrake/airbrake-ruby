@@ -4,7 +4,7 @@ Airbrake Ruby Changelog
 ### master
 
 * Reduced clutter of `DeployNotifier` and `PerformanceNotifier` when
-  `inspect`ing ([#421](https://github.com/airbrake/airbrake-ruby/pull/421))
+  `inspect`ing ([#423](https://github.com/airbrake/airbrake-ruby/pull/423))
 
 ### [v3.2.5][v3.2.5] (Feburary 20, 2019)
 
