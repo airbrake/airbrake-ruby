@@ -830,8 +830,11 @@ Airbrake.notify_query(
   method: 'GET',
   route: '/things/1',
   query: 'SELECT * FROM foos',
+  func: 'foo', # optional
+  file: 'foo.rb', # optional
+  line: 123, # optional
   start_time: Time.new - 200,
-  end_time: Time.new
+  end_time: Time.new # optional
 )
 ```
 

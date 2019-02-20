@@ -450,6 +450,9 @@ module Airbrake
     #     method: 'POST',
     #     route: '/thing/:id/create',
     #     status_code: 200,
+    #     func: 'do_stuff',
+    #     file: 'app/models/foo.rb',
+    #     line: 452,
     #     start_time: timestamp,
     #     end_time: Time.now
     #   )
@@ -457,7 +460,14 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] request_info
     # @option request_info [String] :method The HTTP method that was invoked
     # @option request_info [String] :route The route that was invoked
-    # @option request_info [Integer] :status_code The respose code that the route returned
+    # @option request_info [Integer] :status_code The respose code that the
+    #   route returned
+    # @option request_info [String] :func The function that called the query
+    #   (optional)
+    # @option request_info [String] :file The file that has the function that
+    #   called the query (optional)
+    # @option request_info [Integer] :line The line that executes the query
+    #   (optional)
     # @option request_info [Date] :start_time When the request started
     # @option request_info [Time] :end_time When the request ended (optional)
     # @return [void]
