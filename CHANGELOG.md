@@ -3,6 +3,14 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v3.2.5][v3.2.5] (Feburary 20, 2019)
+
+* Added the ability to attach caller location to `Airbrake::Query` (function,
+  file, line) ([#419](https://github.com/airbrake/airbrake-ruby/pull/419))
+* Added the ability to attach environment to `Airbrake::Query` &
+  `Airbrake::Request`
+  ([#421](https://github.com/airbrake/airbrake-ruby/pull/421))
+
 ### [v3.2.4][v3.2.4] (Feburary 15, 2019)
 
 * Fixed ``undefined method `split' for nil:NilClass`` in `GitRepositoryFilter`
@@ -633,3 +641,4 @@ Airbrake Ruby Changelog
 [v3.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.2
 [v3.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.3
 [v3.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.4
+[v3.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.5
