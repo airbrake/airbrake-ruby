@@ -379,8 +379,7 @@ module Airbrake
       @notice_notifiers[:default].close
     end
 
-    # Pings the Airbrake Deploy API endpoint about the occurred deploy. This
-    # method is used by the airbrake gem for various integrations.
+    # Pings the Airbrake Deploy API endpoint about the occurred deploy.
     #
     # @param [Hash{Symbol=>String}] deploy_info The params for the API
     # @option deploy_info [Symbol] :environment
@@ -389,8 +388,19 @@ module Airbrake
     # @option deploy_info [Symbol] :revision
     # @option deploy_info [Symbol] :version
     # @return [void]
-    def create_deploy(deploy_info)
+    def notify_deploy(deploy_info)
       @deploy_notifiers[:default].notify(deploy_info)
+    end
+
+    # @see notify_deploy
+    def create_deploy(deploy_info)
+      loc = caller_locations(1..1).first
+      signature = "#{self}##{__method__}"
+      warn(
+        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. Call " \
+        "#{self}#notify_deploy instead"
+      )
+      notify_deploy(deploy_info)
     end
 
     # Merges +context+ with the current context.
