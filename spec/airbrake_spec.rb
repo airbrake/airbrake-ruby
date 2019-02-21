@@ -121,12 +121,12 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe ".create_deploy" do
+  describe ".notify_deploy" do
     let(:default_notifier) { described_class.notifiers[:deploy][:default] }
 
     it "calls 'notify' on the deploy notifier" do
       expect(default_notifier).to receive(:notify).with(foo: 'bar')
-      described_class.create_deploy(foo: 'bar')
+      described_class.notify_deploy(foo: 'bar')
     end
   end
 
