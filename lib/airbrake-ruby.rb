@@ -127,14 +127,6 @@ module Airbrake
     def merge_context(_context); end
   end
 
-  # @deprecated Use {Airbrake::NoticeNotifier} instead
-  Notifier = NoticeNotifier
-  deprecate_constant(:Notifier) if respond_to?(:deprecate_constant)
-
-  # @deprecated Use {Airbrake::NilNoticeNotifier} instead
-  NilNotifier = NilNoticeNotifier
-  deprecate_constant(:NilNotifier) if respond_to?(:deprecate_constant)
-
   # NilPerformanceNotifier is a no-op notifier, which mimics
   # {Airbrake::PerformanceNotifier} and serves only the purpose of making the
   # library API easier to use.
