@@ -32,8 +32,7 @@ Key features
 * Awesome performance (check out our benchmarks)<sup>[[link](#running-benchmarks)]</sup>
 * Asynchronous exception reporting<sup>[[link](#asynchronous-airbrake-options)]</sup>
 * Promise support<sup>[[link](#promise)]</sup>
-* Flexible configuration options (configure as many Airbrake notifers in one
-  application as you want)<sup>[[link](#configuration)]</sup>
+* Flexible configuration options<sup>[[link](#configuration)]</sup>
 * Support for proxying<sup>[[link](#proxy)]</sup>
 * Support for environments<sup>[[link](#environment)]</sup>
 * Filters support (filter out sensitive or unwanted data that shouldn't be sent)<sup>[[link](#airbrakeadd_filter)]</sup>
@@ -70,10 +69,8 @@ Invoke the following command from your terminal:
 gem install airbrake-ruby
 ```
 
-Examples
---------
-
-### Basic example
+Example
+-------
 
 This is the minimal example that you can use to test Airbrake Ruby with your
 project.
@@ -111,64 +108,8 @@ puts "\nAnother ZeroDivisionError was sent to Airbrake, but this time synchronou
      "See it at #{response['url']}"
 ```
 
-### Creating a named notifier
-
-A named notifier can co-exist with the default notifier. You can have as many
-notifiers configured differently as you want.
-
-```ruby
-require 'airbrake-ruby'
-
-# Configure first notifier for Project A.
-Airbrake.configure(:project_a) do |c|
-  c.project_id = 105138
-  c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
-end
-
-# Configure second notifier for Project B.
-Airbrake.configure(:project_b) do |c|
-  c.project_id = 123
-  c.project_key = '321'
-end
-
-params = { time: Time.now }
-
-# Send an exception to Project A.
-Airbrake[:project_a].notify('Oops!', params)
-
-# Send an exception to Project B.
-Airbrake[:project_b].notify('Oops!', params)
-
-# Wait for the notifiers to finish their work and make them inactive.
-%i(project_a project_b).each { |notifier_name| Airbrake[notifier_name].close }
-```
-
 Configuration
 -------------
-
-Before using the library and its notifiers, you must configure them. In most
-cases, it is sufficient to configure only one, default, notifier.
-
-```ruby
-Airbrake.configure do |c|
-  c.project_id = 105138
-  c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
-end
-```
-
-Many notifiers can co-exist at the same time. To configure a new notifier,
-simply provide an argument for the `configure` method.
-
-```ruby
-Airbrake.configure(:my_notifier) do |c|
-  c.project_id = 105138
-  c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
-end
-```
-
-You cannot reconfigure already configured notifiers.
-
-### Config options
 
 #### project_id & project_key
 

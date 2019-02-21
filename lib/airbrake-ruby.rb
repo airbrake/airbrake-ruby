@@ -205,21 +205,12 @@ module Airbrake
       }
     end
 
-    # Configures a new +notifier+ with the given name. If the name is not given,
-    # configures the default notifier.
+    # Configures the Airbrake notifier.
     #
     # @example Configuring the default notifier
     #   Airbrake.configure do |c|
     #     c.project_id = 113743
     #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
-    #   end
-    #
-    # @example Configuring a named notifier
-    #   # Configure a new Airbrake instance and
-    #   # assign +:my_other_project+ as its name.
-    #   Airbrake.configure(:my_other_project) do |c|
-    #     c.project_id = 224854
-    #     c.project_key = '91ac5e4a37496026c6837f63276ed2b6'
     #   end
     #
     # @param [Symbol] notifier_name the name to be associated with the notifier
@@ -233,6 +224,15 @@ module Airbrake
     # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
     def configure(notifier_name = :default)
+      unless notifier_name == :default
+        loc = caller_locations(1..1).first
+        warn(
+          "#{loc.path}:#{loc.lineno}: warning: configuring a notifier with a " \
+          "custom name is deprecated. This feature will be removed from " \
+          "airbrake-ruby v4 altogether."
+        )
+      end
+
       yield config = Airbrake::Config.new
 
       if @notice_notifiers.key?(notifier_name)
