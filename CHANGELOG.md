@@ -6,6 +6,8 @@ Airbrake Ruby Changelog
 * Reduced clutter of `DeployNotifier` and `PerformanceNotifier` when
   `inspect`ing ([#423](https://github.com/airbrake/airbrake-ruby/pull/423))
 * Deprecated `Airbrake.create_deploy` in favour of `Airbrake.notify_deploy`
+* Deprecated `Airbrake.configure(:name)` in favour of `Airbrake.configure` or
+  `Airbrake::NoticeNotifier.new`
 
 ### [v3.2.5][v3.2.5] (Feburary 20, 2019)
 
