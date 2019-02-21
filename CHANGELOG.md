@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Renamed `Airbrake.create_deploy` to `Airbrake.notify_deploy`
+
 ### [v3.2.6][v3.2.6] (Feburary 25, 2019)
 
 * Reduced clutter of `DeployNotifier` and `PerformanceNotifier` when

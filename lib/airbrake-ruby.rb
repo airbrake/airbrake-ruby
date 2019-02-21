@@ -160,7 +160,7 @@ module Airbrake
   #
   # @since v3.2.0
   class NilDeployNotifier
-    # @see Airbrake.create_deploy
+    # @see Airbrake.notify_deploy
     def notify(_deploy_info); end
   end
 
@@ -405,17 +405,6 @@ module Airbrake
     # @return [void]
     def notify_deploy(deploy_info)
       @deploy_notifiers[:default].notify(deploy_info)
-    end
-
-    # @see notify_deploy
-    def create_deploy(deploy_info)
-      loc = caller_locations(1..1).first
-      signature = "#{self}##{__method__}"
-      warn(
-        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. Call " \
-        "#{self}#notify_deploy instead"
-      )
-      notify_deploy(deploy_info)
     end
 
     # Merges +context+ with the current context.
