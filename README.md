@@ -47,7 +47,7 @@ Key features
 * Support for code hunks (lines of code surrounding each backtrace frame)<sup>[[link](#code_hunks)]</sup>
 * Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
 * Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
-* Automatic and manual deploy tracking <sup>[[link](#airbrakecreate_deploy)]</sup>
+* Automatic and manual deploy tracking <sup>[[link](#airbrakenotify_deploy)]</sup>
 * Performance monitoring for web applications (route statistics, SQL queries) <sup>[[link](#performance_stats)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
@@ -718,12 +718,12 @@ at_exit do
 end
 ```
 
-#### Airbrake.create_deploy
+#### Airbrake.notify_deploy
 
 Notifies Airbrake of a new deploy. Accepts a Hash with the following params:
 
 ```ruby
-Airbrake.create_deploy(
+Airbrake.notify_deploy(
   environment: 'development',
   username: 'john',
   repository: 'https://github.com/airbrake/airbrake-ruby',

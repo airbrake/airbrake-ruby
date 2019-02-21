@@ -30,7 +30,7 @@ module Airbrake
       @sender = SyncSender.new(@config)
     end
 
-    # @see Airbrake.create_deploy
+    # @see Airbrake.notify_deploy
     def notify(deploy_info, promise = Airbrake::Promise.new)
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")
