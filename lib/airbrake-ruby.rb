@@ -220,7 +220,6 @@ module Airbrake
     #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
     #   end
     #
-    # @param [Symbol] notifier_name the name to be associated with the notifier
     # @yield [config] The configuration object
     # @yieldparam config [Airbrake::Config]
     # @return [void]
@@ -230,33 +229,18 @@ module Airbrake
     #   is missing (or both)
     # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
-    def configure(notifier_name = :default)
-      unless notifier_name == :default
-        loc = caller_locations(1..1).first
-        warn(
-          "#{loc.path}:#{loc.lineno}: warning: configuring a notifier with a " \
-          "custom name is deprecated. This feature will be removed from " \
-          "airbrake-ruby v4 altogether."
-        )
-      end
-
+    def configure
       yield config = Airbrake::Config.new
 
-      if @notice_notifiers.key?(notifier_name)
-        raise Airbrake::Error,
-              "the '#{notifier_name}' notifier was already configured"
+      if @notice_notifiers.key?(:default)
+        raise Airbrake::Error, 'Airbrake was already configured'
       end
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
-      # TODO: Kludge to avoid
-      # https://github.com/airbrake/airbrake-ruby/issues/406
-      # Stop passing perf_notifier to NoticeNotifier as soon as possible.
-      perf_notifier = PerformanceNotifier.new(config)
-      @performance_notifiers[notifier_name] = perf_notifier
-      @notice_notifiers[notifier_name] = NoticeNotifier.new(config, perf_notifier)
-
-      @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
+      @performance_notifiers[:default] = PerformanceNotifier.new(config)
+      @notice_notifiers[:default] = NoticeNotifier.new(config)
+      @deploy_notifiers[:default] = DeployNotifier.new(config)
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise

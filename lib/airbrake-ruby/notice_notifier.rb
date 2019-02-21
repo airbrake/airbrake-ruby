@@ -26,13 +26,12 @@ module Airbrake
     #   notice_notifier = Airbrake::NoticeNotifier.new(config)
     #
     # @param [Airbrake::Config] config
-    def initialize(config, perf_notifier = nil)
+    def initialize(config)
       @config = config
       @context = {}
       @filter_chain = FilterChain.new
       @async_sender = AsyncSender.new(config)
       @sync_sender = SyncSender.new(config)
-      @perf_notifier = perf_notifier
 
       add_default_filters
     end
