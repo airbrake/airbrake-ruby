@@ -36,28 +36,12 @@ RSpec.describe Airbrake do
       end.to yield_with_args(Airbrake::Config)
     end
 
-    context "when invoked with a notice notifier name" do
-      it "sets notice notifier name to the provided name" do
-        described_class.configure(:test) { |c| c.merge(config_params) }
-        expect(described_class[:test]).to be_an(Airbrake::NoticeNotifier)
-      end
-    end
-
-    context "when invoked without a notifier name" do
-      it "defaults to the :default notifier name" do
-        described_class.configure { |c| c.merge(config_params) }
-        expect(described_class[:default]).to be_an(Airbrake::NoticeNotifier)
-      end
-    end
-
-    context "when invoked twice with the same notifier name" do
+    context "when invoked twice" do
       it "raises Airbrake::Error" do
         described_class.configure { |c| c.merge(config_params) }
         expect do
           described_class.configure { |c| c.merge(config_params) }
-        end.to raise_error(
-          Airbrake::Error, "the 'default' notifier was already configured"
-        )
+        end.to raise_error(Airbrake::Error, 'Airbrake was already configured')
       end
     end
 
