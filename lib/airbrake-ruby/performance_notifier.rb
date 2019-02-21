@@ -9,21 +9,9 @@ module Airbrake
 
     # @param [Airbrake::Config] config
     def initialize(config)
-      @config =
-        if config.is_a?(Config)
-          config
-        else
-          loc = caller_locations(1..1).first
-          signature = "#{self.class.name}##{__method__}"
-          warn(
-            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
-            'is deprecated. Pass `Airbrake::Config` instead'
-          )
-          Config.new(config)
-        end
-
-      @flush_period = @config.performance_stats_flush_period
-      @sender = SyncSender.new(@config, :put)
+      @config = config
+      @flush_period = config.performance_stats_flush_period
+      @sender = SyncSender.new(config, :put)
       @payload = {}
       @schedule_flush = nil
       @mutex = Mutex.new
