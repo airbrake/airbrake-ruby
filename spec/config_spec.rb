@@ -77,22 +77,8 @@ RSpec.describe Airbrake::Config do
         expect(config.whitelist_keys).to be_empty
       end
 
-      it "disables route stats by default (deprecated)" do
-        out = StringIO.new
-        config.logger = Logger.new(out)
-        expect(config.route_stats).to be_falsey
-        expect(out.string).to match(/'route_stats'.+is deprecated/)
-      end
-
       it "disables performance stats by default" do
         expect(config.performance_stats).to be_falsey
-      end
-
-      it "sets the default route_stats_flush_period (deprecated)" do
-        out = StringIO.new
-        config.logger = Logger.new(out)
-        expect(config.route_stats_flush_period).to eq(15)
-        expect(out.string).to match(/'route_stats_flush_period'.+is deprecated/)
       end
 
       it "sets the default performance_stats_flush_period" do
