@@ -5,6 +5,7 @@ module Airbrake
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   # @api public
+  # rubocop:disable Metrics/ClassLength
   class NoticeNotifier
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
@@ -27,11 +28,23 @@ module Airbrake
     #
     # @param [Airbrake::Config] config
     def initialize(config, perf_notifier = nil)
-      @config = config
+      @config =
+        if config.is_a?(Config)
+          config
+        else
+          loc = caller_locations(1..1).first
+          signature = "#{self.class.name}##{__method__}"
+          warn(
+            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
+            'is deprecated. Pass `Airbrake::Config` instead'
+          )
+          Config.new(config)
+        end
+
       @context = {}
       @filter_chain = FilterChain.new
-      @async_sender = AsyncSender.new(config)
-      @sync_sender = SyncSender.new(config)
+      @async_sender = AsyncSender.new(@config)
+      @sync_sender = SyncSender.new(@config)
       @perf_notifier = perf_notifier
 
       add_default_filters
@@ -45,6 +58,15 @@ module Airbrake
     # @macro see_public_api_method
     def notify_sync(exception, params = {}, &block)
       send_notice(exception, params, @sync_sender, &block).value
+    end
+
+    # @deprecated Update the airbrake gem to v8.1.0 or higher
+    def notify_request(request_info, promise = Promise.new)
+      @config.logger.info(
+        "#{LOG_LABEL} #{self.class}##{__method__} is deprecated. Update " \
+        'the airbrake gem to v8.1.0 or higher'
+      )
+      @perf_notifier.notify(Request.new(request_info), promise)
     end
 
     # @macro see_public_api_method
@@ -172,4 +194,5 @@ module Airbrake
     end
     # rubocop:enable Metrics/AbcSize
   end
+  # rubocop:enable Metrics/ClassLength
 end

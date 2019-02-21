@@ -14,8 +14,20 @@ module Airbrake
 
     # @param [Airbrake::Config] config
     def initialize(config)
-      @config = config
-      @sender = SyncSender.new(config)
+      @config =
+        if config.is_a?(Config)
+          config
+        else
+          loc = caller_locations(1..1).first
+          signature = "#{self.class.name}##{__method__}"
+          warn(
+            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
+            'is deprecated. Pass `Airbrake::Config` instead'
+          )
+          Config.new(config)
+        end
+
+      @sender = SyncSender.new(@config)
     end
 
     # @see Airbrake.create_deploy

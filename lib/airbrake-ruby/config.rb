@@ -195,6 +195,38 @@ module Airbrake
       end
     end
 
+    def route_stats
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
+        "Use 'performance_stats' instead"
+      )
+      @performance_stats
+    end
+
+    def route_stats=(value)
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
+        "Use 'performance_stats' instead"
+      )
+      @performance_stats = value
+    end
+
+    def route_stats_flush_period
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats_flush_period' option is deprecated. " \
+        "Use 'performance_stats_flush_period' instead"
+      )
+      @performance_stats_flush_period
+    end
+
+    def route_stats_flush_period=(value)
+      logger.warn(
+        "#{LOG_LABEL} the 'route_stats_flush_period' option is deprecated. " \
+        "Use 'performance_stats' instead"
+      )
+      @performance_stats_flush_period = value
+    end
+
     private
 
     def set_option(option, value)
