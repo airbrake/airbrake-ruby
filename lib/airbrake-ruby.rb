@@ -183,6 +183,13 @@ module Airbrake
     # @return [Airbrake::NoticeNotifier, NilClass]
     # @since v1.8.0
     def [](notifier_name)
+      loc = caller_locations(1..1).first
+      signature = "#{self}##{__method__}"
+      warn(
+        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. It " \
+        "will be removed from airbrake-ruby v4 altogether."
+      )
+
       @notice_notifiers[notifier_name]
     end
 
