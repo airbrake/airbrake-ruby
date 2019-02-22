@@ -79,7 +79,6 @@ require 'airbrake-ruby/request'
 #
 # @see Airbrake::NoticeNotifier
 # @since v1.0.0
-# rubocop:disable Metrics/ModuleLength
 module Airbrake
   # The general error that this library uses when it wants to raise.
   Error = Class.new(StandardError)
@@ -174,24 +173,6 @@ module Airbrake
   @deploy_notifiers = Hash.new(NilDeployNotifier.new)
 
   class << self
-    # @return [Hash{Symbol=>Array<Object>}] a Hash with all configured notifiers
-    #   (notice, performance, deploy)
-    # @since v3.2.0
-    def notifiers
-      loc = caller_locations(1..1).first
-      signature = "#{self}##{__method__}"
-      warn(
-        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. It " \
-        "will be removed from airbrake-ruby v4 altogether."
-      )
-
-      {
-        notice: @notice_notifiers,
-        performance: @performance_notifiers,
-        deploy: @deploy_notifiers
-      }
-    end
-
     # Configures the Airbrake notifier.
     #
     # @example Configuring the default notifier
@@ -207,14 +188,9 @@ module Airbrake
     #   existing notifier
     # @raise [Airbrake::Error] when either +project_id+ or +project_key+
     #   is missing (or both)
-    # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
     def configure
       yield config = Airbrake::Config.new
-
-      if @notice_notifiers.key?(:default)
-        raise Airbrake::Error, 'Airbrake was already configured'
-      end
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
@@ -536,4 +512,3 @@ module Airbrake
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength
