@@ -79,6 +79,7 @@ require 'airbrake-ruby/request'
 #
 # @see Airbrake::NoticeNotifier
 # @since v1.0.0
+# rubocop:disable Metrics/ModuleLength
 module Airbrake
   # The general error that this library uses when it wants to raise.
   Error = Class.new(StandardError)
@@ -205,6 +206,13 @@ module Airbrake
     #   (notice, performance, deploy)
     # @since v3.2.0
     def notifiers
+      loc = caller_locations(1..1).first
+      signature = "#{self}##{__method__}"
+      warn(
+        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. It " \
+        "will be removed from airbrake-ruby v4 altogether."
+      )
+
       {
         notice: @notice_notifiers,
         performance: @performance_notifiers,
@@ -583,3 +591,4 @@ module Airbrake
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
