@@ -7,7 +7,7 @@ module Airbrake
   #   begin
   #     raise 'Oops!'
   #   rescue
-  #     Backtrace.parse($!, Logger.new(STDOUT))
+  #     Backtrace.parse($!)
   #   end
   #
   # @api private
@@ -114,6 +114,8 @@ module Airbrake
     end
 
     class << self
+      include Loggable
+
       private
 
       def best_regexp_for(exception)
@@ -140,7 +142,7 @@ module Airbrake
         false
       end
 
-      def stack_frame(config, regexp, stackframe)
+      def stack_frame(regexp, stackframe)
         if (match = match_frame(regexp, stackframe))
           return {
             file: match[:file],
@@ -149,7 +151,7 @@ module Airbrake
           }
         end
 
-        config.logger.error(
+        logger.error(
           "can't parse '#{stackframe}' (please file an issue so we can fix " \
           "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
         )
@@ -168,7 +170,7 @@ module Airbrake
         root_directory = config.root_directory.to_s
 
         exception.backtrace.map.with_index do |stackframe, i|
-          frame = stack_frame(config, regexp, stackframe)
+          frame = stack_frame(regexp, stackframe)
           next(frame) if !config.code_hunks || frame[:file].nil?
 
           if !root_directory.empty?

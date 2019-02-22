@@ -20,11 +20,11 @@ module Airbrake
       #   file (checkout information is omitted)
       MIN_HEAD_COLS = 6
 
-      # @param [Logger] logger
+      include Loggable
+
       # @param [String] root_directory
-      def initialize(logger, root_directory)
+      def initialize(root_directory)
         @git_path = File.join(root_directory, '.git')
-        @logger = logger
         @weight = 116
         @last_checkout = nil
       end
@@ -45,12 +45,13 @@ module Airbrake
 
       private
 
+      # rubocop:disable Metrics/AbcSize
       def last_checkout
         return unless (line = last_checkout_line)
 
         parts = line.chomp.split("\t").first.split(' ')
         if parts.size < MIN_HEAD_COLS
-          @logger.error(
+          logger.error(
             "#{LOG_LABEL} Airbrake::#{self.class.name}: can't parse line: #{line}"
           )
           return
@@ -64,6 +65,7 @@ module Airbrake
           time: timestamp(parts[-2].to_i)
         }
       end
+      # rubocop:enable Metrics/AbcSize
 
       def last_checkout_line
         head_path = File.join(@git_path, 'logs', 'HEAD')

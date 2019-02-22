@@ -11,14 +11,9 @@ RSpec.describe Airbrake::SyncSender do
 
   describe "#send" do
     let(:promise) { Airbrake::Promise.new }
-    let(:stdout) { StringIO.new }
 
     let(:config) do
-      Airbrake::Config.new(
-        project_id: 1,
-        project_key: 'banana',
-        logger: Logger.new(stdout)
-      )
+      Airbrake::Config.new(project_id: 1, project_key: 'banana')
     end
 
     let(:sender) { described_class.new(config) }
@@ -60,9 +55,11 @@ RSpec.describe Airbrake::SyncSender do
       https = double("foo")
       allow(sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
+      expect(Airbrake::Loggable.instance).to receive(:error).with(
+        /HTTP error: foo/
+      )
       expect(sender.send({}, promise)).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('error' => '**Airbrake: HTTP error: foo')
-      expect(stdout.string).to match(/ERROR -- : .+ HTTP error: foo/)
     end
 
     context "when request body is nil" do
@@ -80,10 +77,15 @@ RSpec.describe Airbrake::SyncSender do
 
         notice = Airbrake::Notice.new(config, ex)
 
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /data was not sent/
+        )
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /truncation failed/
+        )
         expect(sender.send(notice, promise)).to be_an(Airbrake::Promise)
         expect(promise.value).
           to match('error' => '**Airbrake: data was not sent because of missing body')
-        expect(stdout.string).to match(/ERROR -- : .+ data was not sent/)
       end
     end
 
