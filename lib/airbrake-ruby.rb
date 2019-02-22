@@ -138,27 +138,14 @@ module Airbrake
     def notify(_deploy_info); end
   end
 
-  # A Hash that holds all notice notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::NoticeNotifier} instances. If a notifier is
-  # not assigned to the hash, then it returns a null object (NilNoticeNotifier).
-  @notice_notifiers = Hash.new(NilNoticeNotifier.new)
-
-  # A Hash that holds all performance notifiers. The keys of the Hash are
-  # notifier names, the values are {Airbrake::PerformanceNotifier} instances. If
-  # a notifier is not assigned to the hash, then it returns a null object
-  # (NilPerformanceNotifier).
-  @performance_notifiers = Hash.new(NilPerformanceNotifier.new)
-
-  # A Hash that holds all deploy notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::DeployNotifier} instances. If a deploy
-  # notifier is not assigned to the hash, then it returns a null object
-  # (NilDeployNotifier).
-  @deploy_notifiers = Hash.new(NilDeployNotifier.new)
+  @notice_notifier = NilNoticeNotifier.new
+  @performance_notifier = NilPerformanceNotifier.new
+  @deploy_notifier = NilDeployNotifier.new
 
   class << self
     # Configures the Airbrake notifier.
     #
-    # @example Configuring the default notifier
+    # @example
     #   Airbrake.configure do |c|
     #     c.project_id = 113743
     #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
@@ -177,15 +164,15 @@ module Airbrake
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
-      @performance_notifiers[:default] = PerformanceNotifier.new(config)
-      @notice_notifiers[:default] = NoticeNotifier.new(config)
-      @deploy_notifiers[:default] = DeployNotifier.new(config)
+      @performance_notifier = PerformanceNotifier.new(config)
+      @notice_notifier = NoticeNotifier.new(config)
+      @deploy_notifier = DeployNotifier.new(config)
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
     # @since v2.3.0
     def configured?
-      @notice_notifiers[:default].configured?
+      @notice_notifier.configured?
     end
 
     # Sends an exception to Airbrake asynchronously.
@@ -210,7 +197,7 @@ module Airbrake
     # @return [Airbrake::Promise]
     # @see .notify_sync
     def notify(exception, params = {}, &block)
-      @notice_notifiers[:default].notify(exception, params, &block)
+      @notice_notifier.notify(exception, params, &block)
     end
 
     # Sends an exception to Airbrake synchronously.
@@ -230,7 +217,7 @@ module Airbrake
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
     def notify_sync(exception, params = {}, &block)
-      @notice_notifiers[:default].notify_sync(exception, params, &block)
+      @notice_notifier.notify_sync(exception, params, &block)
     end
 
     # Runs a callback before {.notify} or {.notify_sync} kicks in. This is
@@ -258,7 +245,7 @@ module Airbrake
     # @yieldreturn [void]
     # @return [void]
     def add_filter(filter = nil, &block)
-      @notice_notifiers[:default].add_filter(filter, &block)
+      @notice_notifier.add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_filter}.
@@ -275,7 +262,7 @@ module Airbrake
     # @since v3.1.0
     # @note This method cannot delete filters assigned via the Proc form.
     def delete_filter(filter_class)
-      @notice_notifiers[:default].delete_filter(filter_class)
+      @notice_notifier.delete_filter(filter_class)
     end
 
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
@@ -293,7 +280,7 @@ module Airbrake
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
     def build_notice(exception, params = {})
-      @notice_notifiers[:default].build_notice(exception, params)
+      @notice_notifier.build_notice(exception, params)
     end
 
     # Makes the notice notifier a no-op, which means you cannot use the
@@ -306,7 +293,7 @@ module Airbrake
     #
     # @return [void]
     def close
-      @notice_notifiers[:default].close
+      @notice_notifier.close
     end
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.
@@ -319,7 +306,7 @@ module Airbrake
     # @option deploy_info [Symbol] :version
     # @return [void]
     def notify_deploy(deploy_info)
-      @deploy_notifiers[:default].notify(deploy_info)
+      @deploy_notifier.notify(deploy_info)
     end
 
     # Merges +context+ with the current context.
@@ -367,7 +354,7 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] context
     # @return [void]
     def merge_context(context)
-      @notice_notifiers[:default].merge_context(context)
+      @notice_notifier.merge_context(context)
     end
 
     # Increments request statistics of a certain +route+ that was invoked on
@@ -406,7 +393,7 @@ module Airbrake
     # @since v3.0.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_request(request_info)
-      @performance_notifiers[:default].notify(Request.new(request_info))
+      @performance_notifier.notify(Request.new(request_info))
     end
 
     # Increments SQL statistics of a certain +query+ that was invoked on
@@ -438,7 +425,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_query(query_info)
-      @performance_notifiers[:default].notify(Query.new(query_info))
+      @performance_notifier.notify(Query.new(query_info))
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
@@ -473,7 +460,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#add_filter
     def add_performance_filter(filter = nil, &block)
-      @performance_notifiers[:default].add_filter(filter, &block)
+      @performance_notifier.add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_performance_filter}.
@@ -491,7 +478,7 @@ module Airbrake
     # @note This method cannot delete filters assigned via the Proc form.
     # @see Airbrake::PerformanceNotifier#delete_filter
     def delete_performance_filter(filter_class)
-      @performance_notifiers[:default].delete_filter(filter_class)
+      @performance_notifier.delete_filter(filter_class)
     end
   end
 end
