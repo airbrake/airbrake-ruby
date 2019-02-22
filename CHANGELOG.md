@@ -10,6 +10,7 @@ Airbrake Ruby Changelog
 * Deleted deprecated `Config#route_stats`, `Config#route_stats_flush_period`
 * `PerformanceNotifier`, `NoticeNotifier` & `DeployNotifier` stopped accepting
   deprecated Hash as a `config` object
+* Deleted deprecated `Airbrake#[]`
 
 * Reduced clutter of `DeployNotifier` and `PerformanceNotifier` when
   `inspect`ing ([#423](https://github.com/airbrake/airbrake-ruby/pull/423))

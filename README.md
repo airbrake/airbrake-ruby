@@ -403,17 +403,6 @@ API
 
 ### Airbrake
 
-#### Airbrake.[]
-
-Retrieves a configured *notice* notifier.
-
-```ruby
-Airbrake[:my_notifier] #=> Airbrake::NoticeNotifier
-```
-
-If the notifier is not configured, returns an instance of
-`Airbrake::NilNotifier` (a no-op version of `Airbrake::NoticeNotifier`).
-
 #### Airbrake.notifiers
 
 Returns a Hash with all notifiers (notice, performance, deploy).

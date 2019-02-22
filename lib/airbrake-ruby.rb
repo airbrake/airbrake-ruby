@@ -173,26 +173,6 @@ module Airbrake
   @deploy_notifiers = Hash.new(NilDeployNotifier.new)
 
   class << self
-    # Retrieves configured notifiers.
-    #
-    # @example
-    #   Airbrake[:my_notifier].notify('oops')
-    #
-    # @param [Symbol] notifier_name the name of the notice notifier you want to
-    #   use
-    # @return [Airbrake::NoticeNotifier, NilClass]
-    # @since v1.8.0
-    def [](notifier_name)
-      loc = caller_locations(1..1).first
-      signature = "#{self}##{__method__}"
-      warn(
-        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. It " \
-        "will be removed from airbrake-ruby v4 altogether."
-      )
-
-      @notice_notifiers[notifier_name]
-    end
-
     # @return [Hash{Symbol=>Array<Object>}] a Hash with all configured notifiers
     #   (notice, performance, deploy)
     # @since v3.2.0
