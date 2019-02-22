@@ -46,39 +46,22 @@ require 'airbrake-ruby/tdigest'
 require 'airbrake-ruby/query'
 require 'airbrake-ruby/request'
 
-# This module defines the Airbrake API. The user is meant to interact with
-# Airbrake via its public class methods. Before using the library, you must to
-# {configure} the default notifier.
+# Airbrake is a thin wrapper around instances of the notifier classes (such as
+# notice, performance & deploy notifiers). It creates a way to access them via a
+# consolidated global interface.
 #
-# The module supports multiple notifiers, each of which can be configured
-# differently. By default, every method is invoked in context of the default
-# notifier. To use a different notifier, you need to {configure} it first and
-# pass the notifier's name as the last argument of the method you're calling.
+# Prior to using it, you must {configure} it.
 #
-# You can have as many notifiers as you want, but they must have unique names.
-#
-# @example Configuring multiple notifiers and using them
-#   # Configure the default notifier.
+# @example
 #   Airbrake.configure do |c|
 #     c.project_id = 113743
 #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
 #   end
 #
-#   # Configure a named notifier.
-#   Airbrake.configure(:my_other_project) do |c|
-#     c.project_id = 224854
-#     c.project_key = '91ac5e4a37496026c6837f63276ed2b6'
-#   end
-#
-#   # Send an exception via the default notifier.
 #   Airbrake.notify('Oops!')
 #
-#   # Send an exception via other configured notifier.
-#   params = {}
-#   Airbrake[:my_other_project].notify('Oops', params)
-#
-# @see Airbrake::NoticeNotifier
 # @since v1.0.0
+# @api public
 module Airbrake
   # The general error that this library uses when it wants to raise.
   Error = Class.new(StandardError)
