@@ -16,6 +16,7 @@ module Airbrake
     ].freeze
 
     include Inspectable
+    include Loggable
 
     # Creates a new notice notifier with the given config options.
     #
@@ -120,7 +121,7 @@ module Airbrake
     def default_sender
       return @async_sender if @async_sender.has_workers?
 
-      @config.logger.warn(
+      logger.warn(
         "#{LOG_LABEL} falling back to sync delivery because there are no " \
         "running async workers"
       )
@@ -142,19 +143,15 @@ module Airbrake
       DEFAULT_FILTERS.each { |f| add_filter(f.new) }
 
       if (whitelist_keys = @config.whitelist_keys).any?
-        add_filter(
-          Airbrake::Filters::KeysWhitelist.new(@config.logger, whitelist_keys)
-        )
+        add_filter(Airbrake::Filters::KeysWhitelist.new(whitelist_keys))
       end
 
       if (blacklist_keys = @config.blacklist_keys).any?
-        add_filter(
-          Airbrake::Filters::KeysBlacklist.new(@config.logger, blacklist_keys)
-        )
+        add_filter(Airbrake::Filters::KeysBlacklist.new(blacklist_keys))
       end
 
       add_filter(Airbrake::Filters::ContextFilter.new(@context))
-      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new(@config.logger))
+      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new)
 
       return unless (root_directory = @config.root_directory)
       [
@@ -166,7 +163,7 @@ module Airbrake
       end
 
       add_filter(
-        Airbrake::Filters::GitLastCheckoutFilter.new(@config.logger, root_directory)
+        Airbrake::Filters::GitLastCheckoutFilter.new(root_directory)
       )
     end
     # rubocop:enable Metrics/AbcSize

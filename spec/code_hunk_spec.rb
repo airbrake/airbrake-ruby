@@ -1,6 +1,8 @@
 RSpec.describe Airbrake::CodeHunk do
   let(:config) { Airbrake::Config.new }
 
+  subject { described_class.new(config) }
+
   after do
     %w[empty_file.rb code.rb banana.rb short_file.rb long_line.txt].each do |f|
       Airbrake::FileCache[project_root_path(f)] = nil
@@ -105,13 +107,12 @@ RSpec.describe Airbrake::CodeHunk do
       end
 
       it "logs error and returns nil" do
-        out = StringIO.new
-        config = Airbrake::Config.new
-        config.logger = Logger.new(out)
-        expect(described_class.new(config).get(project_root_path('code.rb'), 1)).to(
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /can't read code hunk.+Permission denied/
+        )
+        expect(subject.get(project_root_path('code.rb'), 1)).to(
           eq(1 => '')
         )
-        expect(out.string).to match(/can't read code hunk.+Permission denied/)
       end
     end
   end

@@ -26,16 +26,16 @@ module Airbrake
       #   be modified by blacklist/whitelist filters
       FILTERABLE_CONTEXT_KEYS = %i[user headers].freeze
 
+      include Loggable
+
       # @return [Integer]
       attr_reader :weight
 
       # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
-      # @param [Logger, #error] logger
       # @param [Array<String,Regexp,Symbol>] patterns
-      def initialize(logger, patterns)
-        @logger = logger
+      def initialize(patterns)
         @patterns = patterns
         @valid_patterns = false
       end
@@ -122,7 +122,7 @@ module Airbrake
 
         return if @valid_patterns
 
-        @logger.error(
+        logger.error(
           "#{LOG_LABEL} one of the patterns in #{self.class} is invalid. " \
           "Known patterns: #{@patterns}"
         )

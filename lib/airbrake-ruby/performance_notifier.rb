@@ -6,6 +6,7 @@ module Airbrake
   # @since v3.2.0
   class PerformanceNotifier
     include Inspectable
+    include Loggable
 
     # @param [Airbrake::Config] config
     def initialize(config)
@@ -79,7 +80,7 @@ module Airbrake
       signature = "#{self.class.name}##{__method__}"
       raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
 
-      @config.logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
+      logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
 
       payload.group_by { |k, _v| k.name }.each do |resource_name, data|
         @sender.send(

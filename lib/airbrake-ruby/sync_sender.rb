@@ -9,6 +9,8 @@ module Airbrake
     # @return [String] body for HTTP requests
     CONTENT_TYPE = 'application/json'.freeze
 
+    include Loggable
+
     # @param [Airbrake::Config] config
     def initialize(config, method = :post)
       @config = config
@@ -35,11 +37,11 @@ module Airbrake
         response = https.request(req)
       rescue StandardError => ex
         reason = "#{LOG_LABEL} HTTP error: #{ex}"
-        @config.logger.error(reason)
+        logger.error(reason)
         return promise.reject(reason)
       end
 
-      parsed_resp = Response.parse(response, @config.logger)
+      parsed_resp = Response.parse(response)
       if parsed_resp.key?('rate_limit_reset')
         @rate_limit_reset = parsed_resp['rate_limit_reset']
       end
@@ -101,7 +103,7 @@ module Airbrake
 
       if missing
         reason = "#{LOG_LABEL} data was not sent because of missing body"
-        @config.logger.error(reason)
+        logger.error(reason)
         promise.reject(reason)
       end
 
