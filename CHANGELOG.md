@@ -18,6 +18,7 @@ Airbrake Ruby Changelog
 * Deprecated `Airbrake.configure(:name)` in favour of `Airbrake.configure` or
   `Airbrake::NoticeNotifier.new`
 * Deprecated `Airbrake#[]` in favour of `Airbrake::NoticeNotifier.new`
+* Deprecated `Airbrake#notifiers`
 
 ### [v3.2.5][v3.2.5] (Feburary 20, 2019)
 
