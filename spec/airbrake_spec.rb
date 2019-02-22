@@ -1,10 +1,4 @@
 RSpec.describe Airbrake do
-  describe ".[]" do
-    it "returns a NilNotifier" do
-      expect(described_class[:test]).to be_an(Airbrake::NilNoticeNotifier)
-    end
-  end
-
   describe ".notifiers" do
     it "returns a Hash of notifiers" do
       expect(described_class.notifiers).to eq(
@@ -14,7 +8,7 @@ RSpec.describe Airbrake do
   end
 
   let(:default_notifier) do
-    described_class[:default]
+    described_class.notifiers[:notice][:default]
   end
 
   describe ".configure" do
