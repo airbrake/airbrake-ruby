@@ -1,5 +1,5 @@
 RSpec.describe Airbrake::Filters::KeysBlacklist do
-  subject { described_class.new(Logger.new('/dev/null'), patterns) }
+  subject { described_class.new(patterns) }
 
   let(:notice) do
     Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
@@ -92,14 +92,11 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       )
 
       it "logs an error" do
-        out = StringIO.new
-        logger = Logger.new(out)
-        keys_blacklist = described_class.new(logger, patterns)
-        keys_blacklist.call(notice)
-
-        expect(out.string).to(
-          match(/ERROR.+KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/)
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/
         )
+        keys_blacklist = described_class.new(patterns)
+        keys_blacklist.call(notice)
       end
     end
 
@@ -108,14 +105,11 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
 
       context "and when the filter is called once" do
         it "logs an error" do
-          out = StringIO.new
-          logger = Logger.new(out)
-          keys_blacklist = described_class.new(logger, patterns)
-          keys_blacklist.call(notice)
-
-          expect(out.string).to(
-            match(/ERROR.+KeysBlacklist is invalid.+patterns: \[#<Proc:.+>\]/)
+          expect(Airbrake::Loggable.instance).to receive(:error).with(
+            /KeysBlacklist is invalid.+patterns: \[#<Proc:.+>\]/
           )
+          keys_blacklist = described_class.new(patterns)
+          keys_blacklist.call(notice)
         end
       end
 
@@ -140,14 +134,11 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
     )
 
     it "logs an error" do
-      out = StringIO.new
-      logger = Logger.new(out)
-      keys_blacklist = described_class.new(logger, patterns)
-      keys_blacklist.call(notice)
-
-      expect(out.string).to(
-        match(/ERROR.+KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/)
+      expect(Airbrake::Loggable.instance).to receive(:error).with(
+        /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/
       )
+      keys_blacklist = described_class.new(patterns)
+      keys_blacklist.call(notice)
     end
   end
 

@@ -5,7 +5,6 @@ module Airbrake
     #
     # @example
     #   filter = Airbrake::Filters::KeysBlacklist.new(
-    #     Logger.new(STDOUT),
     #     [:email, /credit/i, 'password']
     #   )
     #   airbrake.add_filter(filter)

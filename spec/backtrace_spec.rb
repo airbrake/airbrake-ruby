@@ -182,14 +182,11 @@ RSpec.describe Airbrake::Backtrace do
         ).to eq([file: nil, line: nil, function: 'a b c 1 23 321 .rb'])
       end
 
-      it "logs unknown frames as errors" do
-        out = StringIO.new
-        config.logger = Logger.new(out)
-
-        expect { described_class.parse(config, ex) }.
-          to change { out.string }.
-          from('').
-          to(/ERROR -- : can't parse 'a b c 1 23 321 .rb'/)
+      it "logs frames that cannot be parsed" do
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /can't parse 'a b c 1 23 321 .rb'/
+        )
+        described_class.parse(config, ex)
       end
     end
 

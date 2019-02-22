@@ -7,6 +7,7 @@ require 'socket'
 require 'time'
 
 require 'airbrake-ruby/version'
+require 'airbrake-ruby/loggable'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
 require 'airbrake-ruby/promise'
@@ -163,6 +164,8 @@ module Airbrake
       yield config = Airbrake::Config.new
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
+
+      Airbrake::Loggable.instance = config.logger
 
       @performance_notifier = PerformanceNotifier.new(config)
       @notice_notifier = NoticeNotifier.new(config)

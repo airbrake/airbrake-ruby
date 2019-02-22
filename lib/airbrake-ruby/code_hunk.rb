@@ -9,6 +9,8 @@ module Airbrake
     # @return [Integer] how many lines should be read around the base line
     NLINES = 2
 
+    include Loggable
+
     def initialize(config)
       @config = config
     end
@@ -31,7 +33,7 @@ module Airbrake
     def get_from_cache(file)
       Airbrake::FileCache[file] ||= File.foreach(file)
     rescue StandardError => ex
-      @config.logger.error(
+      logger.error(
         "#{self.class.name}: can't read code hunk for #{file}: #{ex}"
       )
       nil

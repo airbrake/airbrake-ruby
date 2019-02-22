@@ -1,5 +1,5 @@
 RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
-  subject { described_class.new(Logger.new(STDOUT), '.') }
+  subject { described_class.new('.') }
 
   let(:notice) do
     Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
@@ -14,7 +14,7 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
   end
 
   context "when .git directory doesn't exist" do
-    subject { described_class.new(Logger.new(STDOUT), 'root/dir') }
+    subject { described_class.new('root/dir') }
 
     it "doesn't attach anything to context/lastCheckout" do
       subject.call(notice)
