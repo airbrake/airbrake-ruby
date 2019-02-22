@@ -403,25 +403,6 @@ API
 
 ### Airbrake
 
-#### Airbrake.notifiers
-
-Returns a Hash with all notifiers (notice, performance, deploy).
-
-```ruby
-Airbrake.notifiers
-# {
-#   :notice => {
-#     :default => ...
-#   },
-#   :performance => {
-#     :default => ...
-#   },
-#   :deploy => {
-#     :default => ...
-#   }
-# }
-```
-
 #### Airbrake.notify
 
 Sends an exception to Airbrake asynchronously.
