@@ -10,6 +10,7 @@ Airbrake Ruby Changelog
 * `PerformanceNotifier`, `NoticeNotifier` & `DeployNotifier` stopped accepting
   deprecated Hash as a `config` object
 * Deleted deprecated `Airbrake#[]`
+* Deleted deprecated `Airbrake#notifiers`
 
 ### [v3.2.6][v3.2.6] (Feburary 25, 2019)
 
