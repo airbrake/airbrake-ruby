@@ -1,22 +1,25 @@
 RSpec.describe Airbrake::Notice do
-  let(:notice) do
-    described_class.new(Airbrake::Config.new, AirbrakeTestError.new, bingo: '1')
-  end
+  let(:notice) { described_class.new(AirbrakeTestError.new, bingo: '1') }
 
   describe "#to_json" do
     context "app_version" do
       context "when missing" do
+        before { Airbrake::Config.instance.merge(app_version: nil) }
+
         it "doesn't include app_version" do
           expect(notice.to_json).not_to match(/"context":{"version":"1.2.3"/)
         end
       end
 
       context "when present" do
-        let(:config) do
-          Airbrake::Config.new(app_version: '1.2.3', root_directory: '/one/two')
-        end
+        let(:notice) { described_class.new(AirbrakeTestError.new) }
 
-        let(:notice) { described_class.new(config, AirbrakeTestError.new) }
+        before do
+          Airbrake::Config.instance.merge(
+            app_version: "1.2.3",
+            root_directory: "/one/two"
+          )
+        end
 
         it "includes app_version" do
           expect(notice.to_json).to match(/"context":{"version":"1.2.3"/)
@@ -54,7 +57,7 @@ RSpec.describe Airbrake::Notice do
           size.times { backtrace << "bin/rails:3:in `<main>'" }
           ex.set_backtrace(backtrace)
 
-          notice = described_class.new(Airbrake::Config.new, ex)
+          notice = described_class.new(ex)
 
           expect(notice.to_json.bytesize).to be < 64000
         end
@@ -94,9 +97,7 @@ RSpec.describe Airbrake::Notice do
           10.times { backtrace << "bin/rails:3:in `<#{bad_string}>'" }
           ex.set_backtrace(backtrace)
 
-          config = Airbrake::Config.new(logger: Logger.new('/dev/null'))
-          notice = described_class.new(config, ex)
-
+          notice = described_class.new(ex)
           expect(notice.to_json).to be_nil
         end
       end
@@ -105,7 +106,7 @@ RSpec.describe Airbrake::Notice do
         let(:klass) { Class.new {} }
         let(:ex) { AirbrakeTestError.new }
         let(:params) { { bingo: [Object.new, klass.new] } }
-        let(:notice) { described_class.new(Airbrake::Config.new, ex, params) }
+        let(:notice) { described_class.new(ex, params) }
 
         before do
           backtrace = []

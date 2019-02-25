@@ -1,154 +1,147 @@
 RSpec.describe Airbrake::AsyncSender do
+  let(:endpoint) { 'https://api.airbrake.io/api/v3/projects/1/notices' }
+  let(:queue_size) { 10 }
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
+
   before do
-    stub_request(:post, /.*/).to_return(status: 201, body: '{}')
+    stub_request(:post, endpoint).to_return(status: 201, body: '{}')
+    Airbrake::Config.instance = Airbrake::Config.new(
+      project_id: '1',
+      workers: 3,
+      queue_size: queue_size
+    )
+
+    allow(Airbrake::Loggable.instance).to receive(:debug)
+    expect(subject).to have_workers
   end
 
   describe "#send" do
-    it "limits the size of the queue" do
-      stdout = StringIO.new
-      notices_count = 1000
-      queue_size = 10
-      config = Airbrake::Config.new(
-        logger: Logger.new(stdout), workers: 3, queue_size: queue_size
-      )
-      sender = described_class.new(config)
-      expect(sender).to have_workers
+    it "sends payload to Airbrake" do
+      2.times do
+        subject.send(notice, Airbrake::Promise.new)
+      end
+      subject.close
 
-      notice = Airbrake::Notice.new(config, AirbrakeTestError.new)
-      notices_count.times { sender.send(notice, Airbrake::Promise.new) }
-      sender.close
+      expect(a_request(:post, endpoint)).to have_been_made.twice
+    end
 
-      log = stdout.string.split("\n")
-      notices_sent    = log.grep(/\*\*Airbrake: Airbrake::Response \(201\): \{\}/).size
-      notices_dropped = log.grep(/\*\*Airbrake:.*not.*delivered/).size
-      expect(notices_sent).to be >= queue_size
-      expect(notices_sent + notices_dropped).to eq(notices_count)
+    context "when the queue is full" do
+      before do
+        allow(subject.unsent).to receive(:size).and_return(queue_size)
+      end
+
+      it "discards payload" do
+        200.times do
+          subject.send(notice, Airbrake::Promise.new)
+        end
+        subject.close
+
+        expect(a_request(:post, endpoint)).not_to have_been_made
+      end
+
+      it "logs discarded payload" do
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /reached its capacity/
+        ).exactly(15).times
+
+        15.times do
+          subject.send(notice, Airbrake::Promise.new)
+        end
+        subject.close
+      end
     end
   end
 
   describe "#close" do
-    before do
-      @stderr = StringIO.new
-      config = Airbrake::Config.new(logger: Logger.new(@stderr))
-      @sender = described_class.new(config)
-      expect(@sender).to have_workers
-    end
-
     context "when there are no unsent notices" do
       it "joins the spawned thread" do
-        workers = @sender.instance_variable_get(:@workers).list
-
+        workers = subject.workers.list
         expect(workers).to all(be_alive)
-        @sender.close
+
+        subject.close
         expect(workers).to all(be_stop)
       end
     end
 
     context "when there are some unsent notices" do
-      before do
-        notice = Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-        300.times { @sender.send(notice, Airbrake::Promise.new) }
-        expect(@sender.instance_variable_get(:@unsent).size).not_to be_zero
-        @sender.close
-      end
+      it "logs how many notices are left to send" do
+        expect(Airbrake::Loggable.instance).to receive(:debug).with(
+          /waiting to send \d+ unsent notice\(s\)/
+        )
+        expect(Airbrake::Loggable.instance).to receive(:debug).with(/closed/)
 
-      it "warns about the number of notices" do
-        expect(@stderr.string).to match(/waiting to send \d+ unsent notice/)
-      end
-
-      it "prints the correct number of log messages" do
-        log = @stderr.string.split("\n")
-        notices_sent    = log.grep(/\*\*Airbrake: Airbrake::Response \(201\): \{\}/).size
-        notices_dropped = log.grep(/\*\*Airbrake:.*not.*delivered/).size
-        expect(notices_sent).to be >= @sender.instance_variable_get(:@unsent).max
-        expect(notices_sent + notices_dropped).to eq(300)
+        300.times { subject.send(notice, Airbrake::Promise.new) }
+        subject.close
       end
 
       it "waits until the unsent notices queue is empty" do
-        expect(@sender.instance_variable_get(:@unsent).size).to be_zero
+        subject.close
+        expect(subject.unsent.size).to be_zero
       end
     end
 
     context "when it was already closed" do
       it "doesn't increase the unsent queue size" do
         begin
-          @sender.close
+          subject.close
         rescue Airbrake::Error
           nil
         end
 
-        expect(@sender.instance_variable_get(:@unsent).size).to be_zero
+        expect(subject.unsent.size).to be_zero
       end
 
       it "raises error" do
-        @sender.close
+        subject.close
 
-        expect(@sender).to be_closed
-        expect { @sender.close }.
-          to raise_error(Airbrake::Error, 'attempted to close already closed sender')
+        expect(subject).to be_closed
+        expect { subject.close }.to raise_error(
+          Airbrake::Error, 'attempted to close already closed sender'
+        )
       end
     end
 
     context "when workers were not spawned" do
       it "correctly closes the notifier nevertheless" do
-        sender = described_class.new(Airbrake::Config.new)
-        sender.close
-
-        expect(sender).to be_closed
+        subject.close
+        expect(subject).to be_closed
       end
     end
   end
 
   describe "#has_workers?" do
-    before do
-      @sender = described_class.new(Airbrake::Config.new)
-      expect(@sender).to have_workers
-    end
-
     it "returns false when the sender is not closed, but has 0 workers" do
-      @sender.instance_variable_get(:@workers).list.each(&:kill)
-      sleep 1
-      expect(@sender).not_to have_workers
+      subject.workers.list.each do |worker|
+        worker.kill.join
+      end
+      expect(subject).not_to have_workers
     end
 
     it "returns false when the sender is closed" do
-      @sender.close
-      expect(@sender).not_to have_workers
+      subject.close
+      expect(subject).not_to have_workers
     end
 
     it "respawns workers on fork()", skip: %w[jruby rbx].include?(RUBY_ENGINE) do
-      pid = fork do
-        expect(@sender).to have_workers
-      end
+      pid = fork { expect(subject).to have_workers }
       Process.wait(pid)
-      @sender.close
-      expect(@sender).not_to have_workers
+      subject.close
+      expect(subject).not_to have_workers
     end
   end
 
   describe "#spawn_workers" do
     it "spawns alive threads in an enclosed ThreadGroup" do
-      sender = described_class.new(Airbrake::Config.new)
-      expect(sender).to have_workers
+      expect(subject.workers).to be_a(ThreadGroup)
+      expect(subject.workers.list).to all(be_alive)
+      expect(subject.workers).to be_enclosed
 
-      workers = sender.instance_variable_get(:@workers)
-
-      expect(workers).to be_a(ThreadGroup)
-      expect(workers.list).to all(be_alive)
-      expect(workers).to be_enclosed
-
-      sender.close
+      subject.close
     end
 
     it "spawns exactly config.workers workers" do
-      workers_count = 5
-      sender = described_class.new(Airbrake::Config.new(workers: workers_count))
-      expect(sender).to have_workers
-
-      workers = sender.instance_variable_get(:@workers)
-
-      expect(workers.list.size).to eq(workers_count)
-      sender.close
+      expect(subject.workers.list.size).to eq(Airbrake::Config.instance.workers)
+      subject.close
     end
   end
 end

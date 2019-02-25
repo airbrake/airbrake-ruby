@@ -12,25 +12,12 @@ module Airbrake
   class DeployNotifier
     include Inspectable
 
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config =
-        if config.is_a?(Config)
-          config
-        else
-          loc = caller_locations(1..1).first
-          signature = "#{self.class.name}##{__method__}"
-          warn(
-            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
-            'is deprecated. Pass `Airbrake::Config` instead'
-          )
-          Config.new(config)
-        end
-
-      @sender = SyncSender.new(@config)
+    def initialize
+      @config = Airbrake::Config.instance
+      @sender = SyncSender.new
     end
 
-    # @see Airbrake.create_deploy
+    # @see Airbrake.notify_deploy
     def notify(deploy_info, promise = Airbrake::Promise.new)
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")

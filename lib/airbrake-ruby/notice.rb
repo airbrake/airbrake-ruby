@@ -50,6 +50,7 @@ module Airbrake
     DEFAULT_SEVERITY = 'error'.freeze
 
     include Ignorable
+    include Loggable
 
     # @since v1.7.0
     # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
@@ -57,11 +58,10 @@ module Airbrake
     attr_reader :stash
 
     # @api private
-    def initialize(config, exception, params = {})
-      @config = config
-
+    def initialize(exception, params = {})
+      @config = Airbrake::Config.instance
       @payload = {
-        errors: NestedException.new(config, exception).as_json,
+        errors: NestedException.new(exception).as_json,
         context: context,
         environment: {
           program_name: $PROGRAM_NAME
@@ -84,7 +84,7 @@ module Airbrake
         begin
           json = @payload.to_json
         rescue *JSON_EXCEPTIONS => ex
-          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")
+          logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")
         else
           return json if json && json.bytesize <= MAX_NOTICE_SIZE
         end
@@ -152,7 +152,7 @@ module Airbrake
 
       new_max_size = @truncator.reduce_max_size
       if new_max_size == 0
-        @config.logger.error(
+        logger.error(
           "#{LOG_LABEL} truncation failed. File an issue at " \
           "https://github.com/airbrake/airbrake-ruby " \
           "and attach the following payload: #{@payload}"

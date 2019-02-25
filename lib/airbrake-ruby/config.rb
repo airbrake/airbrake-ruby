@@ -5,6 +5,13 @@ module Airbrake
   # @api public
   # @since v1.0.0
   class Config
+    @instance = new
+
+    class << self
+      # @return [Config]
+      attr_accessor :instance
+    end
+
     # @return [Integer] the project identificator. This value *must* be set.
     # @api public
     attr_accessor :project_id
@@ -97,7 +104,6 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
-    # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
       @validator = Config::Validator.new(self)
 
@@ -105,10 +111,7 @@ module Airbrake
       self.queue_size = 100
       self.workers = 1
       self.code_hunks = true
-
-      self.logger = Logger.new(STDOUT)
-      logger.level = Logger::WARN
-
+      self.logger = ::Logger.new(File::NULL)
       self.project_id = user_config[:project_id]
       self.project_key = user_config[:project_key]
       self.host = 'https://api.airbrake.io'
@@ -131,7 +134,6 @@ module Airbrake
 
       merge(user_config)
     end
-    # rubocop:enable Metrics/AbcSize
 
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address
@@ -193,38 +195,6 @@ module Airbrake
           env == pattern.to_s
         end
       end
-    end
-
-    def route_stats
-      logger.warn(
-        "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
-        "Use 'performance_stats' instead"
-      )
-      @performance_stats
-    end
-
-    def route_stats=(value)
-      logger.warn(
-        "#{LOG_LABEL} the 'route_stats' option is deprecated. " \
-        "Use 'performance_stats' instead"
-      )
-      @performance_stats = value
-    end
-
-    def route_stats_flush_period
-      logger.warn(
-        "#{LOG_LABEL} the 'route_stats_flush_period' option is deprecated. " \
-        "Use 'performance_stats_flush_period' instead"
-      )
-      @performance_stats_flush_period
-    end
-
-    def route_stats_flush_period=(value)
-      logger.warn(
-        "#{LOG_LABEL} the 'route_stats_flush_period' option is deprecated. " \
-        "Use 'performance_stats' instead"
-      )
-      @performance_stats_flush_period = value
     end
 
     private

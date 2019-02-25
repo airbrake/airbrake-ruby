@@ -1,8 +1,4 @@
 RSpec.describe Airbrake::Backtrace do
-  let(:config) do
-    Airbrake::Config.new.tap { |c| c.logger = Logger.new('/dev/null') }
-  end
-
   describe ".parse" do
     context "UNIX backtrace" do
       let(:parsed_backtrace) do
@@ -24,9 +20,8 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(
-          described_class.parse(config, AirbrakeTestError.new)
-        ).to eq(parsed_backtrace)
+        expect(described_class.parse(AirbrakeTestError.new)).
+          to eq(parsed_backtrace)
       end
     end
 
@@ -46,7 +41,7 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -70,9 +65,8 @@ RSpec.describe Airbrake::Backtrace do
       it "returns a properly formatted array of hashes" do
         allow(described_class).to receive(:java_exception?).and_return(true)
 
-        expect(
-          described_class.parse(config, JavaAirbrakeTestError.new)
-        ).to eq(backtrace_array)
+        expect(described_class.parse(JavaAirbrakeTestError.new)).
+          to eq(backtrace_array)
       end
     end
 
@@ -99,7 +93,7 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns a properly formatted array of hashes" do
         allow(described_class).to receive(:java_exception?).and_return(true)
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -123,7 +117,7 @@ RSpec.describe Airbrake::Backtrace do
       let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(backtrace) } }
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -148,7 +142,7 @@ RSpec.describe Airbrake::Backtrace do
         end
 
         it "returns a properly formatted array of hashes" do
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
 
@@ -166,7 +160,7 @@ RSpec.describe Airbrake::Backtrace do
         end
 
         it "returns a properly formatted array of hashes" do
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
     end
@@ -178,18 +172,15 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns array of hashes where each unknown frame is marked as 'function'" do
         expect(
-          described_class.parse(config, ex)
+          described_class.parse(ex)
         ).to eq([file: nil, line: nil, function: 'a b c 1 23 321 .rb'])
       end
 
-      it "logs unknown frames as errors" do
-        out = StringIO.new
-        config.logger = Logger.new(out)
-
-        expect { described_class.parse(config, ex) }.
-          to change { out.string }.
-          from('').
-          to(/ERROR -- : can't parse 'a b c 1 23 321 .rb'/)
+      it "logs frames that cannot be parsed" do
+        expect(Airbrake::Loggable.instance).to receive(:error).with(
+          /can't parse 'a b c 1 23 321 .rb'/
+        )
+        described_class.parse(ex)
       end
     end
 
@@ -207,7 +198,7 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -230,7 +221,7 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns a properly formatted array of hashes" do
         stub_const('OCIError', AirbrakeTestError)
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
 
@@ -263,20 +254,17 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns a properly formatted array of hashes" do
         stub_const('ExecJS::RuntimeError', AirbrakeTestError)
-        expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+        expect(described_class.parse(ex)).to eq(parsed_backtrace)
       end
     end
 
     context "when code hunks are enabled" do
-      let(:config) do
-        config = Airbrake::Config.new
-        config.logger = Logger.new('/dev/null')
-        config.code_hunks = true
-        config
-      end
+      before { Airbrake::Config.instance.merge(code_hunks: true) }
 
       context "and when root_directory is configured" do
-        before { config.root_directory = project_root_path('') }
+        before do
+          Airbrake::Config.instance.merge(root_directory: project_root_path(''))
+        end
 
         let(:parsed_backtrace) do
           [
@@ -315,12 +303,16 @@ RSpec.describe Airbrake::Backtrace do
             project_root_path('vendor/bundle/ignored_file.rb') + ":2:in `ignore_me'"
           ]
           ex.set_backtrace(backtrace)
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
 
       context "and when root_directory is a Pathname" do
-        before { config.root_directory = Pathname.new(project_root_path('')) }
+        before do
+          Airbrake::Config.instance.merge(
+            root_directory: Pathname.new(project_root_path(''))
+          )
+        end
 
         let(:parsed_backtrace) do
           [
@@ -344,13 +336,13 @@ RSpec.describe Airbrake::Backtrace do
         it "attaches code to those frames files of which match root_directory" do
           ex = RuntimeError.new
           ex.set_backtrace([project_root_path('code.rb') + ":94:in `to_json'"])
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
 
       context "and when root_directory isn't configured" do
         before do
-          config.root_directory = nil
+          Airbrake::Config.instance.merge(root_directory: nil)
           stub_const('Airbrake::Backtrace::CODE_FRAME_LIMIT', 2)
         end
 
@@ -400,21 +392,18 @@ RSpec.describe Airbrake::Backtrace do
             project_root_path('code.rb') + ":96:in `to_json'"
           ]
           ex.set_backtrace(backtrace)
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
     end
 
     context "when code hunks are disabled" do
-      let(:config) do
-        config = Airbrake::Config.new
-        config.logger = Logger.new('/dev/null')
-        config.code_hunks = false
-        config
-      end
+      before { Airbrake::Config.instance.merge(code_hunks: false) }
 
       context "and when root_directory is configured" do
-        before { config.root_directory = project_root_path('') }
+        before do
+          Airbrake::Config.instance.merge(root_directory: project_root_path(''))
+        end
 
         let(:parsed_backtrace) do
           [
@@ -430,7 +419,7 @@ RSpec.describe Airbrake::Backtrace do
           ex = RuntimeError.new
           backtrace = [project_root_path('code.rb') + ":94:in `to_json'"]
           ex.set_backtrace(backtrace)
-          expect(described_class.parse(config, ex)).to eq(parsed_backtrace)
+          expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
     end

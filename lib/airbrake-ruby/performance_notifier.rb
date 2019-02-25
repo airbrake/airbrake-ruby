@@ -6,24 +6,12 @@ module Airbrake
   # @since v3.2.0
   class PerformanceNotifier
     include Inspectable
+    include Loggable
 
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config =
-        if config.is_a?(Config)
-          config
-        else
-          loc = caller_locations(1..1).first
-          signature = "#{self.class.name}##{__method__}"
-          warn(
-            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
-            'is deprecated. Pass `Airbrake::Config` instead'
-          )
-          Config.new(config)
-        end
-
-      @flush_period = @config.performance_stats_flush_period
-      @sender = SyncSender.new(@config, :put)
+    def initialize
+      @config = Airbrake::Config.instance
+      @flush_period = Airbrake::Config.instance.performance_stats_flush_period
+      @sender = SyncSender.new(:put)
       @payload = {}
       @schedule_flush = nil
       @mutex = Mutex.new
@@ -92,7 +80,7 @@ module Airbrake
       signature = "#{self.class.name}##{__method__}"
       raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
 
-      @config.logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
+      logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
 
       payload.group_by { |k, _v| k.name }.each do |resource_name, data|
         data = { resource_name => data.map { |k, v| k.to_h.merge!(v.to_h) } }

@@ -1,9 +1,6 @@
 RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
   describe "#call" do
-    let(:out) { StringIO.new }
-    let(:notice) { Airbrake::Notice.new(Airbrake::Config.new, ex) }
-
-    subject { described_class.new(Logger.new(out)) }
+    let(:notice) { Airbrake::Notice.new(ex) }
 
     context "when #to_airbrake returns a non-Hash object" do
       let(:ex) do
@@ -17,11 +14,6 @@ RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
       it "doesn't raise" do
         expect { subject.call(notice) }.not_to raise_error
         expect(notice[:params]).to be_empty
-      end
-
-      it "logs the error" do
-        expect { subject.call(notice) }.not_to raise_error
-        expect(out.string).to match(/wanted Hash, got Object/)
       end
     end
 
@@ -37,11 +29,6 @@ RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
       it "doesn't raise" do
         expect { subject.call(notice) }.not_to raise_error
         expect(notice[:params]).to be_empty
-      end
-
-      it "logs the error" do
-        expect { subject.call(notice) }.not_to raise_error
-        expect(out.string).to match(/#to_airbrake failed.+ZeroDivisionError/)
       end
     end
 

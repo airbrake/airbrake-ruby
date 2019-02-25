@@ -1,17 +1,13 @@
 # rubocop:disable Layout/DotPosition
 RSpec.describe Airbrake::NoticeNotifier do
-  let(:user_params) do
-    {
+  before do
+    Airbrake::Config.instance = Airbrake::Config.new(
       project_id: 1,
       project_key: 'abc',
       logger: Logger.new('/dev/null'),
       performance_stats: true
-    }
+    )
   end
-
-  let(:params) { {} }
-  let(:config) { Airbrake::Config.new(user_params.merge(params)) }
-  subject { described_class.new(config) }
 
   describe "#new" do
     describe "default filter addition" do
@@ -30,12 +26,12 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
 
       context "when user config has some whitelist keys" do
-        let(:params) { { whitelist_keys: %w[foo] } }
+        before { Airbrake::Config.instance.merge(whitelist_keys: %w[foo]) }
 
         it "appends the whitelist filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysWhitelist))
-          described_class.new(config)
+          subject
         end
       end
 
@@ -43,17 +39,17 @@ RSpec.describe Airbrake::NoticeNotifier do
         it "doesn't append the whitelist filter" do
           expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysWhitelist))
-          described_class.new(config)
+          subject
         end
       end
 
       context "when user config has some blacklist keys" do
-        let(:params) { { blacklist_keys: %w[bar] } }
+        before { Airbrake::Config.instance.merge(blacklist_keys: %w[bar]) }
 
         it "appends the blacklist filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysBlacklist))
-          described_class.new(config)
+          subject
         end
       end
 
@@ -61,17 +57,17 @@ RSpec.describe Airbrake::NoticeNotifier do
         it "doesn't append the blacklist filter" do
           expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::KeysBlacklist))
-          described_class.new(config)
+          subject
         end
       end
 
       context "when user config specifies a root directory" do
-        let(:params) { { root_directory: '/foo' } }
+        before { Airbrake::Config.instance.merge(root_directory: '/foo') }
 
         it "appends the root directory filter" do
           expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::RootDirectoryFilter))
-          described_class.new(config)
+          subject
         end
       end
 
@@ -81,7 +77,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             .and_return(nil)
           expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
             .with(instance_of(Airbrake::Filters::RootDirectoryFilter))
-          described_class.new(config)
+          subject
         end
       end
     end
@@ -89,8 +85,6 @@ RSpec.describe Airbrake::NoticeNotifier do
 
   describe "#notify" do
     let(:endpoint) { 'https://api.airbrake.io/api/v3/projects/1/notices' }
-
-    subject { described_class.new(Airbrake::Config.new(user_params)) }
 
     let(:body) do
       {
@@ -161,7 +155,12 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
 
     context "when the provided environment is ignored" do
-      let(:user_params) { { environment: 'test', ignore_environments: %w[test] } }
+      before do
+        Airbrake::Config.instance.merge(
+          environment: 'test',
+          ignore_environments: %w[test]
+        )
+      end
 
       it "doesn't send an notice" do
         expect_any_instance_of(Airbrake::AsyncSender).not_to receive(:send)
@@ -241,7 +240,11 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
 
     context "when the provided environment is ignored" do
-      let(:params) { { environment: 'test', ignore_environments: %w[test] } }
+      before do
+        Airbrake::Config.instance.merge(
+          environment: 'test', ignore_environments: %w[test]
+        )
+      end
 
       it "doesn't send an notice" do
         expect_any_instance_of(Airbrake::SyncSender).not_to receive(:send)

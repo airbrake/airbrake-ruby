@@ -7,6 +7,7 @@ require 'socket'
 require 'time'
 
 require 'airbrake-ruby/version'
+require 'airbrake-ruby/loggable'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
 require 'airbrake-ruby/promise'
@@ -46,40 +47,22 @@ require 'airbrake-ruby/tdigest'
 require 'airbrake-ruby/query'
 require 'airbrake-ruby/request'
 
-# This module defines the Airbrake API. The user is meant to interact with
-# Airbrake via its public class methods. Before using the library, you must to
-# {configure} the default notifier.
+# Airbrake is a thin wrapper around instances of the notifier classes (such as
+# notice, performance & deploy notifiers). It creates a way to access them via a
+# consolidated global interface.
 #
-# The module supports multiple notifiers, each of which can be configured
-# differently. By default, every method is invoked in context of the default
-# notifier. To use a different notifier, you need to {configure} it first and
-# pass the notifier's name as the last argument of the method you're calling.
+# Prior to using it, you must {configure} it.
 #
-# You can have as many notifiers as you want, but they must have unique names.
-#
-# @example Configuring multiple notifiers and using them
-#   # Configure the default notifier.
+# @example
 #   Airbrake.configure do |c|
 #     c.project_id = 113743
 #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
 #   end
 #
-#   # Configure a named notifier.
-#   Airbrake.configure(:my_other_project) do |c|
-#     c.project_id = 224854
-#     c.project_key = '91ac5e4a37496026c6837f63276ed2b6'
-#   end
-#
-#   # Send an exception via the default notifier.
 #   Airbrake.notify('Oops!')
 #
-#   # Send an exception via other configured notifier.
-#   params = {}
-#   Airbrake[:my_other_project].notify('Oops', params)
-#
-# @see Airbrake::NoticeNotifier
 # @since v1.0.0
-# rubocop:disable Metrics/ModuleLength
+# @api public
 module Airbrake
   # The general error that this library uses when it wants to raise.
   Error = Class.new(StandardError)
@@ -127,14 +110,6 @@ module Airbrake
     def merge_context(_context); end
   end
 
-  # @deprecated Use {Airbrake::NoticeNotifier} instead
-  Notifier = NoticeNotifier
-  deprecate_constant(:Notifier) if respond_to?(:deprecate_constant)
-
-  # @deprecated Use {Airbrake::NilNoticeNotifier} instead
-  NilNotifier = NilNoticeNotifier
-  deprecate_constant(:NilNotifier) if respond_to?(:deprecate_constant)
-
   # NilPerformanceNotifier is a no-op notifier, which mimics
   # {Airbrake::PerformanceNotifier} and serves only the purpose of making the
   # library API easier to use.
@@ -160,75 +135,23 @@ module Airbrake
   #
   # @since v3.2.0
   class NilDeployNotifier
-    # @see Airbrake.create_deploy
+    # @see Airbrake.notify_deploy
     def notify(_deploy_info); end
   end
 
-  # A Hash that holds all notice notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::NoticeNotifier} instances. If a notifier is
-  # not assigned to the hash, then it returns a null object (NilNoticeNotifier).
-  @notice_notifiers = Hash.new(NilNoticeNotifier.new)
-
-  # A Hash that holds all performance notifiers. The keys of the Hash are
-  # notifier names, the values are {Airbrake::PerformanceNotifier} instances. If
-  # a notifier is not assigned to the hash, then it returns a null object
-  # (NilPerformanceNotifier).
-  @performance_notifiers = Hash.new(NilPerformanceNotifier.new)
-
-  # A Hash that holds all deploy notifiers. The keys of the Hash are notifier
-  # names, the values are {Airbrake::DeployNotifier} instances. If a deploy
-  # notifier is not assigned to the hash, then it returns a null object
-  # (NilDeployNotifier).
-  @deploy_notifiers = Hash.new(NilDeployNotifier.new)
+  @notice_notifier = NilNoticeNotifier.new
+  @performance_notifier = NilPerformanceNotifier.new
+  @deploy_notifier = NilDeployNotifier.new
 
   class << self
-    # Retrieves configured notifiers.
-    #
-    # @example
-    #   Airbrake[:my_notifier].notify('oops')
-    #
-    # @param [Symbol] notifier_name the name of the notice notifier you want to
-    #   use
-    # @return [Airbrake::NoticeNotifier, NilClass]
-    # @since v1.8.0
-    def [](notifier_name)
-      loc = caller_locations(1..1).first
-      signature = "#{self}##{__method__}"
-      warn(
-        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. It " \
-        "will be removed from airbrake-ruby v4 altogether."
-      )
-
-      @notice_notifiers[notifier_name]
-    end
-
-    # @return [Hash{Symbol=>Array<Object>}] a Hash with all configured notifiers
-    #   (notice, performance, deploy)
-    # @since v3.2.0
-    def notifiers
-      loc = caller_locations(1..1).first
-      signature = "#{self}##{__method__}"
-      warn(
-        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. It " \
-        "will be removed from airbrake-ruby v4 altogether."
-      )
-
-      {
-        notice: @notice_notifiers,
-        performance: @performance_notifiers,
-        deploy: @deploy_notifiers
-      }
-    end
-
     # Configures the Airbrake notifier.
     #
-    # @example Configuring the default notifier
+    # @example
     #   Airbrake.configure do |c|
     #     c.project_id = 113743
     #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
     #   end
     #
-    # @param [Symbol] notifier_name the name to be associated with the notifier
     # @yield [config] The configuration object
     # @yieldparam config [Airbrake::Config]
     # @return [void]
@@ -236,41 +159,23 @@ module Airbrake
     #   existing notifier
     # @raise [Airbrake::Error] when either +project_id+ or +project_key+
     #   is missing (or both)
-    # @note There's no way to reconfigure a notifier
     # @note There's no way to read config values outside of this library
-    def configure(notifier_name = :default)
-      unless notifier_name == :default
-        loc = caller_locations(1..1).first
-        warn(
-          "#{loc.path}:#{loc.lineno}: warning: configuring a notifier with a " \
-          "custom name is deprecated. This feature will be removed from " \
-          "airbrake-ruby v4 altogether."
-        )
-      end
-
-      yield config = Airbrake::Config.new
-
-      if @notice_notifiers.key?(notifier_name)
-        raise Airbrake::Error,
-              "the '#{notifier_name}' notifier was already configured"
-      end
+    def configure
+      yield config = Airbrake::Config.instance
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
-      # TODO: Kludge to avoid
-      # https://github.com/airbrake/airbrake-ruby/issues/406
-      # Stop passing perf_notifier to NoticeNotifier as soon as possible.
-      perf_notifier = PerformanceNotifier.new(config)
-      @performance_notifiers[notifier_name] = perf_notifier
-      @notice_notifiers[notifier_name] = NoticeNotifier.new(config, perf_notifier)
+      Airbrake::Loggable.instance = Airbrake::Config.instance
 
-      @deploy_notifiers[notifier_name] = DeployNotifier.new(config)
+      @performance_notifier = PerformanceNotifier.new
+      @notice_notifier = NoticeNotifier.new
+      @deploy_notifier = DeployNotifier.new
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
     # @since v2.3.0
     def configured?
-      @notice_notifiers[:default].configured?
+      @notice_notifier.configured?
     end
 
     # Sends an exception to Airbrake asynchronously.
@@ -295,7 +200,7 @@ module Airbrake
     # @return [Airbrake::Promise]
     # @see .notify_sync
     def notify(exception, params = {}, &block)
-      @notice_notifiers[:default].notify(exception, params, &block)
+      @notice_notifier.notify(exception, params, &block)
     end
 
     # Sends an exception to Airbrake synchronously.
@@ -315,7 +220,7 @@ module Airbrake
     # @return [Hash{String=>String}] the reponse from the server
     # @see .notify
     def notify_sync(exception, params = {}, &block)
-      @notice_notifiers[:default].notify_sync(exception, params, &block)
+      @notice_notifier.notify_sync(exception, params, &block)
     end
 
     # Runs a callback before {.notify} or {.notify_sync} kicks in. This is
@@ -343,7 +248,7 @@ module Airbrake
     # @yieldreturn [void]
     # @return [void]
     def add_filter(filter = nil, &block)
-      @notice_notifiers[:default].add_filter(filter, &block)
+      @notice_notifier.add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_filter}.
@@ -360,7 +265,7 @@ module Airbrake
     # @since v3.1.0
     # @note This method cannot delete filters assigned via the Proc form.
     def delete_filter(filter_class)
-      @notice_notifiers[:default].delete_filter(filter_class)
+      @notice_notifier.delete_filter(filter_class)
     end
 
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
@@ -378,7 +283,7 @@ module Airbrake
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
     def build_notice(exception, params = {})
-      @notice_notifiers[:default].build_notice(exception, params)
+      @notice_notifier.build_notice(exception, params)
     end
 
     # Makes the notice notifier a no-op, which means you cannot use the
@@ -391,7 +296,7 @@ module Airbrake
     #
     # @return [void]
     def close
-      @notice_notifiers[:default].close
+      @notice_notifier.close
     end
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.
@@ -404,18 +309,7 @@ module Airbrake
     # @option deploy_info [Symbol] :version
     # @return [void]
     def notify_deploy(deploy_info)
-      @deploy_notifiers[:default].notify(deploy_info)
-    end
-
-    # @see notify_deploy
-    def create_deploy(deploy_info)
-      loc = caller_locations(1..1).first
-      signature = "#{self}##{__method__}"
-      warn(
-        "#{loc.path}:#{loc.lineno}: warning: #{signature} is deprecated. Call " \
-        "#{self}#notify_deploy instead"
-      )
-      notify_deploy(deploy_info)
+      @deploy_notifier.notify(deploy_info)
     end
 
     # Merges +context+ with the current context.
@@ -463,7 +357,7 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] context
     # @return [void]
     def merge_context(context)
-      @notice_notifiers[:default].merge_context(context)
+      @notice_notifier.merge_context(context)
     end
 
     # Increments request statistics of a certain +route+ that was invoked on
@@ -502,7 +396,7 @@ module Airbrake
     # @since v3.0.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_request(request_info)
-      @performance_notifiers[:default].notify(Request.new(request_info))
+      @performance_notifier.notify(Request.new(request_info))
     end
 
     # Increments SQL statistics of a certain +query+ that was invoked on
@@ -534,7 +428,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_query(query_info)
-      @performance_notifiers[:default].notify(Query.new(query_info))
+      @performance_notifier.notify(Query.new(query_info))
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
@@ -569,7 +463,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#add_filter
     def add_performance_filter(filter = nil, &block)
-      @performance_notifiers[:default].add_filter(filter, &block)
+      @performance_notifier.add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_performance_filter}.
@@ -587,8 +481,7 @@ module Airbrake
     # @note This method cannot delete filters assigned via the Proc form.
     # @see Airbrake::PerformanceNotifier#delete_filter
     def delete_performance_filter(filter_class)
-      @performance_notifiers[:default].delete_filter(filter_class)
+      @performance_notifier.delete_filter(filter_class)
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

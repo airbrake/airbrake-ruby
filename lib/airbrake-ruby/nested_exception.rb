@@ -9,8 +9,7 @@ module Airbrake
     #   can unwrap. Exceptions that have a longer cause chain will be ignored
     MAX_NESTED_EXCEPTIONS = 3
 
-    def initialize(config, exception)
-      @config = config
+    def initialize(exception)
       @exception = exception
     end
 
@@ -18,7 +17,7 @@ module Airbrake
       unwind_exceptions.map do |exception|
         { type: exception.class.name,
           message: exception.message,
-          backtrace: Backtrace.parse(@config, exception) }
+          backtrace: Backtrace.parse(exception) }
       end
     end
 

@@ -7,11 +7,23 @@ module Airbrake
   # @api private
   # @since v1.0.0
   class AsyncSender
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config = config
-      @unsent = SizedQueue.new(config.queue_size)
-      @sender = SyncSender.new(config)
+    include Loggable
+
+    # @return [ThreadGroup] the list of workers
+    # @note This is exposed for eaiser unit testing
+    # @since v4.0.0
+    attr_reader :workers
+
+    # @return [Array<[Airbrake::Notice,Airbrake::Promise]>] the list of unsent
+    #   payload
+    # @note This is exposed for eaiser unit testing
+    # @since v4.0.0
+    attr_reader :unsent
+
+    def initialize
+      @config = Airbrake::Config.instance
+      @unsent = SizedQueue.new(Airbrake::Config.instance.queue_size)
+      @sender = SyncSender.new
       @closed = false
       @workers = ThreadGroup.new
       @mutex = Mutex.new
@@ -41,7 +53,7 @@ module Airbrake
 
         unless @unsent.empty?
           msg = "#{LOG_LABEL} waiting to send #{@unsent.size} unsent notice(s)..."
-          @config.logger.debug(msg + ' (Ctrl-C to abort)')
+          logger.debug(msg + ' (Ctrl-C to abort)')
         end
 
         @config.workers.times { @unsent << [:stop, Airbrake::Promise.new] }
@@ -50,7 +62,7 @@ module Airbrake
       end
 
       threads.each(&:join)
-      @config.logger.debug("#{LOG_LABEL} closed")
+      logger.debug("#{LOG_LABEL} closed")
     end
 
     # Checks whether the sender is closed and thus usable.
@@ -107,7 +119,7 @@ module Airbrake
       backtrace = notice[:errors][0][:backtrace].map do |line|
         "#{line[:file]}:#{line[:line]} in `#{line[:function]}'"
       end
-      @config.logger.error(
+      logger.error(
         "#{LOG_LABEL} AsyncSender has reached its capacity of "                   \
         "#{@unsent.max} and the following notice will not be delivered "          \
         "Error: #{notice[:errors][0][:type]} - #{notice[:errors][0][:message]}\n" \

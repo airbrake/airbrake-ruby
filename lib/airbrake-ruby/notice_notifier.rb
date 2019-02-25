@@ -5,7 +5,6 @@ module Airbrake
   # @see Airbrake::Config The list of options
   # @since v1.0.0
   # @api public
-  # rubocop:disable Metrics/ClassLength
   class NoticeNotifier
     # @return [Array<Class>] filters to be executed first
     DEFAULT_FILTERS = [
@@ -17,35 +16,14 @@ module Airbrake
     ].freeze
 
     include Inspectable
+    include Loggable
 
-    # Creates a new notice notifier with the given config options.
-    #
-    # @example
-    #   config = Airbrake::Config.new
-    #   config.project_id = 123
-    #   config.project_key = '321'
-    #   notice_notifier = Airbrake::NoticeNotifier.new(config)
-    #
-    # @param [Airbrake::Config] config
-    def initialize(config, perf_notifier = nil)
-      @config =
-        if config.is_a?(Config)
-          config
-        else
-          loc = caller_locations(1..1).first
-          signature = "#{self.class.name}##{__method__}"
-          warn(
-            "#{loc.path}:#{loc.lineno}: warning: passing a Hash to #{signature} " \
-            'is deprecated. Pass `Airbrake::Config` instead'
-          )
-          Config.new(config)
-        end
-
+    def initialize
+      @config = Airbrake::Config.instance
       @context = {}
       @filter_chain = FilterChain.new
-      @async_sender = AsyncSender.new(@config)
-      @sync_sender = SyncSender.new(@config)
-      @perf_notifier = perf_notifier
+      @async_sender = AsyncSender.new
+      @sync_sender = SyncSender.new
 
       add_default_filters
     end
@@ -58,15 +36,6 @@ module Airbrake
     # @macro see_public_api_method
     def notify_sync(exception, params = {}, &block)
       send_notice(exception, params, @sync_sender, &block).value
-    end
-
-    # @deprecated Update the airbrake gem to v8.1.0 or higher
-    def notify_request(request_info, promise = Promise.new)
-      @config.logger.info(
-        "#{LOG_LABEL} #{self.class}##{__method__} is deprecated. Update " \
-        'the airbrake gem to v8.1.0 or higher'
-      )
-      @perf_notifier.notify(Request.new(request_info), promise)
     end
 
     # @macro see_public_api_method
@@ -90,7 +59,7 @@ module Airbrake
         exception[:params].merge!(params)
         exception
       else
-        Notice.new(@config, convert_to_exception(exception), params.dup)
+        Notice.new(convert_to_exception(exception), params.dup)
       end
     end
 
@@ -143,7 +112,7 @@ module Airbrake
     def default_sender
       return @async_sender if @async_sender.has_workers?
 
-      @config.logger.warn(
+      logger.warn(
         "#{LOG_LABEL} falling back to sync delivery because there are no " \
         "running async workers"
       )
@@ -165,19 +134,15 @@ module Airbrake
       DEFAULT_FILTERS.each { |f| add_filter(f.new) }
 
       if (whitelist_keys = @config.whitelist_keys).any?
-        add_filter(
-          Airbrake::Filters::KeysWhitelist.new(@config.logger, whitelist_keys)
-        )
+        add_filter(Airbrake::Filters::KeysWhitelist.new(whitelist_keys))
       end
 
       if (blacklist_keys = @config.blacklist_keys).any?
-        add_filter(
-          Airbrake::Filters::KeysBlacklist.new(@config.logger, blacklist_keys)
-        )
+        add_filter(Airbrake::Filters::KeysBlacklist.new(blacklist_keys))
       end
 
       add_filter(Airbrake::Filters::ContextFilter.new(@context))
-      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new(@config.logger))
+      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new)
 
       return unless (root_directory = @config.root_directory)
       [
@@ -189,10 +154,9 @@ module Airbrake
       end
 
       add_filter(
-        Airbrake::Filters::GitLastCheckoutFilter.new(@config.logger, root_directory)
+        Airbrake::Filters::GitLastCheckoutFilter.new(root_directory)
       )
     end
     # rubocop:enable Metrics/AbcSize
   end
-  # rubocop:enable Metrics/ClassLength
 end

@@ -11,13 +11,16 @@ module Airbrake
     # @return [Integer] HTTP code returned when an IP sends over 10k/min notices
     TOO_MANY_REQUESTS = 429
 
+    class << self
+      include Loggable
+    end
+
     # Parses HTTP responses from the Airbrake API.
     #
     # @param [Net::HTTPResponse] response
-    # @param [Logger] logger
     # @return [Hash{String=>String}] parsed response
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def self.parse(response, logger)
+    def self.parse(response)
       code = response.code.to_i
       body = response.body
 

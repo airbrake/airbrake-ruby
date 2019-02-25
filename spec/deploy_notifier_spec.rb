@@ -1,9 +1,5 @@
 RSpec.describe Airbrake::DeployNotifier do
-  let(:user_params) { { project_id: 1, project_key: 'banana' } }
-  let(:params) { {} }
-  let(:config) { Airbrake::Config.new(user_params.merge(params)) }
-
-  subject { described_class.new(config) }
+  before { Airbrake::Config.instance = Airbrake::Config.new(project_id: 1) }
 
   describe "#notify" do
     it "returns a promise" do
@@ -13,7 +9,7 @@ RSpec.describe Airbrake::DeployNotifier do
     end
 
     context "when environment is configured" do
-      let(:params) { { environment: 'fooenv' } }
+      before { Airbrake::Config.instance.merge(environment: 'fooenv') }
 
       it "prefers the passed environment to the config env" do
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
@@ -26,7 +22,7 @@ RSpec.describe Airbrake::DeployNotifier do
     end
 
     context "when environment is not configured" do
-      let(:params) { { environment: 'fooenv' } }
+      before { Airbrake::Config.instance.merge(environment: 'fooenv') }
 
       it "sets the environment from the config" do
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(

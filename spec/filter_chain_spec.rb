@@ -1,7 +1,5 @@
 RSpec.describe Airbrake::FilterChain do
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   describe "#refine" do
     let(:filter) do

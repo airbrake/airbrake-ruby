@@ -46,7 +46,7 @@ Key features
 * Support for code hunks (lines of code surrounding each backtrace frame)<sup>[[link](#code_hunks)]</sup>
 * Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
 * Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
-* Automatic and manual deploy tracking <sup>[[link](#airbrakecreate_deploy)]</sup>
+* Automatic and manual deploy tracking <sup>[[link](#airbrakenotify_deploy)]</sup>
 * Performance monitoring for web applications (route statistics, SQL queries) <sup>[[link](#performance_stats)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
@@ -403,36 +403,6 @@ API
 
 ### Airbrake
 
-#### Airbrake.[]
-
-Retrieves a configured *notice* notifier.
-
-```ruby
-Airbrake[:my_notifier] #=> Airbrake::NoticeNotifier
-```
-
-If the notifier is not configured, returns an instance of
-`Airbrake::NilNotifier` (a no-op version of `Airbrake::NoticeNotifier`).
-
-#### Airbrake.notifiers
-
-Returns a Hash with all notifiers (notice, performance, deploy).
-
-```ruby
-Airbrake.notifiers
-# {
-#   :notice => {
-#     :default => ...
-#   },
-#   :performance => {
-#     :default => ...
-#   },
-#   :deploy => {
-#     :default => ...
-#   }
-# }
-```
-
 #### Airbrake.notify
 
 Sends an exception to Airbrake asynchronously.
@@ -659,12 +629,12 @@ at_exit do
 end
 ```
 
-#### Airbrake.create_deploy
+#### Airbrake.notify_deploy
 
 Notifies Airbrake of a new deploy. Accepts a Hash with the following params:
 
 ```ruby
-Airbrake.create_deploy(
+Airbrake.notify_deploy(
   environment: 'development',
   username: 'john',
   repository: 'https://github.com/airbrake/airbrake-ruby',

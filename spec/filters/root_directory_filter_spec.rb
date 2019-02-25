@@ -2,10 +2,7 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
   subject { described_class.new(root_directory) }
 
   let(:root_directory) { '/var/www/project' }
-
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   it "replaces root directory in the backtrace with a label" do
     # rubocop:disable Metrics/LineLength

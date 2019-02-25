@@ -6,8 +6,9 @@ module Airbrake
     # @api private
     # @since v2.10.0
     class ExceptionAttributesFilter
-      def initialize(logger)
-        @logger = logger
+      include Loggable
+
+      def initialize
         @weight = 118
       end
 
@@ -20,13 +21,13 @@ module Airbrake
         begin
           attributes = exception.to_airbrake
         rescue StandardError => ex
-          @logger.error(
+          logger.error(
             "#{LOG_LABEL} #{exception.class}#to_airbrake failed. #{ex.class}: #{ex}"
           )
         end
 
         unless attributes.is_a?(Hash)
-          @logger.error(
+          logger.error(
             "#{LOG_LABEL} #{self.class}: wanted Hash, got #{attributes.class}"
           )
           return
