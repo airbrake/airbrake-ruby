@@ -3,24 +3,35 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Removed support for deprecated `Airbrake.configure(:name)`
+  ([#429](https://github.com/airbrake/airbrake-ruby/pull/429))
 * Renamed `Airbrake.create_deploy` to `Airbrake.notify_deploy`
-* Deleted deprecated `Airbrake.create_deploy`
+  ([#427](https://github.com/airbrake/airbrake-ruby/pull/427))
 * Deleted deprecated `Airbrake::Notifier` & `Airbrake::NilNotifier` constants
+  ([#425](https://github.com/airbrake/airbrake-ruby/pull/425))
 * Deleted deprecated `Config#route_stats`, `Config#route_stats_flush_period`
+  ([#425](https://github.com/airbrake/airbrake-ruby/pull/425))
 * `PerformanceNotifier`, `NoticeNotifier` & `DeployNotifier` stopped accepting
   deprecated Hash as a `config` object
+  ([#425](https://github.com/airbrake/airbrake-ruby/pull/425))
 * Deleted deprecated `Airbrake#[]`
+  ([#432](https://github.com/airbrake/airbrake-ruby/pull/432))
 * Deleted deprecated `Airbrake#notifiers`
+  ([#433](https://github.com/airbrake/airbrake-ruby/pull/433))
 
 ### [v3.2.6][v3.2.6] (Feburary 25, 2019)
 
 * Reduced clutter of `DeployNotifier` and `PerformanceNotifier` when
   `inspect`ing ([#423](https://github.com/airbrake/airbrake-ruby/pull/423))
 * Deprecated `Airbrake.create_deploy` in favour of `Airbrake.notify_deploy`
+  ([#426](https://github.com/airbrake/airbrake-ruby/pull/426))
 * Deprecated `Airbrake.configure(:name)` in favour of `Airbrake.configure` or
   `Airbrake::NoticeNotifier.new`
+  ([#430](https://github.com/airbrake/airbrake-ruby/pull/430))
 * Deprecated `Airbrake#[]` in favour of `Airbrake::NoticeNotifier.new`
+  ([#431](https://github.com/airbrake/airbrake-ruby/pull/431))
 * Deprecated `Airbrake#notifiers`
+  ([#434](https://github.com/airbrake/airbrake-ruby/pull/434))
 
 ### [v3.2.5][v3.2.5] (Feburary 20, 2019)
 
