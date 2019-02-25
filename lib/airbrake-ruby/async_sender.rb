@@ -20,11 +20,10 @@ module Airbrake
     # @since v4.0.0
     attr_reader :unsent
 
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config = config
-      @unsent = SizedQueue.new(config.queue_size)
-      @sender = SyncSender.new(config)
+    def initialize
+      @config = Airbrake::Config.instance
+      @unsent = SizedQueue.new(Airbrake::Config.instance.queue_size)
+      @sender = SyncSender.new
       @closed = false
       @workers = ThreadGroup.new
       @mutex = Mutex.new

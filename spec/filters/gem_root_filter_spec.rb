@@ -1,8 +1,5 @@
 RSpec.describe Airbrake::Filters::GemRootFilter do
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
-
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
   let(:root1) { '/my/gem/root' }
   let(:root2) { '/my/other/gem/root' }
 

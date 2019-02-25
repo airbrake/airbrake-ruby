@@ -1,7 +1,5 @@
 RSpec.describe Airbrake::Filters::ThreadFilter do
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   def new_thread
     Thread.new do

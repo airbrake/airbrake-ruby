@@ -1,9 +1,7 @@
 RSpec.describe Airbrake::Filters::KeysBlacklist do
   subject { described_class.new(patterns) }
 
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   shared_examples 'pattern matching' do |patts, params|
     let(:patterns) { patts }

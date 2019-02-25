@@ -12,10 +12,9 @@ module Airbrake
   class DeployNotifier
     include Inspectable
 
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config = config
-      @sender = SyncSender.new(config)
+    def initialize
+      @config = Airbrake::Config.instance
+      @sender = SyncSender.new
     end
 
     # @see Airbrake.notify_deploy

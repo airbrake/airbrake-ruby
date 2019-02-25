@@ -1,6 +1,4 @@
 RSpec.describe Airbrake::NestedException do
-  let(:config) { Airbrake::Config.new }
-
   describe "#as_json" do
     context "given exceptions with backtraces" do
       it "unwinds nested exceptions" do
@@ -11,7 +9,7 @@ RSpec.describe Airbrake::NestedException do
             Ruby21Error.raise_error('bingo')
           end
         rescue Ruby21Error => ex
-          nested_exception = described_class.new(config, ex)
+          nested_exception = described_class.new(ex)
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(2)
@@ -38,7 +36,7 @@ RSpec.describe Airbrake::NestedException do
             end
           end
         rescue Ruby21Error => ex
-          nested_exception = described_class.new(config, ex)
+          nested_exception = described_class.new(ex)
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(3)
@@ -62,7 +60,7 @@ RSpec.describe Airbrake::NestedException do
           end
         rescue Ruby21Error => ex1
           ex1.set_backtrace([])
-          nested_exception = described_class.new(config, ex1)
+          nested_exception = described_class.new(ex1)
           exceptions = nested_exception.as_json
 
           expect(exceptions.size).to eq(2)

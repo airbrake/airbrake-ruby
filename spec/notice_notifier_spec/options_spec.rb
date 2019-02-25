@@ -11,27 +11,23 @@ RSpec.describe Airbrake::NoticeNotifier do
     "https://api.airbrake.io/api/v3/projects/#{project_id}/notices"
   end
 
-  let(:user_params) do
-    { project_id: project_id,
-      project_key: project_key,
-      logger: Logger.new(StringIO.new) }
-  end
-
   let(:params) { {} }
   let(:ex) { AirbrakeTestError.new }
-  let(:config) { Airbrake::Config.new(user_params.merge(params)) }
-
-  subject { described_class.new(config) }
 
   before do
     stub_request(:post, endpoint).to_return(status: 201, body: '{}')
+
+    Airbrake::Config.instance = Airbrake::Config.new(
+      project_id: project_id,
+      project_key: project_key
+    )
   end
 
   describe "options" do
     describe ":host" do
       context "when custom" do
         shared_examples 'endpoint' do |host, endpoint, title|
-          let(:params) { { host: host } }
+          before { Airbrake::Config.instance.merge(host: host) }
 
           example(title) do
             stub_request(:post, endpoint).to_return(status: 201, body: '{}')
@@ -70,11 +66,12 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
 
     describe ":root_directory" do
-      let(:params) { { root_directory: '/home/kyrylo/code' } }
+      before do
+        Airbrake::Config.instance.merge(root_directory: '/home/kyrylo/code')
+      end
 
       it "filters out frames" do
-        airbrake = described_class.new(config)
-        airbrake.notify_sync(ex)
+        subject.notify_sync(ex)
 
         expect(
           a_request(:post, endpoint).
@@ -84,7 +81,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
       context "when present and is a" do
         shared_examples 'root directory' do |dir|
-          let(:params) { { root_directory: dir } }
+          before { Airbrake::Config.instance.merge(root_directory: dir) }
 
           it "being included into the notice's payload" do
             subject.notify_sync(ex)
@@ -123,14 +120,12 @@ RSpec.describe Airbrake::NoticeNotifier do
           password: 'password' }
       end
 
-      let(:params) do
-        {
+      before do
+        Airbrake::Config.instance.merge(
           proxy: proxy_params,
           host: "http://localhost:#{proxy.config[:Port]}"
-        }
-      end
+        )
 
-      before do
         proxy.mount_proc '/' do |req, res|
           requests << req
           res.status = 201
@@ -165,7 +160,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     describe ":environment" do
       context "when present" do
-        let(:params) { { environment: :production } }
+        before { Airbrake::Config.instance.merge(environment: :production) }
 
         it "being included into the notice's payload" do
           subject.notify_sync(ex)
@@ -179,7 +174,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     describe ":ignore_environments" do
       shared_examples 'sent notice' do |params|
-        let(:params) { params }
+        before { Airbrake::Config.instance.merge(params) }
 
         it "sends a notice" do
           subject.notify_sync(ex)
@@ -188,7 +183,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
 
       shared_examples 'ignored notice' do |params|
-        let(:params) { params }
+        before { Airbrake::Config.instance.merge(params) }
 
         it "ignores exceptions occurring in envs that were not configured" do
           subject.notify_sync(ex)
@@ -245,11 +240,11 @@ RSpec.describe Airbrake::NoticeNotifier do
       # Fixes https://github.com/airbrake/airbrake-ruby/issues/276
       context "when specified along with :whitelist_keys" do
         context "and when context payload is present" do
-          let(:params) do
-            {
+          before do
+            Airbrake::Config.instance.merge(
               blacklist_keys: %i[password password_confirmation],
               whitelist_keys: [:email, /user/i, 'account_id']
-            }
+            )
           end
 
           it "sends a notice" do

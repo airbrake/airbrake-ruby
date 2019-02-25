@@ -1,7 +1,5 @@
 RSpec.describe Airbrake::Filters::DependencyFilter do
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   describe "#call" do
     it "attaches loaded dependencies to context/versions/dependencies" do

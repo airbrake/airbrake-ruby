@@ -1,24 +1,19 @@
 RSpec.describe Airbrake::AsyncSender do
   let(:endpoint) { 'https://api.airbrake.io/api/v3/projects/1/notices' }
   let(:queue_size) { 10 }
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
-  let(:config) do
-    Airbrake::Config.new(
+  before do
+    stub_request(:post, endpoint).to_return(status: 201, body: '{}')
+    Airbrake::Config.instance = Airbrake::Config.new(
       project_id: '1',
       workers: 3,
       queue_size: queue_size
     )
-  end
 
-  let(:notice) { Airbrake::Notice.new(config, AirbrakeTestError.new) }
-
-  before do
-    stub_request(:post, endpoint).to_return(status: 201, body: '{}')
     allow(Airbrake::Loggable.instance).to receive(:debug)
     expect(subject).to have_workers
   end
-
-  subject { described_class.new(config) }
 
   describe "#send" do
     it "sends payload to Airbrake" do
@@ -108,10 +103,8 @@ RSpec.describe Airbrake::AsyncSender do
 
     context "when workers were not spawned" do
       it "correctly closes the notifier nevertheless" do
-        sender = described_class.new(Airbrake::Config.new)
-        sender.close
-
-        expect(sender).to be_closed
+        subject.close
+        expect(subject).to be_closed
       end
     end
   end
@@ -147,7 +140,7 @@ RSpec.describe Airbrake::AsyncSender do
     end
 
     it "spawns exactly config.workers workers" do
-      expect(subject.workers.list.size).to eq(config.workers)
+      expect(subject.workers.list.size).to eq(Airbrake::Config.instance.workers)
       subject.close
     end
   end

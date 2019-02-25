@@ -2,20 +2,16 @@ RSpec.describe Airbrake::PerformanceNotifier do
   let(:routes) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
   let(:queries) { 'https://api.airbrake.io/api/v5/projects/1/queries-stats' }
 
-  let(:config) do
-    Airbrake::Config.new(
+  before do
+    stub_request(:put, routes).to_return(status: 200, body: '')
+    stub_request(:put, queries).to_return(status: 200, body: '')
+
+    Airbrake::Config.instance = Airbrake::Config.new(
       project_id: 1,
       project_key: 'banana',
       performance_stats: true,
       performance_stats_flush_period: 0
     )
-  end
-
-  subject { described_class.new(config) }
-
-  before do
-    stub_request(:put, routes).to_return(status: 200, body: '')
-    stub_request(:put, queries).to_return(status: 200, body: '')
   end
 
   describe "#notify" do
@@ -195,16 +191,14 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "doesn't send route stats when performance stats are disabled" do
-      notifier = described_class.new(
-        Airbrake::Config.new(
-          project_id: 1, project_key: '2', performance_stats: false
-        )
-      )
-      promise = notifier.notify(
+      Airbrake::Config.instance.merge(performance_stats: false)
+
+      promise = subject.notify(
         Airbrake::Request.new(
           method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
         )
       )
+
       expect(a_request(:put, routes)).not_to have_been_made
       expect(promise.value).to eq(
         'error' => "The Performance Stats feature is disabled"
@@ -212,28 +206,24 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "doesn't send route stats when current environment is ignored" do
-      notifier = described_class.new(
-        config.merge(
-          environment: 'test', ignore_environments: %w[test]
-        )
+      Airbrake::Config.instance.merge(
+        performance_stats: true, environment: 'test', ignore_environments: %w[test]
       )
-      promise = notifier.notify(
+
+      promise = subject.notify(
         Airbrake::Request.new(
           method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
         )
       )
+
       expect(a_request(:put, routes)).not_to have_been_made
       expect(promise.value).to eq('error' => "The 'test' environment is ignored")
     end
 
     it "sends environment when it's specified" do
-      notifier = described_class.new(
-        config.merge(
-          project_id: 1, project_key: '2', performance_stats: true,
-          environment: 'test'
-        )
-      )
-      notifier.notify(
+      Airbrake::Config.instance.merge(performance_stats: true, environment: 'test')
+
+      subject.notify(
         Airbrake::Request.new(
           method: 'POST',
           route: '/foo',
@@ -251,16 +241,14 @@ RSpec.describe Airbrake::PerformanceNotifier do
     describe "payload grouping" do
       let(:flush_period) { 0.5 }
 
-      let(:config) do
-        Airbrake::Config.new(
+      it "groups payload by performance name and sends it separately" do
+        Airbrake::Config.instance.merge(
           project_id: 1,
           project_key: 'banana',
           performance_stats: true,
           performance_stats_flush_period: flush_period
         )
-      end
 
-      it "groups payload by performance name and sends it separately" do
         subject.notify(
           Airbrake::Request.new(
             method: 'GET',

@@ -161,15 +161,15 @@ module Airbrake
     #   is missing (or both)
     # @note There's no way to read config values outside of this library
     def configure
-      yield config = Airbrake::Config.new
+      yield config = Airbrake::Config.instance
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
-      Airbrake::Loggable.instance = config.logger
+      Airbrake::Loggable.instance = Airbrake::Config.instance
 
-      @performance_notifier = PerformanceNotifier.new(config)
-      @notice_notifier = NoticeNotifier.new(config)
-      @deploy_notifier = DeployNotifier.new(config)
+      @performance_notifier = PerformanceNotifier.new
+      @notice_notifier = NoticeNotifier.new
+      @deploy_notifier = DeployNotifier.new
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise

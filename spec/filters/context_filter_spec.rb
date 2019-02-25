@@ -1,7 +1,5 @@
 RSpec.describe Airbrake::Filters::ContextFilter do
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   context "when the current context is empty" do
     it "doesn't merge anything with params" do
