@@ -4,22 +4,18 @@ module Airbrake
   # @see Airbrake.notify_request
   # @api public
   # @since v3.2.0
-  # rubocop:disable Metrics/ParameterLists
-  Request = Struct.new(
-    :environment, :method, :route, :status_code, :start_time, :end_time
-  ) do
+  Request = Struct.new(:method, :route, :status_code, :start_time, :end_time) do
     include HashKeyable
     include Ignorable
 
     def initialize(
-      environment: nil,
       method:,
       route:,
       status_code:,
       start_time:,
       end_time: Time.now
     )
-      super(environment, method, route, status_code, start_time, end_time)
+      super(method, route, status_code, start_time, end_time)
     end
 
     def name
@@ -28,7 +24,6 @@ module Airbrake
 
     def to_h
       {
-        'environment' => environment,
         'method' => method,
         'route' => route,
         'statusCode' => status_code,
@@ -36,5 +31,4 @@ module Airbrake
       }.delete_if { |_key, val| val.nil? }
     end
   end
-  # rubocop:enable Metrics/ParameterLists
 end

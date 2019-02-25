@@ -22,7 +22,6 @@ RSpec.describe Airbrake::PerformanceNotifier do
     it "sends full query" do
       subject.notify(
         Airbrake::Query.new(
-          environment: 'development',
           method: 'POST',
           route: '/foo',
           query: 'SELECT * FROM things',
@@ -37,7 +36,6 @@ RSpec.describe Airbrake::PerformanceNotifier do
       expect(
         a_request(:put, queries).with(body: %r|
           \A{"queries":\[{
-            "environment":"development",
             "method":"POST",
             "route":"/foo",
             "query":"SELECT\s\*\sFROM\sthings",
@@ -56,7 +54,6 @@ RSpec.describe Airbrake::PerformanceNotifier do
     it "sends full request" do
       subject.notify(
         Airbrake::Request.new(
-          environment: 'development',
           method: 'POST',
           route: '/foo',
           status_code: 200,
@@ -68,7 +65,6 @@ RSpec.describe Airbrake::PerformanceNotifier do
       expect(
         a_request(:put, routes).with(body: %r|
           \A{"routes":\[{
-            "environment":"development",
             "method":"POST",
             "route":"/foo",
             "statusCode":200,
@@ -217,8 +213,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     it "doesn't send route stats when current environment is ignored" do
       notifier = described_class.new(
-        Airbrake::Config.new(
-          project_id: 1, project_key: '2', performance_stats: true,
+        config.merge(
           environment: 'test', ignore_environments: %w[test]
         )
       )
@@ -229,6 +224,28 @@ RSpec.describe Airbrake::PerformanceNotifier do
       )
       expect(a_request(:put, routes)).not_to have_been_made
       expect(promise.value).to eq('error' => "The 'test' environment is ignored")
+    end
+
+    it "sends environment when it's specified" do
+      notifier = described_class.new(
+        config.merge(
+          project_id: 1, project_key: '2', performance_stats: true,
+          environment: 'test'
+        )
+      )
+      notifier.notify(
+        Airbrake::Request.new(
+          method: 'POST',
+          route: '/foo',
+          status_code: 200,
+          start_time: Time.new
+        )
+      )
+      expect(
+        a_request(:put, routes).with(
+          body: /\A{"routes":\[.+\],"environment":"test"}\z/x
+        )
+      ).to have_been_made
     end
 
     describe "payload grouping" do
