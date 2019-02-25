@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.0.0][v4.0.0] (Feburary 25, 2019)
+
 * Removed support for deprecated `Airbrake.configure(:name)`
   ([#429](https://github.com/airbrake/airbrake-ruby/pull/429))
 * Renamed `Airbrake.create_deploy` to `Airbrake.notify_deploy`
@@ -673,3 +675,4 @@ Airbrake Ruby Changelog
 [v3.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.4
 [v3.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.5
 [v3.2.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.6
+[v4.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.0.0
