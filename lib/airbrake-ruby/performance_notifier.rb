@@ -87,6 +87,7 @@ module Airbrake
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def send(payload, promise)
       signature = "#{self.class.name}##{__method__}"
       raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
@@ -94,8 +95,11 @@ module Airbrake
       @config.logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
 
       payload.group_by { |k, _v| k.name }.each do |resource_name, data|
+        data = { resource_name => data.map { |k, v| k.to_h.merge!(v.to_h) } }
+        data['environment'] = @config.environment if @config.environment
+
         @sender.send(
-          { resource_name => data.map { |k, v| k.to_h.merge!(v.to_h) } },
+          data,
           promise,
           URI.join(
             @config.host,
@@ -104,5 +108,6 @@ module Airbrake
         )
       end
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
