@@ -1,9 +1,7 @@
 RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
   subject { described_class.new('.') }
 
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   context "when context/lastCheckout is defined" do
     it "doesn't attach anything to context/lastCheckout" do

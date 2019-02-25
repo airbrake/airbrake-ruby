@@ -1,6 +1,6 @@
 RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
   describe "#call" do
-    let(:notice) { Airbrake::Notice.new(Airbrake::Config.new, ex) }
+    let(:notice) { Airbrake::Notice.new(ex) }
 
     context "when #to_airbrake returns a non-Hash object" do
       let(:ex) do

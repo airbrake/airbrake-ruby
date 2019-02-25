@@ -58,11 +58,10 @@ module Airbrake
     attr_reader :stash
 
     # @api private
-    def initialize(config, exception, params = {})
-      @config = config
-
+    def initialize(exception, params = {})
+      @config = Airbrake::Config.instance
       @payload = {
-        errors: NestedException.new(config, exception).as_json,
+        errors: NestedException.new(exception).as_json,
         context: context,
         environment: {
           program_name: $PROGRAM_NAME

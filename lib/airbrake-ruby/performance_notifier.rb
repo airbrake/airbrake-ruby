@@ -8,11 +8,10 @@ module Airbrake
     include Inspectable
     include Loggable
 
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config = config
-      @flush_period = config.performance_stats_flush_period
-      @sender = SyncSender.new(config, :put)
+    def initialize
+      @config = Airbrake::Config.instance
+      @flush_period = Airbrake::Config.instance.performance_stats_flush_period
+      @sender = SyncSender.new(:put)
       @payload = {}
       @schedule_flush = nil
       @mutex = Mutex.new

@@ -11,9 +11,9 @@ module Airbrake
 
     include Loggable
 
-    # @param [Airbrake::Config] config
-    def initialize(config, method = :post)
-      @config = config
+    # @param [Symbol] method HTTP method to use to send payload
+    def initialize(method = :post)
+      @config = Airbrake::Config.instance
       @method = method
       @rate_limit_reset = Time.now
     end

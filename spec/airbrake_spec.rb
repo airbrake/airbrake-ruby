@@ -1,7 +1,5 @@
 RSpec.describe Airbrake do
-  before do
-    Airbrake.configure { |c| c.merge(project_id: 1, project_key: 'abc') }
-  end
+  before { Airbrake::Config.instance = Airbrake::Config.new }
 
   describe ".configure" do
     it "yields the config" do

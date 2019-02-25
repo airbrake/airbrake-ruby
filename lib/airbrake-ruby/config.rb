@@ -5,6 +5,13 @@ module Airbrake
   # @api public
   # @since v1.0.0
   class Config
+    @instance = new
+
+    class << self
+      # @return [Config]
+      attr_accessor :instance
+    end
+
     # @return [Integer] the project identificator. This value *must* be set.
     # @api public
     attr_accessor :project_id

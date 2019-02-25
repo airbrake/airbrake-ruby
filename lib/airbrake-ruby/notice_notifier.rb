@@ -18,21 +18,12 @@ module Airbrake
     include Inspectable
     include Loggable
 
-    # Creates a new notice notifier with the given config options.
-    #
-    # @example
-    #   config = Airbrake::Config.new
-    #   config.project_id = 123
-    #   config.project_key = '321'
-    #   notice_notifier = Airbrake::NoticeNotifier.new(config)
-    #
-    # @param [Airbrake::Config] config
-    def initialize(config)
-      @config = config
+    def initialize
+      @config = Airbrake::Config.instance
       @context = {}
       @filter_chain = FilterChain.new
-      @async_sender = AsyncSender.new(config)
-      @sync_sender = SyncSender.new(config)
+      @async_sender = AsyncSender.new
+      @sync_sender = SyncSender.new
 
       add_default_filters
     end
@@ -68,7 +59,7 @@ module Airbrake
         exception[:params].merge!(params)
         exception
       else
-        Notice.new(@config, convert_to_exception(exception), params.dup)
+        Notice.new(convert_to_exception(exception), params.dup)
       end
     end
 

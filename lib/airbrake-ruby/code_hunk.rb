@@ -11,10 +11,6 @@ module Airbrake
 
     include Loggable
 
-    def initialize(config)
-      @config = config
-    end
-
     # @param [String] file The file to read
     # @param [Integer] line The base line in the file
     # @return [Hash{Integer=>String}, nil] lines of code around the base line
