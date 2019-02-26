@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug in `Airbrake.configure` not setting `logger` properly
+  ([#442](https://github.com/airbrake/airbrake-ruby/pull/442))
+
 ### [v4.0.0][v4.0.0] (Feburary 25, 2019)
 
 * Removed support for deprecated `Airbrake.configure(:name)`

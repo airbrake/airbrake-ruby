@@ -165,7 +165,7 @@ module Airbrake
 
       raise Airbrake::Error, config.validation_error_message unless config.valid?
 
-      Airbrake::Loggable.instance = Airbrake::Config.instance
+      Airbrake::Loggable.instance = config.logger
 
       @performance_notifier = PerformanceNotifier.new
       @notice_notifier = NoticeNotifier.new
