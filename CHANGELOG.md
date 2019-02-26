@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Fixed bug in `Airbrake.configure` not setting `logger` properly
   ([#442](https://github.com/airbrake/airbrake-ruby/pull/442))
+* Fixed bug with `Airbrake::Config.instance` returning a broken Config instance
+  ([#443](https://github.com/airbrake/airbrake-ruby/pull/443))
 
 ### [v4.0.0][v4.0.0] (Feburary 25, 2019)
 

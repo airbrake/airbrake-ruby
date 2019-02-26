@@ -16,11 +16,14 @@ module Airbrake
   # @since v4.0.0
   # @api private
   module Loggable
-    @instance = ::Logger.new(File::NULL)
-
     class << self
+      # @param [Logger] logger
+      attr_writer :instance
+
       # @return [Logger]
-      attr_accessor :instance
+      def instance
+        @instance ||= ::Logger.new(File::NULL)
+      end
     end
 
     # @return [Logger] standard Ruby logger object
