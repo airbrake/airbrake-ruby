@@ -86,157 +86,29 @@ RSpec.describe Airbrake::Config do
   end
 
   describe "#valid?" do
-    context "when project_id is nil" do
-      it "returns false" do
-        config = described_class.new(
-          project_id: nil,
-          project_key: '123'
-        )
-        expect(config).not_to be_valid
-      end
+    it "returns true when #validate returns a resolved promise" do
+      expect(subject).to receive(:validate).and_return(OpenStruct.new(value: :ok))
+      expect(subject.valid?).to be_truthy
     end
 
-    context "when project_key is nil" do
-      it "returns false" do
-        config = described_class.new(
-          project_id: 123,
-          project_key: nil
-        )
-        expect(config).not_to be_valid
-      end
-    end
-
-    context "when the current environment is ignored" do
-      context "and when the notifier misconfigures configure project_key & project_id" do
-        it "returns true" do
-          config = described_class.new(
-            project_id: Object.new,
-            project_key: Object.new,
-            environment: :bingo,
-            ignore_environments: [:bingo]
-          )
-          expect(config).to be_valid
-        end
-      end
-
-      context "and when the notifier configures project_key & project_id" do
-        it "returns true" do
-          config = described_class.new(
-            project_id: 123,
-            project_key: '321',
-            environment: :bingo,
-            ignore_environments: [:bingo]
-          )
-          expect(config).to be_valid
-        end
-      end
-    end
-
-    context "when the project_id value is not a number" do
-      it "returns false" do
-        config = described_class.new(
-          project_id: 'bingo',
-          project_key: '321'
-        )
-        expect(config).not_to be_valid
-      end
-    end
-
-    context "when the project_id value is a String number" do
-      it "returns true" do
-        config = described_class.new(
-          project_id: '123',
-          project_key: '321'
-        )
-        expect(config).to be_valid
-      end
-    end
-
-    context "when the project_key value is not a String" do
-      it "returns false" do
-        config = described_class.new(
-          project_id: 123,
-          project_key: 321
-        )
-        expect(config).not_to be_valid
-      end
-    end
-
-    context "when the project_key value is an empty String" do
-      it "returns false" do
-        config = described_class.new(
-          project_id: 123,
-          project_key: ''
-        )
-        expect(config).not_to be_valid
-      end
-    end
-
-    context "when the environment value is not a String" do
-      before do
-      end
-
-      it "returns false" do
-        config = described_class.new(
-          project_id: 123,
-          project_key: '321',
-          environment: ['bingo']
-        )
-        expect(config).not_to be_valid
-      end
+    it "it returns false when #validate returns a rejected promise" do
+      expect(subject).to receive(:validate)
+        .and_return(OpenStruct.new(value: { 'error' => '' }))
+      expect(subject.valid?).to be_falsey
     end
   end
 
   describe "#ignored_environment?" do
-    describe "warnings" do
-      context "when 'ignore_environments' is set and 'environment' isn't" do
-        it "prints a warning" do
-          config = described_class.new(ignore_environments: [:bingo])
-
-          expect(config.logger).to receive(:warn).with(
-            /'ignore_environments' has no effect/
-          )
-          expect(config.ignored_environment?).to be_falsey
-        end
-      end
-
-      context "when 'ignore_environments' is set along with 'environment'" do
-        it "doesn't print a warning" do
-          config = described_class.new(
-            environment: :bango,
-            ignore_environments: [:bingo]
-          )
-
-          expect(config.logger).not_to receive(:warn)
-          expect(config.ignored_environment?).to be_falsey
-        end
-      end
+    it "returns false when Validator returns a resolved promise" do
+      expect(Airbrake::Config::Validator).to receive(:check_notify_ability)
+        .and_return(OpenStruct.new(value: :ok))
+      expect(subject.ignored_environment?).to be_falsey
     end
 
-    describe "environment value types" do
-      context "when 'environment' is a String" do
-        context "and when 'ignore_environments' contains Symbols" do
-          it "returns true" do
-            config = described_class.new(
-              environment: 'bango',
-              ignore_environments: [:bango]
-            )
-            expect(config.ignored_environment?).to be_truthy
-          end
-        end
-      end
-
-      context "when 'environment' is a Symbol" do
-        context "and when 'ignore_environments' contains Strings" do
-          it "returns true" do
-            config = described_class.new(
-              environment: :bango,
-              ignore_environments: %w[bango]
-            )
-            expect(config.ignored_environment?).to be_truthy
-          end
-        end
-      end
+    it "returns true when Validator returns a rejected promise" do
+      expect(Airbrake::Config::Validator).to receive(:check_notify_ability)
+        .and_return(OpenStruct.new(value: { 'error' => '' }))
+      expect(subject.ignored_environment?).to be_truthy
     end
   end
 

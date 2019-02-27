@@ -1,188 +1,183 @@
 RSpec.describe Airbrake::Config::Validator do
-  subject { described_class.new(config) }
+  let(:valid_id) { 123 }
+  let(:valid_key) { '123' }
+  let(:config) { Airbrake::Config.new(config_params) }
 
-  describe "#valid_project_id?" do
-    context "when project id is zero" do
-      let(:config) { Airbrake::Config.new(project_id: 0) }
+  describe ".validate" do
+    context "when project_id is numerical" do
+      let(:config_params) { { project_id: valid_id, project_key: valid_key } }
 
-      it "returns false" do
-        expect(subject.valid_project_id?).to be false
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
+      end
+    end
+
+    context "when project_id is a numerical String" do
+      let(:config_params) { { project_id: '123', project_key: valid_key } }
+
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
+      end
+    end
+
+    context "when project_id is zero" do
+      let(:config_params) { { project_id: 0, project_key: valid_key } }
+
+      it "returns a rejected promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq('error' => ':project_id is required')
+      end
+    end
+
+    context "when project_id consists of letters" do
+      let(:config_params) { { project_id: 'foo', project_key: valid_key } }
+
+      it "returns a rejected promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq('error' => ':project_id is required')
+      end
+    end
+
+    context "when project_id is less than zero" do
+      let(:config_params) { { project_id: -123, project_key: valid_key } }
+
+      it "returns a rejected promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq('error' => ':project_id is required')
+      end
+    end
+
+    context "when project_key is a non-empty String" do
+      let(:config_params) { { project_id: valid_id, project_key: '123' } }
+
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
+      end
+    end
+
+    context "when project_key is an empty String" do
+      let(:config_params) { { project_id: valid_id, project_key: '' } }
+
+      it "returns a rejected promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq('error' => ':project_key is required')
+      end
+    end
+
+    context "when project_key is a non-String" do
+      let(:config_params) { { project_id: valid_id, project_key: 123 } }
+
+      it "returns a rejected promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq('error' => ':project_key is required')
+      end
+    end
+
+    context "when environment is nil" do
+      let(:config_params) do
+        { project_id: valid_id, project_key: valid_key, environment: nil }
       end
 
-      it "sets correct error message" do
-        expect { subject.valid_project_id? }.to(
-          change { subject.error_message }.to(/:project_id is required/)
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
+      end
+    end
+
+    context "when environment is a String" do
+      let(:config_params) do
+        { project_id: valid_id, project_key: valid_key, environment: 'test' }
+      end
+
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
+      end
+    end
+
+    context "when environment is a Symbol" do
+      let(:config_params) do
+        { project_id: valid_id, project_key: valid_key, environment: :test }
+      end
+
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
+      end
+    end
+
+    context "when environment is non-String and non-Symbol" do
+      let(:config_params) do
+        { project_id: valid_id, project_key: valid_key, environment: 1.0 }
+      end
+
+      it "returns a rejected promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(
+          'error' => "the 'environment' option must be configured with a " \
+                     "Symbol (or String), but 'Float' was provided: 1.0"
         )
       end
     end
 
-    context "when project_id is a String" do
-      let(:config) { Airbrake::Config.new(project_id: '000') }
+    context "when environment is String-like" do
+      let(:string_inquirer) { Class.new(String) }
 
-      context "and when it's zero" do
-        it "returns false" do
-          expect(subject.valid_project_id?).to be false
-        end
-
-        it "sets correct error message" do
-          expect { subject.valid_project_id? }
-            .to(
-              change { subject.error_message }.to(/:project_id is required/)
-            )
-        end
+      let(:config_params) do
+        {
+          project_id: valid_id,
+          project_key: valid_key,
+          environment: string_inquirer.new('test')
+        }
       end
 
-      context "and when it consists of letters" do
-        let(:config) { Airbrake::Config.new(project_id: 'bingo') }
-
-        it "returns false" do
-          expect(subject.valid_project_id?).to be false
-        end
-
-        it "sets correct error message" do
-          expect { subject.valid_project_id? }.to(
-            change { subject.error_message }.to(/:project_id is required/)
-          )
-        end
-      end
-
-      context "and when it's numerical" do
-        let(:config) { Airbrake::Config.new(project_id: '123') }
-
-        it "returns true" do
-          expect(subject.valid_project_id?).to be true
-        end
-
-        it "doesn't set the error message" do
-          expect { subject.valid_project_id? }.not_to(change { subject.error_message })
-        end
-      end
-    end
-
-    context "when project id is non-zero" do
-      let(:config) { Airbrake::Config.new(project_id: 123) }
-
-      it "returns true" do
-        expect(subject.valid_project_id?).to be true
-      end
-
-      it "doesn't set the error message" do
-        expect { subject.valid_project_id? }.not_to(change { subject.error_message })
+      it "returns a resolved promise" do
+        promise = described_class.validate(config)
+        expect(promise.value).to eq(:ok)
       end
     end
   end
 
-  describe "#valid_project_key?" do
-    context "when it's a String" do
-      context "and when it's empty" do
-        let(:config) { Airbrake::Config.new(project_key: '') }
-
-        it "returns false" do
-          expect(subject.valid_project_key?).to be false
-        end
-
-        it "sets correct error message" do
-          expect { subject.valid_project_key? }
-            .to change { subject.error_message }
-            .to(/:project_key is required/)
-        end
+  describe "#check_notify_ability" do
+    context "when current environment is ignored" do
+      let(:config_params) do
+        {
+          project_id: valid_id,
+          project_key: valid_key,
+          environment: 'test',
+          ignore_environments: ['test']
+        }
       end
 
-      context "and when it's non-empty" do
-        let(:config) { Airbrake::Config.new(project_key: '123abc') }
-
-        it "returns true" do
-          expect(subject.valid_project_key?).to be true
-        end
-
-        it "doesn't set the error message" do
-          expect { subject.valid_project_key? }.not_to(change { subject.error_message })
-        end
-      end
-    end
-
-    context "when it's not a String" do
-      let(:config) { Airbrake::Config.new(project_key: 123) }
-
-      it "returns false" do
-        expect(subject.valid_project_key?).to be false
-      end
-
-      it "sets correct error message" do
-        expect { subject.valid_project_key? }.to(
-          change { subject.error_message }.to(/:project_key is required/)
+      it "returns a rejected promise" do
+        promise = described_class.check_notify_ability(config)
+        expect(promise.value).to eq(
+          'error' => "current environment 'test' is ignored"
         )
       end
     end
-  end
 
-  describe "#valid_environment?" do
-    context "when config.environment is not set" do
-      let(:config) { Airbrake::Config.new }
-
-      it "returns true" do
-        expect(subject.valid_environment?).to be true
+    context "when no environment is specified but ignore_environments is" do
+      let(:config_params) do
+        {
+          project_id: valid_id,
+          project_key: valid_key,
+          ignore_environments: ['test']
+        }
       end
 
-      it "doesn't set the error message" do
-        expect { subject.valid_environment? }.not_to(change { subject.error_message })
-      end
-    end
-
-    context "when config.environment is set" do
-      context "and when it is not a Symbol or String" do
-        let(:config) { Airbrake::Config.new(environment: 123) }
-
-        it "returns false" do
-          expect(subject.valid_environment?).to be false
-        end
-
-        it "sets the error message" do
-          expect { subject.valid_environment? }.to(
-            change { subject.error_message }
-              .to(/the 'environment' option must be configured with a Symbol/)
-          )
-        end
+      it "returns a rejected promise" do
+        promise = described_class.check_notify_ability(config)
+        expect(promise.value).to eq(:ok)
       end
 
-      context "and when it is a Symbol" do
-        let(:config) { Airbrake::Config.new(environment: :bingo) }
-
-        it "returns true" do
-          expect(subject.valid_environment?).to be true
-        end
-
-        it "doesn't set the error message" do
-          expect { subject.valid_environment? }.not_to(change { subject.error_message })
-        end
-      end
-
-      context "and when it is a String" do
-        let(:config) { Airbrake::Config.new(environment: 'bingo') }
-
-        it "returns true" do
-          expect(subject.valid_environment?).to be true
-        end
-
-        it "doesn't set the error message" do
-          expect { subject.valid_environment? }.not_to(change { subject.error_message })
-        end
-      end
-
-      context "and when it is kind of a String" do
-        let(:string_inquirer) { Class.new(String) }
-
-        let(:config) do
-          Airbrake::Config.new(environment: string_inquirer.new('bingo'))
-        end
-
-        it "returns true" do
-          expect(subject.valid_environment?).to be true
-        end
-
-        it "doesn't set the error message" do
-          expect { subject.valid_environment? }.not_to(change { subject.error_message })
-        end
+      it "warns about 'no effect'" do
+        expect(config.logger).to receive(:warn)
+          .with(/'ignore_environments' has no effect/)
+        described_class.check_notify_ability(config)
       end
     end
   end
