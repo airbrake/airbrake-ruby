@@ -104,8 +104,8 @@ RSpec.describe Airbrake::Truncator do
     context "given an arbitrary object that doesn't respond to #to_json" do
       let(:object) do
         obj = Object.new
-        allow(obj).to receive(:to_json).
-          and_raise(Airbrake::Notice::JSON_EXCEPTIONS.first)
+        allow(obj).to receive(:to_json)
+          .and_raise(Airbrake::Notice::JSON_EXCEPTIONS.first)
         obj
       end
 

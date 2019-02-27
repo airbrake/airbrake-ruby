@@ -74,8 +74,8 @@ RSpec.describe Airbrake::NoticeNotifier do
         subject.notify_sync(ex)
 
         expect(
-          a_request(:post, endpoint).
-          with(body: %r|{"file":"/PROJECT_ROOT/airbrake/ruby/spec/airbrake_spec.+|)
+          a_request(:post, endpoint)
+          .with(body: %r|{"file":"/PROJECT_ROOT/airbrake/ruby/spec/airbrake_spec.+|)
         ).to have_been_made.once
       end
 
@@ -86,8 +86,8 @@ RSpec.describe Airbrake::NoticeNotifier do
           it "being included into the notice's payload" do
             subject.notify_sync(ex)
             expect(
-              a_request(:post, endpoint).
-              with(body: %r{"rootDirectory":"/bingo/bango"})
+              a_request(:post, endpoint)
+              .with(body: %r{"rootDirectory":"/bingo/bango"})
             ).to have_been_made.once
           end
         end
@@ -148,12 +148,12 @@ RSpec.describe Airbrake::NoticeNotifier do
 
         proxied_request = requests.pop(true)
 
-        expect(proxied_request.header['proxy-authorization'].first).
-          to eq('Basic dXNlcjpwYXNzd29yZA==')
+        expect(proxied_request.header['proxy-authorization'].first)
+          .to eq('Basic dXNlcjpwYXNzd29yZA==')
 
         # rubocop:disable Metrics/LineLength
-        expect(proxied_request.request_line).
-          to eq("POST http://localhost:#{proxy.config[:Port]}/api/v3/projects/105138/notices HTTP/1.1\r\n")
+        expect(proxied_request.request_line)
+          .to eq("POST http://localhost:#{proxy.config[:Port]}/api/v3/projects/105138/notices HTTP/1.1\r\n")
         # rubocop:enable Metrics/LineLength
       end
     end
@@ -165,8 +165,8 @@ RSpec.describe Airbrake::NoticeNotifier do
         it "being included into the notice's payload" do
           subject.notify_sync(ex)
           expect(
-            a_request(:post, endpoint).
-            with(body: /"context":{.*"environment":"production".*}/)
+            a_request(:post, endpoint)
+            .with(body: /"context":{.*"environment":"production".*}/)
           ).to have_been_made.once
         end
       end
@@ -210,8 +210,8 @@ RSpec.describe Airbrake::NoticeNotifier do
 
         it "returns early and doesn't try to parse the given exception" do
           expect(Airbrake::Notice).not_to receive(:new)
-          expect(subject.notify_sync(ex)).
-            to eq('error' => "The 'development' environment is ignored")
+          expect(subject.notify_sync(ex))
+            .to eq('error' => "The 'development' environment is ignored")
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end

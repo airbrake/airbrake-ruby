@@ -178,8 +178,8 @@ RSpec.describe Airbrake::TDigest do
 
       it "returns a tdigest with less than or equal centroids" do
         new_tdigest = subject + @other
-        expect(new_tdigest.centroids.size).
-          to be <= subject.centroids.size + @other.centroids.size
+        expect(new_tdigest.centroids.size)
+          .to be <= subject.centroids.size + @other.centroids.size
       end
 
       it "has the size of the two digests combined" do

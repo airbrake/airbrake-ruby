@@ -85,8 +85,8 @@ RSpec.describe Airbrake::Notice do
 
       context "when truncation failed" do
         it "returns nil" do
-          expect_any_instance_of(Airbrake::Truncator).
-            to receive(:reduce_max_size).and_return(0)
+          expect_any_instance_of(Airbrake::Truncator)
+            .to receive(:reduce_max_size).and_return(0)
 
           encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
           bad_string = Base64.decode64(encoded)
@@ -118,8 +118,8 @@ RSpec.describe Airbrake::Notice do
           let(:backtrace_size) { 1000 }
 
           it "doesn't happen" do
-            expect(notice.to_json).
-              to match(/bingo":\["#<Object:.+>","#<#<Class:.+>:.+>"/)
+            expect(notice.to_json)
+              .to match(/bingo":\["#<Object:.+>","#<#<Class:.+>:.+>"/)
           end
         end
 
@@ -128,8 +128,8 @@ RSpec.describe Airbrake::Notice do
             let(:backtrace_size) { 50_000 }
 
             it "happens" do
-              expect(notice.to_json).
-                to match(/bingo":\[".+Object.+",".+Class.+"/)
+              expect(notice.to_json)
+                .to match(/bingo":\[".+Object.+",".+Class.+"/)
             end
           end
         end
@@ -219,13 +219,13 @@ RSpec.describe Airbrake::Notice do
     it "overwrites the 'notifier' payload with the default values" do
       notice[:notifier] = { name: 'bingo', bango: 'bongo' }
 
-      expect(notice.to_json).
-        to match(/"notifier":{"name":"airbrake-ruby","version":".+","url":".+"}/)
+      expect(notice.to_json)
+        .to match(/"notifier":{"name":"airbrake-ruby","version":".+","url":".+"}/)
     end
 
     it "always contains context/hostname" do
-      expect(notice.to_json).
-        to match(/"context":{.*"hostname":".+".*}/)
+      expect(notice.to_json)
+        .to match(/"context":{.*"hostname":".+".*}/)
     end
 
     it "defaults to the error severity" do
@@ -233,18 +233,18 @@ RSpec.describe Airbrake::Notice do
     end
 
     it "always contains environment/program_name" do
-      expect(notice.to_json).
-        to match(%r|"environment":{"program_name":.+/rspec.*|)
+      expect(notice.to_json)
+        .to match(%r|"environment":{"program_name":.+/rspec.*|)
     end
 
     it "contains errors" do
-      expect(notice.to_json).
-        to match(/"errors":\[{"type":"AirbrakeTestError","message":"App crash/)
+      expect(notice.to_json)
+        .to match(/"errors":\[{"type":"AirbrakeTestError","message":"App crash/)
     end
 
     it "contains a backtrace" do
-      expect(notice.to_json).
-        to match(%r|"backtrace":\[{"file":"/home/.+/spec/spec_helper.rb"|)
+      expect(notice.to_json)
+        .to match(%r|"backtrace":\[{"file":"/home/.+/spec/spec_helper.rb"|)
     end
 
     it "contains params" do
@@ -259,8 +259,8 @@ RSpec.describe Airbrake::Notice do
 
     it "raises error if notice is ignored" do
       notice.ignore!
-      expect { notice[:params] }.
-        to raise_error(Airbrake::Error, 'cannot access ignored Airbrake::Notice')
+      expect { notice[:params] }
+        .to raise_error(Airbrake::Error, 'cannot access ignored Airbrake::Notice')
     end
   end
 
@@ -273,18 +273,18 @@ RSpec.describe Airbrake::Notice do
 
     it "raises error if notice is ignored" do
       notice.ignore!
-      expect { notice[:params] = {} }.
-        to raise_error(Airbrake::Error, 'cannot access ignored Airbrake::Notice')
+      expect { notice[:params] = {} }
+        .to raise_error(Airbrake::Error, 'cannot access ignored Airbrake::Notice')
     end
 
     it "raises error when trying to assign unrecognized key" do
-      expect { notice[:bingo] = 1 }.
-        to raise_error(Airbrake::Error, /:bingo is not recognized among/)
+      expect { notice[:bingo] = 1 }
+        .to raise_error(Airbrake::Error, /:bingo is not recognized among/)
     end
 
     it "raises when setting non-hash objects as the value" do
-      expect { notice[:params] = Object.new }.
-        to raise_error(Airbrake::Error, 'Got Object value, wanted a Hash')
+      expect { notice[:params] = Object.new }
+        .to raise_error(Airbrake::Error, 'Got Object value, wanted a Hash')
     end
   end
 

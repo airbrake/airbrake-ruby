@@ -13,9 +13,6 @@ Metrics/MethodLength:
 Metrics/LineLength:
   Max: 90
 
-Layout/DotPosition:
-  EnforcedStyle: trailing
-
 # Details:
 #   http://c2.com/cgi/wiki?AbcMetric
 Metrics/AbcSize:
