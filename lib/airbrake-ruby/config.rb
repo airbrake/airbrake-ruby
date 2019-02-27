@@ -108,8 +108,6 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
     def initialize(user_config = {})
-      @validator = Config::Validator.new(self)
-
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
@@ -169,35 +167,18 @@ module Airbrake
     # @return [Boolean] true if the config meets the requirements, false
     #   otherwise
     def valid?
-      return true if ignored_environment?
-
-      return false unless @validator.valid_project_id?
-      return false unless @validator.valid_project_key?
-      return false unless @validator.valid_environment?
-
-      true
+      validate.value == :ok
     end
 
-    def validation_error_message
-      @validator.error_message
+    # @return [Promise] resolved if the config is valid, rejected otherwise
+    def validate
+      Validator.validate(self)
     end
 
     # @return [Boolean] true if the config ignores current environment, false
     #   otherwise
     def ignored_environment?
-      if ignore_environments.any? && environment.nil?
-        logger.warn("#{LOG_LABEL} the 'environment' option is not set, " \
-                    "'ignore_environments' has no effect")
-      end
-
-      env = environment.to_s
-      ignore_environments.any? do |pattern|
-        if pattern.is_a?(Regexp)
-          env.match(pattern)
-        else
-          env == pattern.to_s
-        end
-      end
+      Validator.check_notify_ability(self).value != :ok
     end
 
     private

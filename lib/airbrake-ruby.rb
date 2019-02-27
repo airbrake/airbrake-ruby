@@ -163,7 +163,9 @@ module Airbrake
     def configure
       yield config = Airbrake::Config.instance
 
-      raise Airbrake::Error, config.validation_error_message unless config.valid?
+      unless (result = config.validate.value) == :ok
+        raise Airbrake::Error, result['error']
+      end
 
       Airbrake::Loggable.instance = config.logger
 
