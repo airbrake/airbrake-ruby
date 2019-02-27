@@ -20,8 +20,8 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "returns a properly formatted array of hashes" do
-        expect(described_class.parse(AirbrakeTestError.new)).
-          to eq(parsed_backtrace)
+        expect(described_class.parse(AirbrakeTestError.new))
+          .to eq(parsed_backtrace)
       end
     end
 
@@ -65,8 +65,8 @@ RSpec.describe Airbrake::Backtrace do
       it "returns a properly formatted array of hashes" do
         allow(described_class).to receive(:java_exception?).and_return(true)
 
-        expect(described_class.parse(JavaAirbrakeTestError.new)).
-          to eq(backtrace_array)
+        expect(described_class.parse(JavaAirbrakeTestError.new))
+          .to eq(backtrace_array)
       end
     end
 

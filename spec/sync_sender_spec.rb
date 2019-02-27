@@ -55,8 +55,8 @@ RSpec.describe Airbrake::SyncSender do
 
     context "when request body is nil" do
       it "doesn't send data" do
-        expect_any_instance_of(Airbrake::Truncator).
-          to receive(:reduce_max_size).and_return(0)
+        expect_any_instance_of(Airbrake::Truncator)
+          .to receive(:reduce_max_size).and_return(0)
 
         encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
         bad_string = Base64.decode64(encoded)
@@ -75,8 +75,8 @@ RSpec.describe Airbrake::SyncSender do
           /truncation failed/
         )
         expect(subject.send(notice, promise)).to be_an(Airbrake::Promise)
-        expect(promise.value).
-          to match('error' => '**Airbrake: data was not sent because of missing body')
+        expect(promise.value)
+          .to match('error' => '**Airbrake: data was not sent because of missing body')
       end
     end
 

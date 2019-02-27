@@ -3,8 +3,8 @@ RSpec.describe Airbrake::DeployNotifier do
 
   describe "#notify" do
     it "returns a promise" do
-      stub_request(:post, 'https://api.airbrake.io/api/v4/projects/1/deploys').
-        to_return(status: 201, body: '{}')
+      stub_request(:post, 'https://api.airbrake.io/api/v4/projects/1/deploys')
+        .to_return(status: 201, body: '{}')
       expect(subject.notify({})).to be_an(Airbrake::Promise)
     end
 

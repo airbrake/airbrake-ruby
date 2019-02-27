@@ -25,8 +25,8 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "sets correct error message" do
-          expect { subject.valid_project_id? }.
-            to(
+          expect { subject.valid_project_id? }
+            .to(
               change { subject.error_message }.to(/:project_id is required/)
             )
         end
@@ -82,9 +82,9 @@ RSpec.describe Airbrake::Config::Validator do
         end
 
         it "sets correct error message" do
-          expect { subject.valid_project_key? }.
-            to change { subject.error_message }.
-            to(/:project_key is required/)
+          expect { subject.valid_project_key? }
+            .to change { subject.error_message }
+            .to(/:project_key is required/)
         end
       end
 
@@ -139,8 +139,8 @@ RSpec.describe Airbrake::Config::Validator do
 
         it "sets the error message" do
           expect { subject.valid_environment? }.to(
-            change { subject.error_message }.
-              to(/the 'environment' option must be configured with a Symbol/)
+            change { subject.error_message }
+              .to(/the 'environment' option must be configured with a Symbol/)
           )
         end
       end

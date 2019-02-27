@@ -1,4 +1,3 @@
-# rubocop:disable Layout/DotPosition
 RSpec.describe Airbrake::NoticeNotifier do
   before do
     Airbrake::Config.instance = Airbrake::Config.new(
@@ -406,4 +405,3 @@ RSpec.describe Airbrake::NoticeNotifier do
     end
   end
 end
-# rubocop:enable Layout/DotPosition

@@ -39,8 +39,8 @@ RSpec.describe Airbrake::Config do
       end
 
       it "raises error on unknown config options" do
-        expect { described_class.new(unknown_option: true) }.
-          to raise_error(Airbrake::Error, /unknown option/)
+        expect { described_class.new(unknown_option: true) }
+          .to raise_error(Airbrake::Error, /unknown option/)
       end
 
       it "sets the default number of workers" do
@@ -247,16 +247,16 @@ RSpec.describe Airbrake::Config do
       context "and with a trailing slash" do
         it "sets the endpoint with the slug" do
           config.host = 'https://localhost/bingo/'
-          expect(config.endpoint.to_s).
-            to eq('https://localhost/bingo/api/v3/projects/1/notices')
+          expect(config.endpoint.to_s)
+            .to eq('https://localhost/bingo/api/v3/projects/1/notices')
         end
       end
 
       context "and without a trailing slash" do
         it "sets the endpoint without the slug" do
           config.host = 'https://localhost/bingo'
-          expect(config.endpoint.to_s).
-            to eq('https://localhost/api/v3/projects/1/notices')
+          expect(config.endpoint.to_s)
+            .to eq('https://localhost/api/v3/projects/1/notices')
         end
       end
     end
