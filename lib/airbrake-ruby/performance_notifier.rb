@@ -23,6 +23,10 @@ module Airbrake
     # @see Airbrake.notify_query
     # @see Airbrake.notify_request
     def notify(resource, promise = Airbrake::Promise.new)
+      unless @config.valid?
+        return promise.reject("Notice not sent: config is invalid or not configured")
+      end
+
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")
       end

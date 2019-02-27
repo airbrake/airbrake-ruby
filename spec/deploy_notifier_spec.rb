@@ -1,11 +1,26 @@
 RSpec.describe Airbrake::DeployNotifier do
-  before { Airbrake::Config.instance = Airbrake::Config.new(project_id: 1) }
+  before do
+    Airbrake::Config.instance = Airbrake::Config.new(
+      project_id: 1, project_key: 'abc'
+    )
+  end
 
   describe "#notify" do
     it "returns a promise" do
       stub_request(:post, 'https://api.airbrake.io/api/v4/projects/1/deploys').
         to_return(status: 201, body: '{}')
       expect(subject.notify({})).to be_an(Airbrake::Promise)
+    end
+
+    context "when config is invalid" do
+      before { Airbrake::Config.instance.merge(project_id: nil) }
+
+      it "returns a rejected promise" do
+        promise = subject.notify({})
+        expect(promise.value).to eq(
+          'error' => 'Notice not sent: config is invalid or not configured'
+        )
+      end
     end
 
     context "when environment is configured" do

@@ -108,6 +108,17 @@ RSpec.describe Airbrake::NoticeNotifier do
       sleep 1
     end
 
+    context "when config is invalid" do
+      before { Airbrake::Config.instance.merge(project_id: nil) }
+
+      it "returns a rejected promise" do
+        promise = subject.notify({})
+        expect(promise.value).to eq(
+          'error' => 'Notice not sent: config is invalid or not configured'
+        )
+      end
+    end
+
     context "when a notice is not ignored" do
       it "yields the notice" do
         expect { |b| subject.notify('ex', &b) }
