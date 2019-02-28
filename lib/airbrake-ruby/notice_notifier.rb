@@ -95,15 +95,14 @@ module Airbrake
     end
 
     def send_notice(exception, params, sender)
-      promise = Airbrake::Promise.new
-      if @config.ignored_environment?
-        return promise.reject("The '#{@config.environment}' environment is ignored")
-      end
+      promise = @config.check_configuration
+      return promise if promise.rejected?
 
       notice = build_notice(exception, params)
       yield notice if block_given?
       @filter_chain.refine(notice)
 
+      promise = Airbrake::Promise.new
       return promise.reject("#{notice} was marked as ignored") if notice.ignored?
 
       sender.send(notice, promise)

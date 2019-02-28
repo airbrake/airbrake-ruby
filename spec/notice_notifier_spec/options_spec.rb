@@ -211,7 +211,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         it "returns early and doesn't try to parse the given exception" do
           expect(Airbrake::Notice).not_to receive(:new)
           expect(subject.notify_sync(ex))
-            .to eq('error' => "The 'development' environment is ignored")
+            .to eq('error' => "current environment 'development' is ignored")
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end

@@ -2,6 +2,8 @@ RSpec.describe Airbrake::Config do
   let(:resolved_promise) { Airbrake::Promise.new.resolve }
   let(:rejected_promise) { Airbrake::Promise.new.reject }
 
+  let(:valid_params) { { project_id: 1, project_key: '2' } }
+
   its(:project_id) { is_expected.to be_nil }
   its(:project_key) { is_expected.to be_nil }
   its(:logger) { is_expected.to be_a(Logger) }
@@ -60,7 +62,6 @@ RSpec.describe Airbrake::Config do
   end
 
   describe "#endpoint" do
-    let(:valid_params) { { project_id: 1, project_key: '2' } }
     subject { described_class.new(valid_params.merge(user_config)) }
 
     context "when host ends with a URL with a slug with a trailing slash" do
@@ -82,5 +83,27 @@ RSpec.describe Airbrake::Config do
 
   describe "#validate" do
     its(:validate) { is_expected.to be_an(Airbrake::Promise) }
+  end
+
+  describe "#check_configuration" do
+    let(:user_config) { {} }
+
+    subject { described_class.new(valid_params.merge(user_config)) }
+
+    its(:check_configuration) { is_expected.to be_an(Airbrake::Promise) }
+
+    context "when config is invalid" do
+      let(:user_config) { { project_id: nil } }
+      its(:check_configuration) { is_expected.to be_rejected }
+    end
+
+    context "when current environment is ignored" do
+      let(:user_config) { { environment: 'test', ignore_environments: ['test'] } }
+      its(:check_configuration) { is_expected.to be_rejected }
+    end
+
+    context "when config is valid and allows notifying" do
+      its(:check_configuration) { is_expected.not_to be_rejected }
+    end
   end
 end

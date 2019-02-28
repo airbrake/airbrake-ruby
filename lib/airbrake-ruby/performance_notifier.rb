@@ -19,14 +19,13 @@ module Airbrake
     end
 
     # @param [Hash] resource
-    # @param [Airbrake::Promise] promise
     # @see Airbrake.notify_query
     # @see Airbrake.notify_request
-    def notify(resource, promise = Airbrake::Promise.new)
-      if @config.ignored_environment?
-        return promise.reject("The '#{@config.environment}' environment is ignored")
-      end
+    def notify(resource)
+      promise = @config.check_configuration
+      return promise if promise.rejected?
 
+      promise = Airbrake::Promise.new
       unless @config.performance_stats
         return promise.reject("The Performance Stats feature is disabled")
       end
