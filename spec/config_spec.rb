@@ -94,27 +94,16 @@ RSpec.describe Airbrake::Config do
 
     context "when config is invalid" do
       let(:user_config) { { project_id: nil } }
-
-      it "rejects the promise" do
-        promise = subject.check_configuration
-        expect(promise).to be_rejected
-      end
+      its(:check_configuration) { is_expected.to be_rejected }
     end
 
     context "when current environment is ignored" do
       let(:user_config) { { environment: 'test', ignore_environments: ['test'] } }
-
-      it "rejects the promise" do
-        promise = subject.check_configuration
-        expect(promise).to be_rejected
-      end
+      its(:check_configuration) { is_expected.to be_rejected }
     end
 
     context "when config is valid and allows notifying" do
-      it "doesn't reject the promise" do
-        promise = subject.check_configuration
-        expect(promise).not_to be_rejected
-      end
+      its(:check_configuration) { is_expected.not_to be_rejected }
     end
   end
 end

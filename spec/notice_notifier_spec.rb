@@ -168,7 +168,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
       it "returns a rejected promise" do
         promise = subject.notify('foo', bingo: 'bango')
-        expect(promise.value).to eq('error' => "The 'test' environment is ignored")
+        expect(promise.value).to eq('error' => "current environment 'test' is ignored")
       end
     end
   end
@@ -252,7 +252,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
       it "returns an error hash" do
         expect(subject.notify_sync('foo'))
-          .to eq('error' => "The 'test' environment is ignored")
+          .to eq('error' => "current environment 'test' is ignored")
       end
     end
   end

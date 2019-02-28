@@ -18,11 +18,11 @@ module Airbrake
     end
 
     # @see Airbrake.notify_deploy
-    def notify(deploy_info, promise = Airbrake::Promise.new)
-      if @config.ignored_environment?
-        return promise.reject("The '#{@config.environment}' environment is ignored")
-      end
+    def notify(deploy_info)
+      promise = @config.check_configuration
+      return promise if promise.rejected?
 
+      promise = Airbrake::Promise.new
       deploy_info[:environment] ||= @config.environment
       @sender.send(
         deploy_info,

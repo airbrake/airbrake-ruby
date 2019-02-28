@@ -1,5 +1,7 @@
 RSpec.describe Airbrake::DeployNotifier do
-  before { Airbrake::Config.instance = Airbrake::Config.new(project_id: 1) }
+  before do
+    Airbrake::Config.instance = Airbrake::Config.new(project_id: 1, project_key: '123')
+  end
 
   describe "#notify" do
     it "returns a promise" do

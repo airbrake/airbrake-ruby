@@ -217,7 +217,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       )
 
       expect(a_request(:put, routes)).not_to have_been_made
-      expect(promise.value).to eq('error' => "The 'test' environment is ignored")
+      expect(promise.value).to eq('error' => "current environment 'test' is ignored")
     end
 
     it "sends environment when it's specified" do
