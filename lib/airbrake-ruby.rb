@@ -77,71 +77,9 @@ module Airbrake
   # @!macro see_public_api_method
   #   @see Airbrake.$0
 
-  # NilNoticeNotifier is a no-op notice notifier, which mimics
-  # +Airbrake::NoticeNotifier+ and serves only the purpose of making the library
-  # API easier to use.
-  #
-  # @since v2.1.0
-  class NilNoticeNotifier
-    # @macro see_public_api_method
-    def notify(_exception, _params = {}, &block); end
-
-    # @macro see_public_api_method
-    def notify_sync(_exception, _params = {}, &block); end
-
-    # @macro see_public_api_method
-    def add_filter(_filter = nil, &_block); end
-
-    # @macro see_public_api_method
-    def delete_filter(_filter_class); end
-
-    # @macro see_public_api_method
-    def build_notice(_exception, _params = {}); end
-
-    # @macro see_public_api_method
-    def close; end
-
-    # @macro see_public_api_method
-    def configured?
-      false
-    end
-
-    # @macro see_public_api_method
-    def merge_context(_context); end
-  end
-
-  # NilPerformanceNotifier is a no-op notifier, which mimics
-  # {Airbrake::PerformanceNotifier} and serves only the purpose of making the
-  # library API easier to use.
-  #
-  # @since v3.2.0
-  class NilPerformanceNotifier
-    # @see Airbrake.notify_request
-    # @see Airbrake.notify_query
-    def notify(_performance_info); end
-
-    # @see Airbrake.notify_request
-    # @see Airbrake.notify_query
-    def add_filter(_filter = nil, &_block); end
-
-    # @see Airbrake.notify_request
-    # @see Airbrake.notify_query
-    def delete_filter(_filter_class); end
-  end
-
-  # NilDeployNotifier is a no-op notifier, which mimics
-  # {Airbrake::DeployNotifier} and serves only the purpose of making the library
-  # API easier to use.
-  #
-  # @since v3.2.0
-  class NilDeployNotifier
-    # @see Airbrake.notify_deploy
-    def notify(_deploy_info); end
-  end
-
-  @notice_notifier = NilNoticeNotifier.new
-  @performance_notifier = NilPerformanceNotifier.new
-  @deploy_notifier = NilDeployNotifier.new
+  @performance_notifier = PerformanceNotifier.new
+  @notice_notifier = NoticeNotifier.new
+  @deploy_notifier = DeployNotifier.new
 
   class << self
     # Configures the Airbrake notifier.
@@ -163,15 +101,11 @@ module Airbrake
     def configure
       yield config = Airbrake::Config.instance
 
-      unless (result = config.validate.value) == :ok
-        raise Airbrake::Error, result['error']
+      if (result = config.validate).rejected?
+        raise Airbrake::Error, result.value['error']
       end
 
       Airbrake::Loggable.instance = config.logger
-
-      @performance_notifier = PerformanceNotifier.new
-      @notice_notifier = NoticeNotifier.new
-      @deploy_notifier = DeployNotifier.new
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
@@ -219,7 +153,7 @@ module Airbrake
     # @yield [notice] The notice to filter
     # @yieldparam [Airbrake::Notice]
     # @yieldreturn [void]
-    # @return [Hash{String=>String}] the reponse from the server
+    # @return [Airbrake::Promise] the reponse from the server
     # @see .notify
     def notify_sync(exception, params = {}, &block)
       @notice_notifier.notify_sync(exception, params, &block)

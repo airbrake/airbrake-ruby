@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* `add_filter` & `add_performance_filter` add filters even when Airbrake is not
+  configured ([#445](https://github.com/airbrake/airbrake-ruby/pull/445),
+  [#451](https://github.com/airbrake/airbrake-ruby/pull/451))
+
 ### [v4.0.1][v4.0.1] (Feburary 26, 2019)
 
 * Fixed bug in `Airbrake.configure` not setting `logger` properly

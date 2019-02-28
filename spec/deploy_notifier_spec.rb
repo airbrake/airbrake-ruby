@@ -10,6 +10,15 @@ RSpec.describe Airbrake::DeployNotifier do
       expect(subject.notify({})).to be_an(Airbrake::Promise)
     end
 
+    context "when config is invalid" do
+      before { Airbrake::Config.instance.merge(project_id: nil) }
+
+      it "returns a rejected promise" do
+        promise = subject.notify({})
+        expect(promise).to be_rejected
+      end
+    end
+
     context "when environment is configured" do
       before { Airbrake::Config.instance.merge(environment: 'fooenv') }
 
