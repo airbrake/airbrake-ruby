@@ -238,6 +238,15 @@ RSpec.describe Airbrake::PerformanceNotifier do
       ).to have_been_made
     end
 
+    context "when config is invalid" do
+      before { Airbrake::Config.instance.merge(project_id: nil) }
+
+      it "returns a rejected promise" do
+        promise = subject.notify({})
+        expect(promise).to be_rejected
+      end
+    end
+
     describe "payload grouping" do
       let(:flush_period) { 0.5 }
 
