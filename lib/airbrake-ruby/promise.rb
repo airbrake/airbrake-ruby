@@ -95,5 +95,10 @@ module Airbrake
 
       self
     end
+
+    # @return [Bool]
+    def rejected?
+      @value.key?('error')
+    end
   end
 end

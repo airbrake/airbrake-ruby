@@ -162,4 +162,15 @@ RSpec.describe Airbrake::Promise do
       expect(array).to match_array([999])
     end
   end
+
+  describe "#rejected?" do
+    context "when it was rejected" do
+      before { subject.reject(1) }
+      it { is_expected.to be_rejected }
+    end
+
+    context "when it wasn't rejected" do
+      it { is_expected.not_to be_rejected }
+    end
+  end
 end
