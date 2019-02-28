@@ -96,6 +96,7 @@ module Airbrake
 
     def send_notice(exception, params, sender)
       promise = Airbrake::Promise.new
+
       if @config.ignored_environment?
         return promise.reject("The '#{@config.environment}' environment is ignored")
       end

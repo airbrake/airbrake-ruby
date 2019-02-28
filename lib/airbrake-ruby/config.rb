@@ -170,15 +170,31 @@ module Airbrake
       validate.resolved?
     end
 
-    # @return [Promise] resolved if the config is valid, rejected otherwise
+    # @return [Promise]
+    # @see Validator.validate
     def validate
       Validator.validate(self)
+    end
+
+    # @return [Promise]
+    # @see Validator.check_notify_ability
+    def check_notify_ability
+      Validator.check_notify_ability(self)
     end
 
     # @return [Boolean] true if the config ignores current environment, false
     #   otherwise
     def ignored_environment?
-      Validator.check_notify_ability(self).rejected?
+      check_notify_ability.rejected?
+    end
+
+    # @return [Promise] resolved promise if config is valid & can notify,
+    #   rejected otherwise
+    def check_configuration
+      promise = validate
+      return promise if promise.rejected?
+
+      check_notify_ability
     end
 
     private
