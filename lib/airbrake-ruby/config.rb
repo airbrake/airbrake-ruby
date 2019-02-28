@@ -167,7 +167,7 @@ module Airbrake
     # @return [Boolean] true if the config meets the requirements, false
     #   otherwise
     def valid?
-      validate.value == :ok
+      validate.resolved?
     end
 
     # @return [Promise] resolved if the config is valid, rejected otherwise
@@ -178,7 +178,7 @@ module Airbrake
     # @return [Boolean] true if the config ignores current environment, false
     #   otherwise
     def ignored_environment?
-      Validator.check_notify_ability(self).value != :ok
+      Validator.check_notify_ability(self).rejected?
     end
 
     private
