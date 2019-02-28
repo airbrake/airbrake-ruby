@@ -9,7 +9,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
 
@@ -18,7 +18,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
 
@@ -54,7 +54,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
 
@@ -83,7 +83,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
 
@@ -94,7 +94,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
 
@@ -105,7 +105,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
 
@@ -136,7 +136,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a resolved promise" do
         promise = described_class.validate(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
     end
   end
@@ -171,7 +171,7 @@ RSpec.describe Airbrake::Config::Validator do
 
       it "returns a rejected promise" do
         promise = described_class.check_notify_ability(config)
-        expect(promise.value).to eq(:ok)
+        expect(promise).to be_resolved
       end
 
       it "warns about 'no effect'" do

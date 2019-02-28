@@ -7,12 +7,6 @@ module Airbrake
   # @see https://github.com/ruby-concurrency/concurrent-ruby/blob/master/lib/concurrent/promise.rb
   # @since v1.7.0
   class Promise
-    # @api private
-    # @return [Hash<String,String>] either successful response containing the
-    #   +id+ key or unsuccessful response containing the +error+ key
-    # @note This is a non-blocking call!
-    attr_reader :value
-
     def initialize
       @on_resolved = []
       @on_rejected = []
@@ -32,8 +26,8 @@ module Airbrake
     # @return [self]
     def then(&block)
       @mutex.synchronize do
-        if @value.key?('id')
-          yield(@value)
+        if @value.key?('ok')
+          yield(@value['ok'])
           return self
         end
 
@@ -64,36 +58,52 @@ module Airbrake
       self
     end
 
-    # Resolves the promise.
-    #
     # @example
     #   Airbrake::Promise.new.resolve('id' => '123')
     #
-    # @param response [Hash<String,String>]
+    # @param reason [Object]
     # @return [self]
-    def resolve(response)
+    def resolve(reason = 'resolved')
       @mutex.synchronize do
-        @value = response
-        @on_resolved.each { |callback| callback.call(response) }
+        @value['ok'] = reason
+        @on_resolved.each { |callback| callback.call(reason) }
       end
 
       self
     end
 
-    # Rejects the promise.
-    #
     # @example
     #   Airbrake::Promise.new.reject('Something went wrong')
     #
-    # @param error [String]
+    # @param reason [String]
     # @return [self]
-    def reject(error)
+    def reject(reason = 'rejected')
       @mutex.synchronize do
-        @value['error'] = error
-        @on_rejected.each { |callback| callback.call(error) }
+        @value['error'] = reason
+        @on_rejected.each { |callback| callback.call(reason) }
       end
 
       self
+    end
+
+    # @return [Boolean]
+    def rejected?
+      @value.key?('error')
+    end
+
+    # @return [Boolean]
+    def resolved?
+      @value.key?('ok')
+    end
+
+    # @return [Hash<String,String>] either successful response containing the
+    #   +id+ key or unsuccessful response containing the +error+ key
+    # @note This is a non-blocking call!
+    # @todo Get rid of this method and use an accessor. The resolved guard is
+    #   needed for compatibility but it shouldn't exist in the future
+    def value
+      return @value['ok'] if resolved?
+      @value
     end
   end
 end

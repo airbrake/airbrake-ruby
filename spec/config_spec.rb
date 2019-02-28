@@ -1,6 +1,6 @@
 RSpec.describe Airbrake::Config do
-  let(:resolved_promise) { OpenStruct.new(value: :ok) }
-  let(:rejected_promise) { OpenStruct.new(value: { 'error' => '' }) }
+  let(:resolved_promise) { Airbrake::Promise.new.resolve }
+  let(:rejected_promise) { Airbrake::Promise.new.reject }
 
   its(:project_id) { is_expected.to be_nil }
   its(:project_key) { is_expected.to be_nil }
