@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.1.0][v4.1.0] (Feburary 28, 2019)
+
 * `add_filter` & `add_performance_filter` add filters even when Airbrake is not
   configured ([#445](https://github.com/airbrake/airbrake-ruby/pull/445),
   [#451](https://github.com/airbrake/airbrake-ruby/pull/451))
@@ -688,3 +690,4 @@ Airbrake Ruby Changelog
 [v3.2.6]: https://github.com/airbrake/airbrake-ruby/releases/tag/v3.2.6
 [v4.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.0.0
 [v4.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.0.1
+[v4.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.1.0
