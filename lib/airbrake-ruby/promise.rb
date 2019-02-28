@@ -32,8 +32,8 @@ module Airbrake
     # @return [self]
     def then(&block)
       @mutex.synchronize do
-        if @value.key?('id')
-          yield(@value)
+        if @value.key?('ok')
+          yield(@value['ok'])
           return self
         end
 
@@ -64,41 +64,42 @@ module Airbrake
       self
     end
 
-    # Resolves the promise.
-    #
     # @example
     #   Airbrake::Promise.new.resolve('id' => '123')
     #
-    # @param response [Hash<String,String>]
+    # @param reason [Object]
     # @return [self]
-    def resolve(response)
+    def resolve(reason = 'resolved')
       @mutex.synchronize do
-        @value = response
-        @on_resolved.each { |callback| callback.call(response) }
+        @value['ok'] = reason
+        @on_resolved.each { |callback| callback.call(reason) }
       end
 
       self
     end
 
-    # Rejects the promise.
-    #
     # @example
     #   Airbrake::Promise.new.reject('Something went wrong')
     #
-    # @param error [String]
+    # @param reason [String]
     # @return [self]
-    def reject(error)
+    def reject(reason)
       @mutex.synchronize do
-        @value['error'] = error
-        @on_rejected.each { |callback| callback.call(error) }
+        @value['error'] = reason
+        @on_rejected.each { |callback| callback.call(reason) }
       end
 
       self
     end
 
-    # @return [Bool]
+    # @return [Boolean]
     def rejected?
       @value.key?('error')
+    end
+
+    # @return [Boolean]
+    def resolved?
+      @value.key?('ok')
     end
   end
 end
