@@ -1,5 +1,7 @@
 require 'airbrake-ruby'
 
+require 'rspec/its'
+
 require 'webmock'
 require 'webmock/rspec'
 require 'pry'
