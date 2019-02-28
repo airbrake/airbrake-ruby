@@ -133,4 +133,10 @@ RSpec.describe Airbrake::Config do
       end
     end
   end
+
+  describe "#validate" do
+    it "returns a promise" do
+      expect(subject.validate).to be_an(Airbrake::Promise)
+    end
+  end
 end
