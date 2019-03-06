@@ -24,7 +24,11 @@ module Airbrake
       super(method, route, query, func, file, line, start_time, end_time)
     end
 
-    def name
+    def destination
+      'queries-stats'
+    end
+
+    def cargo
       'queries'
     end
 

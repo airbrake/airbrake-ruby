@@ -81,8 +81,12 @@ module Airbrake
 
       logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
 
-      payload.group_by { |k, _v| k.name }.each do |resource_name, data|
-        data = { resource_name => data.map { |k, v| k.to_h.merge!(v.to_h) } }
+      groups = payload.group_by do |resource, _stat|
+        [resource.cargo, resource.destination]
+      end
+
+      groups.each do |(cargo, destination), data|
+        data = { cargo => data.map { |k, v| k.to_h.merge!(v.to_h) } }
         data['environment'] = @config.environment if @config.environment
 
         @sender.send(
@@ -90,7 +94,7 @@ module Airbrake
           promise,
           URI.join(
             @config.host,
-            "api/v5/projects/#{@config.project_id}/#{resource_name}-stats"
+            "api/v5/projects/#{@config.project_id}/#{destination}"
           )
         )
       end
