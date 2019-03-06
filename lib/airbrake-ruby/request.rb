@@ -18,7 +18,11 @@ module Airbrake
       super(method, route, status_code, start_time, end_time)
     end
 
-    def name
+    def destination
+      'routes-stats'
+    end
+
+    def cargo
       'routes'
     end
 
