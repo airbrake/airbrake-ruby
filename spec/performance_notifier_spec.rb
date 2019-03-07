@@ -433,9 +433,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
   describe "#delete_filter" do
     let(:filter) do
       Class.new do
-        def call(resource)
-          resource.ignore!
-        end
+        def call(resource); end
       end
     end
 

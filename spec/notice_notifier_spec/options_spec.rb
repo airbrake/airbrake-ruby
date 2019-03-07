@@ -1,8 +1,4 @@
 RSpec.describe Airbrake::NoticeNotifier do
-  def expect_a_request_with_body(body)
-    expect(a_request(:post, endpoint).with(body: body)).to have_been_made.once
-  end
-
   let(:project_id) { 105138 }
   let(:project_key) { 'fd04e13d806a90f96614ad8e529b2822' }
   let(:localhost) { 'http://localhost:8080' }

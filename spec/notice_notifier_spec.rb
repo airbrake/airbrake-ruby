@@ -185,10 +185,6 @@ RSpec.describe Airbrake::NoticeNotifier do
   describe "#notify_sync" do
     let(:endpoint) { 'https://api.airbrake.io/api/v3/projects/1/notices' }
 
-    let(:user_params) do
-      { project_id: 1, project_key: 'abc', logger: Logger.new('/dev/null') }
-    end
-
     let(:body) do
       {
         'id' => '00054414-b147-6ffa-85d6-1524d83362a6',
