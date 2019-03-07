@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.2.0][v4.2.0] (March 7, 2019)
+
 * Added `Airbrake.notify_performance_breakdown` that sends performance data by
   arbitrary groups ([#454](https://github.com/airbrake/airbrake-ruby/pull/454))
 
@@ -694,3 +696,4 @@ Airbrake Ruby Changelog
 [v4.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.0.0
 [v4.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.0.1
 [v4.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.1.0
+[v4.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.0
