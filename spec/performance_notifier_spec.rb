@@ -1,10 +1,12 @@
 RSpec.describe Airbrake::PerformanceNotifier do
   let(:routes) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
   let(:queries) { 'https://api.airbrake.io/api/v5/projects/1/queries-stats' }
+  let(:breakdowns) { 'https://api.airbrake.io/api/v5/projects/1/routes-breakdowns' }
 
   before do
     stub_request(:put, routes).to_return(status: 200, body: '')
     stub_request(:put, queries).to_return(status: 200, body: '')
+    stub_request(:put, breakdowns).to_return(status: 200, body: '')
 
     Airbrake::Config.instance = Airbrake::Config.new(
       project_id: 1,
@@ -70,6 +72,47 @@ RSpec.describe Airbrake::PerformanceNotifier do
             "sumsq":3600000000.0,
             "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
           }\]}\z|x)
+      ).to have_been_made
+    end
+
+    it "sends full performance breakdown" do
+      subject.notify(
+        Airbrake::PerformanceBreakdown.new(
+          method: 'DELETE',
+          route: '/routes-breakdowns',
+          response_type: 'json',
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+          groups: { db: 131, view: 421 }
+        )
+      )
+
+      expect(
+        a_request(:put, breakdowns).with(body: %r|
+          \A{"routes":\[{
+            "method":"DELETE",
+            "route":"/routes-breakdowns",
+            "responseType":"json",
+            "time":"2018-01-01T00:49:00\+00:00",
+            "count":1,
+            "sum":60000.0,
+            "sumsq":3600000000.0,
+            "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB",
+            "groups":{
+              "db":{
+                "count":1,
+                "sum":131.0,
+                "sumsq":17161.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUMDAAAB"
+              },
+              "view":{
+                "count":1,
+                "sum":421.0,
+                "sumsq":177241.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
+              }
+            }
+        }\]}\z|x)
       ).to have_been_made
     end
 
@@ -174,6 +217,57 @@ RSpec.describe Airbrake::PerformanceNotifier do
                "sumsq":3600000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"}\]}
           \z|x
         )
+      ).to have_been_made
+    end
+
+    it "groups performance breakdowns by route key" do
+      subject.notify(
+        Airbrake::PerformanceBreakdown.new(
+          method: 'DELETE',
+          route: '/routes-breakdowns',
+          response_type: 'json',
+          start_time: Time.new(2018, 1, 1, 0, 0, 20, 0),
+          end_time: Time.new(2018, 1, 1, 0, 0, 22, 0),
+          groups: { db: 131, view: 421 }
+        )
+      )
+      subject.notify(
+        Airbrake::PerformanceBreakdown.new(
+          method: 'DELETE',
+          route: '/routes-breakdowns',
+          response_type: 'json',
+          start_time: Time.new(2018, 1, 1, 0, 0, 30, 0),
+          end_time: Time.new(2018, 1, 1, 0, 0, 32, 0),
+          groups: { db: 55, view: 11 }
+        )
+      )
+
+      expect(
+        a_request(:put, breakdowns).with(body: %r|
+          \A{"routes":\[{
+            "method":"DELETE",
+            "route":"/routes-breakdowns",
+            "responseType":"json",
+            "time":"2018-01-01T00:00:00\+00:00",
+            "count":2,
+            "sum":4000.0,
+            "sumsq":8000000.0,
+            "tdigest":"AAAAAkA0AAAAAAAAAAAAAUT6AAAC",
+            "groups":{
+              "db":{
+                "count":2,
+                "sum":186.0,
+                "sumsq":20186.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAkJcAABCmAAAAQE="
+              },
+              "view":{
+                "count":2,
+                "sum":432.0,
+                "sumsq":177362.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAkEwAABDzQAAAQE="
+              }
+            }
+        }\]}\z|x)
       ).to have_been_made
     end
 

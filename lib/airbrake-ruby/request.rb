@@ -4,6 +4,7 @@ module Airbrake
   # @see Airbrake.notify_request
   # @api public
   # @since v3.2.0
+  # rubocop:disable Metrics/BlockLength
   Request = Struct.new(:method, :route, :status_code, :start_time, :end_time) do
     include HashKeyable
     include Ignorable
@@ -26,6 +27,10 @@ module Airbrake
       'routes'
     end
 
+    def groups
+      {}
+    end
+
     def to_h
       {
         'method' => method,
@@ -35,4 +40,5 @@ module Airbrake
       }.delete_if { |_key, val| val.nil? }
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

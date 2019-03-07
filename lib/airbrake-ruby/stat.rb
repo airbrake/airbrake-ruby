@@ -43,10 +43,16 @@ module Airbrake
     # @return [void]
     def increment(start_time, end_time = nil)
       end_time ||= Time.new
+      increment_ms((end_time - start_time) * 1000)
+    end
 
+    # Increments count and updates performance with given +ms+ value.
+    #
+    # @param [Float] ms
+    # @return [void]
+    def increment_ms(ms)
       self.count += 1
 
-      ms = (end_time - start_time) * 1000
       self.sum += ms
       self.sumsq += ms * ms
 

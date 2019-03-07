@@ -34,14 +34,8 @@ module Airbrake
       return if resource.ignored?
 
       @mutex.synchronize do
-        @payload[resource] ||= Airbrake::Stat.new
-        @payload[resource].increment(resource.start_time, resource.end_time)
-
-        if @flush_period > 0
-          schedule_flush(promise)
-        else
-          send(@payload, promise)
-        end
+        update_payload(resource)
+        @flush_period > 0 ? schedule_flush(promise) : send(@payload, promise)
       end
 
       promise
@@ -59,6 +53,16 @@ module Airbrake
 
     private
 
+    def update_payload(resource)
+      @payload[resource] ||= { total: Airbrake::Stat.new }
+      @payload[resource][:total].increment(resource.start_time, resource.end_time)
+
+      resource.groups.each do |name, ms|
+        @payload[resource][name] ||= Airbrake::Stat.new
+        @payload[resource][name].increment_ms(ms)
+      end
+    end
+
     def schedule_flush(promise)
       @schedule_flush ||= Thread.new do
         sleep(@flush_period)
@@ -74,31 +78,50 @@ module Airbrake
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def send(payload, promise)
       signature = "#{self.class.name}##{__method__}"
       raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
 
       logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
 
-      groups = payload.group_by do |resource, _stat|
+      with_grouped_payload(payload) do |resource_hash, destination|
+        url = URI.join(
+          @config.host,
+          "api/v5/projects/#{@config.project_id}/#{destination}"
+        )
+        @sender.send(resource_hash, promise, url)
+      end
+
+      promise
+    end
+
+    def with_grouped_payload(raw_payload)
+      grouped_payload = raw_payload.group_by do |resource, _stats|
         [resource.cargo, resource.destination]
       end
 
-      groups.each do |(cargo, destination), data|
-        data = { cargo => data.map { |k, v| k.to_h.merge!(v.to_h) } }
-        data['environment'] = @config.environment if @config.environment
+      grouped_payload.each do |(cargo, destination), resources|
+        payload = {}
+        payload[cargo] = serialize_resources(resources)
+        payload['environment'] = @config.environment if @config.environment
 
-        @sender.send(
-          data,
-          promise,
-          URI.join(
-            @config.host,
-            "api/v5/projects/#{@config.project_id}/#{destination}"
-          )
-        )
+        yield(payload, destination)
       end
     end
-    # rubocop:enable Metrics/AbcSize
+
+    def serialize_resources(resources)
+      resources.map do |resource, stats|
+        resource_hash = resource.to_h.merge!(stats[:total].to_h)
+
+        if resource.groups.any?
+          group_stats = stats.reject { |name, _stat| name == :total }
+          resource_hash['groups'] = group_stats.merge(group_stats) do |_name, stat|
+            stat.to_h
+          end
+        end
+
+        resource_hash
+      end
+    end
   end
 end

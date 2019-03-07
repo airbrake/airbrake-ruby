@@ -738,7 +738,6 @@ displayed on the Performance tab of your project.
 
 ```ruby
 Airbrake.notify_query(
-  environment: 'production', # optional
   method: 'GET',
   route: '/things/1',
   query: 'SELECT * FROM foos',
@@ -755,6 +754,22 @@ a rejected promise.
 
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
+
+#### Airbrake.notify_performance_breakdown
+
+Sends performance breakdown statistics by groups to Airbrake. The groups are
+arbitrary (database, views, HTTP calls, etc.), but there can be only up to 10
+groups per route in total.
+
+```ruby
+Airbrake.notify_performance_breakdown(
+  method: 'GET',
+  route: '/things/1',
+  response_type: 'json',
+  groups: { db: 24.0, view: 0.4 }, # ms
+  start_time: Time.new
+)
+```
 
 #### Airbrake.add_performance_filter
 
