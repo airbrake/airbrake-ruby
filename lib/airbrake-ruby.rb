@@ -46,6 +46,7 @@ require 'airbrake-ruby/time_truncate'
 require 'airbrake-ruby/tdigest'
 require 'airbrake-ruby/query'
 require 'airbrake-ruby/request'
+require 'airbrake-ruby/performance_breakdown'
 
 # Airbrake is a thin wrapper around instances of the notifier classes (such as
 # notice, performance & deploy notifiers). It creates a way to access them via a
@@ -352,7 +353,6 @@ module Airbrake
     #   )
     #
     # @param [Hash{Symbol=>Object}] query_info
-    # @option request_info [String] :environment (optional)
     # @option request_info [String] :method The HTTP method that triggered this
     #   SQL query (optional)
     # @option request_info [String] :route The route that triggered this SQL
@@ -365,6 +365,30 @@ module Airbrake
     # @see Airbrake::PerformanceNotifier#notify
     def notify_query(query_info)
       @performance_notifier.notify(Query.new(query_info))
+    end
+
+    # Increments performance breakdown statistics of a certain route.
+    #
+    # @example
+    #   Airbrake.notify_request(
+    #     method: 'POST',
+    #     route: '/thing/:id/create',
+    #     response_type: 'json',
+    #     groups: { db: 24.0, view: 0.4 }, # ms
+    #     start_time: timestamp,
+    #     end_time: Time.now
+    #   )
+    #
+    # @param [Hash{Symbol=>Object}] breakdown_info
+    # @option breakdown_info [String] :method HTTP method
+    # @option breakdown_info [String] :route
+    # @option breakdown_info [String] :response_type
+    # @option breakdown_info [Array<Hash{Symbol=>Float}>] :groups
+    # @option breakdown_info [Date] :start_time
+    # @return [void]
+    # @since v4.2.0
+    def notify_performance_breakdown(breakdown_info)
+      @performance_notifier.notify(PerformanceBreakdown.new(breakdown_info))
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This

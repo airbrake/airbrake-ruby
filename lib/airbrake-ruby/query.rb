@@ -32,6 +32,10 @@ module Airbrake
       'queries'
     end
 
+    def groups
+      {}
+    end
+
     def to_h
       {
         'method' => method,
