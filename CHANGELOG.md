@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.2.1][v4.2.1] (March 14, 2019)
+
 * Stopped raising `Airbrake::Error` when configuring Airbrake without a project
   id or project key ([#458](https://github.com/airbrake/airbrake-ruby/pull/458))
 
@@ -700,3 +702,4 @@ Airbrake Ruby Changelog
 [v4.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.0.1
 [v4.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.1.0
 [v4.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.0
+[v4.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.1
