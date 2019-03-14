@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Stopped raising `Airbrake::Error` when configuring Airbrake without a project
+  id or project key ([#458](https://github.com/airbrake/airbrake-ruby/pull/458))
+
 ### [v4.2.0][v4.2.0] (March 7, 2019)
 
 * Added `Airbrake.notify_performance_breakdown` that sends performance data by

@@ -96,16 +96,9 @@ module Airbrake
     # @return [void]
     # @raise [Airbrake::Error] when trying to reconfigure already
     #   existing notifier
-    # @raise [Airbrake::Error] when either +project_id+ or +project_key+
-    #   is missing (or both)
     # @note There's no way to read config values outside of this library
     def configure
       yield config = Airbrake::Config.instance
-
-      if (result = config.validate).rejected?
-        raise Airbrake::Error, result.value['error']
-      end
-
       Airbrake::Loggable.instance = config.logger
     end
 
