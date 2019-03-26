@@ -98,10 +98,3 @@ class Ruby21Error < RuntimeError
     raise ex
   end
 end
-
-puts <<BANNER
-#{'#' * 80}
-# RUBY_VERSION: #{RUBY_VERSION}
-# RUBY_ENGINE: #{RUBY_ENGINE}
-#{'#' * 80}
-BANNER
