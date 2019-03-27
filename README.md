@@ -781,6 +781,12 @@ instead of `Airbrake::Notice` it yields performance data (such as
 [`notify_query`](#airbrakenotify_query) (but [`notify`](#airbrakenotify) calls
 don't trigger it!).
 
+```ruby
+Airbrake.add_performance_filter do |resource|
+  resource.ignore! if resource.route == %r{/health_check}
+end
+```
+
 #### Airbrake.delete_performance_filter
 
 Deletes a performance filter added via
