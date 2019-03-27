@@ -78,10 +78,6 @@ module Airbrake
   # @!macro see_public_api_method
   #   @see Airbrake.$0
 
-  @performance_notifier = PerformanceNotifier.new
-  @notice_notifier = NoticeNotifier.new
-  @deploy_notifier = DeployNotifier.new
-
   class << self
     # Configures the Airbrake notifier.
     #
@@ -100,6 +96,7 @@ module Airbrake
     def configure
       yield config = Airbrake::Config.instance
       Airbrake::Loggable.instance = config.logger
+      reset
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
@@ -436,5 +433,18 @@ module Airbrake
     def delete_performance_filter(filter_class)
       @performance_notifier.delete_filter(filter_class)
     end
+
+    # Resets all notifiers, including its filters
+    # @return [void]
+    # @since v4.2.2
+    def reset
+      close if @notice_notifier && configured?
+
+      @performance_notifier = PerformanceNotifier.new
+      @notice_notifier = NoticeNotifier.new
+      @deploy_notifier = DeployNotifier.new
+    end
   end
 end
+
+Airbrake.reset

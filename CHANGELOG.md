@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `blacklist_keys/whitelist_keys` options not working
+  ([#461](https://github.com/airbrake/airbrake-ruby/pull/461))
+
 ### [v4.2.1][v4.2.1] (March 14, 2019)
 
 * Stopped raising `Airbrake::Error` when configuring Airbrake without a project
