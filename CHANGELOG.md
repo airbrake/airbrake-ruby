@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.2.2][v4.2.2] (March 27, 2019)
+
 * Fixed `blacklist_keys/whitelist_keys` options not working
   ([#461](https://github.com/airbrake/airbrake-ruby/pull/461))
 
@@ -706,3 +708,4 @@ Airbrake Ruby Changelog
 [v4.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.1.0
 [v4.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.0
 [v4.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.1
+[v4.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.2
