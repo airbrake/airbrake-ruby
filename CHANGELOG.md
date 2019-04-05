@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Stopped resetting default notifiers on `Airbrake.configure`, which can lead to
+  bugs where default filters are not installed
+  ([#464](https://github.com/airbrake/airbrake-ruby/pull/464))
+
 ### [v4.2.2][v4.2.2] (March 27, 2019)
 
 * Fixed `blacklist_keys/whitelist_keys` options not working

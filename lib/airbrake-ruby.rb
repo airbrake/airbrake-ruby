@@ -79,6 +79,18 @@ module Airbrake
   #   @see Airbrake.$0
 
   class << self
+    # @since v4.2.3
+    # @api private
+    attr_accessor :performance_notifier
+
+    # @since v4.2.3
+    # @api private
+    attr_accessor :notice_notifier
+
+    # @since v4.2.3
+    # @api private
+    attr_accessor :deploy_notifier
+
     # Configures the Airbrake notifier.
     #
     # @example
@@ -96,13 +108,16 @@ module Airbrake
     def configure
       yield config = Airbrake::Config.instance
       Airbrake::Loggable.instance = config.logger
+
+      return if performance_notifier && notice_notifier && deploy_notifier
+
       reset
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
     # @since v2.3.0
     def configured?
-      @notice_notifier.configured?
+      notice_notifier.configured?
     end
 
     # Sends an exception to Airbrake asynchronously.
@@ -127,7 +142,7 @@ module Airbrake
     # @return [Airbrake::Promise]
     # @see .notify_sync
     def notify(exception, params = {}, &block)
-      @notice_notifier.notify(exception, params, &block)
+      notice_notifier.notify(exception, params, &block)
     end
 
     # Sends an exception to Airbrake synchronously.
@@ -147,7 +162,7 @@ module Airbrake
     # @return [Airbrake::Promise] the reponse from the server
     # @see .notify
     def notify_sync(exception, params = {}, &block)
-      @notice_notifier.notify_sync(exception, params, &block)
+      notice_notifier.notify_sync(exception, params, &block)
     end
 
     # Runs a callback before {.notify} or {.notify_sync} kicks in. This is
@@ -175,7 +190,7 @@ module Airbrake
     # @yieldreturn [void]
     # @return [void]
     def add_filter(filter = nil, &block)
-      @notice_notifier.add_filter(filter, &block)
+      notice_notifier.add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_filter}.
@@ -192,7 +207,7 @@ module Airbrake
     # @since v3.1.0
     # @note This method cannot delete filters assigned via the Proc form.
     def delete_filter(filter_class)
-      @notice_notifier.delete_filter(filter_class)
+      notice_notifier.delete_filter(filter_class)
     end
 
     # Builds an Airbrake notice. This is useful, if you want to add or modify a
@@ -210,7 +225,7 @@ module Airbrake
     # @return [Airbrake::Notice] the notice built with help of the given
     #   arguments
     def build_notice(exception, params = {})
-      @notice_notifier.build_notice(exception, params)
+      notice_notifier.build_notice(exception, params)
     end
 
     # Makes the notice notifier a no-op, which means you cannot use the
@@ -223,7 +238,7 @@ module Airbrake
     #
     # @return [void]
     def close
-      @notice_notifier.close
+      notice_notifier.close
     end
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.
@@ -236,7 +251,7 @@ module Airbrake
     # @option deploy_info [Symbol] :version
     # @return [void]
     def notify_deploy(deploy_info)
-      @deploy_notifier.notify(deploy_info)
+      deploy_notifier.notify(deploy_info)
     end
 
     # Merges +context+ with the current context.
@@ -284,7 +299,7 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] context
     # @return [void]
     def merge_context(context)
-      @notice_notifier.merge_context(context)
+      notice_notifier.merge_context(context)
     end
 
     # Increments request statistics of a certain +route+ that was invoked on
@@ -323,7 +338,7 @@ module Airbrake
     # @since v3.0.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_request(request_info)
-      @performance_notifier.notify(Request.new(request_info))
+      performance_notifier.notify(Request.new(request_info))
     end
 
     # Increments SQL statistics of a certain +query+ that was invoked on
@@ -354,7 +369,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_query(query_info)
-      @performance_notifier.notify(Query.new(query_info))
+      performance_notifier.notify(Query.new(query_info))
     end
 
     # Increments performance breakdown statistics of a certain route.
@@ -378,7 +393,7 @@ module Airbrake
     # @return [void]
     # @since v4.2.0
     def notify_performance_breakdown(breakdown_info)
-      @performance_notifier.notify(PerformanceBreakdown.new(breakdown_info))
+      performance_notifier.notify(PerformanceBreakdown.new(breakdown_info))
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
@@ -413,7 +428,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#add_filter
     def add_performance_filter(filter = nil, &block)
-      @performance_notifier.add_filter(filter, &block)
+      performance_notifier.add_filter(filter, &block)
     end
 
     # Deletes a filter added via {Airbrake#add_performance_filter}.
@@ -431,20 +446,22 @@ module Airbrake
     # @note This method cannot delete filters assigned via the Proc form.
     # @see Airbrake::PerformanceNotifier#delete_filter
     def delete_performance_filter(filter_class)
-      @performance_notifier.delete_filter(filter_class)
+      performance_notifier.delete_filter(filter_class)
     end
 
     # Resets all notifiers, including its filters
     # @return [void]
     # @since v4.2.2
     def reset
-      close if @notice_notifier && configured?
+      close if notice_notifier && configured?
 
-      @performance_notifier = PerformanceNotifier.new
-      @notice_notifier = NoticeNotifier.new
-      @deploy_notifier = DeployNotifier.new
+      self.performance_notifier = PerformanceNotifier.new
+      self.notice_notifier = NoticeNotifier.new
+      self.deploy_notifier = DeployNotifier.new
     end
   end
 end
 
-Airbrake.reset
+Airbrake.configure do
+  # Initialize Airbrake with default notifiers.
+end
