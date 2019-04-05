@@ -1,12 +1,24 @@
 RSpec.describe Airbrake do
-  before do
-    Airbrake::Config.instance = Airbrake::Config.new
-    described_class.reset
+  it "gets initialized with a performance notifier" do
+    expect(described_class.performance_notifier).not_to be_nil
   end
 
-  after { described_class.reset }
+  it "gets initialized with a notice notifier" do
+    expect(described_class.notice_notifier).not_to be_nil
+  end
+
+  it "gets initialized with a deploy notifier" do
+    expect(described_class.deploy_notifier).not_to be_nil
+  end
 
   describe ".configure" do
+    before do
+      Airbrake::Config.instance = Airbrake::Config.new
+      described_class.reset
+    end
+
+    after { described_class.reset }
+
     it "yields the config" do
       expect do |b|
         begin
@@ -41,18 +53,18 @@ RSpec.describe Airbrake do
 
     context "when a notifier was configured" do
       before do
-        expect(described_class).to receive(:configured?).twice.and_return(true)
+        expect(described_class).to receive(:configured?).and_return(true)
       end
 
       it "closes previously configured notice notifier" do
-        expect(described_class).to receive(:close).twice
+        expect(described_class).to receive(:close)
         described_class.configure {}
       end
     end
 
     context "when a notifier wasn't configured" do
       before do
-        expect(described_class).to receive(:configured?).twice.and_return(false)
+        expect(described_class).to receive(:configured?).and_return(false)
       end
 
       it "doesn't close previously configured notice notifier" do
@@ -60,16 +72,42 @@ RSpec.describe Airbrake do
         described_class.configure {}
       end
     end
+
+    context "when called multiple times" do
+      it "doesn't overwrite performance notifier" do
+        described_class.configure {}
+        performance_notifier = described_class.performance_notifier
+
+        described_class.configure {}
+        expect(described_class.performance_notifier).to eql(performance_notifier)
+      end
+
+      it "doesn't overwrite notice notifier" do
+        described_class.configure {}
+        notice_notifier = described_class.notice_notifier
+
+        described_class.configure {}
+        expect(described_class.notice_notifier).to eql(notice_notifier)
+      end
+
+      it "doesn't overwrite deploy notifier" do
+        described_class.configure {}
+        deploy_notifier = described_class.deploy_notifier
+
+        described_class.configure {}
+        expect(described_class.deploy_notifier).to eql(deploy_notifier)
+      end
+    end
   end
 
   describe "#reset" do
     context "when Airbrake was previously configured" do
       before do
-        expect(described_class).to receive(:configured?).twice.and_return(true)
+        expect(described_class).to receive(:configured?).and_return(true)
       end
 
       it "closes notice notifier" do
-        expect(described_class).to receive(:close).twice
+        expect(described_class).to receive(:close)
         subject.reset
       end
     end
