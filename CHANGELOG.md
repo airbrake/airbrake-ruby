@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.2.3][v4.2.3] (April 8, 2019)
+
 * Stopped resetting default notifiers on `Airbrake.configure`, which can lead to
   bugs where default filters are not installed
   ([#464](https://github.com/airbrake/airbrake-ruby/pull/464))
@@ -713,3 +715,4 @@ Airbrake Ruby Changelog
 [v4.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.0
 [v4.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.1
 [v4.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.2
+[v4.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.3
