@@ -1,7 +1,9 @@
 RSpec.describe Airbrake::Filters::GitRevisionFilter do
   subject { described_class.new('root/dir') }
 
-  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
+  # 'let!', not 'let' to make sure Notice doesn't call File.exist? with
+  # unexpected arguments.
+  let!(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   context "when context/revision is defined" do
     it "doesn't attach anything to context/revision" do
