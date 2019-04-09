@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `Airbrake::Benchmark` for measuring time of execution of Ruby
+  operations ([#467](https://github.com/airbrake/airbrake-ruby/pull/467))
+
 ### [v4.2.3][v4.2.3] (April 8, 2019)
 
 * Stopped resetting default notifiers on `Airbrake.configure`, which can lead to
