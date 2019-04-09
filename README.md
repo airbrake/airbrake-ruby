@@ -909,6 +909,22 @@ Airbrake.notify(MyException.new)
 Note: you don't have to call `Airbrake.notify` manually to be able to benefit
 from this API. It should "just work".
 
+### Benchmark
+
+#### .measure
+
+Measures [monotonic time][monotonic] for the given operation. Returns elapsed
+time in milliseconds.
+
+```ruby
+time = Airbrake::Benchmark.measure do
+  (1..10_000).inject(:*)
+end
+
+puts "Time: #{time}"
+#=> Time: 67.40199995040894
+```
+
 Additional notes
 ----------------
 
@@ -982,3 +998,4 @@ The project uses the MIT License. See LICENSE.md for details.
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
 [arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
+[monotonic]: http://pubs.opengroup.org/onlinepubs/9699919799/functions/clock_getres.html
