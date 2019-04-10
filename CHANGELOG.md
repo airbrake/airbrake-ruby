@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.2.4][v4.2.4] (April 10, 2019)
+
 * Added `Airbrake::Benchmark` for measuring time of execution of Ruby
   operations ([#467](https://github.com/airbrake/airbrake-ruby/pull/467))
 * Fixed `KeysBlacklist` & `KeysWhitelist` filters not being added
@@ -721,3 +723,4 @@ Airbrake Ruby Changelog
 [v4.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.1
 [v4.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.2
 [v4.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.3
+[v4.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.4
