@@ -98,6 +98,88 @@ RSpec.describe Airbrake do
         expect(described_class.deploy_notifier).to eql(deploy_notifier)
       end
     end
+
+    context "when blacklist_keys gets configured" do
+      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+
+      it "adds blacklist filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::KeysBlacklist))
+        described_class.configure { |c| c.blacklist_keys = %w[password] }
+      end
+
+      it "initializes blacklist with specified parameters" do
+        expect(Airbrake::Filters::KeysBlacklist).to receive(:new).with(%w[password])
+        described_class.configure { |c| c.blacklist_keys = %w[password] }
+      end
+    end
+
+    context "when whitelist_keys gets configured" do
+      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+
+      it "adds whitelist filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::KeysWhitelist))
+        described_class.configure { |c| c.whitelist_keys = %w[banana] }
+      end
+
+      it "initializes whitelist with specified parameters" do
+        expect(Airbrake::Filters::KeysWhitelist).to receive(:new).with(%w[banana])
+        described_class.configure { |c| c.whitelist_keys = %w[banana] }
+      end
+    end
+
+    context "when root_directory gets configured" do
+      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+
+      it "adds root directory filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::RootDirectoryFilter))
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "initializes root directory filter with specified path" do
+        expect(Airbrake::Filters::RootDirectoryFilter)
+          .to receive(:new).with('/my/path')
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "adds git revision filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::GitRevisionFilter))
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "initializes git revision filter with correct root directory" do
+        expect(Airbrake::Filters::GitRevisionFilter)
+          .to receive(:new).with('/my/path')
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "adds git repository filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::GitRepositoryFilter))
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "initializes git repository filter with correct root directory" do
+        expect(Airbrake::Filters::GitRepositoryFilter)
+          .to receive(:new).with('/my/path')
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "adds git last checkout filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::GitLastCheckoutFilter))
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+
+      it "initializes git last checkout filter with correct root directory" do
+        expect(Airbrake::Filters::GitLastCheckoutFilter)
+          .to receive(:new).with('/my/path')
+        described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+    end
   end
 
   describe "#reset" do
