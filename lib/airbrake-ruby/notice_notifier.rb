@@ -25,7 +25,10 @@ module Airbrake
       @async_sender = AsyncSender.new
       @sync_sender = SyncSender.new
 
-      add_default_filters
+      DEFAULT_FILTERS.each { |filter| add_filter(filter.new) }
+
+      add_filter(Airbrake::Filters::ContextFilter.new(@context))
+      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new)
     end
 
     # @macro see_public_api_method
@@ -127,35 +130,5 @@ module Airbrake
       return caller_copy if clean_bt.empty?
       clean_bt
     end
-
-    # rubocop:disable Metrics/AbcSize
-    def add_default_filters
-      DEFAULT_FILTERS.each { |f| add_filter(f.new) }
-
-      if (whitelist_keys = @config.whitelist_keys).any?
-        add_filter(Airbrake::Filters::KeysWhitelist.new(whitelist_keys))
-      end
-
-      if (blacklist_keys = @config.blacklist_keys).any?
-        add_filter(Airbrake::Filters::KeysBlacklist.new(blacklist_keys))
-      end
-
-      add_filter(Airbrake::Filters::ContextFilter.new(@context))
-      add_filter(Airbrake::Filters::ExceptionAttributesFilter.new)
-
-      return unless (root_directory = @config.root_directory)
-      [
-        Airbrake::Filters::RootDirectoryFilter,
-        Airbrake::Filters::GitRevisionFilter,
-        Airbrake::Filters::GitRepositoryFilter
-      ].each do |filter|
-        add_filter(filter.new(root_directory))
-      end
-
-      add_filter(
-        Airbrake::Filters::GitLastCheckoutFilter.new(root_directory)
-      )
-    end
-    # rubocop:enable Metrics/AbcSize
   end
 end

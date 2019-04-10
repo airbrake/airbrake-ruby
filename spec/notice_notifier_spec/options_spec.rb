@@ -63,7 +63,9 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     describe ":root_directory" do
       before do
-        Airbrake::Config.instance.merge(root_directory: '/home/kyrylo/code')
+        subject.add_filter(
+          Airbrake::Filters::RootDirectoryFilter.new('/home/kyrylo/code')
+        )
       end
 
       it "filters out frames" do

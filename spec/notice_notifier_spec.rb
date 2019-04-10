@@ -23,62 +23,6 @@ RSpec.describe Airbrake::NoticeNotifier do
           .with(instance_of(Airbrake::Filters::ExceptionAttributesFilter))
         subject
       end
-
-      context "when user config has some whitelist keys" do
-        before { Airbrake::Config.instance.merge(whitelist_keys: %w[foo]) }
-
-        it "appends the whitelist filter" do
-          expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
-            .with(instance_of(Airbrake::Filters::KeysWhitelist))
-          subject
-        end
-      end
-
-      context "when user config doesn't have any whitelist keys" do
-        it "doesn't append the whitelist filter" do
-          expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
-            .with(instance_of(Airbrake::Filters::KeysWhitelist))
-          subject
-        end
-      end
-
-      context "when user config has some blacklist keys" do
-        before { Airbrake::Config.instance.merge(blacklist_keys: %w[bar]) }
-
-        it "appends the blacklist filter" do
-          expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
-            .with(instance_of(Airbrake::Filters::KeysBlacklist))
-          subject
-        end
-      end
-
-      context "when user config doesn't have any blacklist keys" do
-        it "doesn't append the blacklist filter" do
-          expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
-            .with(instance_of(Airbrake::Filters::KeysBlacklist))
-          subject
-        end
-      end
-
-      context "when user config specifies a root directory" do
-        before { Airbrake::Config.instance.merge(root_directory: '/foo') }
-
-        it "appends the root directory filter" do
-          expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
-            .with(instance_of(Airbrake::Filters::RootDirectoryFilter))
-          subject
-        end
-      end
-
-      context "when user config doesn't specify a root directory" do
-        it "doesn't append the root directory filter" do
-          expect_any_instance_of(Airbrake::Config).to receive(:root_directory)
-            .and_return(nil)
-          expect_any_instance_of(Airbrake::FilterChain).not_to receive(:add_filter)
-            .with(instance_of(Airbrake::Filters::RootDirectoryFilter))
-          subject
-        end
-      end
     end
   end
 

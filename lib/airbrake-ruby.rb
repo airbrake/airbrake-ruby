@@ -83,15 +83,15 @@ module Airbrake
   class << self
     # @since v4.2.3
     # @api private
-    attr_accessor :performance_notifier
+    attr_writer :performance_notifier
 
     # @since v4.2.3
     # @api private
-    attr_accessor :notice_notifier
+    attr_writer :notice_notifier
 
     # @since v4.2.3
     # @api private
-    attr_accessor :deploy_notifier
+    attr_writer :deploy_notifier
 
     # Configures the Airbrake notifier.
     #
@@ -101,19 +101,31 @@ module Airbrake
     #     c.project_key = 'fd04e13d806a90f96614ad8e529b2822'
     #   end
     #
-    # @yield [config] The configuration object
+    # @yield [config]
     # @yieldparam config [Airbrake::Config]
     # @return [void]
-    # @raise [Airbrake::Error] when trying to reconfigure already
-    #   existing notifier
-    # @note There's no way to read config values outside of this library
     def configure
       yield config = Airbrake::Config.instance
       Airbrake::Loggable.instance = config.logger
+      process_config_options(config)
+    end
 
-      return if performance_notifier && notice_notifier && deploy_notifier
+    # @since v4.2.3
+    # @api private
+    def performance_notifier
+      @performance_notifier ||= NoticeNotifier.new
+    end
 
-      reset
+    # @since v4.2.3
+    # @api private
+    def notice_notifier
+      @notice_notifier ||= NoticeNotifier.new
+    end
+
+    # @since v4.2.3
+    # @api private
+    def deploy_notifier
+      @deploy_notifier ||= PerformanceNotifier.new
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise
@@ -461,9 +473,30 @@ module Airbrake
       self.notice_notifier = NoticeNotifier.new
       self.deploy_notifier = DeployNotifier.new
     end
-  end
-end
 
-Airbrake.configure do
-  # Initialize Airbrake with default notifiers.
+    private
+
+    def process_config_options(config)
+      if config.blacklist_keys.any?
+        blacklist = Airbrake::Filters::KeysBlacklist.new(config.blacklist_keys)
+        notice_notifier.add_filter(blacklist)
+      end
+
+      if config.whitelist_keys.any?
+        whitelist = Airbrake::Filters::KeysWhitelist.new(config.whitelist_keys)
+        notice_notifier.add_filter(whitelist)
+      end
+
+      return unless config.root_directory
+
+      [
+        Airbrake::Filters::RootDirectoryFilter,
+        Airbrake::Filters::GitRevisionFilter,
+        Airbrake::Filters::GitRepositoryFilter,
+        Airbrake::Filters::GitLastCheckoutFilter
+      ].each do |filter|
+        notice_notifier.add_filter(filter.new(config.root_directory))
+      end
+    end
+  end
 end
