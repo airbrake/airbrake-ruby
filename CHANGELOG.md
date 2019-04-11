@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.2.5][v4.2.5] (April 11, 2019)
+
+* Fixed `Airbrake.performance_notifier` & `Airbrake.deploy_notifier` returning
+  wrong value ([#472](https://github.com/airbrake/airbrake-ruby/pull/472))
+
 ### [v4.2.4][v4.2.4] (April 10, 2019)
 
 * Added `Airbrake::Benchmark` for measuring time of execution of Ruby
@@ -724,3 +729,4 @@ Airbrake Ruby Changelog
 [v4.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.2
 [v4.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.3
 [v4.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.4
+[v4.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.5
