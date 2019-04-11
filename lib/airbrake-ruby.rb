@@ -113,7 +113,7 @@ module Airbrake
     # @since v4.2.3
     # @api private
     def performance_notifier
-      @performance_notifier ||= NoticeNotifier.new
+      @performance_notifier ||= PerformanceNotifier.new
     end
 
     # @since v4.2.3
@@ -125,7 +125,7 @@ module Airbrake
     # @since v4.2.3
     # @api private
     def deploy_notifier
-      @deploy_notifier ||= PerformanceNotifier.new
+      @deploy_notifier ||= DeployNotifier.new
     end
 
     # @return [Boolean] true if the notifier was configured, false otherwise

@@ -194,4 +194,23 @@ RSpec.describe Airbrake do
       end
     end
   end
+
+  describe ".performance_notifier" do
+    it "returns a performance notifier" do
+      expect(described_class.performance_notifier)
+        .to be_an(Airbrake::PerformanceNotifier)
+    end
+  end
+
+  describe ".notice_notifier" do
+    it "returns a notice notifier" do
+      expect(described_class.notice_notifier).to be_an(Airbrake::NoticeNotifier)
+    end
+  end
+
+  describe ".deploy_notifier" do
+    it "returns a deploy notifier" do
+      expect(described_class.deploy_notifier).to be_an(Airbrake::DeployNotifier)
+    end
+  end
 end
