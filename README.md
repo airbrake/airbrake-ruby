@@ -357,6 +357,9 @@ end
 
 #### performance_stats
 
+The performance monitoring feature is currently in beta and is not available to
+all accounts. Please <a href="mailto:support@airbrake.io?subject=Perfomance Monitoring Beta">contact support<a/> if you're interested in participating in the beta.
+
 Configures performance statistics collection (routes, SQL queries) This
 statistics is displayed on the Performance tab of your project. By default, it's
 disabled.
