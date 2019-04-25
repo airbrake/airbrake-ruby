@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `Airbrake::TimedTrace` for measuring performance of arbitrary code
+  chunks ([#476](https://github.com/airbrake/airbrake-ruby/pull/476))
+
 ### [v4.2.5][v4.2.5] (April 11, 2019)
 
 * Fixed `Airbrake.performance_notifier` & `Airbrake.deploy_notifier` returning

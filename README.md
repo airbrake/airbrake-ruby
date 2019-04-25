@@ -928,6 +928,32 @@ puts "Time: #{time}"
 #=> Time: 67.40199995040894
 ```
 
+### TimedTrace
+
+Represents a chunk of code performance of which was measured and stored under a
+label. The chunk is called a "span". Such spans can be used for [performance
+breakdown](#notify_performance_breakdown) reporting.
+
+#### .span
+
+```ruby
+# Measure time for a span called 'operation'.
+timed_trace = Airbrake::TimedTrace.span('operation') do
+  call_something
+end
+timed_trace.spans #=> { 'operation' => 0.123 }
+
+# Send the spans to the Airbrake dashboard.
+Airbrake.notify_performance_breakdown(
+  method: 'GET',
+  route: '/things/1',
+  response_type: 'json',
+  groups: timed_trace.spans
+)
+```
+
+See [full documentation][yard-api] for more examples.
+
 Additional notes
 ----------------
 
