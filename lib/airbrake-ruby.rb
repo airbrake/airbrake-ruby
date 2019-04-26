@@ -77,9 +77,6 @@ module Airbrake
   #  special cases where we need to work around older implementations
   JRUBY = (RUBY_ENGINE == 'jruby')
 
-  # @!macro see_public_api_method
-  #   @see Airbrake.$0
-
   class << self
     # @since v4.2.3
     # @api private

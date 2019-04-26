@@ -96,7 +96,7 @@ module Airbrake
     attr_accessor :performance_stats_flush_period
 
     class << self
-      # @param [Config] new_instance
+      # @return [Config]
       attr_writer :instance
 
       # @return [Config]

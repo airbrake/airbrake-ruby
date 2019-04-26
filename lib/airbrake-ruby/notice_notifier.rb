@@ -31,27 +31,27 @@ module Airbrake
       add_filter(Airbrake::Filters::ExceptionAttributesFilter.new)
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.notify
     def notify(exception, params = {}, &block)
       send_notice(exception, params, default_sender, &block)
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.notify_sync
     def notify_sync(exception, params = {}, &block)
       send_notice(exception, params, @sync_sender, &block).value
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.add_filte
     def add_filter(filter = nil, &block)
       @filter_chain.add_filter(block_given? ? block : filter)
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.delete_filter
     def delete_filter(filter_class)
       @filter_chain.delete_filter(filter_class)
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.build_notice
     def build_notice(exception, params = {})
       if @async_sender.closed?
         raise Airbrake::Error,
@@ -66,17 +66,17 @@ module Airbrake
       end
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.close
     def close
       @async_sender.close
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.configured?
     def configured?
       @config.valid?
     end
 
-    # @macro see_public_api_method
+    # @see Airbrake.merge_context
     def merge_context(context)
       @context.merge!(context)
     end
