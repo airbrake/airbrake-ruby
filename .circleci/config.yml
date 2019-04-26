@@ -29,6 +29,19 @@ jobs:
       - run:
           name: Run RuboCop linting
           command: bundle exec rubocop --parallel
+  yard_lint:
+    docker:
+      - image: circleci/ruby:2.6
+    working_directory: ~/airbrake-ruby
+    steps:
+      - checkout
+      - <<: *repo_save_cache
+      - <<: *bundle_install
+      - run:
+          name: Run YARD linting
+          command: |
+            touch README # Workaround for "incorrect" anchor links in README.md
+            bundle exec yardoc --fail-on-warning --no-progress --readme=README
   "ruby-2.1":
     docker:
       - image: circleci/ruby:2.1
@@ -91,24 +104,32 @@ workflows:
   build:
     jobs:
       - rubocop_lint
+      - yard_lint
       - "ruby-2.1":
           requires:
             - rubocop_lint
+            - yard_lint
       - "ruby-2.2":
           requires:
             - rubocop_lint
+            - yard_lint
       - "ruby-2.3":
           requires:
             - rubocop_lint
+            - yard_lint
       - "ruby-2.4":
           requires:
             - rubocop_lint
+            - yard_lint
       - "ruby-2.5":
           requires:
             - rubocop_lint
+            - yard_lint
       - "ruby-2.6":
           requires:
             - rubocop_lint
+            - yard_lint
       - "jruby-9.2.0.0":
           requires:
             - rubocop_lint
+            - yard_lint
