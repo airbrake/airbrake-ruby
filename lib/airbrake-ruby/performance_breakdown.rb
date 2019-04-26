@@ -1,6 +1,6 @@
 module Airbrake
   # PerformanceBreakdown holds data that shows how much time a request spent
-  # doing certaing subtasks such as (DB querying, view rendering, etc).  request
+  # doing certaing subtasks such as (DB querying, view rendering, etc).
   #
   # @see Airbrake.notify_breakdown
   # @api public
