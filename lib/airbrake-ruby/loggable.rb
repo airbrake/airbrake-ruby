@@ -17,7 +17,7 @@ module Airbrake
   # @api private
   module Loggable
     class << self
-      # @param [Logger] logger
+      # @return [Logger]
       attr_writer :instance
 
       # @return [Logger]
