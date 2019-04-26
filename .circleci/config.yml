@@ -18,7 +18,7 @@ references:
       name: Run unit tests
       command: bundle exec rake
 jobs:
-  lint:
+  rubocop_lint:
     docker:
       - image: circleci/ruby:2.6
     working_directory: ~/airbrake-ruby
@@ -90,25 +90,25 @@ workflows:
   version: 2
   build:
     jobs:
-      - lint
+      - rubocop_lint
       - "ruby-2.1":
           requires:
-            - lint
+            - rubocop_lint
       - "ruby-2.2":
           requires:
-            - lint
+            - rubocop_lint
       - "ruby-2.3":
           requires:
-            - lint
+            - rubocop_lint
       - "ruby-2.4":
           requires:
-            - lint
+            - rubocop_lint
       - "ruby-2.5":
           requires:
-            - lint
+            - rubocop_lint
       - "ruby-2.6":
           requires:
-            - lint
+            - rubocop_lint
       - "jruby-9.2.0.0":
           requires:
-            - lint
+            - rubocop_lint
