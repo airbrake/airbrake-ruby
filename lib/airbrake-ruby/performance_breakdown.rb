@@ -4,7 +4,7 @@ module Airbrake
   #
   # @see Airbrake.notify_breakdown
   # @api public
-  # @since v4.3.0
+  # @since v4.2.0
   # rubocop:disable Metrics/BlockLength, Metrics/ParameterLists
   PerformanceBreakdown = Struct.new(
     :method, :route, :response_type, :groups, :start_time, :end_time
