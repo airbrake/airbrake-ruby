@@ -49,6 +49,7 @@ require 'airbrake-ruby/request'
 require 'airbrake-ruby/performance_breakdown'
 require 'airbrake-ruby/benchmark'
 require 'airbrake-ruby/monotonic_time'
+require 'airbrake-ruby/timed_trace'
 
 # Airbrake is a thin wrapper around instances of the notifier classes (such as
 # notice, performance & deploy notifiers). It creates a way to access them via a
