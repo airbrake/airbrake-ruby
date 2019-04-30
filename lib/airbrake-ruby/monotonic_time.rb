@@ -7,7 +7,7 @@ module Airbrake
   #   MonotonicTime.time_in_ms #=> 287138801.144576
   #
   # @see http://pubs.opengroup.org/onlinepubs/9699919799/functions/clock_getres.html
-  # @since v4.3.0
+  # @since v4.2.4
   # @api private
   module MonotonicTime
     class << self

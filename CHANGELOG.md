@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.3.0][v4.3.0] (April 30, 2019)
+
 * Added `Airbrake::TimedTrace` for measuring performance of arbitrary code
   chunks ([#476](https://github.com/airbrake/airbrake-ruby/pull/476))
 
@@ -733,3 +735,4 @@ Airbrake Ruby Changelog
 [v4.2.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.3
 [v4.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.4
 [v4.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.5
+[v4.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.3.0
