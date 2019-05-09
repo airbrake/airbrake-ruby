@@ -8,6 +8,7 @@ require 'time'
 
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/loggable'
+require 'airbrake-ruby/stashable'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
 require 'airbrake-ruby/promise'

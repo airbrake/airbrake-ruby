@@ -51,11 +51,7 @@ module Airbrake
 
     include Ignorable
     include Loggable
-
-    # @since v1.7.0
-    # @return [Hash{Symbol=>Object}] the hash with arbitrary objects to be used
-    #   in filters
-    attr_reader :stash
+    include Stashable
 
     # @api private
     def initialize(exception, params = {})
@@ -69,8 +65,9 @@ module Airbrake
         session: {},
         params: params
       }
-      @stash = { exception: exception }
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
+
+      stash[:exception] = exception
     end
 
     # Converts the notice to JSON. Calls +to_json+ on each object inside
