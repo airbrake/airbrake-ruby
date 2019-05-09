@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.4.0][v4.4.0] (May 9, 2019)
+
 * Added `Airbrake::Query#stash`, `Airbrake::Request#stash`,
   `Airbrake::PerformanceBreakdown#stash` that allows storing arbitrary
   information in these structures
@@ -753,3 +755,4 @@ Airbrake Ruby Changelog
 [v4.2.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.4
 [v4.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.5
 [v4.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.3.0
+[v4.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.4.0
