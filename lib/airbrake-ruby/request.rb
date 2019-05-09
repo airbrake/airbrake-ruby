@@ -8,6 +8,7 @@ module Airbrake
   Request = Struct.new(:method, :route, :status_code, :start_time, :end_time) do
     include HashKeyable
     include Ignorable
+    include Stashable
 
     def initialize(
       method:,

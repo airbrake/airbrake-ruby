@@ -289,10 +289,8 @@ RSpec.describe Airbrake::Notice do
   end
 
   describe "#stash" do
-    it "returns a hash" do
-      obj = Object.new
-      notice.stash[:bingo_object] = obj
-      expect(notice.stash[:bingo_object]).to eql(obj)
-    end
+    subject { described_class.new(AirbrakeTestError.new) }
+
+    it { is_expected.to respond_to(:stash) }
   end
 end
