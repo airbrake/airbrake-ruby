@@ -11,6 +11,7 @@ module Airbrake
   ) do
     include HashKeyable
     include Ignorable
+    include Stashable
 
     def initialize(
       method:,

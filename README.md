@@ -728,6 +728,24 @@ Airbrake.notify_request(
 )
 ```
 
+
+Optionally, you can attach information to the stash (`request_id` in this
+example).
+
+```ruby
+Airbrake.notify_request(
+  {
+    # normal params
+  },
+  request_id: 123
+)
+```
+
+This stash can be accessed from performance filters as
+`resource.stash[:request_id]`.
+
+##### Return value
+
 When [`config.performance_stats = false`](#performance_stats), it always returns
 a rejected promise.
 
@@ -752,6 +770,23 @@ Airbrake.notify_query(
 )
 ```
 
+Optionally, you can attach information to the stash (`request_id` in this
+example).
+
+```ruby
+Airbrake.notify_query(
+  {
+    # normal params
+  },
+  request_id: 123
+)
+```
+
+This stash can be accessed from performance filters as
+`resource.stash[:request_id]`.
+
+##### Return value
+
 When [`config.performance_stats = false`](#performance_stats), it always returns
 a rejected promise.
 
@@ -773,6 +808,29 @@ Airbrake.notify_performance_breakdown(
   start_time: Time.new
 )
 ```
+
+Optionally, you can attach information to the stash (`request_id` in this
+example).
+
+```ruby
+Airbrake.notify_performance_breakdown(
+  {
+    # normal params
+  },
+  request_id: 123
+)
+```
+
+This stash can be accessed from performance filters as
+`resource.stash[:request_id]`.
+
+##### Return value
+
+When [`config.performance_stats = false`](#performance_stats), it always returns
+a rejected promise.
+
+When [`config.performance_stats = true`](#performance_stats), then it aggregates
+statistics and sends as a batch every 15 seconds.
 
 #### Airbrake.add_performance_filter
 

@@ -195,6 +195,114 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe "#notify_request" do
+    context "when :stash key is not provided" do
+      it "doesn't add anything to the stash of the request" do
+        expect(described_class.performance_notifier).to receive(:notify) do |request|
+          expect(request.stash).to be_empty
+        end
+
+        described_class.notify_request(
+          method: 'GET',
+          route: '/',
+          status_code: 200,
+          start_time: Time.now
+        )
+      end
+    end
+
+    context "when :stash key is provided" do
+      it "adds the value as the stash of the request" do
+        expect(described_class.performance_notifier).to receive(:notify) do |request|
+          expect(request.stash).to eq(request_id: 1)
+        end
+
+        described_class.notify_request(
+          {
+            method: 'GET',
+            route: '/',
+            status_code: 200,
+            start_time: Time.now
+          },
+          request_id: 1
+        )
+      end
+    end
+  end
+
+  describe "#notify_query" do
+    context "when :stash key is not provided" do
+      it "doesn't add anything to the stash of the query" do
+        expect(described_class.performance_notifier).to receive(:notify) do |query|
+          expect(query.stash).to be_empty
+        end
+
+        described_class.notify_query(
+          method: 'GET',
+          route: '/',
+          query: '',
+          start_time: Time.now
+        )
+      end
+    end
+
+    context "when :stash key is provided" do
+      it "adds the value as the stash of the query" do
+        expect(described_class.performance_notifier).to receive(:notify) do |query|
+          expect(query.stash).to eq(request_id: 1)
+        end
+
+        described_class.notify_query(
+          {
+            method: 'GET',
+            route: '/',
+            query: '',
+            start_time: Time.now
+          },
+          request_id: 1
+        )
+      end
+    end
+  end
+
+  describe "#notify_performance_breakdown" do
+    context "when :stash key is not provided" do
+      it "doesn't add anything to the stash of the performance breakdown" do
+        expect(described_class.performance_notifier).to receive(:notify) do |query|
+          expect(query.stash).to be_empty
+        end
+
+        described_class.notify_query(
+          method: 'GET',
+          route: '/',
+          query: '',
+          start_time: Time.now
+        )
+      end
+    end
+
+    context "when :stash key is provided" do
+      it "adds the value as the stash of the performance breakdown" do
+        expect(
+          described_class.performance_notifier
+        ).to receive(:notify) do |performance_breakdown|
+          expect(performance_breakdown.stash).to eq(request_id: 1)
+        end
+
+        described_class.notify_performance_breakdown(
+          {
+            method: 'GET',
+            route: '/',
+            response_type: :html,
+            groups: {},
+            start_time: Time.now
+          },
+          request_id: 1
+        )
+      end
+    end
+  end
+
   describe ".performance_notifier" do
     it "returns a performance notifier" do
       expect(described_class.performance_notifier)

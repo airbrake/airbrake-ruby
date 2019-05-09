@@ -3,6 +3,23 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `Airbrake::Query#stash`, `Airbrake::Request#stash`,
+  `Airbrake::PerformanceBreakdown#stash` that allows storing arbitrary
+  information in these structures
+  ([#481](https://github.com/airbrake/airbrake-ruby/pull/481))
+* Added the ability to attach objects to stash to `Airbrake.notify_query`,
+  `Airbrake.notify_request`, `Airbrake.notify_performance_breakdown`
+  ([#481](https://github.com/airbrake/airbrake-ruby/pull/481))
+
+  Example:
+  ```ruby
+  query_info = { query: '...', ...}
+  stash = { request_id: 123 }
+  Airbrake.notify_query(query_info, stash)
+  ```
+
+  This stash can be accessed from performance filters.
+
 ### [v4.3.0][v4.3.0] (April 30, 2019)
 
 * Added `Airbrake::TimedTrace` for measuring performance of arbitrary code

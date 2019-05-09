@@ -8,6 +8,7 @@ require 'time'
 
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/loggable'
+require 'airbrake-ruby/stashable'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
 require 'airbrake-ruby/promise'
@@ -346,11 +347,15 @@ module Airbrake
     #   (optional)
     # @option request_info [Date] :start_time When the request started
     # @option request_info [Time] :end_time When the request ended (optional)
+    # @param [Hash] stash What needs to be appeneded to the stash, so it's
+    #   available in filters
     # @return [void]
     # @since v3.0.0
     # @see Airbrake::PerformanceNotifier#notify
-    def notify_request(request_info)
-      performance_notifier.notify(Request.new(request_info))
+    def notify_request(request_info, stash = {})
+      request = Request.new(request_info)
+      request.stash.merge!(stash)
+      performance_notifier.notify(request)
     end
 
     # Increments SQL statistics of a certain +query+ that was invoked on
@@ -377,11 +382,15 @@ module Airbrake
     # @option request_info [String] :query The query that was executed
     # @option request_info [Date] :start_time When the query started executing
     # @option request_info [Time] :end_time When the query finished (optional)
+    # @param [Hash] stash What needs to be appeneded to the stash, so it's
+    #   available in filters
     # @return [void]
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#notify
-    def notify_query(query_info)
-      performance_notifier.notify(Query.new(query_info))
+    def notify_query(query_info, stash = {})
+      query = Query.new(query_info)
+      query.stash.merge!(stash)
+      performance_notifier.notify(query)
     end
 
     # Increments performance breakdown statistics of a certain route.
@@ -402,10 +411,14 @@ module Airbrake
     # @option breakdown_info [String] :response_type
     # @option breakdown_info [Array<Hash{Symbol=>Float}>] :groups
     # @option breakdown_info [Date] :start_time
+    # @param [Hash] stash What needs to be appeneded to the stash, so it's
+    #   available in filters
     # @return [void]
     # @since v4.2.0
-    def notify_performance_breakdown(breakdown_info)
-      performance_notifier.notify(PerformanceBreakdown.new(breakdown_info))
+    def notify_performance_breakdown(breakdown_info, stash = {})
+      performance_breakdown = PerformanceBreakdown.new(breakdown_info)
+      performance_breakdown.stash.merge!(stash)
+      performance_notifier.notify(performance_breakdown)
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
