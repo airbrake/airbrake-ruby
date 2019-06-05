@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `AsyncSender` returning `nil` instead of a rejected promise when it
+  reaches its capacity
+  ([#484](https://github.com/airbrake/airbrake-ruby/pull/484))
+
 ### [v4.4.0][v4.4.0] (May 9, 2019)
 
 * Added `Airbrake::Query#stash`, `Airbrake::Request#stash`,

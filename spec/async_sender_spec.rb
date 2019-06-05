@@ -49,6 +49,14 @@ RSpec.describe Airbrake::AsyncSender do
         end
         subject.close
       end
+
+      it "returns a rejected promise" do
+        promise = Airbrake::Promise.new
+        200.times { subject.send(notice, promise) }
+        expect(promise.value).to eq(
+          'error' => "AsyncSender has reached its capacity of #{queue_size}"
+        )
+      end
     end
   end
 
