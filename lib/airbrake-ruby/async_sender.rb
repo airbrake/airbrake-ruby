@@ -9,6 +9,12 @@ module Airbrake
   class AsyncSender
     include Loggable
 
+    # @return [String]
+    WILL_NOT_DELIVER_MSG =
+      "%<log_label>s AsyncSender has reached its capacity of %<capacity>s " \
+      "and the following notice will not be delivered " \
+      "Error: %<type>s - %<message>s\nBacktrace: %<backtrace>s\n".freeze
+
     # @return [ThreadGroup] the list of workers
     # @note This is exposed for eaiser unit testing
     # @since v4.0.0
@@ -36,7 +42,7 @@ module Airbrake
     #   library
     # @return [Airbrake::Promise]
     def send(notice, promise)
-      return will_not_deliver(notice) if @unsent.size >= @unsent.max
+      return will_not_deliver(notice, promise) if @unsent.size >= @unsent.max
 
       @unsent << [notice, promise]
       promise
@@ -115,17 +121,22 @@ module Airbrake
       end
     end
 
-    def will_not_deliver(notice)
-      backtrace = notice[:errors][0][:backtrace].map do |line|
-        "#{line[:file]}:#{line[:line]} in `#{line[:function]}'"
-      end
+    def will_not_deliver(notice, promise)
+      error = notice[:errors].first
+
       logger.error(
-        "#{LOG_LABEL} AsyncSender has reached its capacity of "                   \
-        "#{@unsent.max} and the following notice will not be delivered "          \
-        "Error: #{notice[:errors][0][:type]} - #{notice[:errors][0][:message]}\n" \
-        "Backtrace: \n" + backtrace.join("\n")
+        format(
+          WILL_NOT_DELIVER_MSG,
+          log_label: LOG_LABEL,
+          capacity: @unsent.max,
+          type: error[:type],
+          message: error[:message],
+          backtrace: error[:backtrace].map do |line|
+            "#{line[:file]}:#{line[:line]} in `#{line[:function]}'"
+          end.join("\n")
+        )
       )
-      nil
+      promise.reject("AsyncSender has reached its capacity of #{@unsent.max}")
     end
   end
 end
