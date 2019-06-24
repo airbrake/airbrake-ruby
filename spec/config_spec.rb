@@ -19,7 +19,7 @@ RSpec.describe Airbrake::Config do
   its(:timeout) { is_expected.to be_nil }
   its(:blacklist_keys) { is_expected.to be_empty }
   its(:whitelist_keys) { is_expected.to be_empty }
-  its(:performance_stats) { is_expected.to be_falsey }
+  its(:performance_stats) { is_expected.to eq(true) }
   its(:performance_stats_flush_period) { is_expected.to eq(15) }
 
   describe "#new" do

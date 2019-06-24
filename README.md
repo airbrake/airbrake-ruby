@@ -362,7 +362,7 @@ all accounts. Please <a href="mailto:support@airbrake.io?subject=Perfomance Moni
 
 Configures performance statistics collection (routes, SQL queries) This
 statistics is displayed on the Performance tab of your project. By default, it's
-disabled.
+enabled.
 
 The statistics is sent via:
 
@@ -371,7 +371,7 @@ The statistics is sent via:
 
 ```ruby
 Airbrake.configure do |c|
-  c.performance_stats = true
+  c.performance_stats = false
 end
 ```
 
