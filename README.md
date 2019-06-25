@@ -58,7 +58,7 @@ Installation
 Add the Airbrake Ruby gem to your Gemfile:
 
 ```ruby
-gem 'airbrake-ruby', '~> 4.4'
+gem 'airbrake-ruby', '~> 4.5'
 ```
 
 ### Manual

@@ -3,10 +3,13 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.5.0][v4.5.0] (June 25, 2019)
+
 * Fixed `AsyncSender` returning `nil` instead of a rejected promise when it
   reaches its capacity
   ([#484](https://github.com/airbrake/airbrake-ruby/pull/484))
-* Enabled `performance_stats` by default
+* **IMPORTANT**: Enabled `performance_stats` by default. If you wish to disable
+  it, set `config.performance_stats = false`
   ([#485](https://github.com/airbrake/airbrake-ruby/pull/485))
 
 ### [v4.4.0][v4.4.0] (May 9, 2019)
@@ -762,3 +765,4 @@ Airbrake Ruby Changelog
 [v4.2.5]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.2.5
 [v4.3.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.3.0
 [v4.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.4.0
+[v4.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.5.0
