@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Improved performance of `PerformanceNotifier` (sic!)
+  ([#490](https://github.com/airbrake/airbrake-ruby/pull/490))
+
 ### [v4.5.0][v4.5.0] (June 25, 2019)
 
 * Fixed `AsyncSender` returning `nil` instead of a rejected promise when it

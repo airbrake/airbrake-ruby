@@ -82,7 +82,7 @@ module Airbrake
       signature = "#{self.class.name}##{__method__}"
       raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
 
-      logger.debug("#{LOG_LABEL} #{signature}: #{payload}")
+      logger.debug { "#{LOG_LABEL} #{signature}: #{payload}" }
 
       with_grouped_payload(payload) do |resource_hash, destination|
         url = URI.join(
