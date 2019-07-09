@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Improved performance of `PerformanceNotifier` (sic!)
   ([#490](https://github.com/airbrake/airbrake-ruby/pull/490))
+* Improved performance of `Airbrake::Stat` when logging (or inspecting)
+  ([#491](https://github.com/airbrake/airbrake-ruby/pull/491))
 
 ### [v4.5.0][v4.5.0] (June 25, 2019)
 
