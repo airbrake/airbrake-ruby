@@ -1,5 +1,6 @@
 require 'base64'
 
+# rubocop:disable Metrics/BlockLength
 module Airbrake
   # Stat is a data structure that allows accumulating performance data (route
   # performance, SQL query performance and such). It's powered by TDigests.
@@ -58,5 +59,15 @@ module Airbrake
 
       tdigest.push(ms)
     end
+
+    # We define custom inspect so that we weed out uninformative TDigest, which
+    # is also very slow to dump when we log Airbrake::Stat.
+    #
+    # @return [String]
+    def inspect
+      "#<struct Airbrake::Stat count=#{count}, sum=#{sum}, sumsq=#{sumsq}>"
+    end
+    alias_method :pretty_print, :inspect
   end
 end
+# rubocop:enable Metrics/BlockLength
