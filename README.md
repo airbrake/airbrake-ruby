@@ -357,12 +357,9 @@ end
 
 #### performance_stats
 
-The performance monitoring feature is currently in beta and is not available to
-all accounts. Please <a href="mailto:support@airbrake.io?subject=Perfomance Monitoring Beta">contact support<a/> if you're interested in participating in the beta.
-
-Configures performance statistics collection (routes, SQL queries) This
-statistics is displayed on the Performance tab of your project. By default, it's
-enabled.
+Configures [Airbrake Performance Monitoring][airbrake-performance-monitoring]
+statistics collection (routes, SQL queries). These are displayed on the
+Performance tab of your project. By default, it's enabled.
 
 The statistics is sent via:
 
@@ -371,7 +368,7 @@ The statistics is sent via:
 
 ```ruby
 Airbrake.configure do |c|
-  c.performance_stats = false
+  c.performance_stats = true
 end
 ```
 
@@ -715,7 +712,8 @@ grocer.deliver_veggies
 
 #### Airbrake.notify_request
 
-Sends performance statistics to Airbrake. The performance statistics is
+Sends performance statistics to [Airbrake Performance
+Monitoring][airbrake-performance-monitoring]. The performance statistics are
 displayed on the Performance tab of your project.
 
 ```ruby
@@ -1086,3 +1084,4 @@ The project uses the MIT License. See LICENSE.md for details.
 [arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
 [monotonic]: http://pubs.opengroup.org/onlinepubs/9699919799/functions/clock_getres.html
+[airbrake-performance-monitoring]: https://airbrake.io/product/performance
