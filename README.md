@@ -623,9 +623,6 @@ Ruby's `at_exit` hook.
 at_exit do
   # Closes the default notifier.
   Airbrake.close
-
-  # Closes a named notifier.
-  Airbrake[:my_notifier].close
 end
 ```
 
