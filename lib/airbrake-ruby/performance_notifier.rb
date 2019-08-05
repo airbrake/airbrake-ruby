@@ -25,10 +25,8 @@ module Airbrake
       promise = @config.check_configuration
       return promise if promise.rejected?
 
-      promise = Airbrake::Promise.new
-      unless @config.performance_stats
-        return promise.reject("The Performance Stats feature is disabled")
-      end
+      promise = @config.check_performance_options(resource)
+      return promise if promise.rejected?
 
       @filter_chain.refine(resource)
       return if resource.ignored?

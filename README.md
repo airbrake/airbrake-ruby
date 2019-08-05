@@ -358,17 +358,35 @@ end
 #### performance_stats
 
 Configures [Airbrake Performance Monitoring][airbrake-performance-monitoring]
-statistics collection (routes, SQL queries). These are displayed on the
+statistics collection aggregated per route. These are displayed on the
 Performance tab of your project. By default, it's enabled.
 
 The statistics is sent via:
 
 * [`Airbrake.notify_request`](#airbrakenotify_request)
-* [`Airbrake.notify_query`](#airbrakenotify_query)
 
 ```ruby
 Airbrake.configure do |c|
   c.performance_stats = true
+end
+```
+
+#### query_stats
+
+Configures [Airbrake Performance Monitoring][airbrake-performance-monitoring]
+query collection. These are displayed on the Performance tab of your project. If
+`performance_stats` is `false`, setting this to `true` won't have effect because
+`performance_stats` has higher precedence. By default, it's disabled.
+**WARNING**: this feature is currently in alpha and it's not available for all
+accounts.
+
+The statistics is sent via:
+
+* [`Airbrake.notify_query`](#airbrakenotify_query)
+
+```ruby
+Airbrake.configure do |c|
+  c.query_stats = false
 end
 ```
 
