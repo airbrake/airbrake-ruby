@@ -12,7 +12,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
       project_id: 1,
       project_key: 'banana',
       performance_stats: true,
-      performance_stats_flush_period: 0
+      performance_stats_flush_period: 0,
+      query_stats: true
     )
   end
 
@@ -284,34 +285,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
       expect(promise.value).to eq('' => nil)
     end
 
-    it "doesn't send route stats when performance stats are disabled" do
-      Airbrake::Config.instance.merge(performance_stats: false)
-
-      promise = subject.notify(
-        Airbrake::Request.new(
-          method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
-        )
+    it "checks performance stat configuration" do
+      request = Airbrake::Request.new(
+        method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
       )
-
-      expect(a_request(:put, routes)).not_to have_been_made
-      expect(promise.value).to eq(
-        'error' => "The Performance Stats feature is disabled"
-      )
-    end
-
-    it "doesn't send route stats when current environment is ignored" do
-      Airbrake::Config.instance.merge(
-        performance_stats: true, environment: 'test', ignore_environments: %w[test]
-      )
-
-      promise = subject.notify(
-        Airbrake::Request.new(
-          method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
-        )
-      )
-
-      expect(a_request(:put, routes)).not_to have_been_made
-      expect(promise.value).to eq('error' => "current environment 'test' is ignored")
+      expect(Airbrake::Config.instance).to receive(:check_performance_options)
+        .with(request).and_return(Airbrake::Promise.new)
+      subject.notify(request)
     end
 
     it "sends environment when it's specified" do

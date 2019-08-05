@@ -3,6 +3,13 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added the `query_stats` option that configures SQL performance
+  monitoring. If `performance_stats` is `false`, setting this to `true` won't
+  have effect because `performance_stats` has higher precedence. It's also
+  disabled by default, and it's currently in alpha (works only for some
+  accounts). Enabling is not recommended for now.
+  ([#495](https://github.com/airbrake/airbrake-ruby/pull/495))
+
 ### [v4.5.1][v4.5.1] (July 29, 2019)
 
 * Improved performance of `PerformanceNotifier` (sic!)

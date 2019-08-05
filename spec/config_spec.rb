@@ -21,6 +21,7 @@ RSpec.describe Airbrake::Config do
   its(:whitelist_keys) { is_expected.to be_empty }
   its(:performance_stats) { is_expected.to eq(true) }
   its(:performance_stats_flush_period) { is_expected.to eq(15) }
+  its(:query_stats) { is_expected.to eq(false) }
 
   describe "#new" do
     context "when user config is passed" do
@@ -104,6 +105,50 @@ RSpec.describe Airbrake::Config do
 
     context "when config is valid and allows notifying" do
       its(:check_configuration) { is_expected.not_to be_rejected }
+    end
+  end
+
+  describe "#check_performance_options" do
+    it "returns a promise" do
+      resource = Airbrake::Query.new(
+        method: '', route: '', query: '', start_time: Time.now
+      )
+      expect(subject.check_performance_options(resource))
+        .to be_an(Airbrake::Promise)
+    end
+
+    context "when performance stats are disabled" do
+      before { subject.performance_stats = false }
+
+      let(:resource) do
+        Airbrake::Request.new(
+          method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
+        )
+      end
+
+      it "returns a rejected promise" do
+        promise = subject.check_performance_options(resource)
+        expect(promise.value).to eq(
+          'error' => "The Performance Stats feature is disabled"
+        )
+      end
+    end
+
+    context "when query stats are disabled" do
+      before { subject.query_stats = false }
+
+      let(:resource) do
+        Airbrake::Query.new(
+          method: 'GET', route: '/foo', query: '', start_time: Time.new
+        )
+      end
+
+      it "returns a rejected promise" do
+        promise = subject.check_performance_options(resource)
+        expect(promise.value).to eq(
+          'error' => "The Query Stats feature is disabled"
+        )
+      end
     end
   end
 end

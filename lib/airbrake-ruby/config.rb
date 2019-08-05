@@ -83,17 +83,23 @@ module Airbrake
     # @since v2.5.0
     attr_accessor :code_hunks
 
-    # @return [Boolean] true if the library should send performance stats
-    #   information to Airbrake (routes, SQL queries), false otherwise
+    # @return [Boolean] true if the library should send route performance stats
+    #   to Airbrake, false otherwise
     # @api public
     # @since v3.2.0
     attr_accessor :performance_stats
 
     # @return [Integer] how many seconds to wait before sending collected route
     #   stats
-    # @api public
+    # @api private
     # @since v3.2.0
     attr_accessor :performance_stats_flush_period
+
+    # @return [Boolean] true if the library should send SQL stats to Airbrake,
+    #   false otherwise
+    # @api public
+    # @since v4.6.0
+    attr_accessor :query_stats
 
     class << self
       # @return [Config]
@@ -132,6 +138,7 @@ module Airbrake
       self.versions = {}
       self.performance_stats = true
       self.performance_stats_flush_period = 15
+      self.query_stats = false
 
       merge(user_config)
     end
@@ -195,6 +202,20 @@ module Airbrake
       return promise if promise.rejected?
 
       check_notify_ability
+    end
+
+    # @return [Promise] resolved promise if neither of the performance options
+    #   reject it, false otherwise
+    def check_performance_options(resource)
+      promise = Airbrake::Promise.new
+
+      if !performance_stats
+        promise.reject("The Performance Stats feature is disabled")
+      elsif resource.is_a?(Airbrake::Query) && !query_stats
+        promise.reject("The Query Stats feature is disabled")
+      else
+        promise
+      end
     end
 
     private
