@@ -91,7 +91,7 @@ module Airbrake
 
     # @return [Integer] how many seconds to wait before sending collected route
     #   stats
-    # @api public
+    # @api private
     # @since v3.2.0
     attr_accessor :performance_stats_flush_period
 

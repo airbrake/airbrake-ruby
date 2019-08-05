@@ -8,7 +8,7 @@ Airbrake Ruby Changelog
   have effect because `performance_stats` has higher precedence. It's also
   disabled by default, and it's currently in alpha (works only for some
   accounts). Enabling is not recommended for now.
-  ([#491](https://github.com/airbrake/airbrake-ruby/pull/491))
+  ([#495](https://github.com/airbrake/airbrake-ruby/pull/495))
 
 ### [v4.5.1][v4.5.1] (July 29, 2019)
 
