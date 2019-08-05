@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.6.0][v4.6.0] (August 5, 2019)
+
 * Added the `query_stats` option that configures SQL performance
   monitoring. If `performance_stats` is `false`, setting this to `true` won't
   have effect because `performance_stats` has higher precedence. It's also
@@ -781,3 +783,4 @@ Airbrake Ruby Changelog
 [v4.4.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.4.0
 [v4.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.5.0
 [v4.5.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.5.1
+[v4.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.6.0
