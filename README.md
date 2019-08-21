@@ -857,7 +857,7 @@ don't trigger it!).
 
 ```ruby
 Airbrake.add_performance_filter do |resource|
-  resource.ignore! if resource.route == %r{/health_check}
+  resource.ignore! if resource.route =~ %r{/health_check}
 end
 ```
 
