@@ -1,8 +1,6 @@
 RSpec.describe Airbrake::FileCache do
-  after do
-    %i[banana mango].each { |k| described_class.delete(k) }
-    expect(described_class).to be_empty
-  end
+  before { described_class.reset }
+  after { described_class.reset }
 
   describe ".[]=" do
     context "when cache limit isn't reached" do

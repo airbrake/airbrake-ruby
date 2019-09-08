@@ -40,6 +40,12 @@ module Airbrake
       data.empty?
     end
 
+    # @since ?.?.?
+    # @return [void]
+    def self.reset
+      @data = {}
+    end
+
     def self.data
       @data ||= {}
     end
