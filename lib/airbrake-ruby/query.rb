@@ -22,6 +22,7 @@ module Airbrake
       start_time:,
       end_time: Time.now
     )
+      @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
       super(method, route, query, func, file, line, start_time, end_time)
     end
 
@@ -42,7 +43,7 @@ module Airbrake
         'method' => method,
         'route' => route,
         'query' => query,
-        'time' => TimeTruncate.utc_truncate_minutes(start_time),
+        'time' => @start_time_utc,
         'function' => func,
         'file' => file,
         'line' => line

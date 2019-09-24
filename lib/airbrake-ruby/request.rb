@@ -17,6 +17,7 @@ module Airbrake
       start_time:,
       end_time: Time.now
     )
+      @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
       super(method, route, status_code, start_time, end_time)
     end
 
@@ -37,7 +38,7 @@ module Airbrake
         'method' => method,
         'route' => route,
         'statusCode' => status_code,
-        'time' => TimeTruncate.utc_truncate_minutes(start_time)
+        'time' => @start_time_utc
       }.delete_if { |_key, val| val.nil? }
     end
   end
