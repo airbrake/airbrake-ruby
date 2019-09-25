@@ -62,14 +62,18 @@ module Airbrake
     end
 
     def schedule_flush(promise)
-      @schedule_flush ||= Thread.new do
+      if @schedule_flush
+        return if @schedule_flush.alive?
+        @schedule_flush.join
+      end
+
+      @schedule_flush = Thread.new do
         sleep(@flush_period)
 
         payload = nil
         @mutex.synchronize do
           payload = @payload
           @payload = {}
-          @schedule_flush = nil
         end
 
         send(payload, promise)
