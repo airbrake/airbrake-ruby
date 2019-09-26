@@ -39,6 +39,7 @@ Style/SignalException:
 Naming/PredicateName:
   Exclude:
     - 'lib/airbrake-ruby/async_sender.rb'
+    - 'lib/airbrake-ruby/thread_pool.rb'
 
 Metrics/ClassLength:
   Max: 120
