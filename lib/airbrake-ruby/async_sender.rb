@@ -1,7 +1,5 @@
 module Airbrake
-  # Responsible for sending notices to Airbrake asynchronously. The class
-  # supports an unlimited number of worker threads and an unlimited queue size
-  # (both values are configurable).
+  # Responsible for sending notices to Airbrake asynchronously.
   #
   # @see SyncSender
   # @api private
@@ -15,25 +13,15 @@ module Airbrake
       "and the following notice will not be delivered " \
       "Error: %<type>s - %<message>s\nBacktrace: %<backtrace>s\n".freeze
 
-    # @return [ThreadGroup] the list of workers
-    # @note This is exposed for eaiser unit testing
-    # @since v4.0.0
-    attr_reader :workers
-
-    # @return [Array<[Airbrake::Notice,Airbrake::Promise]>] the list of unsent
-    #   payload
-    # @note This is exposed for eaiser unit testing
-    # @since v4.0.0
-    attr_reader :unsent
-
     def initialize
       @config = Airbrake::Config.instance
-      @unsent = SizedQueue.new(Airbrake::Config.instance.queue_size)
-      @sender = SyncSender.new
-      @closed = false
-      @workers = ThreadGroup.new
-      @mutex = Mutex.new
-      @pid = nil
+
+      sender = SyncSender.new
+      @thread_pool = ThreadPool.new(
+        worker_size: @config.workers,
+        queue_size: @config.queue_size,
+        block: proc { |(notice, promise)| sender.send(notice, promise) }
+      )
     end
 
     # Asynchronously sends a notice to Airbrake.
@@ -42,84 +30,26 @@ module Airbrake
     #   library
     # @return [Airbrake::Promise]
     def send(notice, promise)
-      return will_not_deliver(notice, promise) if @unsent.size >= @unsent.max
-
-      @unsent << [notice, promise]
+      return will_not_deliver(notice, promise) unless @thread_pool << [notice, promise]
       promise
     end
 
-    # Closes the instance making it a no-op (it shut downs all worker
-    # threads). Before closing, waits on all unsent notices to be sent.
-    #
     # @return [void]
-    # @raise [Airbrake::Error] when invoked more than one time
     def close
-      threads = @mutex.synchronize do
-        raise Airbrake::Error, 'attempted to close already closed sender' if closed?
-
-        unless @unsent.empty?
-          msg = "#{LOG_LABEL} waiting to send #{@unsent.size} unsent notice(s)..."
-          logger.debug(msg + ' (Ctrl-C to abort)')
-        end
-
-        @config.workers.times { @unsent << [:stop, Airbrake::Promise.new] }
-        @closed = true
-        @workers.list.dup
-      end
-
-      threads.each(&:join)
-      logger.debug("#{LOG_LABEL} closed")
+      @thread_pool.close
     end
 
-    # Checks whether the sender is closed and thus usable.
     # @return [Boolean]
     def closed?
-      @closed
+      @thread_pool.closed?
     end
 
-    # Checks if an active sender has any workers. A sender doesn't have any
-    # workers only in two cases: when it was closed or when all workers
-    # crashed. An *active* sender doesn't have any workers only when something
-    # went wrong.
-    #
-    # Workers are expected to crash when you +fork+ the process the workers are
-    # living in. In this case we detect a +fork+ and try to revive them here.
-    #
-    # Another possible scenario that crashes workers is when you close the
-    # instance on +at_exit+, but some other +at_exit+ hook prevents the process
-    # from exiting.
-    #
-    # @return [Boolean] true if an instance wasn't closed, but has no workers
-    # @see https://goo.gl/oydz8h Example of at_exit that prevents exit
+    # @return [Boolean]
     def has_workers?
-      @mutex.synchronize do
-        return false if @closed
-
-        if @pid != Process.pid && @workers.list.empty?
-          @pid = Process.pid
-          spawn_workers
-        end
-
-        !@closed && @workers.list.any?
-      end
+      @thread_pool.has_workers?
     end
 
     private
-
-    def spawn_workers
-      @workers = ThreadGroup.new
-      @config.workers.times { @workers.add(spawn_worker) }
-      @workers.enclose
-    end
-
-    def spawn_worker
-      Thread.new do
-        while (message = @unsent.pop)
-          break if message.first == :stop
-          @sender.send(*message)
-        end
-      end
-    end
 
     def will_not_deliver(notice, promise)
       error = notice[:errors].first
@@ -128,7 +58,7 @@ module Airbrake
         format(
           WILL_NOT_DELIVER_MSG,
           log_label: LOG_LABEL,
-          capacity: @unsent.max,
+          capacity: @config.queue_size,
           type: error[:type],
           message: error[:message],
           backtrace: error[:backtrace].map do |line|
@@ -136,7 +66,7 @@ module Airbrake
           end.join("\n")
         )
       )
-      promise.reject("AsyncSender has reached its capacity of #{@unsent.max}")
+      promise.reject("AsyncSender has reached its capacity of #{@config.queue_size}")
     end
   end
 end
