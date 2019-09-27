@@ -253,6 +253,7 @@ module Airbrake
     # @return [void]
     def close
       notice_notifier.close
+      performance_notifier.close
     end
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.

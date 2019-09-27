@@ -16,6 +16,7 @@ module Airbrake
       @schedule_flush = nil
       @mutex = Mutex.new
       @filter_chain = FilterChain.new
+      @waiting = false
     end
 
     # @param [Hash] resource
@@ -33,10 +34,10 @@ module Airbrake
 
       @mutex.synchronize do
         update_payload(resource)
-        @flush_period > 0 ? schedule_flush(promise) : send(@payload, promise)
+        @flush_period > 0 ? schedule_flush : send(@payload, promise)
       end
 
-      promise
+      promise.resolve(:success)
     end
 
     # @see Airbrake.add_performance_filter
@@ -47,6 +48,13 @@ module Airbrake
     # @see Airbrake.delete_performance_filter
     def delete_filter(filter_class)
       @filter_chain.delete_filter(filter_class)
+    end
+
+    def close
+      @mutex.synchronize do
+        @schedule_flush.kill if @schedule_flush
+        logger.debug("#{LOG_LABEL}: performance notifier closed")
+      end
     end
 
     private
@@ -61,22 +69,39 @@ module Airbrake
       end
     end
 
-    def schedule_flush(promise)
-      if @schedule_flush
-        return if @schedule_flush.alive?
-        @schedule_flush.join
+    def schedule_flush
+      return if @payload.empty?
+
+      if @schedule_flush && @schedule_flush.status == 'sleep' && @waiting
+        begin
+          @schedule_flush.run
+        rescue ThreadError => exception
+          logger.error("#{LOG_LABEL}: error occurred while flushing: #{exception}")
+        end
       end
 
-      @schedule_flush = Thread.new do
-        sleep(@flush_period)
+      @schedule_flush ||= spawn_timer
+    end
 
-        payload = nil
-        @mutex.synchronize do
-          payload = @payload
-          @payload = {}
+    def spawn_timer
+      Thread.new do
+        loop do
+          if @payload.none?
+            @waiting = true
+            Thread.stop
+            @waiting = false
+          end
+
+          sleep(@flush_period)
+
+          payload = nil
+          @mutex.synchronize do
+            payload = @payload
+            @payload = {}
+          end
+
+          send(payload, Airbrake::Promise.new)
         end
-
-        send(payload, promise)
       end
     end
 
