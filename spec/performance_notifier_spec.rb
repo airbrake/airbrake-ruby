@@ -282,7 +282,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
         )
       )
       expect(promise).to be_an(Airbrake::Promise)
-      expect(promise.value).to eq('' => nil)
+      expect(promise.value).to eq(:success)
     end
 
     it "checks performance stat configuration" do
@@ -323,6 +323,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     describe "payload grouping" do
       let(:flush_period) { 0.5 }
+
+      after { subject.close }
 
       it "groups payload by performance name and sends it separately" do
         Airbrake::Config.instance.merge(
@@ -407,6 +409,36 @@ RSpec.describe Airbrake::PerformanceNotifier do
           )
         ).to have_been_made
       end
+    end
+  end
+
+  describe "#close" do
+    before do
+      Airbrake::Config.instance.merge(performance_stats_flush_period: 0.1)
+    end
+
+    after do
+      Airbrake::Config.instance.merge(performance_stats_flush_period: 0)
+    end
+
+    it "kills the background thread" do
+      expect_any_instance_of(Thread).to receive(:kill).and_call_original
+      subject.notify(
+        Airbrake::Query.new(
+          method: 'POST',
+          route: '/foo',
+          query: 'SELECT * FROM things',
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
+        )
+      )
+      subject.close
+    end
+
+    it "logs the exit message" do
+      expect(Airbrake::Loggable.instance).to receive(:debug).with(
+        /performance notifier closed/
+      )
+      subject.close
     end
   end
 

@@ -245,12 +245,12 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
 
   it "appends thread inspect (self)" do
     subject.call(notice)
-    expect(notice[:params][:thread][:self]).to match(/\A#<Thread:.+ run>\z/)
+    expect(notice[:params][:thread][:self]).to match(/\A#<Thread:.+>\z/)
   end
 
   it "appends thread group" do
     subject.call(notice)
-    expect(notice[:params][:thread][:group][0]).to match(/\A#<Thread:.+ run>\z/)
+    expect(notice[:params][:thread][:group][0]).to match(/\A#<Thread:.+>\z/)
   end
 
   it "appends priority" do
