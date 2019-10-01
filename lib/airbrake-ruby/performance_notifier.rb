@@ -11,7 +11,7 @@ module Airbrake
     def initialize
       @config = Airbrake::Config.instance
       @flush_period = Airbrake::Config.instance.performance_stats_flush_period
-      @sender = SyncSender.new(:put)
+      @sender = AsyncSender.new(:put)
       @payload = {}
       @schedule_flush = nil
       @mutex = Mutex.new
@@ -53,7 +53,8 @@ module Airbrake
     def close
       @mutex.synchronize do
         @schedule_flush.kill if @schedule_flush
-        logger.debug("#{LOG_LABEL}: performance notifier closed")
+        @sender.close
+        logger.debug("#{LOG_LABEL} performance notifier closed")
       end
     end
 
