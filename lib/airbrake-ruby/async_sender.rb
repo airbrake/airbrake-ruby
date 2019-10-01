@@ -15,13 +15,7 @@ module Airbrake
 
     def initialize(method = :post)
       @config = Airbrake::Config.instance
-
-      sender = SyncSender.new(method)
-      @thread_pool = ThreadPool.new(
-        worker_size: @config.workers,
-        queue_size: @config.queue_size,
-        block: proc { |args| sender.send(*args) }
-      )
+      @method = method
     end
 
     # Asynchronously sends a notice to Airbrake.
@@ -30,7 +24,7 @@ module Airbrake
     #   library
     # @return [Airbrake::Promise]
     def send(notice, promise, endpoint = @config.endpoint)
-      unless @thread_pool << [notice, promise, endpoint]
+      unless thread_pool << [notice, promise, endpoint]
         return will_not_deliver(notice, promise)
       end
 
@@ -39,20 +33,31 @@ module Airbrake
 
     # @return [void]
     def close
-      @thread_pool.close
+      thread_pool.close
     end
 
     # @return [Boolean]
     def closed?
-      @thread_pool.closed?
+      thread_pool.closed?
     end
 
     # @return [Boolean]
     def has_workers?
-      @thread_pool.has_workers?
+      thread_pool.has_workers?
     end
 
     private
+
+    def thread_pool
+      @thread_pool ||= begin
+        sender = SyncSender.new(@method)
+        ThreadPool.new(
+          worker_size: @config.workers,
+          queue_size: @config.queue_size,
+          block: proc { |args| sender.send(*args) }
+        )
+      end
+    end
 
     def will_not_deliver(notice, promise)
       error = notice[:errors].first
