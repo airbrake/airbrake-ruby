@@ -31,6 +31,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
         )
       )
+      subject.close
 
       expect(
         a_request(:put, queries).with(body: %r|
@@ -60,6 +61,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
         )
       )
+      subject.close
 
       expect(
         a_request(:put, routes).with(body: %r|
@@ -87,6 +89,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           groups: { db: 131, view: 421 }
         )
       )
+      subject.close
 
       expect(
         a_request(:put, breakdowns).with(body: %r|
@@ -126,6 +129,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
         )
       )
+      subject.close
+
       expect(
         a_request(:put, routes).with(body: /"time":"2018-01-01T00:00:00\+00:00"/)
       ).to have_been_made
@@ -148,6 +153,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           start_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
         )
       )
+      subject.close
+
       expect(
         a_request(:put, routes).with(body: /"count":2/)
       ).to have_been_made
@@ -172,6 +179,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           end_time: Time.new(2018, 1, 1, 0, 1, 55, 0)
         )
       )
+      subject.close
+
       expect(
         a_request(:put, routes).with(
           body: %r|\A
@@ -206,6 +215,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
         )
       )
+      subject.close
+
       expect(
         a_request(:put, routes).with(
           body: %r|\A
@@ -242,6 +253,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           groups: { db: 55, view: 11 }
         )
       )
+      subject.close
 
       expect(
         a_request(:put, breakdowns).with(body: %r|
@@ -281,8 +293,10 @@ RSpec.describe Airbrake::PerformanceNotifier do
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
         )
       )
+      subject.close
+
       expect(promise).to be_an(Airbrake::Promise)
-      expect(promise.value).to eq(:success)
+      expect(promise.value).to eq('' => nil)
     end
 
     it "checks performance stat configuration" do
@@ -292,6 +306,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       expect(Airbrake::Config.instance).to receive(:check_performance_options)
         .with(request).and_return(Airbrake::Promise.new)
       subject.notify(request)
+      subject.close
     end
 
     it "sends environment when it's specified" do
@@ -305,6 +320,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           start_time: Time.new
         )
       )
+      subject.close
+
       expect(
         a_request(:put, routes).with(
           body: /\A{"routes":\[.+\],"environment":"test"}\z/x
@@ -323,8 +340,6 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     describe "payload grouping" do
       let(:flush_period) { 0.5 }
-
-      after { subject.close }
 
       it "groups payload by performance name and sends it separately" do
         Airbrake::Config.instance.merge(
@@ -371,6 +386,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
           )
         )
+        subject.close
+
         expect(a_request(:put, routes)).not_to have_been_made
       end
 
@@ -383,6 +400,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
           )
         )
+        subject.close
+
         expect(a_request(:put, queries)).not_to have_been_made
       end
     end
@@ -403,6 +422,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
           )
         )
+        subject.close
+
         expect(
           a_request(:put, queries).with(
             body: /\A{"queries":\[{"method":"POST","route":"\[Filtered\]"/
@@ -435,6 +456,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "logs the exit message" do
+      allow(Airbrake::Loggable.instance).to receive(:debug)
       expect(Airbrake::Loggable.instance).to receive(:debug).with(
         /performance notifier closed/
       )
@@ -461,6 +483,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
         )
       )
+      subject.close
+
       expect(a_request(:put, routes)).to have_been_made
     end
   end
