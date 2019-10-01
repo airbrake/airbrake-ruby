@@ -37,6 +37,10 @@ module Airbrake
         # rubocop:enable Metrics/LineLength
       }.freeze
 
+      # @return [Regexp] the regexp that is applied after the feature regexps
+      #   were used
+      POST_FILTER = /(?<=[values|in ]\().+(?=\))/i
+
       # @return [Hash{Symbol=>Array<Symbol>}] a set of features that corresponds
       #   to a certain dialect
       DIALECT_FEATURES = {
@@ -96,6 +100,7 @@ module Airbrake
         return unless resource.respond_to?(:query)
 
         q = resource.query.gsub(@regexp, FILTERED)
+        q.gsub!(POST_FILTER, FILTERED) if q =~ POST_FILTER
         q = ERROR_MSG if UNMATCHED_PAIR[@dialect] =~ q
         resource.query = q
       end

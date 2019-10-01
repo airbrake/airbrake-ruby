@@ -60,7 +60,11 @@ RSpec.describe Airbrake::Filters::SqlFilter do
       dialects: %i[postgres]
     }, {
       input: "INSERT INTO `X` values(\"test\",0, 1 , 2, 'test')",
-      output: "INSERT INTO `X` values(?,?, ? , ?, ?)",
+      output: "INSERT INTO `X` values(?)",
+      dialects: %i[mysql]
+    }, {
+      input: "INSERT INTO `X` values(\"test\",0, 1 , 2, 'test')",
+      output: "INSERT INTO `X` values(?)",
       dialects: %i[mysql]
     }, {
       input: "SELECT c11.col1, c22.col2 FROM table c11, table c22 WHERE value='nothing'",
@@ -68,7 +72,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
       dialects: ALL_DIALECTS
     }, {
       input: "INSERT INTO X VALUES(1, 23456, 123.456, 99+100)",
-      output: "INSERT INTO X VALUES(?, ?, ?, ?+?)",
+      output: "INSERT INTO X VALUES(?)",
       dialects: ALL_DIALECTS
     }, {
       input: "SELECT * FROM table WHERE name=\"foo\" AND value=\"don't\"",
@@ -117,7 +121,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
       dialects: ALL_DIALECTS
     }, {
       input: "INSERT INTO X values('', 'a''b c',0, 1 , 'd''e f''s h')",
-      output: "INSERT INTO X values(?, ?,?, ? , ?)",
+      output: "INSERT INTO X values(?)",
       dialects: ALL_DIALECTS
     }, {
       input: "SELECT * FROM t WHERE -- '\n  bar='baz' -- '",
@@ -153,7 +157,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
       dialects: %i[postgres]
     }, {
       input: "INSERT INTO \"foo\" (\"bar\", \"baz\", \"qux\") VALUES ($1, $2, $3) RETURNING \"id\"",
-      output: "INSERT INTO \"foo\" (\"bar\", \"baz\", \"qux\") VALUES ($?, $?, $?) RETURNING \"id\"",
+      output: "INSERT INTO \"foo\" (?) RETURNING \"id\"",
       dialects: %i[postgres]
     }, {
       input: "select * from foo where bar = 'some\\tthing' and baz = 10",

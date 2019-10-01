@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Improved grouping of some SQL queries
+  ([#504](https://github.com/airbrake/airbrake-ruby/pull/504))
+
 ### [v4.6.0][v4.6.0] (August 5, 2019)
 
 * Added the `query_stats` option that configures SQL performance
