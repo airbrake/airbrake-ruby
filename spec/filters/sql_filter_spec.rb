@@ -10,6 +10,18 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     end
   end
 
+  shared_examples "query blacklisting" do |query, opts|
+    it "ignores '#{query}'" do
+      filter = described_class.new('postgres')
+      q = Airbrake::Query.new(
+        query: query, method: 'GET', route: '/', start_time: Time.now
+      )
+      filter.call(q)
+
+      expect(q.ignored?).to eq(opts[:should_ignore])
+    end
+  end
+
   ALL_DIALECTS = %i[mysql postgres sqlite cassandra oracle].freeze
 
   # rubocop:disable Metrics/LineLength
@@ -220,4 +232,31 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     include_examples 'query filtering', test
   end
   # rubocop:enable Metrics/LineLength
+
+  [
+    'COMMIT',
+    'commit',
+    'BEGIN',
+    'begin',
+    'SET time zone ?',
+    'set time zone ?',
+    'SHOW max_identifier_length',
+    'show max_identifier_length',
+
+    'WITH pk_constraint AS ( SELECT conrelid, unnest(conkey) AS connum ' \
+    'FROM pg_constraint WHERE contype = ? AND conrelid = ?::regclass ), ' \
+    'cons AS ( SELECT conrelid, connum, row_number() OVER() AS rownum FROM ' \
+    'pk_constraint ) SELECT attr.attname FROM pg_attribute attr INNER JOIN ' \
+    'cons ON attr.attrelid = cons.conrelid AND attr.attnum = cons.connum ' \
+    'ORDER BY cons.rownum'
+
+  ].each do |query|
+    include_examples 'query blacklisting', query, should_ignore: true
+  end
+
+  [
+    'UPDATE "users" SET "last_sign_in_at" = ? WHERE "users"."id" = ?'
+  ].each do |query|
+    include_examples 'query blacklisting', query, should_ignore: false
+  end
 end

@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Improved grouping of some SQL queries
   ([#504](https://github.com/airbrake/airbrake-ruby/pull/504))
+* Started ignoring some service SQL queries such as COMMIT, BEGIN and others
+  ([#505](https://github.com/airbrake/airbrake-ruby/pull/505))
 
 ### [v4.6.0][v4.6.0] (August 5, 2019)
 
