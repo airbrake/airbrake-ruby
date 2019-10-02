@@ -79,6 +79,16 @@ module Airbrake
         oracle_enhanced: %r{'|/\*|\*/}
       }.freeze
 
+      # @return [Array<Regexp>] the list of queries to be ignored
+      IGNORED_QUERIES = [
+        /\ACOMMIT/i,
+        /\ABEGIN/i,
+        /\ASET/i,
+        /\ASHOW/i,
+        /\AWITH/i,
+        /FROM pg_attribute/i
+      ].freeze
+
       def initialize(dialect)
         @dialect =
           case dialect
@@ -99,7 +109,13 @@ module Airbrake
       def call(resource)
         return unless resource.respond_to?(:query)
 
-        q = resource.query.gsub(@regexp, FILTERED)
+        query = resource.query
+        if IGNORED_QUERIES.any? { |q| q =~ query }
+          resource.ignore!
+          return
+        end
+
+        q = query.gsub(@regexp, FILTERED)
         q.gsub!(POST_FILTER, FILTERED) if q =~ POST_FILTER
         q = ERROR_MSG if UNMATCHED_PAIR[@dialect] =~ q
         resource.query = q
