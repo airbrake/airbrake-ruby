@@ -3,10 +3,18 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.7.0][v4.7.0] (October 3, 2019)
+
 * Improved grouping of some SQL queries
   ([#504](https://github.com/airbrake/airbrake-ruby/pull/504))
 * Started ignoring some service SQL queries such as COMMIT, BEGIN and others
   ([#505](https://github.com/airbrake/airbrake-ruby/pull/505))
+* Various performance & memory improvements
+  ([#498](https://github.com/airbrake/airbrake-ruby/pull/498),
+  [#500](https://github.com/airbrake/airbrake-ruby/pull/500),
+  [#501](https://github.com/airbrake/airbrake-ruby/pull/501),
+  [#502](https://github.com/airbrake/airbrake-ruby/pull/502),
+  [#503](https://github.com/airbrake/airbrake-ruby/pull/503))
 
 ### [v4.6.0][v4.6.0] (August 5, 2019)
 
@@ -789,3 +797,4 @@ Airbrake Ruby Changelog
 [v4.5.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.5.0
 [v4.5.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.5.1
 [v4.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.6.0
+[v4.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.0
