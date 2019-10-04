@@ -248,8 +248,22 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     'cons AS ( SELECT conrelid, connum, row_number() OVER() AS rownum FROM ' \
     'pk_constraint ) SELECT attr.attname FROM pg_attribute attr INNER JOIN ' \
     'cons ON attr.attrelid = cons.conrelid AND attr.attnum = cons.connum ' \
-    'ORDER BY cons.rownum'
+    'ORDER BY cons.rownum',
 
+    'SELECT c.relname FROM pg_class c LEFT JOIN pg_namespace n ON ' \
+    'n.oid = c.relnamespace WHERE n.nspname = ANY (?)',
+
+    'SELECT a.attname FROM ( SELECT indrelid, indkey, generate_subscripts(?) ' \
+    'idx FROM pg_index WHERE indrelid = ?::regclass AND indisprimary ) i ' \
+    'JOIN pg_attribute a ON a.attrelid = i.indrelid AND ' \
+    'a.attnum = i.indkey[i.idx] ORDER BY i.idx',
+
+    'SELECT t.oid, t.typname, t.typelem, t.typdelim, t.typinput, r.rngsubtype, ' \
+    't.typtype, t.typbasetype FROM pg_type as t LEFT JOIN pg_range as r ON ' \
+    'oid = rngtypid WHERE t.typname IN (?) OR t.typtype IN (?) OR t.typinput ' \
+    '= ?::regprocedure OR t.typelem != ?',
+
+    'SELECT t.oid, t.typname FROM pg_type as t WHERE t.typname IN (?)'
   ].each do |query|
     include_examples 'query blacklisting', query, should_ignore: true
   end

@@ -86,7 +86,10 @@ module Airbrake
         /\ASET/i,
         /\ASHOW/i,
         /\AWITH/i,
-        /FROM pg_attribute/i
+        /FROM pg_attribute/i,
+        /FROM pg_index/i,
+        /FROM pg_class/i,
+        /FROM pg_type/i
       ].freeze
 
       def initialize(dialect)
