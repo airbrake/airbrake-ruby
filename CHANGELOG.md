@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.7.1][v4.7.1] (October 11, 2019)
+
 * Added more irrelevant SQL queries to the query stats ignore list
   ([#507](https://github.com/airbrake/airbrake-ruby/pull/507))
 
@@ -801,3 +803,4 @@ Airbrake Ruby Changelog
 [v4.5.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.5.1
 [v4.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.6.0
 [v4.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.0
+[v4.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.1
