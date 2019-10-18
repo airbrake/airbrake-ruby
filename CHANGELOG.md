@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Enabled `query_stats` by default
+  ([#509](https://github.com/airbrake/airbrake-ruby/pull/509))
+
 ### [v4.7.1][v4.7.1] (October 11, 2019)
 
 * Added more irrelevant SQL queries to the query stats ignore list
