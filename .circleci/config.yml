@@ -90,6 +90,14 @@ jobs:
       - <<: *repo_restore_cache
       - <<: *bundle_install
       - <<: *unit
+  "ruby-2.7":
+    docker:
+      - image: circleci/ruby:2.7.0-preview1
+    working_directory: ~/airbrake-ruby
+    steps:
+      - <<: *repo_restore_cache
+      - <<: *bundle_install
+      - <<: *unit
   "jruby-9.2.0.0":
     docker:
       - image: circleci/jruby:9.2.0.0
@@ -126,6 +134,10 @@ workflows:
             - rubocop_lint
             - yard_lint
       - "ruby-2.6":
+          requires:
+            - rubocop_lint
+            - yard_lint
+      - "ruby-2.7":
           requires:
             - rubocop_lint
             - yard_lint
