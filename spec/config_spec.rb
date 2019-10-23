@@ -21,7 +21,7 @@ RSpec.describe Airbrake::Config do
   its(:whitelist_keys) { is_expected.to be_empty }
   its(:performance_stats) { is_expected.to eq(true) }
   its(:performance_stats_flush_period) { is_expected.to eq(15) }
-  its(:query_stats) { is_expected.to eq(false) }
+  its(:query_stats) { is_expected.to eq(true) }
 
   describe "#new" do
     context "when user config is passed" do

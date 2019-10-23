@@ -138,7 +138,7 @@ module Airbrake
       self.versions = {}
       self.performance_stats = true
       self.performance_stats_flush_period = 15
-      self.query_stats = false
+      self.query_stats = true
 
       merge(user_config)
     end
