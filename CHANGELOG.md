@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.8.0][v4.8.0] (October 23, 2019)
+
 * Enabled `query_stats` by default
   ([#509](https://github.com/airbrake/airbrake-ruby/pull/509))
 
@@ -807,3 +809,4 @@ Airbrake Ruby Changelog
 [v4.6.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.6.0
 [v4.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.0
 [v4.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.1
+[v4.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.8.0
