@@ -376,7 +376,7 @@ end
 Configures [Airbrake Performance Monitoring][airbrake-performance-monitoring]
 query collection. These are displayed on the Performance tab of your project. If
 `performance_stats` is `false`, setting this to `true` won't have effect because
-`performance_stats` has higher precedence. By default, it's enable.
+`performance_stats` has higher precedence. By default, it's enabled.
 
 The statistics is sent via:
 
