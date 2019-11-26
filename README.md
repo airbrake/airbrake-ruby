@@ -532,6 +532,9 @@ Airbrake.add_filter do |notice|
 end
 ```
 
+By default, the stash contains an exception object accessible via
+`notice.stash[:exception]`.
+
 #### Airbrake.delete_filter
 
 Deletes a filter added via [`add_filter`](#airbrakeadd_filter). Expects a class name of the filter.
