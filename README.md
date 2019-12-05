@@ -846,6 +846,46 @@ a rejected promise.
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
 
+#### Airbrake.notify_queue
+
+Sends queue (worker) statistics to Airbrake. Supports groups (similar to
+[performance breakdowns](#airbrakenotify_performance_breakdown)).
+
+* `queue` - name of the queue (worker)
+* `error_count` - how many times this worker failed
+* `groups` - where the job spent its time
+
+```ruby
+Airbrake.notify_queue(
+  queue: "emails",
+  error_count: 1,
+  groups: { redis: 24.0, sql: 0.4 } # ms
+)
+```
+
+Optionally, you can attach information to the stash (`job_id` in this
+example).
+
+```ruby
+Airbrake.notify_queue(
+  {
+    # normal params
+  },
+  job_id: 123
+)
+```
+
+This stash can be accessed from performance filters as
+`resource.stash[:job_id]`.
+
+##### Return value
+
+When [`config.performance_stats = false`](#performance_stats), it always returns
+a rejected promise.
+
+When [`config.performance_stats = true`](#performance_stats), then it aggregates
+statistics and sends as a batch every 15 seconds.
+
 #### Airbrake.add_performance_filter
 
 Adds a performance filter that filters performance data. Works exactly like

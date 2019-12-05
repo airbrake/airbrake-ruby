@@ -61,7 +61,12 @@ module Airbrake
     private
 
     def update_payload(resource)
-      @payload[resource] ||= { total: Airbrake::Stat.new }
+      if (total_stat = @payload[resource])
+        @payload.key(total_stat).merge(resource)
+      else
+        @payload[resource] = { total: Airbrake::Stat.new }
+      end
+
       @payload[resource][:total].increment(resource.start_time, resource.end_time)
 
       resource.groups.each do |name, ms|

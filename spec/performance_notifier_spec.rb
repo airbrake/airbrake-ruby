@@ -2,11 +2,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
   let(:routes) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
   let(:queries) { 'https://api.airbrake.io/api/v5/projects/1/queries-stats' }
   let(:breakdowns) { 'https://api.airbrake.io/api/v5/projects/1/routes-breakdowns' }
+  let(:queues) { 'https://api.airbrake.io/api/v5/projects/1/queues-stats' }
 
   before do
     stub_request(:put, routes).to_return(status: 200, body: '')
     stub_request(:put, queries).to_return(status: 200, body: '')
     stub_request(:put, breakdowns).to_return(status: 200, body: '')
+    stub_request(:put, queues).to_return(status: 200, body: '')
 
     Airbrake::Config.instance = Airbrake::Config.new(
       project_id: 1,
@@ -117,6 +119,46 @@ RSpec.describe Airbrake::PerformanceNotifier do
               }
             }
         }\]}\z|x)
+      ).to have_been_made
+    end
+
+    it "sends full queue" do
+      subject.notify(
+        Airbrake::Queue.new(
+          queue: 'emails',
+          error_count: 2,
+          groups: { redis: 131, sql: 421 },
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+        )
+      )
+      subject.close
+
+      expect(
+        a_request(:put, queues).with(body: /
+          \A{"queues":\[{
+            "queue":"emails",
+            "errorCount":2,
+            "time":"2018-01-01T00:49:00\+00:00",
+            "count":1,
+            "sum":60000.0,
+            "sumsq":3600000000.0,
+            "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB",
+            "groups":{
+              "redis":{
+                "count":1,
+                "sum":131.0,
+                "sumsq":17161.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUMDAAAB"
+              },
+              "sql":{
+                "count":1,
+                "sum":421.0,
+                "sumsq":177241.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
+              }
+            }
+        }\]}\z/x)
       ).to have_been_made
     end
 
@@ -281,6 +323,55 @@ RSpec.describe Airbrake::PerformanceNotifier do
               }
             }
         }\]}\z|x)
+      ).to have_been_made
+    end
+
+    it "groups queues by queue key" do
+      subject.notify(
+        Airbrake::Queue.new(
+          queue: 'emails',
+          error_count: 2,
+          groups: { redis: 131, sql: 421 },
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+        )
+      )
+      subject.notify(
+        Airbrake::Queue.new(
+          queue: 'emails',
+          error_count: 3,
+          groups: { redis: 131, sql: 421 },
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
+        )
+      )
+      subject.close
+
+      expect(
+        a_request(:put, queues).with(body: /
+          \A{"queues":\[{
+            "queue":"emails",
+            "errorCount":5,
+            "time":"2018-01-01T00:49:00\+00:00",
+            "count":2,
+            "sum":120000.0,
+            "sumsq":7200000000.0,
+            "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAC",
+            "groups":{
+              "redis":{
+                "count":2,
+                "sum":262.0,
+                "sumsq":34322.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUMDAAAC"
+              },
+              "sql":{
+                "count":2,
+                "sum":842.0,
+                "sumsq":354482.0,
+                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAC"
+              }
+            }
+        }\]}\z/x)
       ).to have_been_made
     end
 
