@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.9.0][v4.9.0] (December 9, 2019)
+
 * Added `Airbrake.notify_queue`, which sends queue (worker) info to Airbrake
   ([#513](https://github.com/airbrake/airbrake-ruby/pull/513))
 
@@ -813,3 +815,4 @@ Airbrake Ruby Changelog
 [v4.7.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.0
 [v4.7.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.7.1
 [v4.8.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.8.0
+[v4.9.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.9.0
