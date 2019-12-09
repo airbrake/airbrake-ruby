@@ -12,6 +12,7 @@ module Airbrake
     include Ignorable
     include Stashable
     include Mergeable
+    include Grouppable
 
     def initialize(
       method:,
@@ -33,10 +34,6 @@ module Airbrake
 
     def cargo
       'queries'
-    end
-
-    def groups
-      {}
     end
 
     def to_h
