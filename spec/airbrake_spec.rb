@@ -303,6 +303,37 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe "#notify_queue" do
+    context "when :stash key is not provided" do
+      it "doesn't add anything to the stash of the queue" do
+        expect(described_class.performance_notifier).to receive(:notify) do |queue|
+          expect(queue.stash).to be_empty
+        end
+
+        described_class.notify_queue(
+          queue: 'bananas',
+          error_count: 10
+        )
+      end
+    end
+
+    context "when :stash key is provided" do
+      it "adds the value as the stash of the queue" do
+        expect(described_class.performance_notifier).to receive(:notify) do |queue|
+          expect(queue.stash).to eq(request_id: 1)
+        end
+
+        described_class.notify_queue(
+          {
+            queue: 'bananas',
+            error_count: 10
+          },
+          request_id: 1
+        )
+      end
+    end
+  end
+
   describe ".performance_notifier" do
     it "returns a performance notifier" do
       expect(described_class.performance_notifier)

@@ -9,6 +9,7 @@ require 'time'
 require 'airbrake-ruby/version'
 require 'airbrake-ruby/loggable'
 require 'airbrake-ruby/stashable'
+require 'airbrake-ruby/mergeable'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
 require 'airbrake-ruby/promise'
@@ -52,6 +53,7 @@ require 'airbrake-ruby/performance_breakdown'
 require 'airbrake-ruby/benchmark'
 require 'airbrake-ruby/monotonic_time'
 require 'airbrake-ruby/timed_trace'
+require 'airbrake-ruby/queue'
 
 # Airbrake is a thin wrapper around instances of the notifier classes (such as
 # notice, performance & deploy notifiers). It creates a way to access them via a
@@ -69,6 +71,7 @@ require 'airbrake-ruby/timed_trace'
 #
 # @since v1.0.0
 # @api public
+# rubocop:disable Metrics/ModuleLength
 module Airbrake
   # The general error that this library uses when it wants to raise.
   Error = Class.new(StandardError)
@@ -423,6 +426,31 @@ module Airbrake
       performance_notifier.notify(performance_breakdown)
     end
 
+    # Increments statistics of a certain queue (worker).
+    #
+    # @example
+    #   Airbrake.notify_queue(
+    #     queue: 'emails',
+    #     error_count: 1,
+    #     groups: { redis: 24.0, sql: 0.4 } # ms
+    #   )
+    #
+    # @param [Hash{Symbol=>Object}] queue_info
+    # @option queue_info [String] :queue The name of the queue/worker
+    # @option queue_info [Integer] :error_count How many times this worker
+    #   failed
+    # @option queue_info [Array<Hash{Symbol=>Float}>] :groups Where the job
+    #   spent its time
+    # @param [Hash] stash What needs to be appeneded to the stash, so it's
+    #   available in filters
+    # @return [void]
+    # @since v4.9.0
+    def notify_queue(queue_info, stash = {})
+      queue = Queue.new(queue_info)
+      queue.stash.merge!(stash)
+      performance_notifier.notify(queue)
+    end
+
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
     # is useful if you want to ignore specific resources or filter the data the
     # resource contains.
@@ -513,3 +541,4 @@ module Airbrake
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

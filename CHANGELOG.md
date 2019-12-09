@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `Airbrake.notify_queue`, which sends queue (worker) info to Airbrake
+  ([#513](https://github.com/airbrake/airbrake-ruby/pull/513))
+
 ### [v4.8.0][v4.8.0] (October 23, 2019)
 
 * Enabled `query_stats` by default
