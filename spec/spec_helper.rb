@@ -47,7 +47,7 @@ class AirbrakeTestError < RuntimeError
       "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:88:in `run'",
       "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:73:in `run'",
       "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:41:in `invoke'",
-      "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec:4:in `<main>'"
+      "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec:4:in `<main>'",
     ]
     # rubocop:enable Metrics/LineLength
   end
@@ -78,7 +78,7 @@ class JavaAirbrakeTestError < AirbrakeTestError
       "opt.rubies.jruby_minus_9_dot_0_dot_0_dot_0.bin.irb.RUBY$script(/opt/rubies/jruby-9.0.0.0/bin/irb:13)",
       "org.jruby.ir.Compiler$1.load(Compiler.java:111)",
       "org.jruby.Main.run(Main.java:225)",
-      "org.jruby.Main.main(Main.java:197)"
+      "org.jruby.Main.main(Main.java:197)",
     ]
     # rubocop:enable Metrics/LineLength
   end

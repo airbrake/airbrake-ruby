@@ -111,7 +111,7 @@ RSpec.describe Airbrake::Config do
   describe "#check_performance_options" do
     it "returns a promise" do
       resource = Airbrake::Query.new(
-        method: '', route: '', query: '', start_time: Time.now
+        method: '', route: '', query: '', start_time: Time.now,
       )
       expect(subject.check_performance_options(resource))
         .to be_an(Airbrake::Promise)
@@ -122,14 +122,14 @@ RSpec.describe Airbrake::Config do
 
       let(:resource) do
         Airbrake::Request.new(
-          method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
+          method: 'GET', route: '/foo', status_code: 200, start_time: Time.new,
         )
       end
 
       it "returns a rejected promise" do
         promise = subject.check_performance_options(resource)
         expect(promise.value).to eq(
-          'error' => "The Performance Stats feature is disabled"
+          'error' => "The Performance Stats feature is disabled",
         )
       end
     end
@@ -139,14 +139,14 @@ RSpec.describe Airbrake::Config do
 
       let(:resource) do
         Airbrake::Query.new(
-          method: 'GET', route: '/foo', query: '', start_time: Time.new
+          method: 'GET', route: '/foo', query: '', start_time: Time.new,
         )
       end
 
       it "returns a rejected promise" do
         promise = subject.check_performance_options(resource)
         expect(promise.value).to eq(
-          'error' => "The Query Stats feature is disabled"
+          'error' => "The Query Stats feature is disabled",
         )
       end
     end

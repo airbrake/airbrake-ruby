@@ -128,7 +128,7 @@ BIG_EXCEPTION.set_backtrace(
    "bin/spring:48:in `<top (required)>'",
    "lib/spring/binstub.rb:11:in `<top (required)>'",
    "lin/spring:13:in `<top (required)>'",
-   "bin/rails:3:in `<main>'"]
+   "bin/rails:3:in `<main>'"],
 )
 
 SMALL_EXCEPTION = RuntimeError.new('App crashed!')
@@ -145,7 +145,7 @@ SMALL_EXCEPTION.set_backtrace(
    "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:88:in `run'",
    "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:73:in `run'",
    "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:41:in `invoke'",
-   "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec:4:in `<main>'"]
+   "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec:4:in `<main>'"],
 )
 # rubocop:enable Metrics/LineLength
 

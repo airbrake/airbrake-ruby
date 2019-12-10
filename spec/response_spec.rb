@@ -4,7 +4,7 @@ RSpec.describe Airbrake::Response do
       context "when response code is #{code}" do
         it "logs response body" do
           expect(Airbrake::Loggable.instance).to receive(:debug).with(
-            /Airbrake::Response \(#{code}\): {}/
+            /Airbrake::Response \(#{code}\): {}/,
           )
           described_class.parse(OpenStruct.new(code: code, body: '{}'))
         end
@@ -15,10 +15,10 @@ RSpec.describe Airbrake::Response do
       context "when response code is #{code}" do
         it "logs response message" do
           expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /Airbrake: foo/
+            /Airbrake: foo/,
           )
           described_class.parse(
-            OpenStruct.new(code: code, body: '{"message":"foo"}')
+            OpenStruct.new(code: code, body: '{"message":"foo"}'),
           )
         end
       end
@@ -29,7 +29,7 @@ RSpec.describe Airbrake::Response do
 
       it "logs response message" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /Airbrake: rate limited/
+          /Airbrake: rate limited/,
         )
         described_class.parse(response)
       end
@@ -41,7 +41,7 @@ RSpec.describe Airbrake::Response do
         resp = described_class.parse(response)
         expect(resp).to include(
           'error' => '**Airbrake: rate limited',
-          'rate_limit_reset' => time
+          'rate_limit_reset' => time,
         )
       end
     end
@@ -51,7 +51,7 @@ RSpec.describe Airbrake::Response do
 
       it "logs response body" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /Airbrake: unexpected code \(500\)\. Body: foo/
+          /Airbrake: unexpected code \(500\)\. Body: foo/,
         )
         described_class.parse(response)
       end
@@ -73,14 +73,14 @@ RSpec.describe Airbrake::Response do
 
       it "logs response body" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /Airbrake: error while parsing body \(.*unexpected token.*\)\. Body: foo/
+          /Airbrake: error while parsing body \(.*unexpected token.*\)\. Body: foo/,
         )
         described_class.parse(response)
       end
 
       it "returns an error message" do
         expect(described_class.parse(response)['error']).to match(
-          /\A#<JSON::ParserError.+>/
+          /\A#<JSON::ParserError.+>/,
         )
       end
     end

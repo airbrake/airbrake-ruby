@@ -16,7 +16,7 @@ module Airbrake
         String,
         Symbol,
         Regexp,
-        Numeric
+        Numeric,
       ].freeze
 
       # Variables starting with this prefix are not attached to a notice.

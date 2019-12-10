@@ -54,7 +54,7 @@ module Airbrake
         ThreadPool.new(
           worker_size: @config.workers,
           queue_size: @config.queue_size,
-          block: proc { |args| sender.send(*args) }
+          block: proc { |args| sender.send(*args) },
         )
       end
     end
@@ -71,8 +71,8 @@ module Airbrake
           message: error[:message],
           backtrace: error[:backtrace].map do |line|
             "#{line[:file]}:#{line[:line]} in `#{line[:function]}'"
-          end.join("\n")
-        )
+          end.join("\n"),
+        ),
       )
       promise.reject("AsyncSender has reached its capacity of #{@config.queue_size}")
     end

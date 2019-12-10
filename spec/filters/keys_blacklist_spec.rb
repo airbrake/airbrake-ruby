@@ -19,8 +19,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       [/\Abon/],
       [
         { bongo: 'bango' },
-        { bongo: '[Filtered]' }
-      ]
+        { bongo: '[Filtered]' },
+      ],
     )
 
     context "and when a key is a hash" do
@@ -40,8 +40,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       [:bingo],
       [
         { bingo: 'bango' },
-        { bingo: '[Filtered]' }
-      ]
+        { bingo: '[Filtered]' },
+      ],
     )
   end
 
@@ -51,8 +51,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       ['bingo'],
       [
         { bingo: 'bango' },
-        { bingo: '[Filtered]' }
-      ]
+        { bingo: '[Filtered]' },
+      ],
     )
   end
 
@@ -62,8 +62,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       ['bingo'],
       [
         { array: [{ bingo: 'bango' }, []] },
-        { array: [{ bingo: '[Filtered]' }, []] }
-      ]
+        { array: [{ bingo: '[Filtered]' }, []] },
+      ],
     )
   end
 
@@ -74,8 +74,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
         [proc { 'bongo' }, :bash],
         [
           { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-          { bingo: 'bango', bongo: '[Filtered]', bash: '[Filtered]' }
-        ]
+          { bingo: 'bango', bongo: '[Filtered]', bash: '[Filtered]' },
+        ],
       )
     end
 
@@ -85,13 +85,13 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
         [proc { Object.new }],
         [
           { bingo: 'bango', bongo: 'bish' },
-          { bingo: 'bango', bongo: 'bish' }
-        ]
+          { bingo: 'bango', bongo: 'bish' },
+        ],
       )
 
       it "logs an error" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/
+          /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/,
         )
         keys_blacklist = described_class.new(patterns)
         keys_blacklist.call(notice)
@@ -104,7 +104,7 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       context "and when the filter is called once" do
         it "logs an error" do
           expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /KeysBlacklist is invalid.+patterns: \[#<Proc:.+>\]/
+            /KeysBlacklist is invalid.+patterns: \[#<Proc:.+>\]/,
           )
           keys_blacklist = described_class.new(patterns)
           keys_blacklist.call(notice)
@@ -127,13 +127,13 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       [Object.new],
       [
         { bingo: 'bango', bongo: 'bish' },
-        { bingo: 'bango', bongo: 'bish' }
-      ]
+        { bingo: 'bango', bongo: 'bish' },
+      ],
     )
 
     it "logs an error" do
       expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/
+        /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/,
       )
       keys_blacklist = described_class.new(patterns)
       keys_blacklist.call(notice)
@@ -147,8 +147,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
         ['bish'],
         [
           { bongo: { bish: 'bash' } },
-          { bongo: { bish: '[Filtered]' } }
-        ]
+          { bongo: { bish: '[Filtered]' } },
+        ],
       )
     end
 
@@ -161,8 +161,8 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
         ['bango'],
         [
           bongo,
-          { bingo: { bango: '[Filtered]' } }
-        ]
+          { bingo: { bango: '[Filtered]' } },
+        ],
       )
     end
   end
@@ -177,7 +177,7 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
 
         subject.call(notice)
         expect(notice[:context][:url]).to(
-          eq 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=[Filtered]&color=%23FFAAFF'
+          eq('http://localhost:3000/crash?foo=bar&baz=bongo&bish=[Filtered]&color=%23FFAAFF'),
         )
       end
     end

@@ -44,7 +44,7 @@ module Airbrake
         'time' => @start_time_utc,
         'function' => func,
         'file' => file,
-        'line' => line
+        'line' => line,
       }.delete_if { |_key, val| val.nil? }
     end
     # rubocop:enable Metrics/ParameterLists, Metrics/BlockLength

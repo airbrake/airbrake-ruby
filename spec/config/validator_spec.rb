@@ -118,7 +118,7 @@ RSpec.describe Airbrake::Config::Validator do
         promise = described_class.validate(config)
         expect(promise.value).to eq(
           'error' => "the 'environment' option must be configured with a " \
-                     "Symbol (or String), but 'Float' was provided: 1.0"
+                     "Symbol (or String), but 'Float' was provided: 1.0",
         )
       end
     end
@@ -130,7 +130,7 @@ RSpec.describe Airbrake::Config::Validator do
         {
           project_id: valid_id,
           project_key: valid_key,
-          environment: string_inquirer.new('test')
+          environment: string_inquirer.new('test'),
         }
       end
 
@@ -148,14 +148,14 @@ RSpec.describe Airbrake::Config::Validator do
           project_id: valid_id,
           project_key: valid_key,
           environment: 'test',
-          ignore_environments: ['test']
+          ignore_environments: ['test'],
         }
       end
 
       it "returns a rejected promise" do
         promise = described_class.check_notify_ability(config)
         expect(promise.value).to eq(
-          'error' => "current environment 'test' is ignored"
+          'error' => "current environment 'test' is ignored",
         )
       end
     end
@@ -165,7 +165,7 @@ RSpec.describe Airbrake::Config::Validator do
         {
           project_id: valid_id,
           project_key: valid_key,
-          ignore_environments: ['test']
+          ignore_environments: ['test'],
         }
       end
 

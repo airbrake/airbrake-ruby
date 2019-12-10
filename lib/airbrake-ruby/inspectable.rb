@@ -21,7 +21,7 @@ module Airbrake
         project_id: @config.project_id,
         project_key: @config.project_key,
         host: @config.host,
-        filter_chain: @filter_chain.inspect
+        filter_chain: @filter_chain.inspect,
       )
     end
 
@@ -30,7 +30,7 @@ module Airbrake
       q.text("#<#{self.class}:0x#{(object_id << 1).to_s(16).rjust(16, '0')} ")
       q.text(
         "project_id=\"#{@config.project_id}\" project_key=\"#{@config.project_key}\" " \
-        "host=\"#{@config.host}\" filter_chain="
+        "host=\"#{@config.host}\" filter_chain=",
       )
       q.pp(@filter_chain)
       q.text('>')

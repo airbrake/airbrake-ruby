@@ -36,7 +36,7 @@ module Airbrake
         'method' => method,
         'route' => route,
         'statusCode' => status_code,
-        'time' => @start_time_utc
+        'time' => @start_time_utc,
       }.delete_if { |_key, val| val.nil? }
     end
   end

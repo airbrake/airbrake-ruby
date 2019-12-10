@@ -64,7 +64,7 @@ module Airbrake
         cassandra: %i[
           single_quotes uuids numeric_literals boolean_literals
           hexadecimal_literals comments multi_line_comments
-        ].freeze
+        ].freeze,
       }.freeze
 
       # @return [Hash{Symbol=>Regexp}] a set of regexps to check for unmatches
@@ -76,7 +76,7 @@ module Airbrake
         sqlite: %r{'|/\*|\*/},
         cassandra: %r{'|/\*|\*/},
         oracle: %r{'|/\*|\*/},
-        oracle_enhanced: %r{'|/\*|\*/}
+        oracle_enhanced: %r{'|/\*|\*/},
       }.freeze
 
       # @return [Array<Regexp>] the list of queries to be ignored
@@ -89,7 +89,7 @@ module Airbrake
         /FROM pg_attribute/i,
         /FROM pg_index/i,
         /FROM pg_class/i,
-        /FROM pg_type/i
+        /FROM pg_type/i,
       ].freeze
 
       def initialize(dialect)

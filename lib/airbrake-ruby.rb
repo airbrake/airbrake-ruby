@@ -535,7 +535,7 @@ module Airbrake
         Airbrake::Filters::RootDirectoryFilter,
         Airbrake::Filters::GitRevisionFilter,
         Airbrake::Filters::GitRepositoryFilter,
-        Airbrake::Filters::GitLastCheckoutFilter
+        Airbrake::Filters::GitLastCheckoutFilter,
       ].each do |filter|
         notice_notifier.add_filter(filter.new(config.root_directory))
       end

@@ -46,7 +46,7 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
     it "attaches context/repository" do
       subject.call(notice)
       expect(notice[:context][:repository]).to eq(
-        'ssh://git@github.com/airbrake/airbrake-ruby.git'
+        'ssh://git@github.com/airbrake/airbrake-ruby.git',
       )
     end
   end

@@ -2,7 +2,7 @@ RSpec.describe Airbrake::Filters::SystemExitFilter do
   it "marks SystemExit exceptions as ignored" do
     notice = Airbrake::Notice.new(SystemExit.new)
     expect { subject.call(notice) }.to(
-      change { notice.ignored? }.from(false).to(true)
+      change { notice.ignored? }.from(false).to(true),
     )
   end
 

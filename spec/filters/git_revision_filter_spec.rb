@@ -44,7 +44,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
       context "and also when HEAD doesn't start with 'ref: '" do
         before do
           expect(File).to(
-            receive(:read).with('root/dir/.git/HEAD').and_return('refs/foo')
+            receive(:read).with('root/dir/.git/HEAD').and_return('refs/foo'),
           )
         end
 
@@ -57,17 +57,17 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
       context "and also when HEAD starts with 'ref: " do
         before do
           expect(File).to(
-            receive(:read).with('root/dir/.git/HEAD').and_return("ref: refs/foo\n")
+            receive(:read).with('root/dir/.git/HEAD').and_return("ref: refs/foo\n"),
           )
         end
 
         context "when the ref exists" do
           before do
             expect(File).to(
-              receive(:exist?).with('root/dir/.git/refs/foo').and_return(true)
+              receive(:exist?).with('root/dir/.git/refs/foo').and_return(true),
             )
             expect(File).to(
-              receive(:read).with('root/dir/.git/refs/foo').and_return("d34db33f\n")
+              receive(:read).with('root/dir/.git/refs/foo').and_return("d34db33f\n"),
             )
           end
 
@@ -80,14 +80,14 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
         context "when the ref doesn't exist" do
           before do
             expect(File).to(
-              receive(:exist?).with('root/dir/.git/refs/foo').and_return(false)
+              receive(:exist?).with('root/dir/.git/refs/foo').and_return(false),
             )
           end
 
           context "and when '.git/packed-refs' exists" do
             before do
               expect(File).to(
-                receive(:exist?).with('root/dir/.git/packed-refs').and_return(true)
+                receive(:exist?).with('root/dir/.git/packed-refs').and_return(true),
               )
               expect(File).to(
                 receive(:readlines).with('root/dir/.git/packed-refs').and_return(
@@ -95,9 +95,9 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
                     "# pack-refs with: peeled fully-peeled\n",
                     "ccb316eecff79c7528d1ad43e5fa165f7a44d52e refs/tags/v3.0.30\n",
                     "^d358900f73ee5bfd6ca3a592cf23ac6e82df83c1",
-                    "d34db33f refs/foo\n"
-                  ]
-                )
+                    "d34db33f refs/foo\n",
+                  ],
+                ),
               )
             end
 
@@ -110,7 +110,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
           context "and when '.git/packed-refs' doesn't exist" do
             before do
               expect(File).to(
-                receive(:exist?).with('root/dir/.git/packed-refs').and_return(false)
+                receive(:exist?).with('root/dir/.git/packed-refs').and_return(false),
               )
             end
 

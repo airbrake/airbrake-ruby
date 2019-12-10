@@ -30,7 +30,7 @@ module Airbrake
       Airbrake::FileCache[file] ||= File.foreach(file)
     rescue StandardError => ex
       logger.error(
-        "#{self.class.name}: can't read code hunk for #{file}: #{ex}"
+        "#{self.class.name}: can't read code hunk for #{file}: #{ex}",
       )
       nil
     end

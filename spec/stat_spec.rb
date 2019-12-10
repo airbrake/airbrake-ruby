@@ -5,7 +5,7 @@ RSpec.describe Airbrake::Stat do
         'count' => 0,
         'sum' => 0.0,
         'sumsq' => 0.0,
-        'tdigest' => 'AAAAAkA0AAAAAAAAAAAAAA=='
+        'tdigest' => 'AAAAAkA0AAAAAAAAAAAAAA==',
       )
     end
   end
@@ -34,7 +34,7 @@ RSpec.describe Airbrake::Stat do
   describe "#inspect" do
     it "provides custom inspect output" do
       expect(subject.inspect).to eq(
-        '#<struct Airbrake::Stat count=0, sum=0.0, sumsq=0.0>'
+        '#<struct Airbrake::Stat count=0, sum=0.0, sumsq=0.0>',
       )
     end
   end

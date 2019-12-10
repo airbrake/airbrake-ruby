@@ -15,7 +15,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       project_key: 'banana',
       performance_stats: true,
       performance_stats_flush_period: 0,
-      query_stats: true
+      query_stats: true,
     )
   end
 
@@ -30,8 +30,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           file: 'foo.rb',
           line: 123,
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.close
 
@@ -49,7 +49,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             "sum":60000.0,
             "sumsq":3600000000.0,
             "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
-          }\]}\z|x)
+          }\]}\z|x),
       ).to have_been_made
     end
 
@@ -60,8 +60,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           route: '/foo',
           status_code: 200,
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.close
 
@@ -76,7 +76,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             "sum":60000.0,
             "sumsq":3600000000.0,
             "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
-          }\]}\z|x)
+          }\]}\z|x),
       ).to have_been_made
     end
 
@@ -88,8 +88,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           response_type: 'json',
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
           end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
-          groups: { db: 131, view: 421 }
-        )
+          groups: { db: 131, view: 421 },
+        ),
       )
       subject.close
 
@@ -118,7 +118,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
               }
             }
-        }\]}\z|x)
+        }\]}\z|x),
       ).to have_been_made
     end
 
@@ -129,8 +129,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           error_count: 2,
           groups: { redis: 131, sql: 421 },
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.close
 
@@ -158,7 +158,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
               }
             }
-        }\]}\z/x)
+        }\]}\z/x),
       ).to have_been_made
     end
 
@@ -168,13 +168,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
           method: 'GET',
           route: '/foo',
           status_code: 200,
-          start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
-        )
+          start_time: Time.new(2018, 1, 1, 0, 0, 20, 0),
+        ),
       )
       subject.close
 
       expect(
-        a_request(:put, routes).with(body: /"time":"2018-01-01T00:00:00\+00:00"/)
+        a_request(:put, routes).with(body: /"time":"2018-01-01T00:00:00\+00:00"/),
       ).to have_been_made
     end
 
@@ -184,21 +184,21 @@ RSpec.describe Airbrake::PerformanceNotifier do
           method: 'GET',
           route: '/foo',
           status_code: 200,
-          start_time: Time.new(2018, 1, 1, 0, 0, 20, 0)
-        )
+          start_time: Time.new(2018, 1, 1, 0, 0, 20, 0),
+        ),
       )
       subject.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
           status_code: 200,
-          start_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
-        )
+          start_time: Time.new(2018, 1, 1, 0, 0, 50, 0),
+        ),
       )
       subject.close
 
       expect(
-        a_request(:put, routes).with(body: /"count":2/)
+        a_request(:put, routes).with(body: /"count":2/),
       ).to have_been_made
     end
 
@@ -209,8 +209,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           route: '/foo',
           status_code: 200,
           start_time: Time.new(2018, 1, 1, 0, 0, 49, 0),
-          end_time: Time.new(2018, 1, 1, 0, 0, 50, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 0, 50, 0),
+        ),
       )
       subject.notify(
         Airbrake::Request.new(
@@ -218,8 +218,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           route: '/foo',
           status_code: 200,
           start_time: Time.new(2018, 1, 1, 0, 1, 49, 0),
-          end_time: Time.new(2018, 1, 1, 0, 1, 55, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 1, 55, 0),
+        ),
       )
       subject.close
 
@@ -233,8 +233,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
               {"method":"GET","route":"/foo","statusCode":200,
                "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":6000.0,
                "sumsq":36000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUW7gAAB"}\]}
-          \z|x
-        )
+          \z|x,
+        ),
       ).to have_been_made
     end
 
@@ -245,8 +245,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           route: '/foo',
           status_code: 200,
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.notify(
         Airbrake::Request.new(
@@ -254,8 +254,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           route: '/foo',
           status_code: 200,
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.close
 
@@ -269,8 +269,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
               {"method":"POST","route":"/foo","statusCode":200,
                "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60000.0,
                "sumsq":3600000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"}\]}
-          \z|x
-        )
+          \z|x,
+        ),
       ).to have_been_made
     end
 
@@ -282,8 +282,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           response_type: 'json',
           start_time: Time.new(2018, 1, 1, 0, 0, 20, 0),
           end_time: Time.new(2018, 1, 1, 0, 0, 22, 0),
-          groups: { db: 131, view: 421 }
-        )
+          groups: { db: 131, view: 421 },
+        ),
       )
       subject.notify(
         Airbrake::PerformanceBreakdown.new(
@@ -292,8 +292,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           response_type: 'json',
           start_time: Time.new(2018, 1, 1, 0, 0, 30, 0),
           end_time: Time.new(2018, 1, 1, 0, 0, 32, 0),
-          groups: { db: 55, view: 11 }
-        )
+          groups: { db: 55, view: 11 },
+        ),
       )
       subject.close
 
@@ -322,7 +322,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAkEwAABDzQAAAQE="
               }
             }
-        }\]}\z|x)
+        }\]}\z|x),
       ).to have_been_made
     end
 
@@ -333,8 +333,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           error_count: 2,
           groups: { redis: 131, sql: 421 },
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.notify(
         Airbrake::Queue.new(
@@ -342,8 +342,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           error_count: 3,
           groups: { redis: 131, sql: 421 },
           start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0)
-        )
+          end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
+        ),
       )
       subject.close
 
@@ -371,7 +371,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAC"
               }
             }
-        }\]}\z/x)
+        }\]}\z/x),
       ).to have_been_made
     end
 
@@ -381,8 +381,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           method: 'GET',
           route: '/foo',
           status_code: 200,
-          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-        )
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+        ),
       )
       subject.close
 
@@ -392,7 +392,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     it "checks performance stat configuration" do
       request = Airbrake::Request.new(
-        method: 'GET', route: '/foo', status_code: 200, start_time: Time.new
+        method: 'GET', route: '/foo', status_code: 200, start_time: Time.new,
       )
       expect(Airbrake::Config.instance).to receive(:check_performance_options)
         .with(request).and_return(Airbrake::Promise.new)
@@ -408,15 +408,15 @@ RSpec.describe Airbrake::PerformanceNotifier do
           method: 'POST',
           route: '/foo',
           status_code: 200,
-          start_time: Time.new
-        )
+          start_time: Time.new,
+        ),
       )
       subject.close
 
       expect(
         a_request(:put, routes).with(
-          body: /\A{"routes":\[.+\],"environment":"test"}\z/x
-        )
+          body: /\A{"routes":\[.+\],"environment":"test"}\z/x,
+        ),
       ).to have_been_made
     end
 
@@ -437,7 +437,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           project_id: 1,
           project_key: 'banana',
           performance_stats: true,
-          performance_stats_flush_period: flush_period
+          performance_stats_flush_period: flush_period,
         )
 
         subject.notify(
@@ -445,8 +445,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'GET',
             route: '/foo',
             status_code: 200,
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-          )
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          ),
         )
 
         subject.notify(
@@ -454,8 +454,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'POST',
             route: '/foo',
             query: 'SELECT * FROM things',
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-          )
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          ),
         )
 
         sleep(flush_period + 0.5)
@@ -474,8 +474,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'GET',
             route: '/foo',
             status_code: 200,
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-          )
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          ),
         )
         subject.close
 
@@ -488,8 +488,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'POST',
             route: '/foo',
             query: 'SELECT * FROM things',
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-          )
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          ),
         )
         subject.close
 
@@ -510,15 +510,15 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'POST',
             route: '/foo',
             query: 'SELECT * FROM things',
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-          )
+            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+          ),
         )
         subject.close
 
         expect(
           a_request(:put, queries).with(
-            body: /\A{"queries":\[{"method":"POST","route":"\[Filtered\]"/
-          )
+            body: /\A{"queries":\[{"method":"POST","route":"\[Filtered\]"/,
+          ),
         ).to have_been_made
       end
     end
@@ -540,8 +540,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           method: 'POST',
           route: '/foo',
           query: 'SELECT * FROM things',
-          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-        )
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+        ),
       )
       subject.close
     end
@@ -549,7 +549,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     it "logs the exit message" do
       allow(Airbrake::Loggable.instance).to receive(:debug)
       expect(Airbrake::Loggable.instance).to receive(:debug).with(
-        /performance notifier closed/
+        /performance notifier closed/,
       )
       subject.close
     end
@@ -571,8 +571,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
           method: 'POST',
           route: '/foo',
           status_code: 200,
-          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0)
-        )
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+        ),
       )
       subject.close
 

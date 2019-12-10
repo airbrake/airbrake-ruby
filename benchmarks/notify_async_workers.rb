@@ -19,7 +19,7 @@ config_hash = {
   project_id: 112261,
   project_key: 'c7aaceb2ccb579e6b710cea9da22c526',
   logger: Logger.new('/dev/null'),
-  host: 'http://localhost:8080'
+  host: 'http://localhost:8080',
 }
 
 Airbrake.configure(:workers_1) do |c|

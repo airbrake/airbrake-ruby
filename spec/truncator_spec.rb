@@ -25,7 +25,7 @@ RSpec.describe Airbrake::Truncator do
           banana: multiply_by_2_max_len('a'),
           kiwi: multiply_by_2_max_len('b'),
           strawberry: 'c',
-          shrimp: 'd'
+          shrimp: 'd',
         }.freeze
       end
 
@@ -34,7 +34,7 @@ RSpec.describe Airbrake::Truncator do
         expect(subject).to be_frozen
 
         expect(subject).to eq(
-          banana: 'aaa[Truncated]', kiwi: 'bbb[Truncated]', strawberry: 'c'
+          banana: 'aaa[Truncated]', kiwi: 'bbb[Truncated]', strawberry: 'c',
         )
         expect(subject[:banana]).to be_frozen
         expect(subject[:kiwi]).to be_frozen
@@ -48,7 +48,7 @@ RSpec.describe Airbrake::Truncator do
           multiply_by_2_max_len('a'),
           'b',
           multiply_by_2_max_len('c'),
-          'd'
+          'd',
         ].freeze
       end
 
@@ -69,7 +69,7 @@ RSpec.describe Airbrake::Truncator do
           multiply_by_2_max_len('a'),
           'b',
           multiply_by_2_max_len('c'),
-          'd'
+          'd',
         ]).freeze
       end
 
@@ -78,7 +78,7 @@ RSpec.describe Airbrake::Truncator do
         expect(subject).to be_frozen
 
         expect(subject).to eq(
-          Set.new(['aaa[Truncated]', 'b', 'ccc[Truncated]'])
+          Set.new(['aaa[Truncated]', 'b', 'ccc[Truncated]']),
         )
         expect(subject).to be_frozen
       end
@@ -166,7 +166,7 @@ RSpec.describe Airbrake::Truncator do
 
       it "prevents recursion" do
         expect(subject).to eq(
-          Set.new(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]'])
+          Set.new(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]']),
         )
         expect(subject).to be_frozen
       end
@@ -177,13 +177,13 @@ RSpec.describe Airbrake::Truncator do
         {
           a: multiply_by_2_max_len('a'),
           b: multiply_by_2_max_len('b'),
-          c: { d: multiply_by_2_max_len('d'), e: 'e' }
+          c: { d: multiply_by_2_max_len('d'), e: 'e' },
         }
       end
 
       it "truncates the long strings" do
         expect(subject).to eq(
-          a: 'aaa[Truncated]', b: 'bbb[Truncated]', c: { d: 'ddd[Truncated]', e: 'e' }
+          a: 'aaa[Truncated]', b: 'bbb[Truncated]', c: { d: 'ddd[Truncated]', e: 'e' },
         )
         expect(subject).to be_frozen
       end
@@ -218,8 +218,8 @@ RSpec.describe Airbrake::Truncator do
           errors: [
             { file: 'a' },
             { file: 'a' },
-            hashie.new.merge(file: 'bcde')
-          ]
+            hashie.new.merge(file: 'bcde'),
+          ],
         }
       end
 
@@ -228,8 +228,8 @@ RSpec.describe Airbrake::Truncator do
           errors: [
             { file: 'a' },
             { file: 'a' },
-            hashie.new.merge(file: 'bcd[Truncated]')
-          ]
+            hashie.new.merge(file: 'bcd[Truncated]'),
+          ],
         )
         expect(subject).to be_frozen
       end

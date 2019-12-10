@@ -77,13 +77,13 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
                 {
                   bish: {
                     bash: 'foo',
-                    bosh: Object.new
-                  }
-                }
-              ]
-            }
+                    bosh: Object.new,
+                  },
+                },
+              ],
+            },
           },
-          123
+          123,
         ]
       end
 
@@ -103,15 +103,15 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
                     {
                       bish: {
                         bash: 'foo',
-                        bosh: /\A#<Object:.+>\z/
-                      }
-                    }
-                  ]
-                }
+                        bosh: /\A#<Object:.+>\z/,
+                      },
+                    },
+                  ],
+                },
               },
-              123
-            ]
-          )
+              123,
+            ],
+          ),
         )
       end
     end
@@ -194,13 +194,13 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
                 {
                   bish: {
                     bash: 'foo',
-                    bosh: Object.new
-                  }
-                }
-              ]
-            }
+                    bosh: Object.new,
+                  },
+                },
+              ],
+            },
           },
-          123
+          123,
         ]
       end
 
@@ -220,15 +220,15 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
                     {
                       bish: {
                         bash: 'foo',
-                        bosh: /\A#<Object:.+>\z/
-                      }
-                    }
-                  ]
-                }
+                        bosh: /\A#<Object:.+>\z/,
+                      },
+                    },
+                  ],
+                },
               },
-              123
-            ]
-          )
+              123,
+            ],
+          ),
         )
       end
     end

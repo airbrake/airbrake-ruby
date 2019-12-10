@@ -2,7 +2,7 @@ RSpec.describe Airbrake::Request do
   describe "#stash" do
     subject do
       described_class.new(
-        method: 'GET', route: '/', status_code: 200, start_time: Time.now
+        method: 'GET', route: '/', status_code: 200, start_time: Time.now,
       )
     end
 

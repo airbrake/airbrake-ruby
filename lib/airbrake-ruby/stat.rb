@@ -32,7 +32,7 @@ module Airbrake
         'count' => count,
         'sum' => sum,
         'sumsq' => sumsq,
-        'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes)
+        'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes),
       }
     end
 
