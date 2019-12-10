@@ -22,13 +22,13 @@ module Airbrake
           attributes = exception.to_airbrake
         rescue StandardError => ex
           logger.error(
-            "#{LOG_LABEL} #{exception.class}#to_airbrake failed. #{ex.class}: #{ex}"
+            "#{LOG_LABEL} #{exception.class}#to_airbrake failed. #{ex.class}: #{ex}",
           )
         end
 
         unless attributes.is_a?(Hash)
           logger.error(
-            "#{LOG_LABEL} #{self.class}: wanted Hash, got #{attributes.class}"
+            "#{LOG_LABEL} #{self.class}: wanted Hash, got #{attributes.class}",
           )
           return
         end

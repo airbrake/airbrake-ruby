@@ -33,14 +33,14 @@ module Airbrake
       {
         'queue' => queue,
         'errorCount' => error_count,
-        'time' => @start_time_utc
+        'time' => @start_time_utc,
       }
     end
 
     def hash
       {
         'queue' => queue,
-        'time' => @start_time_utc
+        'time' => @start_time_utc,
       }.hash
     end
 

@@ -172,13 +172,13 @@ RSpec.describe Airbrake::Backtrace do
 
       it "returns array of hashes where each unknown frame is marked as 'function'" do
         expect(
-          described_class.parse(ex)
+          described_class.parse(ex),
         ).to eq([file: nil, line: nil, function: 'a b c 1 23 321 .rb'])
       end
 
       it "logs frames that cannot be parsed" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /can't parse 'a b c 1 23 321 .rb'/
+          /can't parse 'a b c 1 23 321 .rb'/,
         )
         described_class.parse(ex)
       end
@@ -280,18 +280,18 @@ RSpec.describe Airbrake::Backtrace do
                 # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
                 # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
-              }
+              },
             },
             {
               file: fixture_path('notroot.txt'),
               line: 3,
-              function: 'pineapple'
+              function: 'pineapple',
             },
             {
               file: project_root_path('vendor/bundle/ignored_file.rb'),
               line: 2,
-              function: 'ignore_me'
-            }
+              function: 'ignore_me',
+            },
           ]
         end
 
@@ -300,7 +300,7 @@ RSpec.describe Airbrake::Backtrace do
           backtrace = [
             project_root_path('code.rb') + ":94:in `to_json'",
             fixture_path('notroot.txt' + ":3:in `pineapple'"),
-            project_root_path('vendor/bundle/ignored_file.rb') + ":2:in `ignore_me'"
+            project_root_path('vendor/bundle/ignored_file.rb') + ":2:in `ignore_me'",
           ]
           ex.set_backtrace(backtrace)
           expect(described_class.parse(ex)).to eq(parsed_backtrace)
@@ -310,7 +310,7 @@ RSpec.describe Airbrake::Backtrace do
       context "and when root_directory is a Pathname" do
         before do
           Airbrake::Config.instance.merge(
-            root_directory: Pathname.new(project_root_path(''))
+            root_directory: Pathname.new(project_root_path('')),
           )
         end
 
@@ -328,8 +328,8 @@ RSpec.describe Airbrake::Backtrace do
                 # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
                 # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
-              }
-            }
+              },
+            },
           ]
         end
 
@@ -360,7 +360,7 @@ RSpec.describe Airbrake::Backtrace do
                 # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
                 # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
-              }
+              },
             },
             {
               file: project_root_path('code.rb'),
@@ -373,14 +373,14 @@ RSpec.describe Airbrake::Backtrace do
                 # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
                 # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
-                97 => '        else'
-              }
+                97 => '        else',
+              },
             },
             {
               file: project_root_path('code.rb'),
               line: 96,
-              function: 'to_json'
-            }
+              function: 'to_json',
+            },
           ]
         end
 
@@ -389,7 +389,7 @@ RSpec.describe Airbrake::Backtrace do
           backtrace = [
             project_root_path('code.rb') + ":94:in `to_json'",
             project_root_path('code.rb') + ":95:in `to_json'",
-            project_root_path('code.rb') + ":96:in `to_json'"
+            project_root_path('code.rb') + ":96:in `to_json'",
           ]
           ex.set_backtrace(backtrace)
           expect(described_class.parse(ex)).to eq(parsed_backtrace)
@@ -410,8 +410,8 @@ RSpec.describe Airbrake::Backtrace do
             {
               file: project_root_path('code.rb'),
               line: 94,
-              function: 'to_json'
-            }
+              function: 'to_json',
+            },
           ]
         end
 

@@ -124,7 +124,7 @@ module Airbrake
 
         logger.error(
           "#{LOG_LABEL} one of the patterns in #{self.class} is invalid. " \
-          "Known patterns: #{@patterns}"
+          "Known patterns: #{@patterns}",
         )
       end
 

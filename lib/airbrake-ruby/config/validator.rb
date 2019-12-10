@@ -29,7 +29,7 @@ module Airbrake
             return promise.reject(
               "the 'environment' option must be configured " \
               "with a Symbol (or String), but '#{config.environment.class}' was " \
-              "provided: #{config.environment}"
+              "provided: #{config.environment}",
             )
           end
 
@@ -46,7 +46,7 @@ module Airbrake
 
           if ignored_environment?(config)
             return promise.reject(
-              "current environment '#{config.environment}' is ignored"
+              "current environment '#{config.environment}' is ignored",
             )
           end
 
@@ -74,7 +74,7 @@ module Airbrake
           if config.ignore_environments.any? && config.environment.nil?
             config.logger.warn(
               "#{LOG_LABEL} the 'environment' option is not set, " \
-              "'ignore_environments' has no effect"
+              "'ignore_environments' has no effect",
             )
           end
 

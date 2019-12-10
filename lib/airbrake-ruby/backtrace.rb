@@ -147,13 +147,13 @@ module Airbrake
           return {
             file: match[:file],
             line: (Integer(match[:line]) if match[:line]),
-            function: match[:function]
+            function: match[:function],
           }
         end
 
         logger.error(
           "can't parse '#{stackframe}' (please file an issue so we can fix " \
-          "it: https://github.com/airbrake/airbrake-ruby/issues/new)"
+          "it: https://github.com/airbrake/airbrake-ruby/issues/new)",
         )
         { file: nil, line: nil, function: stackframe }
       end

@@ -7,7 +7,7 @@ RSpec.describe Airbrake::ThreadPool do
     described_class.new(
       worker_size: worker_size,
       queue_size: queue_size,
-      block: proc { |message| tasks << message }
+      block: proc { |message| tasks << message },
     )
   end
 
@@ -35,7 +35,7 @@ RSpec.describe Airbrake::ThreadPool do
         described_class.new(
           worker_size: 1,
           queue_size: 1,
-          block: proc { |message| tasks << message }
+          block: proc { |message| tasks << message },
         )
       end
 
@@ -98,11 +98,11 @@ RSpec.describe Airbrake::ThreadPool do
     context "when there's some work to do" do
       it "logs how many tasks are left to process" do
         thread_pool = described_class.new(
-          worker_size: 0, queue_size: 2, block: proc {}
+          worker_size: 0, queue_size: 2, block: proc {},
         )
 
         expect(Airbrake::Loggable.instance).to receive(:debug).with(
-          /waiting to process \d+ task\(s\)/
+          /waiting to process \d+ task\(s\)/,
         )
         expect(Airbrake::Loggable.instance).to receive(:debug).with(/closed/)
 
@@ -112,7 +112,7 @@ RSpec.describe Airbrake::ThreadPool do
 
       it "waits until the queue gets empty" do
         thread_pool = described_class.new(
-          worker_size: 1, queue_size: 2, block: proc {}
+          worker_size: 1, queue_size: 2, block: proc {},
         )
 
         10.times { subject << 1 }

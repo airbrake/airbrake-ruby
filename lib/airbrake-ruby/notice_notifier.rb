@@ -116,7 +116,7 @@ module Airbrake
 
       logger.warn(
         "#{LOG_LABEL} falling back to sync delivery because there are no " \
-        "running async workers"
+        "running async workers",
       )
       @sync_sender
     end

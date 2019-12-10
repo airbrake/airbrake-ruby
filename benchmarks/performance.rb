@@ -16,7 +16,7 @@ query = {
   file: 'foo.rb',
   line: 123,
   start_time: Time.new - 200,
-  end_time: Time.new
+  end_time: Time.new,
 }
 
 request = {
@@ -24,7 +24,7 @@ request = {
   route: '/things/1',
   status_code: 200,
   start_time: Time.new - 200,
-  end_time: Time.new
+  end_time: Time.new,
 }
 
 breakdown = {
@@ -32,7 +32,7 @@ breakdown = {
   route: '/things/1',
   response_type: 'json',
   groups: { db: 24.0, view: 0.4 },
-  start_time: Time.new
+  start_time: Time.new,
 }
 
 Benchmark.ips do |ips|

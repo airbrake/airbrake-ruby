@@ -52,7 +52,7 @@ module Airbrake
         parts = line.chomp.split("\t").first.split(' ')
         if parts.size < MIN_HEAD_COLS
           logger.error(
-            "#{LOG_LABEL} Airbrake::#{self.class.name}: can't parse line: #{line}"
+            "#{LOG_LABEL} Airbrake::#{self.class.name}: can't parse line: #{line}",
           )
           return
         end
@@ -62,7 +62,7 @@ module Airbrake
           username: author[0..1].join(' '),
           email: parts[-3][1..-2],
           revision: parts[1],
-          time: timestamp(parts[-2].to_i)
+          time: timestamp(parts[-2].to_i),
         }
       end
       # rubocop:enable Metrics/AbcSize

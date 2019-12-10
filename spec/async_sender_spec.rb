@@ -8,7 +8,7 @@ RSpec.describe Airbrake::AsyncSender do
     Airbrake::Config.instance = Airbrake::Config.new(
       project_id: '1',
       workers: 3,
-      queue_size: 10
+      queue_size: 10,
     )
   end
 
@@ -35,7 +35,7 @@ RSpec.describe Airbrake::AsyncSender do
         Airbrake::Config.instance = Airbrake::Config.new(
           project_id: '1',
           workers: 0,
-          queue_size: 1
+          queue_size: 1,
         )
       end
 
@@ -55,13 +55,13 @@ RSpec.describe Airbrake::AsyncSender do
 
         expect(promise).to be_rejected
         expect(promise.value).to eq(
-          'error' => "AsyncSender has reached its capacity of 1"
+          'error' => "AsyncSender has reached its capacity of 1",
         )
       end
 
       it "logs discarded notice" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /reached its capacity/
+          /reached its capacity/,
         ).at_least(:once)
 
         15.times { subject.send(notice, Airbrake::Promise.new) }

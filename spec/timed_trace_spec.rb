@@ -117,7 +117,7 @@ RSpec.describe Airbrake::TimedTrace do
       it "returns a Hash with all spans" do
         expect(subject.spans).to match(
           'operation' => be > 0,
-          'another operation' => be > 0
+          'another operation' => be > 0,
         )
       end
     end

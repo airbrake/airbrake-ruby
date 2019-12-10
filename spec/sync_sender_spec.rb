@@ -1,7 +1,7 @@
 RSpec.describe Airbrake::SyncSender do
   before do
     Airbrake::Config.instance = Airbrake::Config.new(
-      project_id: 1, project_key: 'banana'
+      project_id: 1, project_key: 'banana',
     )
   end
 
@@ -17,8 +17,8 @@ RSpec.describe Airbrake::SyncSender do
       subject.send({}, promise)
       expect(
         a_request(:post, endpoint).with(
-          headers: { 'Content-Type' => 'application/json' }
-        )
+          headers: { 'Content-Type' => 'application/json' },
+        ),
       ).to have_been_made.once
     end
 
@@ -27,9 +27,9 @@ RSpec.describe Airbrake::SyncSender do
       expect(
         a_request(:post, endpoint).with(
           headers: {
-            'User-Agent' => %r{airbrake-ruby/\d+\.\d+\.\d+ Ruby/\d+\.\d+\.\d+}
-          }
-        )
+            'User-Agent' => %r{airbrake-ruby/\d+\.\d+\.\d+ Ruby/\d+\.\d+\.\d+},
+          },
+        ),
       ).to have_been_made.once
     end
 
@@ -37,8 +37,8 @@ RSpec.describe Airbrake::SyncSender do
       subject.send({}, promise)
       expect(
         a_request(:post, endpoint).with(
-          headers: { 'Authorization' => 'Bearer banana' }
-        )
+          headers: { 'Authorization' => 'Bearer banana' },
+        ),
       ).to have_been_made.once
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Airbrake::SyncSender do
       allow(subject).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
       expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /HTTP error: foo/
+        /HTTP error: foo/,
       )
       expect(subject.send({}, promise)).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('error' => '**Airbrake: HTTP error: foo')
@@ -69,10 +69,10 @@ RSpec.describe Airbrake::SyncSender do
         notice = Airbrake::Notice.new(ex)
 
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /data was not sent/
+          /data was not sent/,
         )
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /truncation failed/
+          /truncation failed/,
         )
         expect(subject.send(notice, promise)).to be_an(Airbrake::Promise)
         expect(promise.value)
@@ -87,7 +87,7 @@ RSpec.describe Airbrake::SyncSender do
         stub_request(:post, endpoint).to_return(
           status: 429,
           body: '{"message":"IP is rate limited"}',
-          headers: { 'X-RateLimit-Delay' => '1' }
+          headers: { 'X-RateLimit-Delay' => '1' },
         )
       end
 

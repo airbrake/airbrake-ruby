@@ -17,7 +17,7 @@ RSpec.describe Airbrake::Notice do
         before do
           Airbrake::Config.instance.merge(
             app_version: "1.2.3",
-            root_directory: "/one/two"
+            root_directory: "/one/two",
           )
         end
 
@@ -34,7 +34,7 @@ RSpec.describe Airbrake::Notice do
     context "when versions is empty" do
       it "doesn't set the 'versions' payload" do
         expect(notice.to_json).not_to match(
-          /"context":{"versions":{"dep":"1.2.3"}}/
+          /"context":{"versions":{"dep":"1.2.3"}}/,
         )
       end
     end
@@ -43,7 +43,7 @@ RSpec.describe Airbrake::Notice do
       it "sets the 'versions' payload" do
         notice[:context][:versions] = { 'dep' => '1.2.3' }
         expect(notice.to_json).to match(
-          /"context":{.*"versions":{"dep":"1.2.3"}.*}/
+          /"context":{.*"versions":{"dep":"1.2.3"}.*}/,
         )
       end
     end
@@ -192,7 +192,7 @@ RSpec.describe Airbrake::Notice do
             it "doesn't fail" do
               notice[:params] = { a: { b: { c: ObjectWithIoIvars.new } } }
               expect(notice.to_json).to match(
-                /"params":{"a":{"b":{"c":".+ObjectWithIoIvars.+"}}.*}/
+                /"params":{"a":{"b":{"c":".+ObjectWithIoIvars.+"}}.*}/,
               )
             end
           end
@@ -201,7 +201,7 @@ RSpec.describe Airbrake::Notice do
             it "doesn't fail" do
               notice[:params] = { a: [[ObjectWithIoIvars.new]] }
               expect(notice.to_json).to match(
-                /"params":{"a":\[\[".+ObjectWithIoIvars.+"\]\].*}/
+                /"params":{"a":\[\[".+ObjectWithIoIvars.+"\]\].*}/,
               )
             end
           end

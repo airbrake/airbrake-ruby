@@ -39,7 +39,7 @@ module Airbrake
         'method' => method,
         'route' => route,
         'responseType' => response_type,
-        'time' => @start_time_utc
+        'time' => @start_time_utc,
       }.delete_if { |_key, val| val.nil? }
     end
   end

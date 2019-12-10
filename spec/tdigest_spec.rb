@@ -29,7 +29,7 @@ RSpec.describe Airbrake::TDigest do
       new_tdigest = described_class.from_bytes(bytes)
       # Expect some rounding error due to compression
       expect(new_tdigest.percentile(0.9).round(5)).to eq(
-        subject.percentile(0.9).round(5)
+        subject.percentile(0.9).round(5),
       )
       expect(new_tdigest.as_small_bytes).to eq(bytes)
     end
@@ -126,8 +126,8 @@ RSpec.describe Airbrake::TDigest do
           113270270.27027026,
           154459459.45945945,
           123829787.23404256,
-          103191489.36170213
-        ]
+          103191489.36170213,
+        ],
       )
     end
 
@@ -166,13 +166,13 @@ RSpec.describe Airbrake::TDigest do
       it "has the parameters of the left argument (the calling tdigest)" do
         new_tdigest = subject + @other
         expect(new_tdigest.instance_variable_get(:@delta)).to eq(
-          subject.instance_variable_get(:@delta)
+          subject.instance_variable_get(:@delta),
         )
         expect(new_tdigest.instance_variable_get(:@k)).to eq(
-          subject.instance_variable_get(:@k)
+          subject.instance_variable_get(:@k),
         )
         expect(new_tdigest.instance_variable_get(:@cx)).to eq(
-          subject.instance_variable_get(:@cx)
+          subject.instance_variable_get(:@cx),
         )
       end
 

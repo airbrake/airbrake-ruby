@@ -19,8 +19,8 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
       [/\Abin/],
       [
         { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-        { bingo: 'bango', bongo: '[Filtered]', bash: '[Filtered]' }
-      ]
+        { bingo: 'bango', bongo: '[Filtered]', bash: '[Filtered]' },
+      ],
     )
   end
 
@@ -30,8 +30,8 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
       [:bongo],
       [
         { bongo: 'bish', bash: 'bosh', bbashh: 'bboshh' },
-        { bongo: 'bish', bash: '[Filtered]', bbashh: '[Filtered]' }
-      ]
+        { bongo: 'bish', bash: '[Filtered]', bbashh: '[Filtered]' },
+      ],
     )
   end
 
@@ -41,8 +41,8 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
       ['bash'],
       [
         { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-        { bingo: '[Filtered]', bongo: '[Filtered]', bash: 'bosh' }
-      ]
+        { bingo: '[Filtered]', bongo: '[Filtered]', bash: 'bosh' },
+      ],
     )
   end
 
@@ -53,8 +53,8 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
         [proc { 'bongo' }, :bash],
         [
           { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-          { bingo: '[Filtered]', bongo: 'bish', bash: 'bosh' }
-        ]
+          { bingo: '[Filtered]', bongo: 'bish', bash: 'bosh' },
+        ],
       )
     end
 
@@ -64,13 +64,13 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
         [proc { Object.new }],
         [
           { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-          { bingo: '[Filtered]', bongo: '[Filtered]', bash: '[Filtered]' }
-        ]
+          { bingo: '[Filtered]', bongo: '[Filtered]', bash: '[Filtered]' },
+        ],
       )
 
       it "logs an error" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/
+          /KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/,
         )
         keys_whitelist = described_class.new(patterns)
         keys_whitelist.call(notice)
@@ -83,7 +83,7 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
       context "and when the filter is called once" do
         it "logs an error" do
           expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /KeysWhitelist is invalid.+patterns: \[#<Proc:.+>\]/
+            /KeysWhitelist is invalid.+patterns: \[#<Proc:.+>\]/,
           )
           keys_whitelist = described_class.new(patterns)
           keys_whitelist.call(notice)
@@ -94,8 +94,8 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
           [proc { proc { ['bingo'] } }],
           [
             { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-            { bingo: '[Filtered]', bongo: '[Filtered]', bash: '[Filtered]' }
-          ]
+            { bingo: '[Filtered]', bongo: '[Filtered]', bash: '[Filtered]' },
+          ],
         )
       end
     end
@@ -107,13 +107,13 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
       [Object.new],
       [
         { bingo: 'bango', bongo: 'bish', bash: 'bosh' },
-        { bingo: '[Filtered]', bongo: '[Filtered]', bash: '[Filtered]' }
-      ]
+        { bingo: '[Filtered]', bongo: '[Filtered]', bash: '[Filtered]' },
+      ],
     )
 
     it "logs an error" do
       expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/
+        /KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/,
       )
       keys_whitelist = described_class.new(patterns)
       keys_whitelist.call(notice)
@@ -127,8 +127,8 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
         %w[bongo bish],
         [
           { bingo: 'bango', bongo: { bish: 'bash' } },
-          { bingo: '[Filtered]', bongo: { bish: 'bash' } }
-        ]
+          { bingo: '[Filtered]', bongo: { bish: 'bash' } },
+        ],
       )
     end
 
@@ -166,7 +166,7 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
           notice[:context][:url] = 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash'
           subject.call(notice)
           expect(notice[:context][:url]).to(
-            eq('http://localhost:3000/crash?foo=[Filtered]&baz=[Filtered]&bish=bash')
+            eq('http://localhost:3000/crash?foo=[Filtered]&baz=[Filtered]&bish=bash'),
           )
         end
       end
@@ -177,7 +177,7 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
             'http://localhost:3000/cra]]]sh?foo=bar&baz=bongo&bish=bash'
           subject.call(notice)
           expect(notice[:context][:url]).to(
-            eq('http://localhost:3000/cra]]]sh?foo=bar&baz=bongo&bish=bash')
+            eq('http://localhost:3000/cra]]]sh?foo=bar&baz=bongo&bish=bash'),
           )
         end
       end

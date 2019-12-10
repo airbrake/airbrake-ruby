@@ -8,7 +8,7 @@ module Airbrake
     NOTIFIER = {
       name: 'airbrake-ruby'.freeze,
       version: Airbrake::AIRBRAKE_RUBY_VERSION,
-      url: 'https://github.com/airbrake/airbrake-ruby'.freeze
+      url: 'https://github.com/airbrake/airbrake-ruby'.freeze,
     }.freeze
 
     # @return [Hash{Symbol=>String,Hash}] the information to be displayed in the
@@ -16,7 +16,7 @@ module Airbrake
     CONTEXT = {
       os: RUBY_PLATFORM,
       language: "#{RUBY_ENGINE}/#{RUBY_VERSION}".freeze,
-      notifier: NOTIFIER
+      notifier: NOTIFIER,
     }.freeze
 
     # @return [Integer] the maxium size of the JSON payload in bytes
@@ -32,7 +32,7 @@ module Airbrake
       IOError,
       NotImplementedError,
       JSON::GeneratorError,
-      Encoding::UndefinedConversionError
+      Encoding::UndefinedConversionError,
     ].freeze
 
     # @return [Array<Symbol>] the list of keys that can be be overwritten with
@@ -60,10 +60,10 @@ module Airbrake
         errors: NestedException.new(exception).as_json,
         context: context,
         environment: {
-          program_name: $PROGRAM_NAME
+          program_name: $PROGRAM_NAME,
         },
         session: {},
-        params: params
+        params: params,
       }
       @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
 
@@ -138,7 +138,7 @@ module Airbrake
         # Make sure we always send hostname.
         hostname: HOSTNAME,
 
-        severity: DEFAULT_SEVERITY
+        severity: DEFAULT_SEVERITY,
       }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
     end
 
@@ -152,7 +152,7 @@ module Airbrake
         logger.error(
           "#{LOG_LABEL} truncation failed. File an issue at " \
           "https://github.com/airbrake/airbrake-ruby " \
-          "and attach the following payload: #{@payload}"
+          "and attach the following payload: #{@payload}",
         )
       end
 

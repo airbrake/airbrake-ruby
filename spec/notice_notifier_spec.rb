@@ -4,7 +4,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       project_id: 1,
       project_key: 'abc',
       logger: Logger.new('/dev/null'),
-      performance_stats: true
+      performance_stats: true,
     )
   end
 
@@ -32,7 +32,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     let(:body) do
       {
         'id' => '00054414-b147-6ffa-85d6-1524d83362a6',
-        'url' => 'http://localhost/locate/00054414-b147-6ffa-85d6-1524d83362a6'
+        'url' => 'http://localhost/locate/00054414-b147-6ffa-85d6-1524d83362a6',
       }.to_json
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       before do
         Airbrake::Config.instance.merge(
           environment: 'test',
-          ignore_environments: %w[test]
+          ignore_environments: %w[test],
         )
       end
 
@@ -132,7 +132,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     let(:body) do
       {
         'id' => '00054414-b147-6ffa-85d6-1524d83362a6',
-        'url' => 'http://localhost/locate/00054414-b147-6ffa-85d6-1524d83362a6'
+        'url' => 'http://localhost/locate/00054414-b147-6ffa-85d6-1524d83362a6',
       }
     end
 
@@ -153,8 +153,8 @@ RSpec.describe Airbrake::NoticeNotifier do
       subject.notify_sync('foo', bingo: 'bango')
       expect(
         a_request(:post, endpoint).with(
-          body: /"params":{.*"bingo":"bango".*}/
-        )
+          body: /"params":{.*"bingo":"bango".*}/,
+        ),
       ).to have_been_made.once
     end
 
@@ -190,7 +190,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     context "when the provided environment is ignored" do
       before do
         Airbrake::Config.instance.merge(
-          environment: 'test', ignore_environments: %w[test]
+          environment: 'test', ignore_environments: %w[test],
         )
       end
 
@@ -256,7 +256,7 @@ RSpec.describe Airbrake::NoticeNotifier do
           it "returns the full generated backtrace" do
             backtrace = [
               "/lib/airbrake-ruby/a.rb:84:in `build_notice'",
-              "/lib/airbrake-ruby/b.rb:124:in `send_notice'"
+              "/lib/airbrake-ruby/b.rb:124:in `send_notice'",
             ]
             allow(Kernel).to receive(:caller).and_return(backtrace)
 
@@ -265,8 +265,8 @@ RSpec.describe Airbrake::NoticeNotifier do
             expect(notice[:errors].first[:backtrace]).to eq(
               [
                 { file: '/lib/airbrake-ruby/a.rb', line: 84, function: 'build_notice' },
-                { file: '/lib/airbrake-ruby/b.rb', line: 124, function: 'send_notice' }
-              ]
+                { file: '/lib/airbrake-ruby/b.rb', line: 124, function: 'send_notice' },
+              ],
             )
           end
         end
@@ -276,7 +276,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             backtrace = [
               "/airbrake-ruby/lib/airbrake-ruby/a.rb:84:in `b'",
               "/airbrake-ruby/lib/foo/b.rb:84:in `build'",
-              "/airbrake-ruby/lib/bar/c.rb:124:in `send'"
+              "/airbrake-ruby/lib/bar/c.rb:124:in `send'",
             ]
             allow(Kernel).to receive(:caller).and_return(backtrace)
 
@@ -285,8 +285,8 @@ RSpec.describe Airbrake::NoticeNotifier do
             expect(notice[:errors].first[:backtrace]).to eq(
               [
                 { file: '/airbrake-ruby/lib/foo/b.rb', line: 84, function: 'build' },
-                { file: '/airbrake-ruby/lib/bar/c.rb', line: 124, function: 'send' }
-              ]
+                { file: '/airbrake-ruby/lib/bar/c.rb', line: 124, function: 'send' },
+              ],
             )
           end
         end
@@ -303,7 +303,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         backtrace = [
           "org/jruby/RubyKernel.java:998:in `eval'",
           "/ruby/stdlib/irb/workspace.rb:87:in `evaluate'",
-          "/ruby/stdlib/irb.rb:489:in `block in eval_input'"
+          "/ruby/stdlib/irb.rb:489:in `block in eval_input'",
         ]
         allow(Kernel).to receive(:caller).and_return(backtrace)
 
@@ -314,8 +314,8 @@ RSpec.describe Airbrake::NoticeNotifier do
           [
             { file: 'org/jruby/RubyKernel.java', line: 998, function: 'eval' },
             { file: '/ruby/stdlib/irb/workspace.rb', line: 87, function: 'evaluate' },
-            { file: '/ruby/stdlib/irb.rb:489', line: 489, function: 'block in eval_input' }
-          ]
+            { file: '/ruby/stdlib/irb.rb:489', line: 489, function: 'block in eval_input' },
+          ],
         )
         # rubocop:enable Metrics/LineLength
       end
@@ -330,7 +330,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       it "raises error" do
         expect { subject.build_notice(Exception.new) }.to raise_error(
           Airbrake::Error,
-          'attempted to build Exception with closed Airbrake instance'
+          'attempted to build Exception with closed Airbrake instance',
         )
       end
     end

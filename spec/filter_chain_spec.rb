@@ -67,7 +67,7 @@ RSpec.describe Airbrake::FilterChain do
 
       foo_filter_mock = double
       expect(foo_filter_mock).to(
-        receive(:name).at_least(:once).and_return('FooFilter')
+        receive(:name).at_least(:once).and_return('FooFilter'),
       )
       subject.delete_filter(foo_filter_mock)
 

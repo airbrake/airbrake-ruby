@@ -206,7 +206,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           status_code: 200,
-          start_time: Time.now
+          start_time: Time.now,
         )
       end
     end
@@ -222,9 +222,9 @@ RSpec.describe Airbrake do
             method: 'GET',
             route: '/',
             status_code: 200,
-            start_time: Time.now
+            start_time: Time.now,
           },
-          request_id: 1
+          request_id: 1,
         )
       end
     end
@@ -241,7 +241,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           query: '',
-          start_time: Time.now
+          start_time: Time.now,
         )
       end
     end
@@ -257,9 +257,9 @@ RSpec.describe Airbrake do
             method: 'GET',
             route: '/',
             query: '',
-            start_time: Time.now
+            start_time: Time.now,
           },
-          request_id: 1
+          request_id: 1,
         )
       end
     end
@@ -276,7 +276,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           query: '',
-          start_time: Time.now
+          start_time: Time.now,
         )
       end
     end
@@ -284,7 +284,7 @@ RSpec.describe Airbrake do
     context "when :stash key is provided" do
       it "adds the value as the stash of the performance breakdown" do
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to receive(:notify) do |performance_breakdown|
           expect(performance_breakdown.stash).to eq(request_id: 1)
         end
@@ -295,9 +295,9 @@ RSpec.describe Airbrake do
             route: '/',
             response_type: :html,
             groups: {},
-            start_time: Time.now
+            start_time: Time.now,
           },
-          request_id: 1
+          request_id: 1,
         )
       end
     end
@@ -312,7 +312,7 @@ RSpec.describe Airbrake do
 
         described_class.notify_queue(
           queue: 'bananas',
-          error_count: 10
+          error_count: 10,
         )
       end
     end
@@ -326,9 +326,9 @@ RSpec.describe Airbrake do
         described_class.notify_queue(
           {
             queue: 'bananas',
-            error_count: 10
+            error_count: 10,
           },
-          request_id: 1
+          request_id: 1,
         )
       end
     end

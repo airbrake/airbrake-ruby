@@ -120,7 +120,7 @@ module Airbrake
       with_grouped_payload(payload) do |resource_hash, destination|
         url = URI.join(
           @config.host,
-          "api/v5/projects/#{@config.project_id}/#{destination}"
+          "api/v5/projects/#{@config.project_id}/#{destination}",
         )
         @sender.send(resource_hash, promise, url)
       end

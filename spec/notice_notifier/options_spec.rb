@@ -15,7 +15,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     Airbrake::Config.instance = Airbrake::Config.new(
       project_id: project_id,
-      project_key: project_key
+      project_key: project_key,
     )
   end
 
@@ -64,7 +64,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     describe ":root_directory" do
       before do
         subject.add_filter(
-          Airbrake::Filters::RootDirectoryFilter.new('/home/kyrylo/code')
+          Airbrake::Filters::RootDirectoryFilter.new('/home/kyrylo/code'),
         )
       end
 
@@ -73,7 +73,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
         expect(
           a_request(:post, endpoint)
-          .with(body: %r|{"file":"/PROJECT_ROOT/airbrake/ruby/spec/airbrake_spec.+|)
+          .with(body: %r|{"file":"/PROJECT_ROOT/airbrake/ruby/spec/airbrake_spec.+|),
         ).to have_been_made.once
       end
 
@@ -85,7 +85,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             subject.notify_sync(ex)
             expect(
               a_request(:post, endpoint)
-              .with(body: %r{"rootDirectory":"/bingo/bango"})
+              .with(body: %r{"rootDirectory":"/bingo/bango"}),
             ).to have_been_made.once
           end
         end
@@ -105,7 +105,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         WEBrick::HTTPServer.new(
           Port: 0,
           Logger: WEBrick::Log.new('/dev/null'),
-          AccessLog: []
+          AccessLog: [],
         )
       end
 
@@ -121,7 +121,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       before do
         Airbrake::Config.instance.merge(
           proxy: proxy_params,
-          host: "http://localhost:#{proxy.config[:Port]}"
+          host: "http://localhost:#{proxy.config[:Port]}",
         )
 
         proxy.mount_proc '/' do |req, res|
@@ -139,7 +139,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.6.0")
           skip(
             "We use Webmock 2, which doesn't support Ruby 2.6+. It's " \
-            "safe to run this test on 2.6+ once we upgrade to Webmock 3.5+"
+            "safe to run this test on 2.6+ once we upgrade to Webmock 3.5+",
           )
         end
         subject.notify_sync(ex)
@@ -164,7 +164,7 @@ RSpec.describe Airbrake::NoticeNotifier do
           subject.notify_sync(ex)
           expect(
             a_request(:post, endpoint)
-            .with(body: /"context":{.*"environment":"production".*}/)
+            .with(body: /"context":{.*"environment":"production".*}/),
           ).to have_been_made.once
         end
       end
@@ -192,7 +192,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       context "when env is set and ignore_environments doesn't mention it" do
         params = {
           environment: :development,
-          ignore_environments: [:production]
+          ignore_environments: [:production],
         }
 
         include_examples 'sent notice', params
@@ -201,7 +201,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       context "when the current env and notify envs are the same" do
         params = {
           environment: :development,
-          ignore_environments: %i[production development]
+          ignore_environments: %i[production development],
         }
 
         include_examples 'ignored notice', params
@@ -227,7 +227,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       context "when ignore_environments specifies a Regexp pattern" do
         params = {
           environment: :testing,
-          ignore_environments: ['staging', /test.+/]
+          ignore_environments: ['staging', /test.+/],
         }
 
         include_examples 'ignored notice', params
@@ -241,7 +241,7 @@ RSpec.describe Airbrake::NoticeNotifier do
           before do
             Airbrake::Config.instance.merge(
               blacklist_keys: %i[password password_confirmation],
-              whitelist_keys: [:email, /user/i, 'account_id']
+              whitelist_keys: [:email, /user/i, 'account_id'],
             )
           end
 

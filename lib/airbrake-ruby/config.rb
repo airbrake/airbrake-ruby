@@ -132,7 +132,7 @@ module Airbrake
 
       self.root_directory = File.realpath(
         (defined?(Bundler) && Bundler.root) ||
-        Dir.pwd
+        Dir.pwd,
       )
 
       self.versions = {}

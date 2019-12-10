@@ -10,7 +10,7 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
       { file: "/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb" },
       { file: "#{root_directory}/gems/rspec-core-3.3.2/lib/rspec/core/configuration.rb " },
       { file: "/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb" },
-      { file: "#{root_directory}/gems/rspec-core-3.3.2/exe/rspec" }
+      { file: "#{root_directory}/gems/rspec-core-3.3.2/exe/rspec" },
     ]
     # rubocop:enable Metrics/LineLength
 
@@ -23,9 +23,9 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
           { file: "/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb" },
           { file: "/PROJECT_ROOT/gems/rspec-core-3.3.2/lib/rspec/core/configuration.rb " },
           { file: "/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb" },
-          { file: "/PROJECT_ROOT/gems/rspec-core-3.3.2/exe/rspec" }
-        ]
-      )
+          { file: "/PROJECT_ROOT/gems/rspec-core-3.3.2/exe/rspec" },
+        ],
+      ),
     )
     # rubocop:enable Metrics/LineLength
   end
@@ -33,7 +33,7 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
   it "does not filter file when it is nil" do
     expect(notice[:errors].first[:file]).to be_nil
     expect { subject.call(notice) }.not_to(
-      change { notice[:errors].first[:file] }
+      change { notice[:errors].first[:file] },
     )
   end
 end

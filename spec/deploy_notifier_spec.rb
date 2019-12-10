@@ -26,7 +26,7 @@ RSpec.describe Airbrake::DeployNotifier do
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
           { environment: 'barenv' },
           instance_of(Airbrake::Promise),
-          URI('https://api.airbrake.io/api/v4/projects/1/deploys')
+          URI('https://api.airbrake.io/api/v4/projects/1/deploys'),
         )
         subject.notify(environment: 'barenv')
       end
@@ -39,7 +39,7 @@ RSpec.describe Airbrake::DeployNotifier do
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send).with(
           { environment: 'fooenv' },
           instance_of(Airbrake::Promise),
-          URI('https://api.airbrake.io/api/v4/projects/1/deploys')
+          URI('https://api.airbrake.io/api/v4/projects/1/deploys'),
         )
         subject.notify({})
       end

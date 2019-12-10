@@ -37,7 +37,7 @@ RSpec.describe Airbrake::CodeHunk do
             # rubocop:disable Metrics/LineLength
             3 => '  # Represents a chunk of information that is meant to be either sent to',
             # rubocop:enable Metrics/LineLength
-          )
+          ),
         )
       end
     end
@@ -49,8 +49,8 @@ RSpec.describe Airbrake::CodeHunk do
         is_expected.to(
           eq(
             220 => '  end',
-            221 => 'end'
-          )
+            221 => 'end',
+          ),
         )
       end
     end
@@ -65,8 +65,8 @@ RSpec.describe Airbrake::CodeHunk do
           eq(
             1 => 'module Banana',
             2 => '  attr_reader :bingo',
-            3 => 'end'
-          )
+            3 => 'end',
+          ),
         )
       end
     end
@@ -81,8 +81,8 @@ RSpec.describe Airbrake::CodeHunk do
             99 => '        end',
             100 => '',
             101 => '        break if truncate == 0',
-            102 => '      end'
-          )
+            102 => '      end',
+          ),
         )
       end
     end
@@ -104,10 +104,10 @@ RSpec.describe Airbrake::CodeHunk do
 
       it "logs error and returns nil" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /can't read code hunk.+Permission denied/
+          /can't read code hunk.+Permission denied/,
         )
         expect(subject.get(project_root_path('code.rb'), 1)).to(
-          eq(1 => '')
+          eq(1 => ''),
         )
       end
     end
