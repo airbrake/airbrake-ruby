@@ -886,6 +886,26 @@ a rejected promise.
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
 
+#### Airbrake.notify_queue_sync
+
+Sends queue (worker) statistics to Airbrake synchronously. Supports groups (similar to
+[performance breakdowns](#airbrakenotify_performance_breakdown)).
+
+```ruby
+Airbrake.notify_queue(
+  queue: "emails",
+  error_count: 1,
+  groups: { redis: 24.0, sql: 0.4 } # ms
+)
+#=> { "NoContent" => nil }
+```
+
+Accepts the same parameters as [`Airbrake.notify_queue`](#airbrakenotify_queue).
+
+##### Return value
+
+Always returns a Hash with response from the server.
+
 #### Airbrake.add_performance_filter
 
 Adds a performance filter that filters performance data. Works exactly like

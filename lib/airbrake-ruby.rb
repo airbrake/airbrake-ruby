@@ -442,14 +442,42 @@ module Airbrake
     #   failed
     # @option queue_info [Array<Hash{Symbol=>Float}>] :groups Where the job
     #   spent its time
-    # @param [Hash] stash What needs to be appeneded to the stash, so it's
+    # @param [Hash] stash What needs to be appended to the stash, so it's
     #   available in filters
     # @return [void]
     # @since v4.9.0
+    # @see .notify_queue_sync
     def notify_queue(queue_info, stash = {})
       queue = Queue.new(queue_info)
       queue.stash.merge!(stash)
       performance_notifier.notify(queue)
+    end
+
+    # Increments statistics of a certain queue (worker) synchronously.
+    #
+    # @example
+    #   response = Airbrake.notify_queue_sync(
+    #     queue: 'emails',
+    #     error_count: 1,
+    #     groups: { redis: 24.0, sql: 0.4 } # ms
+    #   )
+    #   puts response #=> { 'NoContent' => nil }
+    #
+    # @param [Hash{Symbol=>Object}] queue_info
+    # @option queue_info [String] :queue The name of the queue/worker
+    # @option queue_info [Integer] :error_count How many times this worker
+    #   failed
+    # @option queue_info [Array<Hash{Symbol=>Float}>] :groups Where the job
+    #   spent its time
+    # @param [Hash] stash What needs to be appended to the stash, so it's
+    #   available in filters
+    # @return [void]
+    # @since v4.10.0
+    # @see .notify_queue
+    def notify_queue_sync(queue_info, stash = {})
+      queue = Queue.new(queue_info)
+      queue.stash.merge!(stash)
+      performance_notifier.notify_sync(queue)
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
