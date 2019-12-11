@@ -135,7 +135,7 @@ module Airbrake
     # @return [Boolean] true if the notifier was configured, false otherwise
     # @since v2.3.0
     def configured?
-      notice_notifier.configured?
+      @notice_notifier && @notice_notifier.configured?
     end
 
     # Sends an exception to Airbrake asynchronously.
@@ -255,10 +255,17 @@ module Airbrake
     #   Airbrake.notify('App crashed!') #=> raises Airbrake::Error
     #
     # @return [void]
+    # rubocop:disable Style/GuardClause, Style/IfUnlessModifier
     def close
-      notice_notifier.close
-      performance_notifier.close
+      if defined?(@notice_notifier) && @notice_notifier
+        @notice_notifier.close
+      end
+
+      if defined?(@performance_notifier) && @performance_notifier
+        @performance_notifier.close
+      end
     end
+    # rubocop:enable Style/GuardClause, Style/IfUnlessModifier
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.
     #
@@ -551,7 +558,7 @@ module Airbrake
     # @return [void]
     # @since v4.2.2
     def reset
-      close if notice_notifier && configured?
+      close
 
       self.performance_notifier = PerformanceNotifier.new
       self.notice_notifier = NoticeNotifier.new
