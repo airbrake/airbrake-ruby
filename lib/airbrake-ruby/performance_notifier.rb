@@ -4,6 +4,7 @@ module Airbrake
   #
   # @api public
   # @since v3.2.0
+  # rubocop:disable Metrics/ClassLength
   class PerformanceNotifier
     include Inspectable
     include Loggable
@@ -11,7 +12,8 @@ module Airbrake
     def initialize
       @config = Airbrake::Config.instance
       @flush_period = Airbrake::Config.instance.performance_stats_flush_period
-      @sender = AsyncSender.new(:put)
+      @async_sender = AsyncSender.new(:put)
+      @sync_sender = SyncSender.new(:put)
       @payload = {}
       @schedule_flush = nil
       @mutex = Mutex.new
@@ -23,21 +25,13 @@ module Airbrake
     # @see Airbrake.notify_query
     # @see Airbrake.notify_request
     def notify(resource)
-      promise = @config.check_configuration
-      return promise if promise.rejected?
+      send_resource(resource, sync: false)
+    end
 
-      promise = @config.check_performance_options(resource)
-      return promise if promise.rejected?
-
-      @filter_chain.refine(resource)
-      return if resource.ignored?
-
-      @mutex.synchronize do
-        update_payload(resource)
-        @flush_period > 0 ? schedule_flush : send(@payload, promise)
-      end
-
-      promise.resolve(:success)
+    # @param [Hash] resource
+    # @see Airbrake.notify_queue_sync
+    def notify_sync(resource)
+      send_resource(resource, sync: true).value
     end
 
     # @see Airbrake.add_performance_filter
@@ -53,7 +47,7 @@ module Airbrake
     def close
       @mutex.synchronize do
         @schedule_flush.kill if @schedule_flush
-        @sender.close
+        @async_sender.close
         logger.debug("#{LOG_LABEL} performance notifier closed")
       end
     end
@@ -106,12 +100,32 @@ module Airbrake
             @payload = {}
           end
 
-          send(payload, Airbrake::Promise.new)
+          send(@async_sender, payload, Airbrake::Promise.new)
         end
       end
     end
 
-    def send(payload, promise)
+    def send_resource(resource, sync:)
+      promise = @config.check_configuration
+      return promise if promise.rejected?
+
+      promise = @config.check_performance_options(resource)
+      return promise if promise.rejected?
+
+      @filter_chain.refine(resource)
+      return if resource.ignored?
+
+      @mutex.synchronize do
+        update_payload(resource)
+        if sync || @flush_period == 0
+          send(@sync_sender, @payload, promise)
+        else
+          schedule_flush
+        end
+      end
+    end
+
+    def send(sender, payload, promise)
       signature = "#{self.class.name}##{__method__}"
       raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
 
@@ -122,7 +136,7 @@ module Airbrake
           @config.host,
           "api/v5/projects/#{@config.project_id}/#{destination}",
         )
-        @sender.send(resource_hash, promise, url)
+        sender.send(resource_hash, promise, url)
       end
 
       promise
@@ -157,4 +171,5 @@ module Airbrake
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

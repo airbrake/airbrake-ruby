@@ -334,6 +334,20 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe "#notify_queue_sync" do
+    it "notifies queue synchronously" do
+      expect(described_class.performance_notifier).to receive(:notify_sync)
+
+      described_class.notify_queue_sync(
+        {
+          queue: 'bananas',
+          error_count: 10,
+        },
+        request_id: 1,
+      )
+    end
+  end
+
   describe ".performance_notifier" do
     it "returns a performance notifier" do
       expect(described_class.performance_notifier)

@@ -524,6 +524,26 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
   end
 
+  describe "#notify_sync" do
+    it "notifies synchronously" do
+      retval = subject.notify_sync(
+        Airbrake::Query.new(
+          method: 'POST',
+          route: '/foo',
+          query: 'SELECT * FROM things',
+          start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+        ),
+      )
+
+      expect(
+        a_request(:put, queries).with(
+          body: %r|\A{"queries":\[{"method":"POST","route":"/foo"|,
+        ),
+      ).to have_been_made
+      expect(retval).to eq('' => nil)
+    end
+  end
+
   describe "#close" do
     before do
       Airbrake::Config.instance.merge(performance_stats_flush_period: 0.1)

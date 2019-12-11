@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `Airbrake.notfy_queue_sync`
+  ([#518](https://github.com/airbrake/airbrake-ruby/pull/518))
+
 ### [v4.9.0][v4.9.0] (December 9, 2019)
 
 * Added `Airbrake.notify_queue`, which sends queue (worker) info to Airbrake
