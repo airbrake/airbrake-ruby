@@ -29,6 +29,7 @@ module Airbrake
     end
 
     # @param [Hash] resource
+    # @since v4.10.0
     # @see Airbrake.notify_queue_sync
     def notify_sync(resource)
       send_resource(resource, sync: true).value

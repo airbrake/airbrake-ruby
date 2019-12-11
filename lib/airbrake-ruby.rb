@@ -364,6 +364,17 @@ module Airbrake
       performance_notifier.notify(request)
     end
 
+    # Synchronously Increments request statistics of a certain +route+ that was
+    # invoked on +start_time+ and ended on +end_time+ with +method+, and
+    # returned +status_code+.
+    # @since v4.10.0
+    # @see .notify_request
+    def notify_request_sync(request_info, stash = {})
+      request = Request.new(request_info)
+      request.stash.merge!(stash)
+      performance_notifier.notify_sync(request)
+    end
+
     # Increments SQL statistics of a certain +query+ that was invoked on
     # +start_time+ and finished on +end_time+. When +method+ and +route+ are
     # provided, the query is grouped by these parameters.
@@ -399,6 +410,17 @@ module Airbrake
       performance_notifier.notify(query)
     end
 
+    # Synchronously increments SQL statistics of a certain +query+ that was
+    # invoked on +start_time+ and finished on +end_time+. When +method+ and
+    # +route+ are provided, the query is grouped by these parameters.
+    # @since v4.10.0
+    # @see .notify_query
+    def notify_query_sync(query_info, stash = {})
+      query = Query.new(query_info)
+      query.stash.merge!(stash)
+      performance_notifier.notify_sync(query)
+    end
+
     # Increments performance breakdown statistics of a certain route.
     #
     # @example
@@ -425,6 +447,16 @@ module Airbrake
       performance_breakdown = PerformanceBreakdown.new(breakdown_info)
       performance_breakdown.stash.merge!(stash)
       performance_notifier.notify(performance_breakdown)
+    end
+
+    # Increments performance breakdown statistics of a certain route
+    # synchronously.
+    # @since v4.10.0
+    # @see .notify_performance_breakdown
+    def notify_performance_breakdown_sync(breakdown_info, stash = {})
+      performance_breakdown = PerformanceBreakdown.new(breakdown_info)
+      performance_breakdown.stash.merge!(stash)
+      performance_notifier.notify_sync(performance_breakdown)
     end
 
     # Increments statistics of a certain queue (worker).
@@ -454,24 +486,6 @@ module Airbrake
     end
 
     # Increments statistics of a certain queue (worker) synchronously.
-    #
-    # @example
-    #   response = Airbrake.notify_queue_sync(
-    #     queue: 'emails',
-    #     error_count: 1,
-    #     groups: { redis: 24.0, sql: 0.4 } # ms
-    #   )
-    #   puts response #=> { 'NoContent' => nil }
-    #
-    # @param [Hash{Symbol=>Object}] queue_info
-    # @option queue_info [String] :queue The name of the queue/worker
-    # @option queue_info [Integer] :error_count How many times this worker
-    #   failed
-    # @option queue_info [Array<Hash{Symbol=>Float}>] :groups Where the job
-    #   spent its time
-    # @param [Hash] stash What needs to be appended to the stash, so it's
-    #   available in filters
-    # @return [void]
     # @since v4.10.0
     # @see .notify_queue
     def notify_queue_sync(queue_info, stash = {})

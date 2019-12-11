@@ -728,9 +728,9 @@ grocer.deliver_veggies
 
 #### Airbrake.notify_request
 
-Sends performance statistics to [Airbrake Performance
-Monitoring][airbrake-performance-monitoring]. The performance statistics are
-displayed on the Performance tab of your project.
+Sends request information (performance statistics of a route) to [Airbrake
+Performance Monitoring][airbrake-performance-monitoring]. The performance
+statistics are displayed on the Performance tab of your project.
 
 ```ruby
 Airbrake.notify_request(
@@ -765,6 +765,19 @@ a rejected promise.
 
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
+
+#### Airbrake.notify_request_sync
+
+Sends request information (performance statistics of a route) to [Airbrake
+Performance Monitoring][airbrake-performance-monitoring] synchronously. The
+performance statistics are displayed on the Performance tab of your project.
+
+Accepts the same parameters as
+[`Airbrake.notify_request`](#airbrakenotify_request).
+
+##### Return value
+
+Always returns a Hash with response from the server.
 
 #### Airbrake.notify_query
 
@@ -807,6 +820,18 @@ a rejected promise.
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
 
+#### Airbrake.notify_query_sync
+
+Sends SQL performance statistics to Airbrake synchronously. The performance
+statistics is displayed on the Performance tab of your project.
+
+Accepts the same parameters as
+[`Airbrake.notify_query`](#airbrakenotify_query).
+
+##### Return value
+
+Always returns a Hash with response from the server.
+
 #### Airbrake.notify_performance_breakdown
 
 Sends performance breakdown statistics by groups to Airbrake. The groups are
@@ -845,6 +870,19 @@ a rejected promise.
 
 When [`config.performance_stats = true`](#performance_stats), then it aggregates
 statistics and sends as a batch every 15 seconds.
+
+#### Airbrake.notify_performance_breakdown_sync
+
+Sends performance breakdown statistics by groups to Airbrake synchronously. The
+groups are arbitrary (database, views, HTTP calls, etc.), but there can be only
+up to 10 groups per route in total.
+
+Accepts the same parameters as
+[`Airbrake.notify_performance_breakdown`](#airbrakenotify_performance_breakdown).
+
+##### Return value
+
+Always returns a Hash with response from the server.
 
 #### Airbrake.notify_queue
 
@@ -888,17 +926,7 @@ statistics and sends as a batch every 15 seconds.
 
 #### Airbrake.notify_queue_sync
 
-Sends queue (worker) statistics to Airbrake synchronously. Supports groups (similar to
-[performance breakdowns](#airbrakenotify_performance_breakdown)).
-
-```ruby
-Airbrake.notify_queue(
-  queue: "emails",
-  error_count: 1,
-  groups: { redis: 24.0, sql: 0.4 } # ms
-)
-#=> { "NoContent" => nil }
-```
+Sends queue (worker) statistics to Airbrake synchronously.
 
 Accepts the same parameters as [`Airbrake.notify_queue`](#airbrakenotify_queue).
 
