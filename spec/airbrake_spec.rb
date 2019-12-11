@@ -230,6 +230,22 @@ RSpec.describe Airbrake do
     end
   end
 
+  describe "#notify_request_sync" do
+    it "notifies request synchronously" do
+      expect(described_class.performance_notifier).to receive(:notify_sync)
+
+      described_class.notify_request_sync(
+        {
+          method: 'GET',
+          route: '/',
+          status_code: 200,
+          start_time: Time.now,
+        },
+        request_id: 1,
+      )
+    end
+  end
+
   describe "#notify_query" do
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the query" do
@@ -262,6 +278,22 @@ RSpec.describe Airbrake do
           request_id: 1,
         )
       end
+    end
+  end
+
+  describe "#notify_query_sync" do
+    it "notifies query synchronously" do
+      expect(described_class.performance_notifier).to receive(:notify_sync)
+
+      described_class.notify_query_sync(
+        {
+          method: 'GET',
+          route: '/',
+          query: '',
+          start_time: Time.now,
+        },
+        request_id: 1,
+      )
     end
   end
 
@@ -300,6 +332,23 @@ RSpec.describe Airbrake do
           request_id: 1,
         )
       end
+    end
+  end
+
+  describe "#notify_performance_breakdown_sync" do
+    it "notifies performance breakdown synchronously" do
+      expect(described_class.performance_notifier).to receive(:notify_sync)
+
+      described_class.notify_performance_breakdown_sync(
+        {
+          method: 'GET',
+          route: '/',
+          response_type: :html,
+          groups: {},
+          start_time: Time.now,
+        },
+        request_id: 1,
+      )
     end
   end
 

@@ -5,6 +5,9 @@ Airbrake Ruby Changelog
 
 * Added `Airbrake.notfy_queue_sync`
   ([#518](https://github.com/airbrake/airbrake-ruby/pull/518))
+* Added `Airbrake.notify_request_sync`, `Airbrake.notify_query_sync` &
+  `Airbrake.notify_performance_sync`
+  ([#519](https://github.com/airbrake/airbrake-ruby/pull/519))
 
 ### [v4.9.0][v4.9.0] (December 9, 2019)
 
