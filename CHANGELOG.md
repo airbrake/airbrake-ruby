@@ -3,6 +3,12 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed bug in `PerformanceNotifier` where resource's `start_time` and
+  `end_time` could be the same. This was resulting into sending `sum` statistics
+  for `:total` payload to equal to `0.0`. Zero `sum` is rejected by the backend,
+  and as result, the whole resource is rejected as well
+  ([#522](https://github.com/airbrake/airbrake-ruby/pull/522))
+
 ### [v4.10.0][v4.10.0] (December 12, 2019)
 
 * Added `Airbrake.notfy_queue_sync`
