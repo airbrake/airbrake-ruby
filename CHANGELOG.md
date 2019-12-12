@@ -8,6 +8,9 @@ Airbrake Ruby Changelog
 * Added `Airbrake.notify_request_sync`, `Airbrake.notify_query_sync` &
   `Airbrake.notify_performance_sync`
   ([#519](https://github.com/airbrake/airbrake-ruby/pull/519))
+* Fixed bug where `Airbrake.close` would spawn notifiers (if they didn't exist)
+  just to close them immediately
+  ([#520](https://github.com/airbrake/airbrake-ruby/pull/520))
 
 ### [v4.9.0][v4.9.0] (December 9, 2019)
 

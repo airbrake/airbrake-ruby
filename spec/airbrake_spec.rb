@@ -51,28 +51,6 @@ RSpec.describe Airbrake do
       expect(described_class).to be_configured
     end
 
-    context "when a notifier was configured" do
-      before do
-        expect(described_class).to receive(:configured?).and_return(true)
-      end
-
-      it "closes previously configured notice notifier" do
-        expect(described_class).to receive(:close)
-        described_class.configure {}
-      end
-    end
-
-    context "when a notifier wasn't configured" do
-      before do
-        expect(described_class).to receive(:configured?).and_return(false)
-      end
-
-      it "doesn't close previously configured notice notifier" do
-        expect(described_class).not_to receive(:close)
-        described_class.configure {}
-      end
-    end
-
     context "when called multiple times" do
       it "doesn't overwrite performance notifier" do
         described_class.configure {}
@@ -178,19 +156,6 @@ RSpec.describe Airbrake do
         expect(Airbrake::Filters::GitLastCheckoutFilter)
           .to receive(:new).with('/my/path')
         described_class.configure { |c| c.root_directory = '/my/path' }
-      end
-    end
-  end
-
-  describe "#reset" do
-    context "when Airbrake was previously configured" do
-      before do
-        expect(described_class).to receive(:configured?).and_return(true)
-      end
-
-      it "closes notice notifier" do
-        expect(described_class).to receive(:close)
-        subject.reset
       end
     end
   end
@@ -413,6 +378,37 @@ RSpec.describe Airbrake do
   describe ".deploy_notifier" do
     it "returns a deploy notifier" do
       expect(described_class.deploy_notifier).to be_an(Airbrake::DeployNotifier)
+    end
+  end
+
+  describe ".close" do
+    after { Airbrake.reset }
+
+    context "when notice_notifier is defined" do
+      it "gets closed" do
+        expect(Airbrake.notice_notifier).to receive(:close)
+      end
+    end
+
+    context "when notice_notifier is undefined" do
+      it "doesn't get closed (because it wasn't initialized)" do
+        Airbrake.instance_variable_set(:@notice_notifier, nil)
+        expect_any_instance_of(Airbrake::NoticeNotifier).not_to receive(:close)
+      end
+    end
+
+    context "when performance_notifier is defined" do
+      it "gets closed" do
+        expect(Airbrake.performance_notifier).to receive(:close)
+      end
+    end
+
+    context "when perforance_notifier is undefined" do
+      it "doesn't get closed (because it wasn't initialized)" do
+        Airbrake.instance_variable_set(:@performance_notifier, nil)
+        expect_any_instance_of(Airbrake::PerformanceNotifier)
+          .not_to receive(:close)
+      end
     end
   end
 end
