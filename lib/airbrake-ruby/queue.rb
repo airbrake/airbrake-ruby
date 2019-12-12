@@ -15,7 +15,7 @@ module Airbrake
       error_count:,
       groups: {},
       start_time: Time.now,
-      end_time: Time.now
+      end_time: start_time + 1
     )
       @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
       super(queue, error_count, groups, start_time, end_time)

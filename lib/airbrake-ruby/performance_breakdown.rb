@@ -20,7 +20,7 @@ module Airbrake
       response_type:,
       groups:,
       start_time:,
-      end_time: Time.now
+      end_time: start_time + 1
     )
       @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
       super(method, route, response_type, groups, start_time, end_time)
