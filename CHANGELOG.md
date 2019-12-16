@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* `NoticeNotifier` fixed confusing error message when trying to build a notice
+  when Airbrake was closed
+  ([#525](https://github.com/airbrake/airbrake-ruby/pull/525))
+
 ### [v4.10.1][v4.10.1] (December 12, 2019)
 
 * Fixed bug in `PerformanceNotifier` where resource's `start_time` and
