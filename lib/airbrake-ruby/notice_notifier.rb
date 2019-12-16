@@ -55,7 +55,8 @@ module Airbrake
     def build_notice(exception, params = {})
       if @async_sender.closed?
         raise Airbrake::Error,
-              "attempted to build #{exception} with closed Airbrake instance"
+              "Airbrake is closed; can't build exception: " \
+              "#{exception.class}: #{exception}"
       end
 
       if exception.is_a?(Airbrake::Notice)

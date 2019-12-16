@@ -328,9 +328,9 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
 
       it "raises error" do
-        expect { subject.build_notice(Exception.new) }.to raise_error(
+        expect { subject.build_notice(Exception.new('oops')) }.to raise_error(
           Airbrake::Error,
-          'attempted to build Exception with closed Airbrake instance',
+          "Airbrake is closed; can't build exception: Exception: oops",
         )
       end
     end
