@@ -7,7 +7,8 @@ module Airbrake
   # @since v4.2.0
   # rubocop:disable Metrics/BlockLength, Metrics/ParameterLists
   PerformanceBreakdown = Struct.new(
-    :method, :route, :response_type, :groups, :start_time, :end_time
+    :method, :route, :response_type, :groups, :start_time, :end_time, :timing,
+    :time
   ) do
     include HashKeyable
     include Ignorable
@@ -19,11 +20,15 @@ module Airbrake
       route:,
       response_type:,
       groups:,
-      start_time:,
-      end_time: start_time + 1
+      start_time: Time.now,
+      end_time: start_time + 1,
+      timing: nil,
+      time: Time.now
     )
-      @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
-      super(method, route, response_type, groups, start_time, end_time)
+      @time_utc = TimeTruncate.utc_truncate_minutes(time)
+      super(
+        method, route, response_type, groups, start_time, end_time, timing, time
+      )
     end
 
     def destination
@@ -39,7 +44,7 @@ module Airbrake
         'method' => method,
         'route' => route,
         'responseType' => response_type,
-        'time' => @start_time_utc,
+        'time' => @time_utc,
       }.delete_if { |_key, val| val.nil? }
     end
   end

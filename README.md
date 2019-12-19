@@ -737,8 +737,7 @@ Airbrake.notify_request(
   method: 'GET',
   route: '/things/1',
   status_code: 200,
-  start_time: Time.new - 200,
-  end_time: Time.new
+  timing: 123.45 # ms
 )
 ```
 
@@ -792,8 +791,7 @@ Airbrake.notify_query(
   func: 'foo', # optional
   file: 'foo.rb', # optional
   line: 123, # optional
-  start_time: Time.new - 200,
-  end_time: Time.new # optional
+  timing: 123.45 # ms
 )
 ```
 
@@ -844,7 +842,7 @@ Airbrake.notify_performance_breakdown(
   route: '/things/1',
   response_type: 'json',
   groups: { db: 24.0, view: 0.4 }, # ms
-  start_time: Time.new
+  timing: 123.45 # ms
 )
 ```
 

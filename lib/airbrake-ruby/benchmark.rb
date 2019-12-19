@@ -2,7 +2,7 @@ module Airbrake
   # Benchmark benchmarks Ruby code.
   #
   # @since v4.2.4
-  # @api private
+  # @api public
   class Benchmark
     # Measures monotonic time for the given operation.
     #
