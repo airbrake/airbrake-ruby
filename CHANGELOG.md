@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* `PerformanceNotifier`: started rejecting resources with zero timing
+  ([#528](https://github.com/airbrake/airbrake-ruby/pull/528))
+
 ### [v4.11.0][v4.11.0] (December 20, 2019)
 
 * `NoticeNotifier` fixed confusing error message when trying to build a notice

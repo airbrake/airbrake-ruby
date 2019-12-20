@@ -120,10 +120,7 @@ module Airbrake
     end
 
     def send_resource(resource, sync:)
-      promise = @config.check_configuration
-      return promise if promise.rejected?
-
-      promise = @config.check_performance_options(resource)
+      promise = check_configuration(resource)
       return promise if promise.rejected?
 
       @filter_chain.refine(resource)
@@ -137,6 +134,20 @@ module Airbrake
           schedule_flush
         end
       end
+    end
+
+    def check_configuration(resource)
+      promise = @config.check_configuration
+      return promise if promise.rejected?
+
+      promise = @config.check_performance_options(resource)
+      return promise if promise.rejected?
+
+      if resource.timing && resource.timing == 0
+        return Promise.new.reject(':timing cannot be zero')
+      end
+
+      Promise.new
     end
 
     def send(sender, payload, promise)
