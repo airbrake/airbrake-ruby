@@ -496,6 +496,22 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
         expect(a_request(:put, queries)).not_to have_been_made
       end
+
+      it "returns a rejected promise" do
+        promise = subject.notify(
+          Airbrake::Query.new(
+            method: 'POST',
+            route: '/foo',
+            query: 'SELECT * FROM things',
+            timing: 1,
+          ),
+        )
+        subject.close
+
+        expect(promise.value).to eq(
+          'error' => 'Airbrake::Query was ignored by a filter',
+        )
+      end
     end
 
     context "when a filter that modifies payload was defined" do
