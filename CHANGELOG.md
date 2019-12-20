@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * `PerformanceNotifier`: started rejecting resources with zero timing
   ([#528](https://github.com/airbrake/airbrake-ruby/pull/528))
+* `PerformanceNotifier` started returning a rejected promise if a filter ignores
+  a resource ([#529](https://github.com/airbrake/airbrake-ruby/pull/529))
 
 ### [v4.11.0][v4.11.0] (December 20, 2019)
 

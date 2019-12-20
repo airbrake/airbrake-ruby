@@ -124,7 +124,9 @@ module Airbrake
       return promise if promise.rejected?
 
       @filter_chain.refine(resource)
-      return if resource.ignored?
+      if resource.ignored?
+        return Promise.new.reject("#{resource.class} was ignored by a filter")
+      end
 
       @mutex.synchronize do
         update_payload(resource)
