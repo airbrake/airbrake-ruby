@@ -13,9 +13,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
   shared_examples "query blacklisting" do |query, opts|
     it "ignores '#{query}'" do
       filter = described_class.new('postgres')
-      q = Airbrake::Query.new(
-        query: query, method: 'GET', route: '/', start_time: Time.now,
-      )
+      q = Airbrake::Query.new(query: query, method: 'GET', route: '/', timing: 1)
       filter.call(q)
 
       expect(q.ignored?).to eq(opts[:should_ignore])

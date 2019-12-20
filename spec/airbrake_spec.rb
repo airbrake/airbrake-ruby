@@ -171,7 +171,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           status_code: 200,
-          start_time: Time.now,
+          timing: 1,
         )
       end
     end
@@ -187,7 +187,7 @@ RSpec.describe Airbrake do
             method: 'GET',
             route: '/',
             status_code: 200,
-            start_time: Time.now,
+            timing: 1,
           },
           request_id: 1,
         )
@@ -204,7 +204,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           status_code: 200,
-          start_time: Time.now,
+          timing: 1,
         },
         request_id: 1,
       )
@@ -222,7 +222,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           query: '',
-          start_time: Time.now,
+          timing: 1,
         )
       end
     end
@@ -238,7 +238,7 @@ RSpec.describe Airbrake do
             method: 'GET',
             route: '/',
             query: '',
-            start_time: Time.now,
+            timing: 1,
           },
           request_id: 1,
         )
@@ -255,7 +255,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           query: '',
-          start_time: Time.now,
+          timing: 1,
         },
         request_id: 1,
       )
@@ -273,7 +273,7 @@ RSpec.describe Airbrake do
           method: 'GET',
           route: '/',
           query: '',
-          start_time: Time.now,
+          timing: 1,
         )
       end
     end
@@ -292,7 +292,7 @@ RSpec.describe Airbrake do
             route: '/',
             response_type: :html,
             groups: {},
-            start_time: Time.now,
+            timing: 1,
           },
           request_id: 1,
         )
@@ -310,7 +310,7 @@ RSpec.describe Airbrake do
           route: '/',
           response_type: :html,
           groups: {},
-          start_time: Time.now,
+          timing: 1,
         },
         request_id: 1,
       )
