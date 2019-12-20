@@ -6,7 +6,8 @@ module Airbrake
   # @since v3.2.0
   # rubocop:disable Metrics/ParameterLists, Metrics/BlockLength
   Query = Struct.new(
-    :method, :route, :query, :func, :file, :line, :start_time, :end_time
+    :method, :route, :query, :func, :file, :line, :start_time, :end_time,
+    :timing, :time
   ) do
     include HashKeyable
     include Ignorable
@@ -21,11 +22,16 @@ module Airbrake
       func: nil,
       file: nil,
       line: nil,
-      start_time:,
-      end_time: start_time + 1
+      start_time: Time.now,
+      end_time: start_time + 1,
+      timing: nil,
+      time: Time.now
     )
-      @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
-      super(method, route, query, func, file, line, start_time, end_time)
+      @time_utc = TimeTruncate.utc_truncate_minutes(time)
+      super(
+        method, route, query, func, file, line, start_time, end_time, timing,
+        time
+      )
     end
 
     def destination
@@ -41,7 +47,7 @@ module Airbrake
         'method' => method,
         'route' => route,
         'query' => query,
-        'time' => @start_time_utc,
+        'time' => @time_utc,
         'function' => func,
         'file' => file,
         'line' => line,

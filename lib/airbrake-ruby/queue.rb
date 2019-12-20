@@ -4,8 +4,10 @@ module Airbrake
   # @see Airbrake.notify_queue
   # @api public
   # @since v4.9.0
-  # rubocop:disable Metrics/BlockLength
-  Queue = Struct.new(:queue, :error_count, :groups, :start_time, :end_time) do
+  # rubocop:disable Metrics/BlockLength, Metrics/ParameterLists
+  Queue = Struct.new(
+    :queue, :error_count, :groups, :start_time, :end_time, :timing, :time
+  ) do
     include HashKeyable
     include Ignorable
     include Stashable
@@ -15,10 +17,12 @@ module Airbrake
       error_count:,
       groups: {},
       start_time: Time.now,
-      end_time: start_time + 1
+      end_time: start_time + 1,
+      timing: nil,
+      time: Time.now
     )
-      @start_time_utc = TimeTruncate.utc_truncate_minutes(start_time)
-      super(queue, error_count, groups, start_time, end_time)
+      @time_utc = TimeTruncate.utc_truncate_minutes(time)
+      super(queue, error_count, groups, start_time, end_time, timing, time)
     end
 
     def destination
@@ -33,14 +37,14 @@ module Airbrake
       {
         'queue' => queue,
         'errorCount' => error_count,
-        'time' => @start_time_utc,
+        'time' => @time_utc,
       }
     end
 
     def hash
       {
         'queue' => queue,
-        'time' => @start_time_utc,
+        'time' => @time_utc,
       }.hash
     end
 
@@ -48,5 +52,5 @@ module Airbrake
       self.error_count += other.error_count
     end
   end
-  # rubocop:enable Metrics/BlockLength
+  # rubocop:enable Metrics/BlockLength, Metrics/ParameterLists
 end

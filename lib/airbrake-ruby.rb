@@ -328,9 +328,8 @@ module Airbrake
       notice_notifier.merge_context(context)
     end
 
-    # Increments request statistics of a certain +route+ that was invoked on
-    # +start_time+ and ended on +end_time+ with +method+, and returned
-    # +status_code+.
+    # Increments request statistics of a certain +route+ invoked with +method+,
+    # which returned +status_code+.
     #
     # After a certain amount of time (n seconds) the aggregated route
     # information will be sent to Airbrake.
@@ -343,8 +342,7 @@ module Airbrake
     #     func: 'do_stuff',
     #     file: 'app/models/foo.rb',
     #     line: 452,
-    #     start_time: timestamp,
-    #     end_time: Time.now
+    #     timing: 123.45 # ms
     #   )
     #
     # @param [Hash{Symbol=>Object}] request_info
@@ -358,8 +356,8 @@ module Airbrake
     #   called the query (optional)
     # @option request_info [Integer] :line The line that executes the query
     #   (optional)
-    # @option request_info [Date] :start_time When the request started
-    # @option request_info [Time] :end_time When the request ended (optional)
+    # @option request_info [Float] :timing  How much time it took to process the
+    #   request (in ms)
     # @param [Hash] stash What needs to be appeneded to the stash, so it's
     #   available in filters
     # @return [void]
@@ -371,9 +369,8 @@ module Airbrake
       performance_notifier.notify(request)
     end
 
-    # Synchronously Increments request statistics of a certain +route+ that was
-    # invoked on +start_time+ and ended on +end_time+ with +method+, and
-    # returned +status_code+.
+    # Synchronously increments request statistics of a certain +route+ invoked
+    # with +method+, which returned +status_code+.
     # @since v4.10.0
     # @see .notify_request
     def notify_request_sync(request_info, stash = {})
@@ -382,9 +379,8 @@ module Airbrake
       performance_notifier.notify_sync(request)
     end
 
-    # Increments SQL statistics of a certain +query+ that was invoked on
-    # +start_time+ and finished on +end_time+. When +method+ and +route+ are
-    # provided, the query is grouped by these parameters.
+    # Increments SQL statistics of a certain +query+. When +method+ and +route+
+    # are provided, the query is grouped by these parameters.
     #
     # After a certain amount of time (n seconds) the aggregated query
     # information will be sent to Airbrake.
@@ -394,18 +390,17 @@ module Airbrake
     #     method: 'GET',
     #     route: '/things',
     #     query: 'SELECT * FROM things',
-    #     start_time: timestamp,
-    #     end_time: Time.now
+    #     timing: 123.45 # ms
     #   )
     #
     # @param [Hash{Symbol=>Object}] query_info
-    # @option request_info [String] :method The HTTP method that triggered this
+    # @option query_info [String] :method The HTTP method that triggered this
     #   SQL query (optional)
-    # @option request_info [String] :route The route that triggered this SQL
+    # @option query_info [String] :route The route that triggered this SQL
     #    query (optional)
-    # @option request_info [String] :query The query that was executed
-    # @option request_info [Date] :start_time When the query started executing
-    # @option request_info [Time] :end_time When the query finished (optional)
+    # @option query_info [String] :query The query that was executed
+    # @option query_info [Float] :timing How much time it took to process the
+    #   query (in ms)
     # @param [Hash] stash What needs to be appeneded to the stash, so it's
     #   available in filters
     # @return [void]
@@ -417,9 +412,9 @@ module Airbrake
       performance_notifier.notify(query)
     end
 
-    # Synchronously increments SQL statistics of a certain +query+ that was
-    # invoked on +start_time+ and finished on +end_time+. When +method+ and
-    # +route+ are provided, the query is grouped by these parameters.
+    # Synchronously increments SQL statistics of a certain +query+. When
+    # +method+ and +route+ are provided, the query is grouped by these
+    # parameters.
     # @since v4.10.0
     # @see .notify_query
     def notify_query_sync(query_info, stash = {})
@@ -436,8 +431,7 @@ module Airbrake
     #     route: '/thing/:id/create',
     #     response_type: 'json',
     #     groups: { db: 24.0, view: 0.4 }, # ms
-    #     start_time: timestamp,
-    #     end_time: Time.now
+    #     timing: 123.45 # ms
     #   )
     #
     # @param [Hash{Symbol=>Object}] breakdown_info
@@ -445,7 +439,8 @@ module Airbrake
     # @option breakdown_info [String] :route
     # @option breakdown_info [String] :response_type
     # @option breakdown_info [Array<Hash{Symbol=>Float}>] :groups
-    # @option breakdown_info [Date] :start_time
+    # @option breakdown_info [Float] :timing How much time it took to process
+    #   the performance breakdown (in ms)
     # @param [Hash] stash What needs to be appeneded to the stash, so it's
     #   available in filters
     # @return [void]
@@ -481,6 +476,8 @@ module Airbrake
     #   failed
     # @option queue_info [Array<Hash{Symbol=>Float}>] :groups Where the job
     #   spent its time
+    # @option breakdown_info [Float] :timing How much time it took to process
+    #   the queue (in ms)
     # @param [Hash] stash What needs to be appended to the stash, so it's
     #   available in filters
     # @return [void]

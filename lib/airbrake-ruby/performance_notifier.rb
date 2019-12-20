@@ -62,11 +62,24 @@ module Airbrake
         @payload[resource] = { total: Airbrake::Stat.new }
       end
 
-      @payload[resource][:total].increment(resource.start_time, resource.end_time)
+      update_total(resource, @payload[resource][:total])
 
       resource.groups.each do |name, ms|
         @payload[resource][name] ||= Airbrake::Stat.new
         @payload[resource][name].increment_ms(ms)
+      end
+    end
+
+    def update_total(resource, total)
+      if resource.timing
+        total.increment_ms(resource.timing)
+      else
+        loc = caller_locations(6..6).first
+        Kernel.warn(
+          "#{loc.path}:#{loc.lineno}: warning: :start_time and :end_time are " \
+          "deprecated. Use :timing & :time instead",
+        )
+        total.increment(resource.start_time, resource.end_time)
       end
     end
 
