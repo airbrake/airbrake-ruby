@@ -548,6 +548,24 @@ RSpec.describe Airbrake::PerformanceNotifier do
         ).to have_been_made
       end
     end
+
+    context "when provided :timing is zero" do
+      it "doesn't notify" do
+        queue = Airbrake::Queue.new(queue: 'bananas', error_count: 0, timing: 0)
+        subject.notify(queue)
+        subject.close
+
+        expect(a_request(:put, queues)).not_to have_been_made
+      end
+
+      it "returns a rejected promise" do
+        queue = Airbrake::Queue.new(queue: 'bananas', error_count: 0, timing: 0)
+        promise = subject.notify(queue)
+        subject.close
+
+        expect(promise.value).to eq('error' => ':timing cannot be zero')
+      end
+    end
   end
 
   describe "#notify_sync" do
