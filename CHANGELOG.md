@@ -3,9 +3,41 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.11.0][v4.11.0] (December 20, 2019)
+
 * `NoticeNotifier` fixed confusing error message when trying to build a notice
   when Airbrake was closed
   ([#525](https://github.com/airbrake/airbrake-ruby/pull/525))
+* All "performance" methods such as `Airbrake.notify_request` have deprecated
+  `:start_time` and `:end_time` parameters. Instead, users should provide
+  `:timing` (mandatory) `:time` parameters (optional)
+  ([#526](https://github.com/airbrake/airbrake-ruby/pull/526)). Therefore:
+
+  Before:
+
+  ```rb
+  start_time = Time.now
+  calculate_operation
+
+  Airbrake.notify_request(
+    ...,
+    start_time: start_time,
+    end_time: Time.now,
+  )
+  ```
+
+  After:
+
+  ```rb
+  timing = Airbrake::Benchmark.measure do
+    calculate_operation
+  end
+
+  Airbrake.notify_request(
+    ...,
+    timing: timing,
+  )
+  ```
 
 ### [v4.10.1][v4.10.1] (December 12, 2019)
 
@@ -841,3 +873,4 @@ Airbrake Ruby Changelog
 [v4.9.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.9.0
 [v4.10.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.10.0
 [v4.10.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.10.1
+[v4.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.0
