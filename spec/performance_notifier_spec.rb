@@ -475,7 +475,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'GET',
             route: '/foo',
             status_code: 200,
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+            timing: 1,
           ),
         )
         subject.close
@@ -489,7 +489,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             method: 'POST',
             route: '/foo',
             query: 'SELECT * FROM things',
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
+            timing: 1,
           ),
         )
         subject.close
