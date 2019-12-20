@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.11.1][v4.11.1] (December 20, 2019)
+
 * `PerformanceNotifier`: started rejecting resources with zero timing
   ([#528](https://github.com/airbrake/airbrake-ruby/pull/528))
 * `PerformanceNotifier` started returning a rejected promise if a filter ignores
@@ -879,3 +881,4 @@ Airbrake Ruby Changelog
 [v4.10.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.10.0
 [v4.10.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.10.1
 [v4.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.0
+[v4.11.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.1
