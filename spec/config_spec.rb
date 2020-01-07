@@ -22,6 +22,7 @@ RSpec.describe Airbrake::Config do
   its(:performance_stats) { is_expected.to eq(true) }
   its(:performance_stats_flush_period) { is_expected.to eq(15) }
   its(:query_stats) { is_expected.to eq(true) }
+  its(:job_stats) { is_expected.to eq(true) }
 
   describe "#new" do
     context "when user config is passed" do
@@ -143,6 +144,21 @@ RSpec.describe Airbrake::Config do
         promise = subject.check_performance_options(resource)
         expect(promise.value).to eq(
           'error' => "The Query Stats feature is disabled",
+        )
+      end
+    end
+
+    context "when job stats are disabled" do
+      before { subject.job_stats = false }
+
+      let(:resource) do
+        Airbrake::Queue.new(queue: 'foo_queue', error_count: 0, timing: 1)
+      end
+
+      it "returns a rejected promise" do
+        promise = subject.check_performance_options(resource)
+        expect(promise.value).to eq(
+          'error' => "The Job Stats feature is disabled",
         )
       end
     end

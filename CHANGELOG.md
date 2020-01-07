@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added a new option called `job_stats`, which controls whether the library
+  should send jobs (aka tasks/workers/queues)
+  ([#534](https://github.com/airbrake/airbrake-ruby/pull/534))
+
 ### [v4.11.1][v4.11.1] (December 20, 2019)
 
 * `PerformanceNotifier`: started rejecting resources with zero timing

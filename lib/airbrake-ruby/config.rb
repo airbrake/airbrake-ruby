@@ -101,6 +101,12 @@ module Airbrake
     # @since v4.6.0
     attr_accessor :query_stats
 
+    # @return [Boolean] true if the library should send job/queue/worker stats
+    #   to Airbrake, false otherwise
+    # @api public
+    # @since v4.12.0
+    attr_accessor :job_stats
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -139,6 +145,7 @@ module Airbrake
       self.performance_stats = true
       self.performance_stats_flush_period = 15
       self.query_stats = true
+      self.job_stats = true
 
       merge(user_config)
     end
@@ -213,6 +220,8 @@ module Airbrake
         promise.reject("The Performance Stats feature is disabled")
       elsif resource.is_a?(Airbrake::Query) && !query_stats
         promise.reject("The Query Stats feature is disabled")
+      elsif resource.is_a?(Airbrake::Queue) && !job_stats
+        promise.reject("The Job Stats feature is disabled")
       else
         promise
       end
