@@ -16,6 +16,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       performance_stats: true,
       performance_stats_flush_period: 0,
       query_stats: true,
+      job_stats: true,
     )
   end
 

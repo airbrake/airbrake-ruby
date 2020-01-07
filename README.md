@@ -388,6 +388,24 @@ Airbrake.configure do |c|
 end
 ```
 
+#### job_stats
+
+Configures Airbrake Performance Monitoring job (aka queue/task/worker)
+statistics collection. It is displayed on the Performance tab of your
+project. If `performance_stats` is `false`, setting this to `true` won't have
+effect because `performance_stats` has higher precedence. By default, it's
+enabled.
+
+The statistics is sent via:
+
+* [`Airbrake.notify_queue`](#airbrakenotify_queue)
+
+```
+Airbrake.configure do |c|
+  c.job_stats = false
+end
+```
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do
@@ -895,7 +913,8 @@ Sends queue (worker) statistics to Airbrake. Supports groups (similar to
 Airbrake.notify_queue(
   queue: "emails",
   error_count: 1,
-  groups: { redis: 24.0, sql: 0.4 } # ms
+  groups: { redis: 24.0, sql: 0.4 }, # ms
+  timing: 0.05221 # ms
 )
 ```
 
