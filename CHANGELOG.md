@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.12.0][v4.12.0] (January 7, 2020)
+
 * Added a new option called `job_stats`, which controls whether the library
   should send jobs (aka tasks/workers/queues)
   ([#534](https://github.com/airbrake/airbrake-ruby/pull/534))
@@ -886,3 +888,4 @@ Airbrake Ruby Changelog
 [v4.10.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.10.1
 [v4.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.0
 [v4.11.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.1
+[v4.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.12.0

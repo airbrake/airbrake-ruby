@@ -47,7 +47,8 @@ Key features
 * Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
 * Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
 * Automatic and manual deploy tracking <sup>[[link](#airbrakenotify_deploy)]</sup>
-* Performance monitoring for web applications (route statistics, SQL queries) <sup>[[link](#performance_stats)]</sup>
+* Performance monitoring for web applications (route statistics, SQL queries,
+  Job execution statistics) <sup>[[link](#performance_stats)]</sup>
 * Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
 
 Installation
