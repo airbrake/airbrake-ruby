@@ -957,14 +957,14 @@ Always returns a Hash with response from the server.
 Adds a performance filter that filters performance data. Works exactly like
 [`Airbrake.add_filter`](#airbrakeadd_filter). The only difference is that
 instead of `Airbrake::Notice` it yields performance data (such as
-`Airbrake::Query` or `Airbrake::Request`). It's invoked after
+`Airbrake::Query`, `Airbrake::Request`, or `Airbrake::Queue`). It's invoked after
 [`notify_request`](#airbrakenotify_request) or
 [`notify_query`](#airbrakenotify_query) (but [`notify`](#airbrakenotify) calls
 don't trigger it!).
 
 ```ruby
 Airbrake.add_performance_filter do |resource|
-  resource.ignore! if resource.route =~ %r{/health_check}
+  resource.ignore! if !resource.respond_to?(:route) || resource.route =~ %r{/health_check}
 end
 ```
 
