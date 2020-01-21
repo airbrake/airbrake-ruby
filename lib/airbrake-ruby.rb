@@ -371,7 +371,7 @@ module Airbrake
     # @since v3.0.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_request(request_info, stash = {})
-      request = Request.new(request_info)
+      request = Request.new(**request_info)
       request.stash.merge!(stash)
       performance_notifier.notify(request)
     end
@@ -381,7 +381,7 @@ module Airbrake
     # @since v4.10.0
     # @see .notify_request
     def notify_request_sync(request_info, stash = {})
-      request = Request.new(request_info)
+      request = Request.new(**request_info)
       request.stash.merge!(stash)
       performance_notifier.notify_sync(request)
     end
@@ -414,7 +414,7 @@ module Airbrake
     # @since v3.2.0
     # @see Airbrake::PerformanceNotifier#notify
     def notify_query(query_info, stash = {})
-      query = Query.new(query_info)
+      query = Query.new(**query_info)
       query.stash.merge!(stash)
       performance_notifier.notify(query)
     end
@@ -425,7 +425,7 @@ module Airbrake
     # @since v4.10.0
     # @see .notify_query
     def notify_query_sync(query_info, stash = {})
-      query = Query.new(query_info)
+      query = Query.new(**query_info)
       query.stash.merge!(stash)
       performance_notifier.notify_sync(query)
     end
@@ -453,7 +453,7 @@ module Airbrake
     # @return [void]
     # @since v4.2.0
     def notify_performance_breakdown(breakdown_info, stash = {})
-      performance_breakdown = PerformanceBreakdown.new(breakdown_info)
+      performance_breakdown = PerformanceBreakdown.new(**breakdown_info)
       performance_breakdown.stash.merge!(stash)
       performance_notifier.notify(performance_breakdown)
     end
@@ -463,7 +463,7 @@ module Airbrake
     # @since v4.10.0
     # @see .notify_performance_breakdown
     def notify_performance_breakdown_sync(breakdown_info, stash = {})
-      performance_breakdown = PerformanceBreakdown.new(breakdown_info)
+      performance_breakdown = PerformanceBreakdown.new(**breakdown_info)
       performance_breakdown.stash.merge!(stash)
       performance_notifier.notify_sync(performance_breakdown)
     end
@@ -491,7 +491,7 @@ module Airbrake
     # @since v4.9.0
     # @see .notify_queue_sync
     def notify_queue(queue_info, stash = {})
-      queue = Queue.new(queue_info)
+      queue = Queue.new(**queue_info)
       queue.stash.merge!(stash)
       performance_notifier.notify(queue)
     end
@@ -500,7 +500,7 @@ module Airbrake
     # @since v4.10.0
     # @see .notify_queue
     def notify_queue_sync(queue_info, stash = {})
-      queue = Queue.new(queue_info)
+      queue = Queue.new(**queue_info)
       queue.stash.merge!(stash)
       performance_notifier.notify_sync(queue)
     end

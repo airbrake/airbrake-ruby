@@ -108,8 +108,8 @@ module Airbrake
       return str if utf8_string && str.valid_encoding?
 
       temp_str = str.dup
-      temp_str.encode!(TEMP_ENCODING, ENCODING_OPTIONS) if utf8_string
-      temp_str.encode!('utf-8', ENCODING_OPTIONS)
+      temp_str.encode!(TEMP_ENCODING, **ENCODING_OPTIONS) if utf8_string
+      temp_str.encode!('utf-8', **ENCODING_OPTIONS)
     end
   end
 end
