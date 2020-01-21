@@ -18,4 +18,13 @@ RSpec.describe Airbrake::Queue do
       expect(queue.end_time).to eq(time + 1)
     end
   end
+
+  describe "#route" do
+    it "always returns an empty route" do
+      queue = described_class.new(
+        queue: 'a', error_count: 0, start_time: Time.now,
+      )
+      expect(queue.route).to be_empty
+    end
+  end
 end

@@ -51,6 +51,15 @@ module Airbrake
     def merge(other)
       self.error_count += other.error_count
     end
+
+    # Queues don't have routes, but we want to define this to make sure our
+    # filter API is consistent (other models define this property)
+    #
+    # @return [String] empty route
+    # @see https://github.com/airbrake/airbrake-ruby/pull/537
+    def route
+      ''
+    end
   end
   # rubocop:enable Metrics/BlockLength, Metrics/ParameterLists
 end
