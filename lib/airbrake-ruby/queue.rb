@@ -4,13 +4,14 @@ module Airbrake
   # @see Airbrake.notify_queue
   # @api public
   # @since v4.9.0
-  # rubocop:disable Metrics/BlockLength, Metrics/ParameterLists
-  Queue = Struct.new(
-    :queue, :error_count, :groups, :start_time, :end_time, :timing, :time
-  ) do
+  # rubocop:disable Metrics/ParameterLists
+  class Queue
     include HashKeyable
     include Ignorable
     include Stashable
+
+    attr_accessor :queue, :error_count, :groups, :start_time, :end_time,
+                  :timing, :time
 
     def initialize(
       queue:,
@@ -22,7 +23,13 @@ module Airbrake
       time: Time.now
     )
       @time_utc = TimeTruncate.utc_truncate_minutes(time)
-      super(queue, error_count, groups, start_time, end_time, timing, time)
+      @queue = queue
+      @error_count = error_count
+      @groups = groups
+      @start_time = start_time
+      @end_time = end_time
+      @timing = timing
+      @time = time
     end
 
     def destination
@@ -61,5 +68,5 @@ module Airbrake
       ''
     end
   end
-  # rubocop:enable Metrics/BlockLength, Metrics/ParameterLists
+  # rubocop:enable Metrics/ParameterLists
 end

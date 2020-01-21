@@ -5,15 +5,15 @@ module Airbrake
   # @see Airbrake.notify_breakdown
   # @api public
   # @since v4.2.0
-  # rubocop:disable Metrics/BlockLength, Metrics/ParameterLists
-  PerformanceBreakdown = Struct.new(
-    :method, :route, :response_type, :groups, :start_time, :end_time, :timing,
-    :time
-  ) do
+  # rubocop:disable Metrics/ParameterLists
+  class PerformanceBreakdown
     include HashKeyable
     include Ignorable
     include Stashable
     include Mergeable
+
+    attr_accessor :method, :route, :response_type, :groups, :start_time,
+                  :end_time, :timing, :time
 
     def initialize(
       method:,
@@ -26,9 +26,14 @@ module Airbrake
       time: Time.now
     )
       @time_utc = TimeTruncate.utc_truncate_minutes(time)
-      super(
-        method, route, response_type, groups, start_time, end_time, timing, time
-      )
+      @method = method
+      @route = route
+      @response_type = response_type
+      @groups = groups
+      @start_time = start_time
+      @end_time = end_time
+      @timing = timing
+      @time = time
     end
 
     def destination
@@ -48,5 +53,5 @@ module Airbrake
       }.delete_if { |_key, val| val.nil? }
     end
   end
-  # rubocop:enable Metrics/BlockLength, Metrics/ParameterLists
+  # rubocop:enable Metrics/ParameterLists
 end
