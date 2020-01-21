@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added `Airbrake::Queue#route` for filter API compatibility. It always returns
+  an empty string ([#539](https://github.com/airbrake/airbrake-ruby/pull/539))
+
 ### [v4.12.0][v4.12.0] (January 7, 2020)
 
 * Added a new option called `job_stats`, which controls whether the library
