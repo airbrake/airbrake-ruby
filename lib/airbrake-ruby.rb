@@ -84,6 +84,13 @@ module Airbrake
   #  special cases where we need to work around older implementations
   JRUBY = (RUBY_ENGINE == 'jruby')
 
+  # @return [Boolean] true if this Ruby supports safe levels and tainting,
+  #  to guard against using deprecated or unsupported features.
+  HAS_SAFE_LEVEL = (
+    RUBY_ENGINE == 'ruby' &&
+    Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.7')
+  )
+
   class << self
     # @since v4.2.3
     # @api private
