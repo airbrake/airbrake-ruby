@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Added `Airbrake::Queue#route` for filter API compatibility. It always returns
   an empty string ([#539](https://github.com/airbrake/airbrake-ruby/pull/539))
+* Bumped `rbtree3` dependency to v0.6.0
+  ([#541](https://github.com/airbrake/airbrake-ruby/pull/541))
 
 ### [v4.12.0][v4.12.0] (January 7, 2020)
 
