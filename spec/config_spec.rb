@@ -163,4 +163,43 @@ RSpec.describe Airbrake::Config do
       end
     end
   end
+
+  describe "#default_wrapping_style" do
+    let(:message) { "default_wrapping_style must be :chain or :prepend" }
+    it "is :chain by default" do
+      expect(subject.default_wrapping_style).to eq :chain
+    end
+
+    %i[chain prepend].each do |value|
+      it "allows :#{value}" do
+        subject.default_wrapping_style = value
+        expect(subject.default_wrapping_style).to eq value
+      end
+
+      it "allows '#{value}'" do
+        subject.default_wrapping_style = value.to_s
+        expect(subject.default_wrapping_style).to eq value
+      end
+    end
+
+    it "doesn't allow other symbols" do
+      expect { subject.default_wrapping_style = :foo }
+        .to raise_error(ArgumentError, message)
+    end
+
+    it "doesn't allow other strings" do
+      expect { subject.default_wrapping_style = 'bar' }
+        .to raise_error(ArgumentError, message)
+    end
+
+    it "doesn't allow other values" do
+      expect { subject.default_wrapping_style = 1 }
+        .to raise_error(ArgumentError, message)
+    end
+
+    it "doesn't allow nil" do
+      expect { subject.default_wrapping_style = nil }
+        .to raise_error(ArgumentError, message)
+    end
+  end
 end

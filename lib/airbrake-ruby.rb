@@ -91,6 +91,12 @@ module Airbrake
     Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.7')
   )
 
+  # @return [Boolean] true if this Ruby supports ... argument forwarding.
+  HAS_ARGUMENT_FORWARDING = (
+    RUBY_ENGINE == 'ruby' &&
+    Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.7')
+  )
+
   class << self
     # @since v4.2.3
     # @api private

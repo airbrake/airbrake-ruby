@@ -107,6 +107,11 @@ module Airbrake
     # @since v4.12.0
     attr_accessor :job_stats
 
+    # @return [Symbol] technique used by default to wrap methods:
+    #   :chain for alias_method_chain style or :prepend for Module#prepend.
+    # @api public
+    attr_reader :default_wrapping_style
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -119,6 +124,7 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
+    # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
       self.proxy = {}
       self.queue_size = 100
@@ -147,8 +153,11 @@ module Airbrake
       self.query_stats = true
       self.job_stats = true
 
+      self.default_wrapping_style = :chain
+
       merge(user_config)
     end
+    # rubocop:enable Metrics/AbcSize
 
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address
@@ -165,6 +174,15 @@ module Airbrake
     # @return [Logger] the logger
     def logger=(logger)
       @logger = logger || @logger
+    end
+
+    # Sets the default method wrapping style. Must be :chain or :prepend.
+    def default_wrapping_style=(style)
+      style = style.to_sym if style.respond_to?('to_sym')
+      unless %i[chain prepend].include?(style)
+        raise ArgumentError, "default_wrapping_style must be :chain or :prepend"
+      end
+      @default_wrapping_style = style
     end
 
     # Merges the given +config_hash+ with itself.
