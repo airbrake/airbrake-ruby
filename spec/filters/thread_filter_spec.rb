@@ -258,7 +258,9 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     expect(notice[:params][:thread][:priority]).to eq(0)
   end
 
-  it "appends safe_level", skip: Airbrake::JRUBY do
+  it "appends safe_level", skip: (
+    "Not supported on this version of Ruby." unless Airbrake::HAS_SAFE_LEVEL
+  ) do
     subject.call(notice)
     expect(notice[:params][:thread][:safe_level]).to eq(0)
   end

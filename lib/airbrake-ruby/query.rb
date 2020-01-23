@@ -4,16 +4,16 @@ module Airbrake
   # @see Airbrake.notify_query
   # @api public
   # @since v3.2.0
-  # rubocop:disable Metrics/ParameterLists, Metrics/BlockLength
-  Query = Struct.new(
-    :method, :route, :query, :func, :file, :line, :start_time, :end_time,
-    :timing, :time
-  ) do
+  # rubocop:disable Metrics/ParameterLists
+  class Query
     include HashKeyable
     include Ignorable
     include Stashable
     include Mergeable
     include Grouppable
+
+    attr_accessor :method, :route, :query, :func, :file, :line, :start_time,
+                  :end_time, :timing, :time
 
     def initialize(
       method:,
@@ -28,10 +28,16 @@ module Airbrake
       time: Time.now
     )
       @time_utc = TimeTruncate.utc_truncate_minutes(time)
-      super(
-        method, route, query, func, file, line, start_time, end_time, timing,
-        time
-      )
+      @method = method
+      @route = route
+      @query = query
+      @func = func
+      @file = file
+      @line = line
+      @start_time = start_time
+      @end_time = end_time
+      @timing = timing
+      @time = time
     end
 
     def destination
@@ -53,6 +59,6 @@ module Airbrake
         'line' => line,
       }.delete_if { |_key, val| val.nil? }
     end
-    # rubocop:enable Metrics/ParameterLists, Metrics/BlockLength
+    # rubocop:enable Metrics/ParameterLists
   end
 end

@@ -1,6 +1,5 @@
 require 'base64'
 
-# rubocop:disable Metrics/BlockLength
 module Airbrake
   # Stat is a data structure that allows accumulating performance data (route
   # performance, SQL query performance and such). It's powered by TDigests.
@@ -14,14 +13,19 @@ module Airbrake
   #   stat.to_h # Pack and serialize data so it can be transmitted.
   #
   # @since v3.2.0
-  Stat = Struct.new(:count, :sum, :sumsq, :tdigest) do
+  class Stat
+    attr_accessor :count, :sum, :sumsq, :tdigest
+
     # @param [Integer] count How many times this stat was incremented
     # @param [Float] sum The sum of duration in milliseconds
     # @param [Float] sumsq The squared sum of duration in milliseconds
     # @param [TDigest::TDigest] tdigest Packed durations. By default,
     #   compression is 20
     def initialize(count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest.new(0.05))
-      super(count, sum, sumsq, tdigest)
+      @count = count
+      @sum = sum
+      @sumsq = sumsq
+      @tdigest = tdigest
     end
 
     # @return [Hash{String=>Object}] stats as a hash with compressed TDigest
@@ -67,7 +71,6 @@ module Airbrake
     def inspect
       "#<struct Airbrake::Stat count=#{count}, sum=#{sum}, sumsq=#{sumsq}>"
     end
-    alias_method :pretty_print, :inspect
+    alias pretty_print inspect
   end
 end
-# rubocop:enable Metrics/BlockLength

@@ -72,7 +72,7 @@ module Airbrake
         thread_info[:group] = th.group.list.map(&:inspect)
         thread_info[:priority] = th.priority
 
-        thread_info[:safe_level] = th.safe_level unless Airbrake::JRUBY
+        thread_info[:safe_level] = th.safe_level if Airbrake::HAS_SAFE_LEVEL
       end
 
       def sanitize_value(value)
