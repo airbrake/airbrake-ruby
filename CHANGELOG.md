@@ -3,10 +3,14 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.13.0][v4.13.0] (January 27, 2020)
+
 * Added `Airbrake::Queue#route` for filter API compatibility. It always returns
   an empty string ([#539](https://github.com/airbrake/airbrake-ruby/pull/539))
 * Bumped `rbtree3` dependency to v0.6.0
   ([#541](https://github.com/airbrake/airbrake-ruby/pull/541))
+* Fixed all Ruby 2.7 warnings
+  ([#540](https://github.com/airbrake/airbrake-ruby/pull/540))
 
 ### [v4.12.0][v4.12.0] (January 7, 2020)
 
@@ -894,3 +898,4 @@ Airbrake Ruby Changelog
 [v4.11.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.0
 [v4.11.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.1
 [v4.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.12.0
+[v4.13.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.0
