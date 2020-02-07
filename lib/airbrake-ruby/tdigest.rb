@@ -138,21 +138,17 @@ module Airbrake
     end
 
     def find_nearest(x)
-      return nil if size == 0
+      return if size == 0
 
-      ceil  = @centroids.upper_bound(x)
-      floor = @centroids.lower_bound(x)
+      upper_key, upper = @centroids.upper_bound(x)
+      lower_key, lower = @centroids.lower_bound(x)
+      return lower unless upper_key
+      return upper unless lower_key
 
-      return floor[1] if ceil.nil?
-      return ceil[1]  if floor.nil?
-
-      ceil_key  = ceil[0]
-      floor_key = floor[0]
-
-      if (floor_key - x).abs < (ceil_key - x).abs
-        floor[1]
+      if (lower_key - x).abs < (upper_key - x).abs
+        lower
       else
-        ceil[1]
+        upper
       end
     end
 
