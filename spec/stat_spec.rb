@@ -22,7 +22,6 @@ RSpec.describe Airbrake::Stat do
   describe "#increment_ms" do
     before { subject.increment_ms(1000) }
 
-    its(:count) { is_expected.to eq(1) }
     its(:sum) { is_expected.to eq(1000) }
     its(:sumsq) { is_expected.to eq(1000000) }
 
