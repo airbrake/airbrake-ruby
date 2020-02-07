@@ -59,8 +59,8 @@ module Airbrake
       # compression as defined by Java implementation
       size = @centroids.size
       output = [VERBOSE_ENCODING, compression, size]
-      output += @centroids.map { |_, c| c.mean }
-      output += @centroids.map { |_, c| c.n }
+      output += @centroids.each_value.map(&:mean)
+      output += @centroids.each_value.map(&:n)
       output.pack("NGNG#{size}N#{size}")
     end
 
@@ -70,14 +70,14 @@ module Airbrake
       output = [self.class::SMALL_ENCODING, compression, size]
       x = 0
       # delta encoding allows saving 4-bytes floats
-      mean_arr = @centroids.map do |_, c|
+      mean_arr = @centroids.each_value.map do |c|
         val = c.mean - x
         x = c.mean
         val
       end
       output += mean_arr
       # Variable length encoding of numbers
-      c_arr = @centroids.each_with_object([]) do |(_, c), arr|
+      c_arr = @centroids.each_value.each_with_object([]) do |c, arr|
         k = 0
         n = c.n
         while n < 0 || n > 0x7f
@@ -95,7 +95,7 @@ module Airbrake
     # rubocop:enable Metrics/AbcSize
 
     def as_json(_ = nil)
-      @centroids.map { |_, c| c.as_json }
+      @centroids.each_value.map(&:as_json)
     end
 
     def bound_mean(x)
@@ -331,7 +331,7 @@ module Airbrake
       end
 
       cumn = 0
-      @centroids.each do |_, c|
+      @centroids.each_value do |c|
         c.mean_cumn = cumn + c.n / 2.0
         cumn = c.cumn = cumn + c.n
       end
