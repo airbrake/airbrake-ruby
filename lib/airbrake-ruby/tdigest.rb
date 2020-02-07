@@ -307,16 +307,16 @@ module Airbrake
 
     private
 
-    def _add_weight(nearest, x, n)
-      nearest.mean += n * (x - nearest.mean) / (nearest.n + n) unless x == nearest.mean
+    def _add_weight(centroid, x, n)
+      unless x == centroid.mean
+        centroid.mean += n * (x - centroid.mean) / (centroid.n + n)
+      end
 
-      _cumulate(false, true) if nearest.mean_cumn.nil?
+      _cumulate(false, true) if centroid.mean_cumn.nil?
 
-      nearest.cumn += n
-      nearest.mean_cumn += n / 2.0
-      nearest.n += n
-
-      nil
+      centroid.cumn += n
+      centroid.mean_cumn += n / 2.0
+      centroid.n += n
     end
 
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
