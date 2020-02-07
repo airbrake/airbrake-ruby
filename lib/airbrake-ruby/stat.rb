@@ -14,15 +14,13 @@ module Airbrake
   #
   # @since v3.2.0
   class Stat
-    attr_accessor :count, :sum, :sumsq, :tdigest
+    attr_accessor :sum, :sumsq, :tdigest
 
-    # @param [Integer] count How many times this stat was incremented
     # @param [Float] sum The sum of duration in milliseconds
     # @param [Float] sumsq The squared sum of duration in milliseconds
     # @param [TDigest::TDigest] tdigest Packed durations. By default,
     #   compression is 20
-    def initialize(count: 0, sum: 0.0, sumsq: 0.0, tdigest: TDigest.new(0.05))
-      @count = count
+    def initialize(sum: 0.0, sumsq: 0.0, tdigest: TDigest.new(0.05))
       @sum = sum
       @sumsq = sumsq
       @tdigest = tdigest
@@ -33,15 +31,15 @@ module Airbrake
     def to_h
       tdigest.compress!
       {
-        'count' => count,
+        'count' => tdigest.size,
         'sum' => sum,
         'sumsq' => sumsq,
         'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes),
       }
     end
 
-    # Increments count and updates performance with the difference of +end_time+
-    # and +start_time+.
+    # Increments tdigest timings and updates tdigest with the difference between
+    # +end_time+ and +start_time+.
     #
     # @param [Date] start_time
     # @param [Date] end_time
@@ -51,13 +49,11 @@ module Airbrake
       increment_ms((end_time - start_time) * 1000)
     end
 
-    # Increments count and updates performance with given +ms+ value.
+    # Increments tdigest timings and updates tdigest with given +ms+ value.
     #
     # @param [Float] ms
     # @return [void]
     def increment_ms(ms)
-      self.count += 1
-
       self.sum += ms
       self.sumsq += ms * ms
 
@@ -69,7 +65,7 @@ module Airbrake
     #
     # @return [String]
     def inspect
-      "#<struct Airbrake::Stat count=#{count}, sum=#{sum}, sumsq=#{sumsq}>"
+      "#<struct Airbrake::Stat count=#{tdigest.size}, sum=#{sum}, sumsq=#{sumsq}>"
     end
     alias pretty_print inspect
   end

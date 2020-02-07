@@ -3,6 +3,14 @@ Airbrake Ruby Changelog
 
 ### master
 
+* `PerformanceNotifier`: fixed bug when the backend would reject valid payload
+  due to TDigest count mismatch
+  ([#549](https://github.com/airbrake/airbrake-ruby/pull/549)). For example:
+
+  ```
+  ERROR -- : **Airbrake: tdigest.count=94, but count=100
+  ```
+
 ### [v4.13.0][v4.13.0] (January 27, 2020)
 
 * Added `Airbrake::Queue#route` for filter API compatibility. It always returns
