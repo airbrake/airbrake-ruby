@@ -247,7 +247,7 @@ module Airbrake
     end
 
     def to_a
-      @centroids.map { |_, c| c }
+      @centroids.each_value.to_a
     end
 
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
