@@ -357,16 +357,16 @@ module Airbrake
       if nearest && nearest.mean == x
         _add_weight(nearest, x, n)
       elsif nearest == min
-        _new_centroid(x, n, 0)
+        @centroids[x] = Centroid.new(x, n, 0)
       elsif nearest == max
-        _new_centroid(x, n, @n)
+        @centroids[x] = Centroid.new(x, n, @n)
       else
         p = nearest.mean_cumn.to_f / @n
         max_n = (4 * @n * @delta * p * (1 - p)).floor
         if max_n - nearest.n >= n
           _add_weight(nearest, x, n)
         else
-          _new_centroid(x, n, nearest.cumn)
+          @centroids[x] = Centroid.new(x, n, nearest.cumn)
         end
       end
 
@@ -382,12 +382,6 @@ module Airbrake
     end
     # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity,
     # rubocop:enable Metrics/AbcSize
-
-    def _new_centroid(x, n, cumn)
-      c = Centroid.new(x, n, cumn)
-      @centroids[x] = c
-      c
-    end
   end
   # rubocop:enable Metrics/ClassLength
 end
