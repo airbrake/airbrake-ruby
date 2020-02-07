@@ -59,8 +59,8 @@ module Airbrake
       # compression as defined by Java implementation
       size = @centroids.size
       output = [VERBOSE_ENCODING, compression, size]
-      output += @centroids.map { |_, c| c.mean }
-      output += @centroids.map { |_, c| c.n }
+      output += @centroids.each_value.map(&:mean)
+      output += @centroids.each_value.map(&:n)
       output.pack("NGNG#{size}N#{size}")
     end
 
@@ -70,14 +70,14 @@ module Airbrake
       output = [self.class::SMALL_ENCODING, compression, size]
       x = 0
       # delta encoding allows saving 4-bytes floats
-      mean_arr = @centroids.map do |_, c|
+      mean_arr = @centroids.each_value.map do |c|
         val = c.mean - x
         x = c.mean
         val
       end
       output += mean_arr
       # Variable length encoding of numbers
-      c_arr = @centroids.each_with_object([]) do |(_, c), arr|
+      c_arr = @centroids.each_value.each_with_object([]) do |c, arr|
         k = 0
         n = c.n
         while n < 0 || n > 0x7f
@@ -95,7 +95,7 @@ module Airbrake
     # rubocop:enable Metrics/AbcSize
 
     def as_json(_ = nil)
-      @centroids.map { |_, c| c.as_json }
+      @centroids.each_value.map(&:as_json)
     end
 
     def bound_mean(x)
@@ -138,21 +138,17 @@ module Airbrake
     end
 
     def find_nearest(x)
-      return nil if size == 0
+      return if size == 0
 
-      ceil  = @centroids.upper_bound(x)
-      floor = @centroids.lower_bound(x)
+      upper_key, upper = @centroids.upper_bound(x)
+      lower_key, lower = @centroids.lower_bound(x)
+      return lower unless upper_key
+      return upper unless lower_key
 
-      return floor[1] if ceil.nil?
-      return ceil[1]  if floor.nil?
-
-      ceil_key  = ceil[0]
-      floor_key = floor[0]
-
-      if (floor_key - x).abs < (ceil_key - x).abs
-        floor[1]
+      if (lower_key - x).abs < (upper_key - x).abs
+        lower
       else
-        ceil[1]
+        upper
       end
     end
 
@@ -247,7 +243,7 @@ module Airbrake
     end
 
     def to_a
-      @centroids.map { |_, c| c }
+      @centroids.each_value.to_a
     end
 
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
@@ -307,16 +303,16 @@ module Airbrake
 
     private
 
-    def _add_weight(nearest, x, n)
-      nearest.mean += n * (x - nearest.mean) / (nearest.n + n) unless x == nearest.mean
+    def _add_weight(centroid, x, n)
+      unless x == centroid.mean
+        centroid.mean += n * (x - centroid.mean) / (centroid.n + n)
+      end
 
-      _cumulate(false, true) if nearest.mean_cumn.nil?
+      _cumulate(false, true) if centroid.mean_cumn.nil?
 
-      nearest.cumn += n
-      nearest.mean_cumn += n / 2.0
-      nearest.n += n
-
-      nil
+      centroid.cumn += n
+      centroid.mean_cumn += n / 2.0
+      centroid.n += n
     end
 
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
@@ -331,7 +327,7 @@ module Airbrake
       end
 
       cumn = 0
-      @centroids.each do |_, c|
+      @centroids.each_value do |c|
         c.mean_cumn = cumn + c.n / 2.0
         cumn = c.cumn = cumn + c.n
       end
@@ -345,11 +341,8 @@ module Airbrake
     def _digest(x, n)
       # Use 'first' and 'last' instead of min/max because of performance reasons
       # This works because RBTree is sorted
-      min = @centroids.first
-      max = @centroids.last
-
-      min = min.nil? ? nil : min[1]
-      max = max.nil? ? nil : max[1]
+      min = min.last if (min = @centroids.first)
+      max = max.last if (max = @centroids.last)
       nearest = find_nearest(x)
 
       @n += n
@@ -357,16 +350,16 @@ module Airbrake
       if nearest && nearest.mean == x
         _add_weight(nearest, x, n)
       elsif nearest == min
-        _new_centroid(x, n, 0)
+        @centroids[x] = Centroid.new(x, n, 0)
       elsif nearest == max
-        _new_centroid(x, n, @n)
+        @centroids[x] = Centroid.new(x, n, @n)
       else
         p = nearest.mean_cumn.to_f / @n
         max_n = (4 * @n * @delta * p * (1 - p)).floor
         if max_n - nearest.n >= n
           _add_weight(nearest, x, n)
         else
-          _new_centroid(x, n, nearest.cumn)
+          @centroids[x] = Centroid.new(x, n, nearest.cumn)
         end
       end
 
@@ -382,12 +375,6 @@ module Airbrake
     end
     # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity,
     # rubocop:enable Metrics/AbcSize
-
-    def _new_centroid(x, n, cumn)
-      c = Centroid.new(x, n, cumn)
-      @centroids[x] = c
-      c
-    end
   end
   # rubocop:enable Metrics/ClassLength
 end
