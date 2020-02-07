@@ -345,11 +345,8 @@ module Airbrake
     def _digest(x, n)
       # Use 'first' and 'last' instead of min/max because of performance reasons
       # This works because RBTree is sorted
-      min = @centroids.first
-      max = @centroids.last
-
-      min = min.nil? ? nil : min[1]
-      max = max.nil? ? nil : max[1]
+      min = min.last if (min = @centroids.first)
+      max = max.last if (max = @centroids.last)
       nearest = find_nearest(x)
 
       @n += n
