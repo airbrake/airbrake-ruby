@@ -42,9 +42,8 @@ module Airbrake
       @k = k
       @cx = cx
       @centroids = RBTree.new
-      @nreset = 0
       @n = 0
-      reset!
+      @last_cumulate = 0
     end
 
     def +(other)
@@ -234,7 +233,6 @@ module Airbrake
     def reset!
       @centroids.clear
       @n = 0
-      @nreset += 1
       @last_cumulate = 0
     end
 
