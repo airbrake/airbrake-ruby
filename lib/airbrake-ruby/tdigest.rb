@@ -37,14 +37,15 @@ module Airbrake
     end
 
     attr_accessor :centroids
+    attr_reader :size
+
     def initialize(delta = 0.01, k = 25, cx = 1.1)
       @delta = delta
       @k = k
       @cx = cx
       @centroids = RBTree.new
-      @nreset = 0
-      @n = 0
-      reset!
+      @size = 0
+      @last_cumulate = 0
     end
 
     def +(other)
@@ -182,7 +183,7 @@ module Airbrake
             mean_cumn += (item - lower.mean) * (upper.mean_cumn - lower.mean_cumn) \
               / (upper.mean - lower.mean)
           end
-          mean_cumn / @n
+          mean_cumn / @size
         end
       end
       is_array ? x : x.first
@@ -203,7 +204,7 @@ module Airbrake
           nil
         else
           _cumulate(true)
-          h = @n * item
+          h = @size * item
           lower, upper = bound_mean_cumn(h)
           if lower.nil? && upper.nil?
             nil
@@ -233,13 +234,8 @@ module Airbrake
 
     def reset!
       @centroids.clear
-      @n = 0
-      @nreset += 1
+      @size = 0
       @last_cumulate = 0
-    end
-
-    def size
-      @n || 0
     end
 
     def to_a
@@ -321,9 +317,9 @@ module Airbrake
         factor = if @last_cumulate == 0
                    Float::INFINITY
                  else
-                   (@n.to_f / @last_cumulate)
+                   (@size.to_f / @last_cumulate)
                  end
-        return if @n == @last_cumulate || (!exact && @cx && @cx > factor)
+        return if @size == @last_cumulate || (!exact && @cx && @cx > factor)
       end
 
       cumn = 0
@@ -331,7 +327,7 @@ module Airbrake
         c.mean_cumn = cumn + c.n / 2.0
         cumn = c.cumn = cumn + c.n
       end
-      @n = @last_cumulate = cumn
+      @size = @last_cumulate = cumn
       nil
     end
     # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
@@ -345,17 +341,17 @@ module Airbrake
       max = max.last if (max = @centroids.last)
       nearest = find_nearest(x)
 
-      @n += n
+      @size += n
 
       if nearest && nearest.mean == x
         _add_weight(nearest, x, n)
       elsif nearest == min
         @centroids[x] = Centroid.new(x, n, 0)
       elsif nearest == max
-        @centroids[x] = Centroid.new(x, n, @n)
+        @centroids[x] = Centroid.new(x, n, @size)
       else
-        p = nearest.mean_cumn.to_f / @n
-        max_n = (4 * @n * @delta * p * (1 - p)).floor
+        p = nearest.mean_cumn.to_f / @size
+        max_n = (4 * @size * @delta * p * (1 - p)).floor
         if max_n - nearest.n >= n
           _add_weight(nearest, x, n)
         else
