@@ -119,12 +119,13 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
+    # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
       self.code_hunks = true
-      self.logger = ::Logger.new(File::NULL)
+      self.logger = ::Logger.new(File::NULL).tap { |l| l.level = Logger::WARN }
       self.project_id = user_config[:project_id]
       self.project_key = user_config[:project_key]
       self.host = 'https://api.airbrake.io'
@@ -149,6 +150,7 @@ module Airbrake
 
       merge(user_config)
     end
+    # rubocop:enable Metrics/AbcSize
 
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address

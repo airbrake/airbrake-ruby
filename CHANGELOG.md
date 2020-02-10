@@ -10,6 +10,9 @@ Airbrake Ruby Changelog
   ```
   ERROR -- : **Airbrake: tdigest.count=94, but count=100
   ```
+* Fixed `Airbrake::Loggable` and `Airbrake::Config.instance.logger` not being
+  set to `Logger::WARN` by default (as promised by the README)
+  ([#551](https://github.com/airbrake/airbrake-ruby/pull/551))
 
 ### [v4.13.0][v4.13.0] (January 27, 2020)
 
