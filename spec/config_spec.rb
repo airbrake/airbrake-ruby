@@ -163,4 +163,10 @@ RSpec.describe Airbrake::Config do
       end
     end
   end
+
+  describe "#logger" do
+    it "sets logger level to Logger::WARN" do
+      expect(subject.logger.level).to eq(Logger::WARN)
+    end
+  end
 end

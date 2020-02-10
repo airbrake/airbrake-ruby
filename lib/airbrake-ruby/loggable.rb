@@ -22,7 +22,7 @@ module Airbrake
 
       # @return [Logger]
       def instance
-        @instance ||= ::Logger.new(File::NULL)
+        @instance ||= ::Logger.new(File::NULL).tap { |l| l.level = ::Logger::WARN }
       end
     end
 
