@@ -153,15 +153,17 @@ module Airbrake
     end
 
     def send(sender, payload, promise)
-      signature = "#{self.class.name}##{__method__}"
-      raise "#{signature}: payload (#{payload}) cannot be empty. Race?" if payload.none?
+      raise "payload cannot be empty. Race?" if payload.none?
 
       with_grouped_payload(payload) do |resource_hash, destination|
         url = URI.join(
           @config.host,
           "api/v5/projects/#{@config.project_id}/#{destination}",
         )
-        logger.debug { "#{LOG_LABEL} #{signature}: #{resource_hash}" }
+
+        logger.debug do
+          "#{LOG_LABEL} #{self.class.name}##{__method__}: #{resource_hash}"
+        end
         sender.send(resource_hash, promise, url)
       end
 
