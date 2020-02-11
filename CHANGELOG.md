@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.13.1][v4.13.1] (February 11, 2020)
+
 * `PerformanceNotifier`: fixed bug when the backend would reject valid payload
   due to TDigest count mismatch
   ([#549](https://github.com/airbrake/airbrake-ruby/pull/549)). For example:
@@ -912,3 +914,4 @@ Airbrake Ruby Changelog
 [v4.11.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.11.1
 [v4.12.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.12.0
 [v4.13.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.0
+[v4.13.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.1
