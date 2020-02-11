@@ -14,18 +14,20 @@ module Airbrake
       @flush_period = Airbrake::Config.instance.performance_stats_flush_period
       @async_sender = AsyncSender.new(:put)
       @sync_sender = SyncSender.new(:put)
-      @payload = {}
       @schedule_flush = nil
-      @mutex = Mutex.new
       @filter_chain = FilterChain.new
-      @waiting = false
+
+      @payload = {}.extend(MonitorMixin)
+      @has_payload = @payload.new_cond
     end
 
     # @param [Hash] resource
     # @see Airbrake.notify_query
     # @see Airbrake.notify_request
     def notify(resource)
-      send_resource(resource, sync: false)
+      @payload.synchronize do
+        send_resource(resource, sync: false)
+      end
     end
 
     # @param [Hash] resource
@@ -46,7 +48,7 @@ module Airbrake
     end
 
     def close
-      @mutex.synchronize do
+      @payload.synchronize do
         @schedule_flush.kill if @schedule_flush
         @async_sender.close
         logger.debug("#{LOG_LABEL} performance notifier closed")
@@ -56,37 +58,23 @@ module Airbrake
     private
 
     def schedule_flush
-      return if @payload.empty?
-
-      if @schedule_flush && @schedule_flush.status == 'sleep' && @waiting
-        begin
-          @schedule_flush.run
-        rescue ThreadError => exception
-          logger.error("#{LOG_LABEL}: error occurred while flushing: #{exception}")
-        end
-      end
-
-      @schedule_flush ||= spawn_timer
-    end
-
-    def spawn_timer
-      Thread.new do
+      @schedule_flush ||= Thread.new do
         loop do
-          if @payload.none?
-            @waiting = true
-            Thread.stop
-            @waiting = false
+          @payload.synchronize do
+            @last_flush_time ||= MonotonicTime.time_in_s
+
+            while (MonotonicTime.time_in_s - @last_flush_time) < @flush_period
+              @has_payload.wait(@flush_period)
+            end
+
+            if @payload.none?
+              @last_flush_time = nil
+              next
+            end
+
+            send(@async_sender, @payload, Airbrake::Promise.new)
+            @payload.clear
           end
-
-          sleep(@flush_period)
-
-          payload = nil
-          @mutex.synchronize do
-            payload = @payload
-            @payload = {}
-          end
-
-          send(@async_sender, payload, Airbrake::Promise.new)
         end
       end
     end
@@ -100,13 +88,12 @@ module Airbrake
         return Promise.new.reject("#{resource.class} was ignored by a filter")
       end
 
-      @mutex.synchronize do
-        update_payload(resource)
-        if sync || @flush_period == 0
-          send(@sync_sender, @payload, promise)
-        else
-          schedule_flush
-        end
+      update_payload(resource)
+      if sync || @flush_period == 0
+        send(@sync_sender, @payload, promise)
+      else
+        @has_payload.signal
+        schedule_flush
       end
     end
 
