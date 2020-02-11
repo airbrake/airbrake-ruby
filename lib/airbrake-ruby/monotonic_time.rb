@@ -16,6 +16,11 @@ module Airbrake
         time_in_nanoseconds / (10.0**6)
       end
 
+      # @return [Integer] current monotonic time in seconds
+      def time_in_s
+        time_in_nanoseconds / (10.0**9)
+      end
+
       private
 
       if defined?(Process::CLOCK_MONOTONIC)

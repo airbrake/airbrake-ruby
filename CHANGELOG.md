@@ -10,6 +10,8 @@ Airbrake Ruby Changelog
   ```
   ERROR -- : **Airbrake: tdigest.count=94, but count=100
   ```
+* `PerformanceNotifier`: fixed `ThreadError: deadlock; recursive locking`
+  ([#554](https://github.com/airbrake/airbrake-ruby/pull/554))
 * Fixed `Airbrake::Loggable` and `Airbrake::Config.instance.logger` not being
   set to `Logger::WARN` by default (as promised by the README)
   ([#551](https://github.com/airbrake/airbrake-ruby/pull/551))
