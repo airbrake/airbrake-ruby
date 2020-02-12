@@ -104,7 +104,9 @@ module Airbrake
     # @see https://github.com/flori/json/commit/3e158410e81f94dbbc3da6b7b35f4f64983aa4e3
     def replace_invalid_characters(str)
       encoding = str.encoding
+      # rubocop:disable Style/MultipleComparison
       utf8_string = (encoding == Encoding::UTF_8 || encoding == Encoding::ASCII)
+      # rubocop:enable Style/MultipleComparison
       return str if utf8_string && str.valid_encoding?
 
       temp_str = str.dup
