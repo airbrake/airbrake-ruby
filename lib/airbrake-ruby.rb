@@ -1,7 +1,6 @@
 require 'net/https'
 require 'logger'
 require 'json'
-require 'thread'
 require 'set'
 require 'socket'
 require 'time'
