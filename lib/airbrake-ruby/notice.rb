@@ -76,7 +76,7 @@ module Airbrake
     #
     # @return [Hash{String=>String}, nil]
     # @api private
-    def to_json
+    def to_json(*_args)
       loop do
         begin
           json = @payload.to_json
