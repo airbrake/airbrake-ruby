@@ -6,6 +6,7 @@ AllCops:
   Exclude:
     - 'pkg/**/*'
     - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
 
 Metrics/MethodLength:
   Max: 25
