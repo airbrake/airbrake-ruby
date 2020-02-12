@@ -22,7 +22,7 @@ module Airbrake
         (?<line>\d+)      # Matches '43'
         :in\s
         `(?<function>.*)' # Matches "`block (3 levels) in <top (required)>'"
-      \z}x
+      \z}x.freeze
 
       # @return [Regexp] the pattern that matches JRuby Java stack frames, such
       #  as org.jruby.ast.NewlineNode.interpret(NewlineNode.java:105)
@@ -39,7 +39,7 @@ module Airbrake
           :?
           (?<line>\d+)?  # Matches '105'
         \)
-      \z}x
+      \z}x.freeze
 
       # @return [Regexp] the pattern that tries to assume what a generic stack
       #   frame might look like, when exception's backtrace is set manually.
@@ -53,7 +53,7 @@ module Airbrake
         |
           :in\s(?<function>.+)   # Matches ":in func"
         )?                       # ... or nothing
-      \z}x
+      \z}x.freeze
 
       # @return [Regexp] the pattern that matches exceptions from PL/SQL such as
       #   ORA-06512: at "STORE.LI_LICENSES_PACK", line 1945
@@ -67,7 +67,7 @@ module Airbrake
         |
           #{GENERIC}
         )
-      \z/x
+      \z/x.freeze
 
       # @return [Regexp] the pattern that matches CoffeeScript backtraces
       #   usually coming from Rails & ExecJS
@@ -82,7 +82,7 @@ module Airbrake
           # Matches the Ruby part of the backtrace
           #{RUBY}
         )
-      \z/x
+      \z/x.freeze
     end
 
     # @return [Integer] how many first frames should include code hunks
