@@ -10,7 +10,7 @@ AllCops:
 Metrics/MethodLength:
   Max: 25
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 90
 
 # Details:
@@ -48,7 +48,7 @@ Metrics/ClassLength:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Layout/IndentArray:
+Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
 Style/NumericPredicate:
@@ -69,10 +69,7 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
     - 'airbrake-ruby.gemspec'
 
-Performance/RegexpMatch:
-  Enabled: false
-
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Enabled: false
 
 Gemspec/OrderedDependencies:
@@ -81,7 +78,7 @@ Gemspec/OrderedDependencies:
 Style/FormatStringToken:
   Enabled: false
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
 
 Gemspec/RequiredRubyVersion:
