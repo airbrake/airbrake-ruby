@@ -95,3 +95,6 @@ Style/TrailingCommaInHashLiteral:
 
 Naming/RescuedExceptionsVariableName:
   Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
