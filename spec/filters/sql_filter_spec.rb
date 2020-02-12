@@ -22,7 +22,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
 
   ALL_DIALECTS = %i[mysql postgres sqlite cassandra oracle].freeze
 
-  # rubocop:disable Metrics/LineLength
+  # rubocop:disable Layout/LineLength
   [
     {
       input: 'SELECT * FROM things;',
@@ -229,7 +229,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
   ].each do |test|
     include_examples 'query filtering', test
   end
-  # rubocop:enable Metrics/LineLength
+  # rubocop:enable Layout/LineLength
 
   [
     'COMMIT',

@@ -149,10 +149,10 @@ RSpec.describe Airbrake::NoticeNotifier do
         expect(proxied_request.header['proxy-authorization'].first)
           .to eq('Basic dXNlcjpwYXNzd29yZA==')
 
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         expect(proxied_request.request_line)
           .to eq("POST http://localhost:#{proxy.config[:Port]}/api/v3/projects/105138/notices HTTP/1.1\r\n")
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       end
     end
 

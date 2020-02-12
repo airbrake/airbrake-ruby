@@ -6,7 +6,7 @@ require 'webmock'
 require 'airbrake-ruby'
 
 BIG_EXCEPTION = RuntimeError.new('App crashed!')
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 BIG_EXCEPTION.set_backtrace(
   ["lib/arel/visitors/to_sql.rb:729:in `unsupported'",
    "lib/arel/visitors/reduce.rb:13:in `visit'",
@@ -147,7 +147,7 @@ SMALL_EXCEPTION.set_backtrace(
    "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:41:in `invoke'",
    "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec:4:in `<main>'"],
 )
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength
 
 # Make sure we don't send any remote requests.
 WebMock.disable_net_connect!(allow_localhost: true)

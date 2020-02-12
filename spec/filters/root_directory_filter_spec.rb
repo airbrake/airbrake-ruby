@@ -5,18 +5,18 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   it "replaces root directory in the backtrace with a label" do
-    # rubocop:disable Metrics/LineLength
+    # rubocop:disable Layout/LineLength
     notice[:errors].first[:backtrace] = [
       { file: "/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb" },
       { file: "#{root_directory}/gems/rspec-core-3.3.2/lib/rspec/core/configuration.rb " },
       { file: "/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb" },
       { file: "#{root_directory}/gems/rspec-core-3.3.2/exe/rspec" },
     ]
-    # rubocop:enable Metrics/LineLength
+    # rubocop:enable Layout/LineLength
 
     subject.call(notice)
 
-    # rubocop:disable Metrics/LineLength
+    # rubocop:disable Layout/LineLength
     expect(notice[:errors].first[:backtrace]).to(
       eq(
         [
@@ -27,7 +27,7 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
         ],
       ),
     )
-    # rubocop:enable Metrics/LineLength
+    # rubocop:enable Layout/LineLength
   end
 
   it "does not filter file when it is nil" do
