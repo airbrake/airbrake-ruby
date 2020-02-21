@@ -45,7 +45,15 @@ module Airbrake
     # @return [Boolean] true if the message was successfully sent to the pool,
     #   false if the queue is full
     def <<(message)
-      return false if backlog >= @queue_size
+      if backlog >= @queue_size
+        logger.error(
+          "#{LOG_LABEL} ThreadPool has reached its capacity of " \
+          "#{@queue_size} and the following message will not be " \
+          "processed: #{message.inspect}",
+        )
+        return false
+      end
+
       @queue << message
       true
     end

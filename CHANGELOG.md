@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* `AsyncSender`: fixed ``undefined method `first' for nil:NilClass
+  (NoMethodError)`` when trying to log an error message for a performance stat
+  ([#558](https://github.com/airbrake/airbrake-ruby/pull/558))
+
 ### [v4.13.1][v4.13.1] (February 11, 2020)
 
 * `PerformanceNotifier`: fixed bug when the backend would reject valid payload
