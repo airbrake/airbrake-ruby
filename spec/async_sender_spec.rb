@@ -58,15 +58,6 @@ RSpec.describe Airbrake::AsyncSender do
           'error' => "AsyncSender has reached its capacity of 1",
         )
       end
-
-      it "logs discarded notice" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /reached its capacity/,
-        ).at_least(:once)
-
-        15.times { subject.send(notice, Airbrake::Promise.new) }
-        subject.close
-      end
     end
   end
 end
