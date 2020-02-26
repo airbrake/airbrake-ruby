@@ -24,18 +24,21 @@ module Airbrake
       @sum = sum
       @sumsq = sumsq
       @tdigest = tdigest
+      @mutex = Mutex.new
     end
 
     # @return [Hash{String=>Object}] stats as a hash with compressed TDigest
     #   (serialized as base64)
     def to_h
-      tdigest.compress!
-      {
-        'count' => tdigest.size,
-        'sum' => sum,
-        'sumsq' => sumsq,
-        'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes),
-      }
+      @mutex.synchronize do
+        tdigest.compress!
+        {
+          'count' => tdigest.size,
+          'sum' => sum,
+          'sumsq' => sumsq,
+          'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes),
+        }
+      end
     end
 
     # Increments tdigest timings and updates tdigest with the difference between
@@ -54,10 +57,12 @@ module Airbrake
     # @param [Float] ms
     # @return [void]
     def increment_ms(ms)
-      self.sum += ms
-      self.sumsq += ms * ms
+      @mutex.synchronize do
+        self.sum += ms
+        self.sumsq += ms * ms
 
-      tdigest.push(ms)
+        tdigest.push(ms)
+      end
     end
 
     # We define custom inspect so that we weed out uninformative TDigest, which

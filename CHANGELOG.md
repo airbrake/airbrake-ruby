@@ -9,6 +9,8 @@ Airbrake Ruby Changelog
   ([#562](https://github.com/airbrake/airbrake-ruby/pull/562))
 * Fixed addition of duplicate filters on multiple `Airbrake.configure` calls
   ([#563](https://github.com/airbrake/airbrake-ruby/pull/563))
+* Improved thread-safety of `Airbrake::Stat`
+  ([#560](https://github.com/airbrake/airbrake-ruby/pull/560))
 
 ### [v4.13.2][v4.13.2] (February 21, 2020)
 
