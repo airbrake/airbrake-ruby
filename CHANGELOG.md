@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.13.3][v4.13.3] (March 2, 2020)
+
 * Added the ability to filter via `blacklist_keys` the following keys:
   `context/referer`, `context/httpMethod`, `context/userAddr`,
   `context/userAgent`
@@ -931,3 +933,4 @@ Airbrake Ruby Changelog
 [v4.13.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.0
 [v4.13.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.1
 [v4.13.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.2
+[v4.13.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.3
