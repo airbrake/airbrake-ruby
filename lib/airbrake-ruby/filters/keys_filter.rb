@@ -24,7 +24,18 @@ module Airbrake
 
       # @return [Array<Symbol>] parts of a Notice's *context* payload that can
       #   be modified by blacklist/whitelist filters
-      FILTERABLE_CONTEXT_KEYS = %i[user headers].freeze
+      FILTERABLE_CONTEXT_KEYS = %i[
+        user
+
+        # Provided by Airbrake::Rack::HttpHeadersFilter
+        headers
+        referer
+        httpMethod
+
+        # Provided by Airbrake::Rack::ContextFilter
+        userAddr
+        userAgent
+      ].freeze
 
       include Loggable
 
