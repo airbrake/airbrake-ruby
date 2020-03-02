@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added the ability to filter via `blacklist_keys` the following keys:
+  `context/referer`, `context/httpMethod`, `context/userAddr`,
+  `context/userAgent`
+  ([#562](https://github.com/airbrake/airbrake-ruby/pull/562))
+
 ### [v4.13.2][v4.13.2] (February 21, 2020)
 
 * `AsyncSender`: fixed ``undefined method `first' for nil:NilClass
