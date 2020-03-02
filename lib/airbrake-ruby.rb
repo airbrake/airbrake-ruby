@@ -581,6 +581,7 @@ module Airbrake
         notice_notifier.add_filter(whitelist)
       end
 
+      return if configured?
       return unless config.root_directory
 
       [
