@@ -75,6 +75,16 @@ RSpec.describe Airbrake do
         described_class.configure {}
         expect(described_class.deploy_notifier).to eql(deploy_notifier)
       end
+
+      it "doesn't append the same notice notifier filters over and over" do
+        described_class.configure do |c|
+          c.project_id = 1
+          c.project_key = '2'
+        end
+
+        expect(described_class.notice_notifier).not_to receive(:add_filter)
+        10.times { described_class.configure {} }
+      end
     end
 
     context "when blacklist_keys gets configured" do
