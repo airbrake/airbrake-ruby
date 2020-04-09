@@ -21,24 +21,41 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
   end
 
   context "when .git directory exists" do
-    before { subject.call(notice) }
+    context "when AIRBRAKE_DEPLOY_USERNAME env variable is set" do
+      before { ENV['AIRBRAKE_DEPLOY_USERNAME'] = 'deployer' }
 
-    it "attaches last checkouted username" do
-      expect(notice[:context][:lastCheckout][:username]).not_to be_empty
+      it "attaches username from the environment" do
+        subject.call(notice)
+        expect(notice[:context][:lastCheckout][:username]).to eq('deployer')
+      end
+    end
+
+    context "when AIRBRAKE_DEPLOY_USERNAME env variable is NOT set" do
+      before { ENV['AIRBRAKE_DEPLOY_USERNAME'] = nil }
+
+      it "attaches last checkouted username" do
+        subject.call(notice)
+        username = notice[:context][:lastCheckout][:username]
+        expect(username).not_to be_empty
+        expect(username).not_to be_nil
+      end
     end
 
     it "attaches last checkouted email" do
+      subject.call(notice)
       expect(notice[:context][:lastCheckout][:email]).to(
         match(/\A\w+[\w.-]*@\w+\.?\w+?\z/),
       )
     end
 
     it "attaches last checkouted revision" do
+      subject.call(notice)
       expect(notice[:context][:lastCheckout][:revision]).not_to be_empty
       expect(notice[:context][:lastCheckout][:revision].size).to eq(40)
     end
 
     it "attaches last checkouted time" do
+      subject.call(notice)
       expect(notice[:context][:lastCheckout][:time]).not_to be_empty
       expect(notice[:context][:lastCheckout][:time].size).to eq(25)
     end

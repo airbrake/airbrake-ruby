@@ -27,6 +27,7 @@ module Airbrake
         @git_path = File.join(root_directory, '.git')
         @weight = 116
         @last_checkout = nil
+        @deploy_username = ENV['AIRBRAKE_DEPLOY_USERNAME']
       end
 
       # @macro call_filter
@@ -59,7 +60,7 @@ module Airbrake
 
         author = parts[2..-4]
         @last_checkout = {
-          username: author[0..1].join(' '),
+          username: @deploy_username || author[0..1].join(' '),
           email: parts[-3][1..-2],
           revision: parts[1],
           time: timestamp(parts[-2].to_i),

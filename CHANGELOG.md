@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added support for `AIRBRAKE_DEPLOY_USERNAME`, which overrides deployer
+  username in the automatic deploy tracking feature
+  ([#566](https://github.com/airbrake/airbrake-ruby/pull/566))
+
 ### [v4.13.3][v4.13.3] (March 2, 2020)
 
 * Added the ability to filter via `blacklist_keys` the following keys:
