@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.13.4][v4.13.4] (April 9, 2020)
+
 * Added support for `AIRBRAKE_DEPLOY_USERNAME`, which overrides deployer
   username in the automatic deploy tracking feature
   ([#566](https://github.com/airbrake/airbrake-ruby/pull/566))
@@ -938,3 +940,4 @@ Airbrake Ruby Changelog
 [v4.13.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.1
 [v4.13.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.2
 [v4.13.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.3
+[v4.13.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.4
