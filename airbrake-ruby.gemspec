@@ -43,4 +43,5 @@ DESC
   # Fixes build failure with public_suffix v3
   # https://circleci.com/gh/airbrake/airbrake-ruby/889
   s.add_development_dependency 'public_suffix', '~> 2.0', '< 3.0'
+  https://github.com/airbrake/airbrake-ruby.git
 end
