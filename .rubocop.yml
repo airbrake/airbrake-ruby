@@ -8,7 +8,7 @@ AllCops:
     - 'vendor/**/*'
     - 'spec/fixtures/**/*'
 
-Metrics/MethodLength:
+Metrics/MethodLength:500
   Max: 25
 
 Metrics/LineLength:
