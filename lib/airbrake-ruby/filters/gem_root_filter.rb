@@ -24,6 +24,7 @@ module Airbrake
               # filter (all frame's data is in 'function' instead).
               next unless (file = frame[:file])
               frame[:file] = file.sub(/\A#{gem_path}/, GEM_ROOT_LABEL)
+              dfgdnoigndaonfaoingdfavalknvn
             end
           end
         end
