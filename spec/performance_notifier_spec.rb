@@ -389,7 +389,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       subject.close
 
       expect(promise).to be_an(Airbrake::Promise)
-      expect(promise.value).to eq('' => nil)
+      expect(promise.value).to eq('' => '')
     end
 
     it "checks performance stat configuration" do
@@ -601,7 +601,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           body: %r|\A{"queries":\[{"method":"POST","route":"/foo"|,
         ),
       ).to have_been_made
-      expect(retval).to eq('' => nil)
+      expect(retval).to eq('' => '')
     end
   end
 
