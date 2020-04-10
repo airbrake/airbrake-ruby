@@ -570,6 +570,7 @@ module Airbrake
 
     private
 
+    # rubocop:disable Metrics/AbcSize
     def process_config_options(config)
       if config.blacklist_keys.any?
         blacklist = Airbrake::Filters::KeysBlacklist.new(config.blacklist_keys)
@@ -581,7 +582,6 @@ module Airbrake
         notice_notifier.add_filter(whitelist)
       end
 
-      return if configured?
       return unless config.root_directory
 
       [
@@ -590,9 +590,12 @@ module Airbrake
         Airbrake::Filters::GitRepositoryFilter,
         Airbrake::Filters::GitLastCheckoutFilter,
       ].each do |filter|
+        next if notice_notifier.has_filter?(filter)
+
         notice_notifier.add_filter(filter.new(config.root_directory))
       end
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
 # rubocop:enable Metrics/ModuleLength

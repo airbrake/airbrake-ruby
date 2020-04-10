@@ -85,6 +85,18 @@ RSpec.describe Airbrake do
         expect(described_class.notice_notifier).not_to receive(:add_filter)
         10.times { described_class.configure {} }
       end
+
+      it "appends some default filters" do
+        allow(described_class.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter).with(
+          an_instance_of(Airbrake::Filters::RootDirectoryFilter),
+        )
+
+        described_class.configure do |c|
+          c.project_id = 1
+          c.project_key = '2'
+        end
+      end
     end
 
     context "when blacklist_keys gets configured" do
