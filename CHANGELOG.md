@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.14.0][v4.14.0] (April 10, 2020)
+
 * Fixed a bug where some default filters are not appended
   ([#573](https://github.com/airbrake/airbrake-ruby/pull/573)):
     - `Airbrake::Filters::RootDirectoryFilter`
@@ -951,3 +953,4 @@ Airbrake Ruby Changelog
 [v4.13.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.2
 [v4.13.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.3
 [v4.13.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.4
+[v4.14.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.0
