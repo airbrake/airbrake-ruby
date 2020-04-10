@@ -82,6 +82,12 @@ module Airbrake
       @context.merge!(context)
     end
 
+    # @return [Boolean]
+    # @since v4.14.0
+    def has_filter?(filter_class) # rubocop:disable Naming/PredicateName
+      @filter_chain.includes?(filter_class)
+    end
+
     private
 
     def convert_to_exception(ex)

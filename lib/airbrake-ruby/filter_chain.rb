@@ -76,7 +76,7 @@ module Airbrake
 
     # @return [String] customized inspect to lessen the amount of clutter
     def inspect
-      @filters.map(&:class).to_s
+      filter_classes.to_s
     end
 
     # @return [String] {#inspect} for PrettyPrint
@@ -90,6 +90,20 @@ module Airbrake
         q.seplist(@filters) { |f| q.pp(f.class) }
       end
       q.text(']')
+    end
+
+    # @param [Class] filter_class
+    # @return [Boolean] true if the current chain has an instance of the given
+    #   class, false otherwise
+    # @since v4.14.0
+    def includes?(filter_class)
+      filter_classes.include?(filter_class)
+    end
+
+    private
+
+    def filter_classes
+      @filters.map(&:class)
     end
   end
 end

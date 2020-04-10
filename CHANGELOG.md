@@ -3,6 +3,16 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed a bug where some default filters are not appended
+  ([#573](https://github.com/airbrake/airbrake-ruby/pull/573)):
+    - `Airbrake::Filters::RootDirectoryFilter`
+    - `Airbrake::Filters::GitRevisionFilter`
+    - `Airbrake::Filters::GitRepositoryFilter`
+    - `Airbrake::Filters::GitLastCheckoutFilter`
+* Added `Airbrake::NoticeNotifier#has_filter?`, which checks whether the filter
+  chain of the notifier includes an instance of the given class
+  ([#573](https://github.com/airbrake/airbrake-ruby/pull/573))
+
 ### [v4.13.4][v4.13.4] (April 9, 2020)
 
 * Added support for `AIRBRAKE_DEPLOY_USERNAME`, which overrides deployer
