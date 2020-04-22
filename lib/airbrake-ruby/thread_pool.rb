@@ -83,6 +83,7 @@ module Airbrake
 
         if @pid != Process.pid && @workers.list.empty?
           @pid = Process.pid
+          @workers = ThreadGroup.new
           spawn_workers
         end
 
