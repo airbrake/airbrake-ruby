@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `ThreadError: can't move to the enclosed thread group` when using
+  `notify` inside a `fork`
+  ([#577](https://github.com/airbrake/airbrake-ruby/pull/577))
+
 ### [v4.14.0][v4.14.0] (April 10, 2020)
 
 * Fixed a bug where some default filters are not appended

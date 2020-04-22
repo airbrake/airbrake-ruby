@@ -85,11 +85,31 @@ RSpec.describe Airbrake::ThreadPool do
       expect(subject).not_to have_workers
     end
 
-    it "respawns workers on fork()", skip: %w[jruby].include?(RUBY_ENGINE) do
-      pid = fork { expect(subject).to have_workers }
-      Process.wait(pid)
-      subject.close
-      expect(subject).not_to have_workers
+    describe "forking behavior" do
+      before do
+        skip('fork() is unsupported on JRuby') if %w[jruby].include?(RUBY_ENGINE)
+        unless Process.respond_to?(:last_status)
+          skip('Process.last_status is unsupported on this Ruby')
+        end
+      end
+
+      it "respawns workers on fork()" do
+        pid = fork { expect(subject).to have_workers }
+        Process.wait(pid)
+        subject.close
+
+        expect(Process.last_status).to be_success
+        expect(subject).not_to have_workers
+      end
+
+      it "ensures that a new thread group is created per process" do
+        subject << 1
+        pid = fork { subject.has_workers? }
+        Process.wait(pid)
+        subject.close
+
+        expect(Process.last_status).to be_success
+      end
     end
   end
 
