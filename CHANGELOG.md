@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.14.1][v4.14.1] (April 22, 2020)
+
 * Fixed `ThreadError: can't move to the enclosed thread group` when using
   `notify` inside a `fork`
   ([#577](https://github.com/airbrake/airbrake-ruby/pull/577))
@@ -958,3 +960,4 @@ Airbrake Ruby Changelog
 [v4.13.3]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.3
 [v4.13.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.4
 [v4.14.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.0
+[v4.14.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.1
