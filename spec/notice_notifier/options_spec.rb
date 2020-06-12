@@ -241,7 +241,7 @@ RSpec.describe Airbrake::NoticeNotifier do
           before do
             Airbrake::Config.instance.merge(
               blacklist_keys: %i[password password_confirmation],
-              whitelist_keys: [:email, /user/i, 'account_id'],
+              allowlist_keys: [:email, /user/i, 'account_id'],
             )
           end
 
@@ -255,5 +255,27 @@ RSpec.describe Airbrake::NoticeNotifier do
         end
       end
     end
+
+    describe ":blocklist_keys" do
+      context "when specified along with :allowlist_keys" do
+        context "and when context payload is present" do
+          before do
+            Airbrake::Config.instance.merge(
+              blocklist_keys: %i[password password_confirmation],
+              allowlist_keys: [:email, /user/i, 'account_id'],
+            )
+          end
+
+          it "sends a notice" do
+            notice = subject.build_notice(ex)
+            notice[:context][:headers] = 'banana'
+            subject.notify_sync(notice)
+
+            expect(a_request(:post, endpoint)).to have_been_made
+          end
+        end
+      end
+    end
+
   end
 end

@@ -71,11 +71,23 @@ module Airbrake
     # @since v1.2.0
     attr_accessor :blacklist_keys
 
-    # @return [Array<String, Symbol, Regexp>] the keys, which shouldn't be
+    # @return [Array<String, Symbol, Regexp>] the keys, which should be
+    #   filtered
+    # @api public
+    # @since v1.2.0
+    attr_accessor :blocklist_keys
+
+    # @return [array<string, symbol, regexp>] the keys, which shouldn't be
     #   filtered
     # @api public
     # @since v1.2.0
     attr_accessor :whitelist_keys
+
+    # @return [array<string, symbol, regexp>] the keys, which shouldn't be
+    #   filtered
+    # @api public
+    # @since v1.2.0
+    attr_accessor :allowlist_keys
 
     # @return [Boolean] true if the library should attach code hunks to each
     #   frame in a backtrace, false otherwise
@@ -121,6 +133,8 @@ module Airbrake
     #   config
     # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
+      alias blacklist_keys blocklist_keys
+      alias whitelist_keys allowlist_keys
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
@@ -134,8 +148,8 @@ module Airbrake
 
       self.timeout = user_config[:timeout]
 
-      self.blacklist_keys = []
-      self.whitelist_keys = []
+      self.blocklist_keys = []
+      self.allowlist_keys = []
 
       self.root_directory = File.realpath(
         (defined?(Bundler) && Bundler.root) ||
