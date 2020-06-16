@@ -573,17 +573,19 @@ module Airbrake
 
     def process_blocklist_allowlist_config(config)
       # Allow backwards compatibility for now
-      config.blocklist_keys = if config.blacklist_keys.any? && config.blocklist_keys.empty?
-                                config.blacklist_keys
-                              else
-                                config.blocklist_keys
-                              end
+      config.blocklist_keys =
+        if config.blacklist_keys.any? && config.blocklist_keys.empty?
+          config.blacklist_keys
+        else
+          config.blocklist_keys
+        end
 
-      config.allowlist_keys = if config.whitelist_keys.any? && config.allowlist_keys.empty?
-                                config.whitelist_keys
-                              else
-                                config.allowlist_keys
-                              end
+      config.allowlist_keys =
+        if config.whitelist_keys.any? && config.allowlist_keys.empty?
+          config.whitelist_keys
+        else
+          config.allowlist_keys
+        end
     end
 
     # rubocop:disable Metrics/AbcSize

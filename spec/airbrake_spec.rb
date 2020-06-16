@@ -112,7 +112,7 @@ RSpec.describe Airbrake do
         expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
         described_class.configure { |c| c.blacklist_keys = %w[password] }
       end
-   end
+    end
 
     context "when whitelist_keys gets configured" do
       before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
@@ -145,7 +145,7 @@ RSpec.describe Airbrake do
 
       it "uses allowlist when whitelist is also configured" do
         expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
-        described_class.configure do  |c|
+        described_class.configure do |c|
           c.allowlist_keys = %w[banana]
           c.whitelist_keys = %w[orange]
         end
@@ -173,9 +173,7 @@ RSpec.describe Airbrake do
           c.blacklist_keys = %w[not_password]
         end
       end
-   end
-
-
+    end
 
     context "when root_directory gets configured" do
       before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
