@@ -276,6 +276,5 @@ RSpec.describe Airbrake::NoticeNotifier do
         end
       end
     end
-
   end
 end

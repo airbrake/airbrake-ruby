@@ -104,12 +104,12 @@ RSpec.describe Airbrake do
 
       it "adds blacklist filter" do
         expect(Airbrake.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::KeysBlacklist))
+          .with(an_instance_of(Airbrake::Filters::KeysBlocklist))
         described_class.configure { |c| c.blacklist_keys = %w[password] }
       end
 
       it "initializes blacklist with specified parameters" do
-        expect(Airbrake::Filters::KeysBlacklist).to receive(:new).with(%w[password])
+        expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
         described_class.configure { |c| c.blacklist_keys = %w[password] }
       end
     end
@@ -119,13 +119,28 @@ RSpec.describe Airbrake do
 
       it "adds whitelist filter" do
         expect(Airbrake.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::KeysWhitelist))
+          .with(an_instance_of(Airbrake::Filters::KeysAllowlist))
         described_class.configure { |c| c.whitelist_keys = %w[banana] }
       end
 
       it "initializes whitelist with specified parameters" do
-        expect(Airbrake::Filters::KeysWhitelist).to receive(:new).with(%w[banana])
+        expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
         described_class.configure { |c| c.whitelist_keys = %w[banana] }
+      end
+    end
+
+    context "when alowlist_keys gets configured" do
+      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+
+      it "adds allowlist filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::KeysAllowlist))
+        described_class.configure { |c| c.allowlist_keys = %w[banana] }
+      end
+
+      it "initializes allowlist with specified parameters" do
+        expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
+        described_class.configure { |c| c.allowlist_keys = %w[banana] }
       end
     end
 

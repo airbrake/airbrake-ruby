@@ -133,8 +133,6 @@ module Airbrake
     #   config
     # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
-      alias blacklist_keys blocklist_keys
-      alias whitelist_keys allowlist_keys
       self.proxy = {}
       self.queue_size = 100
       self.workers = 1
@@ -148,6 +146,8 @@ module Airbrake
 
       self.timeout = user_config[:timeout]
 
+      self.blacklist_keys = []
+      self.whitelist_keys = []
       self.blocklist_keys = []
       self.allowlist_keys = []
 

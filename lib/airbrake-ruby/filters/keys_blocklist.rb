@@ -4,7 +4,7 @@ module Airbrake
     # list of parameters in the payload of a notice.
     #
     # @example
-    #   filter = Airbrake::Filters::KeysBlacklist.new(
+    #   filter = Airbrake::Filters::KeysBlocklist.new(
     #     [:email, /credit/i, 'password']
     #   )
     #   airbrake.add_filter(filter)
@@ -22,10 +22,10 @@ module Airbrake
     #   #     email: '[Filtered]',
     #   #     credit_card: '[Filtered]' }
     #
-    # @see KeysWhitelist
+    # @see KeysAllowlist
     # @see KeysFilter
     # @api private
-    class KeysBlacklist
+    class KeysBlocklist
       include KeysFilter
 
       def initialize(*)

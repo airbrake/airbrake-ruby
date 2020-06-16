@@ -4,7 +4,7 @@ module Airbrake
     # notice, but specified keys.
     #
     # @example
-    #   filter = Airbrake::Filters::KeysBlacklist.new(
+    #   filter = Airbrake::Filters::KeysBlocklist.new(
     #     [:email, /credit/i, 'password']
     #   )
     #   airbrake.add_filter(filter)
@@ -22,9 +22,9 @@ module Airbrake
     #   #     email: 'john@example.com',
     #   #     account_id: 42 }
     #
-    # @see KeysBlacklist
+    # @see KeysAllowlist
     # @see KeysFilter
-    class KeysWhitelist
+    class KeysAllowlist
       include KeysFilter
 
       def initialize(*)
