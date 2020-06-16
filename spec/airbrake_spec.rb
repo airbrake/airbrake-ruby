@@ -112,7 +112,7 @@ RSpec.describe Airbrake do
         expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
         described_class.configure { |c| c.blacklist_keys = %w[password] }
       end
-    end
+   end
 
     context "when whitelist_keys gets configured" do
       before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
@@ -142,7 +142,40 @@ RSpec.describe Airbrake do
         expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
         described_class.configure { |c| c.allowlist_keys = %w[banana] }
       end
+
+      it "uses allowlist when whitelist is also configured" do
+        expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
+        described_class.configure do  |c|
+          c.allowlist_keys = %w[banana]
+          c.whitelist_keys = %w[orange]
+        end
+      end
     end
+
+    context "when blocklist_keys gets configured" do
+      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+
+      it "adds blocklist filter" do
+        expect(Airbrake.notice_notifier).to receive(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::KeysBlocklist))
+        described_class.configure { |c| c.blocklist_keys = %w[password] }
+      end
+
+      it "initializes blocklist with specified parameters" do
+        expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
+        described_class.configure { |c| c.blocklist_keys = %w[password] }
+      end
+
+      it "uses blocklist when blacklist is also configured" do
+        expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
+        described_class.configure do |c|
+          c.blocklist_keys = %w[password]
+          c.blacklist_keys = %w[not_password]
+        end
+      end
+   end
+
+
 
     context "when root_directory gets configured" do
       before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
