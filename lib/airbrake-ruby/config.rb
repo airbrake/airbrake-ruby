@@ -69,6 +69,7 @@ module Airbrake
     #   filtered
     # @api public
     # @since v1.2.0
+    # @deprecated Use blocklist_keys instead
     attr_accessor :blacklist_keys
 
     # @return [Array<String, Symbol, Regexp>] the keys, which should be
@@ -81,6 +82,7 @@ module Airbrake
     #   filtered
     # @api public
     # @since v1.2.0
+    # @deprecated Use allowlist_keys instead
     attr_accessor :whitelist_keys
 
     # @return [array<string, symbol, regexp>] the keys, which shouldn't be
