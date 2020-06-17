@@ -1,4 +1,4 @@
-RSpec.describe Airbrake::Filters::KeysWhitelist do
+RSpec.describe Airbrake::Filters::KeysAllowlist do
   subject { described_class.new(patterns) }
 
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
@@ -70,10 +70,10 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
 
       it "logs an error" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/,
+          /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
         )
-        keys_whitelist = described_class.new(patterns)
-        keys_whitelist.call(notice)
+        keys_allowlist = described_class.new(patterns)
+        keys_allowlist.call(notice)
       end
     end
 
@@ -83,10 +83,10 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
       context "and when the filter is called once" do
         it "logs an error" do
           expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /KeysWhitelist is invalid.+patterns: \[#<Proc:.+>\]/,
+            /KeysAllowlist is invalid.+patterns: \[#<Proc:.+>\]/,
           )
-          keys_whitelist = described_class.new(patterns)
-          keys_whitelist.call(notice)
+          keys_allowlist = described_class.new(patterns)
+          keys_allowlist.call(notice)
         end
 
         include_examples(
@@ -113,10 +113,10 @@ RSpec.describe Airbrake::Filters::KeysWhitelist do
 
     it "logs an error" do
       expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /KeysWhitelist is invalid.+patterns: \[#<Object:.+>\]/,
+        /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
       )
-      keys_whitelist = described_class.new(patterns)
-      keys_whitelist.call(notice)
+      keys_allowlist = described_class.new(patterns)
+      keys_allowlist.call(notice)
     end
   end
 

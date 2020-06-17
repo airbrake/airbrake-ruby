@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Deprecated `blacklist_keys` in favor of `blocklist_keys`
+  ([#580](https://github.com/airbrake/airbrake-ruby/pull/580))
+* Deprecated `whitelist_keys` in favor of `allowlist_keys`
+  ([#580](https://github.com/airbrake/airbrake-ruby/pull/580))
+
 ### [v4.14.1][v4.14.1] (April 22, 2020)
 
 * Fixed `ThreadError: can't move to the enclosed thread group` when using

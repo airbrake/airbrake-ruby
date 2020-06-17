@@ -24,8 +24,8 @@ require 'airbrake-ruby/notice'
 require 'airbrake-ruby/backtrace'
 require 'airbrake-ruby/truncator'
 require 'airbrake-ruby/filters/keys_filter'
-require 'airbrake-ruby/filters/keys_whitelist'
-require 'airbrake-ruby/filters/keys_blacklist'
+require 'airbrake-ruby/filters/keys_allowlist'
+require 'airbrake-ruby/filters/keys_blocklist'
 require 'airbrake-ruby/filters/gem_root_filter'
 require 'airbrake-ruby/filters/system_exit_filter'
 require 'airbrake-ruby/filters/root_directory_filter'
@@ -572,14 +572,14 @@ module Airbrake
 
     # rubocop:disable Metrics/AbcSize
     def process_config_options(config)
-      if config.blacklist_keys.any?
-        blacklist = Airbrake::Filters::KeysBlacklist.new(config.blacklist_keys)
-        notice_notifier.add_filter(blacklist)
+      if config.blocklist_keys.any?
+        blocklist = Airbrake::Filters::KeysBlocklist.new(config.blocklist_keys)
+        notice_notifier.add_filter(blocklist)
       end
 
-      if config.whitelist_keys.any?
-        whitelist = Airbrake::Filters::KeysWhitelist.new(config.whitelist_keys)
-        notice_notifier.add_filter(whitelist)
+      if config.allowlist_keys.any?
+        allowlist = Airbrake::Filters::KeysAllowlist.new(config.allowlist_keys)
+        notice_notifier.add_filter(allowlist)
       end
 
       return unless config.root_directory

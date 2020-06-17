@@ -68,14 +68,20 @@ module Airbrake
     # @return [Array<String, Symbol, Regexp>] the keys, which should be
     #   filtered
     # @api public
-    # @since v1.2.0
-    attr_accessor :blacklist_keys
+    # @since v4.15.0
+    attr_accessor :allowlist_keys
 
-    # @return [Array<String, Symbol, Regexp>] the keys, which shouldn't be
+    # @deprecated Use allowlist_keys instead
+    alias whitelist_keys allowlist_keys
+
+    # @return [Array<String, Symbol, Regexp>] the keys, which should be
     #   filtered
     # @api public
-    # @since v1.2.0
-    attr_accessor :whitelist_keys
+    # @since v4.15.0
+    attr_accessor :blocklist_keys
+
+    # @deprecated Use blocklist_keys instead
+    alias blacklist_keys blocklist_keys
 
     # @return [Boolean] true if the library should attach code hunks to each
     #   frame in a backtrace, false otherwise
@@ -134,8 +140,8 @@ module Airbrake
 
       self.timeout = user_config[:timeout]
 
-      self.blacklist_keys = []
-      self.whitelist_keys = []
+      self.blocklist_keys = []
+      self.allowlist_keys = []
 
       self.root_directory = File.realpath(
         (defined?(Bundler) && Bundler.root) ||
@@ -151,6 +157,24 @@ module Airbrake
       merge(user_config)
     end
     # rubocop:enable Metrics/AbcSize
+
+    def blacklist_keys=(keys)
+      loc = caller_locations(1..1).first
+      Kernel.warn(
+        "#{loc.path}:#{loc.lineno}: warning: blacklist_keys= is deprecated " \
+        "use blocklist_keys= instead",
+      )
+      self.blocklist_keys = keys
+    end
+
+    def whitelist_keys=(keys)
+      loc = caller_locations(1..1).first
+      Kernel.warn(
+        "#{loc.path}:#{loc.lineno}: warning: whitelist_keys= is deprecated " \
+        "use allowlist_keys= instead",
+      )
+      self.allowlist_keys = keys
+    end
 
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address

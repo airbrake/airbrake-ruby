@@ -99,33 +99,33 @@ RSpec.describe Airbrake do
       end
     end
 
-    context "when blacklist_keys gets configured" do
+    context "when blocklist_keys gets configured" do
       before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
 
-      it "adds blacklist filter" do
+      it "adds blocklist filter" do
         expect(Airbrake.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::KeysBlacklist))
-        described_class.configure { |c| c.blacklist_keys = %w[password] }
+          .with(an_instance_of(Airbrake::Filters::KeysBlocklist))
+        described_class.configure { |c| c.blocklist_keys = %w[password] }
       end
 
-      it "initializes blacklist with specified parameters" do
-        expect(Airbrake::Filters::KeysBlacklist).to receive(:new).with(%w[password])
-        described_class.configure { |c| c.blacklist_keys = %w[password] }
+      it "initializes blocklist with specified parameters" do
+        expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
+        described_class.configure { |c| c.blocklist_keys = %w[password] }
       end
     end
 
-    context "when whitelist_keys gets configured" do
+    context "when allowlist_keys gets configured" do
       before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
 
-      it "adds whitelist filter" do
+      it "adds allowlist filter" do
         expect(Airbrake.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::KeysWhitelist))
-        described_class.configure { |c| c.whitelist_keys = %w[banana] }
+          .with(an_instance_of(Airbrake::Filters::KeysAllowlist))
+        described_class.configure { |c| c.allowlist_keys = %w[banana] }
       end
 
-      it "initializes whitelist with specified parameters" do
-        expect(Airbrake::Filters::KeysWhitelist).to receive(:new).with(%w[banana])
-        described_class.configure { |c| c.whitelist_keys = %w[banana] }
+      it "initializes allowlist with specified parameters" do
+        expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
+        described_class.configure { |c| c.allowlist_keys = %w[banana] }
       end
     end
 

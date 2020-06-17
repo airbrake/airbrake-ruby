@@ -251,7 +251,7 @@ Airbrake.configure do |c|
 end
 ```
 
-#### blacklist_keys
+#### blocklist_keys
 
 Specifies which keys in the payload (parameters, session data, environment data,
 etc) should be filtered. Before sending an error, filtered keys will be
@@ -262,7 +262,7 @@ filtered.
 
 ```ruby
 Airbrake.configure do |c|
-  c.blacklist_keys = [:email, /credit/i, 'password']
+  c.blocklist_keys = [:email, /credit/i, 'password']
 end
 
 Airbrake.notify('App crashed!', {
@@ -301,14 +301,14 @@ gets executed on first notify, only once):
 ```ruby
 Airbrake.configure do |c|
   # You can mix inline keys and Procs.
-  c.blacklist_keys = [:email, proc { Keyloader.load_keys }, 'password']
+  c.blocklist_keys = [:email, proc { Keyloader.load_keys }, 'password']
 end
 ```
 
 The Proc *must* return an Array consisting only of the elements, which are
 considered to be valid for this option.
 
-#### whitelist_keys
+#### allowlist_keys
 
 Specifies which keys in the payload (parameters, session data, environment data,
 etc) should _not_ be filtered. All other keys will be substituted with the
@@ -319,7 +319,7 @@ shouldn't be filtered.
 
 ```ruby
 Airbrake.configure do |c|
-  c.whitelist_keys = [:email, /user/i, 'account_id']
+  c.allowlist_keys = [:email, /user/i, 'account_id']
 end
 
 Airbrake.notify(StandardError.new('App crashed!'), {
@@ -340,7 +340,7 @@ Airbrake.notify(StandardError.new('App crashed!'), {
 ##### Using Procs to delay filters configuration
 
 See documentation about
-[blacklisting using Proc objects](#using-procs-to-delay-filters-configuration).
+[blocklisting using Proc objects](#using-procs-to-delay-filters-configuration).
 It's identical.
 
 #### code_hunks
@@ -627,7 +627,7 @@ Airbrake.add_filter(MyFilter.new)
 ```
 
 The library provides two default filters that you can use to filter notices:
-[KeysBlacklist][keysblacklist] & [KeysWhitelist][keyswhitelist].
+[KeysBlocklist][keysblocklist] & [KeysAllowlist][keysallowlist].
 
 #### Airbrake.build_notice
 
@@ -1199,8 +1199,8 @@ The project uses the MIT License. See LICENSE.md for details.
 [project-idkey]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/project-id-key.png
 [issues]: https://github.com/airbrake/airbrake-ruby/issues
 [twitter]: https://twitter.com/airbrake
-[keysblacklist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_blacklist.rb
-[keyswhitelist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_whitelist.rb
+[keysblocklist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_blocklist.rb
+[keysallowlist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_allowlist.rb
 [golang]: https://golang.org/
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
 [arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
