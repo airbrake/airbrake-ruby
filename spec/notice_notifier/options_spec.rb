@@ -234,14 +234,14 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
     end
 
-    describe ":blacklist_keys" do
+    describe ":blocklist_keys" do
       # Fixes https://github.com/airbrake/airbrake-ruby/issues/276
-      context "when specified along with :whitelist_keys" do
+      context "when specified along with :allowlist_keys" do
         context "and when context payload is present" do
           before do
             Airbrake::Config.instance.merge(
-              blacklist_keys: %i[password password_confirmation],
-              whitelist_keys: [:email, /user/i, 'account_id'],
+              blocklist_keys: %i[password password_confirmation],
+              allowlist_keys: [:email, /user/i, 'account_id'],
             )
           end
 

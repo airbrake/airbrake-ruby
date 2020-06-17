@@ -17,8 +17,8 @@ RSpec.describe Airbrake::Config do
   its(:environment) { is_expected.to be_nil }
   its(:ignore_environments) { is_expected.to be_empty }
   its(:timeout) { is_expected.to be_nil }
-  its(:blacklist_keys) { is_expected.to be_empty }
-  its(:whitelist_keys) { is_expected.to be_empty }
+  its(:blocklist_keys) { is_expected.to be_empty }
+  its(:allowlist_keys) { is_expected.to be_empty }
   its(:performance_stats) { is_expected.to eq(true) }
   its(:performance_stats_flush_period) { is_expected.to eq(15) }
   its(:query_stats) { is_expected.to eq(true) }
@@ -167,6 +167,34 @@ RSpec.describe Airbrake::Config do
   describe "#logger" do
     it "sets logger level to Logger::WARN" do
       expect(subject.logger.level).to eq(Logger::WARN)
+    end
+  end
+
+  describe "#blacklist_keys=" do
+    before { allow(Kernel).to receive(:warn) }
+
+    it "sets blocklist_keys instead" do
+      subject.blacklist_keys = [1, 2, 3]
+      expect(subject.blocklist_keys).to eq([1, 2, 3])
+    end
+
+    it "prints a warning" do
+      expect(Kernel).to receive(:warn).with(/use blocklist_keys= instead/)
+      subject.blacklist_keys = [1, 2, 3]
+    end
+  end
+
+  describe "#whitelist_keys=" do
+    before { allow(Kernel).to receive(:warn) }
+
+    it "sets allowlist_keys instead" do
+      subject.whitelist_keys = [1, 2, 3]
+      expect(subject.allowlist_keys).to eq([1, 2, 3])
+    end
+
+    it "prints a warning" do
+      expect(Kernel).to receive(:warn).with(/use allowlist_keys= instead/)
+      subject.whitelist_keys = [1, 2, 3]
     end
   end
 end

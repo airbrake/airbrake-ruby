@@ -10,7 +10,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     end
   end
 
-  shared_examples "query blacklisting" do |query, opts|
+  shared_examples "query blocklisting" do |query, opts|
     it "ignores '#{query}'" do
       filter = described_class.new('postgres')
       q = Airbrake::Query.new(query: query, method: 'GET', route: '/', timing: 1)
@@ -263,12 +263,12 @@ RSpec.describe Airbrake::Filters::SqlFilter do
 
     'SELECT t.oid, t.typname FROM pg_type as t WHERE t.typname IN (?)',
   ].each do |query|
-    include_examples 'query blacklisting', query, should_ignore: true
+    include_examples 'query blocklisting', query, should_ignore: true
   end
 
   [
     'UPDATE "users" SET "last_sign_in_at" = ? WHERE "users"."id" = ?',
   ].each do |query|
-    include_examples 'query blacklisting', query, should_ignore: false
+    include_examples 'query blocklisting', query, should_ignore: false
   end
 end

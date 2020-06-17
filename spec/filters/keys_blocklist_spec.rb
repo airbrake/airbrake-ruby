@@ -1,4 +1,4 @@
-RSpec.describe Airbrake::Filters::KeysBlacklist do
+RSpec.describe Airbrake::Filters::KeysBlocklist do
   subject { described_class.new(patterns) }
 
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
@@ -91,10 +91,10 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
 
       it "logs an error" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/,
+          /KeysBlocklist is invalid.+patterns: \[#<Object:.+>\]/,
         )
-        keys_blacklist = described_class.new(patterns)
-        keys_blacklist.call(notice)
+        keys_blocklist = described_class.new(patterns)
+        keys_blocklist.call(notice)
       end
     end
 
@@ -104,10 +104,10 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
       context "and when the filter is called once" do
         it "logs an error" do
           expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /KeysBlacklist is invalid.+patterns: \[#<Proc:.+>\]/,
+            /KeysBlocklist is invalid.+patterns: \[#<Proc:.+>\]/,
           )
-          keys_blacklist = described_class.new(patterns)
-          keys_blacklist.call(notice)
+          keys_blocklist = described_class.new(patterns)
+          keys_blocklist.call(notice)
         end
       end
 
@@ -133,10 +133,10 @@ RSpec.describe Airbrake::Filters::KeysBlacklist do
 
     it "logs an error" do
       expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /KeysBlacklist is invalid.+patterns: \[#<Object:.+>\]/,
+        /KeysBlocklist is invalid.+patterns: \[#<Object:.+>\]/,
       )
-      keys_blacklist = described_class.new(patterns)
-      keys_blacklist.call(notice)
+      keys_blocklist = described_class.new(patterns)
+      keys_blocklist.call(notice)
     end
   end
 

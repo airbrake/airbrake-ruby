@@ -7,8 +7,8 @@ module Airbrake
     # class that includes this module must implement.
     #
     # @see Notice
-    # @see KeysWhitelist
-    # @see KeysBlacklist
+    # @see KeysAllowlist
+    # @see KeysBlocklist
     # @api private
     module KeysFilter
       # @return [String] The label to replace real values of filtered payload
@@ -19,11 +19,11 @@ module Airbrake
       VALID_PATTERN_CLASSES = [String, Symbol, Regexp].freeze
 
       # @return [Array<Symbol>] parts of a Notice's payload that can be modified
-      #   by blacklist/whitelist filters
+      #   by blocklist/allowlist filters
       FILTERABLE_KEYS = %i[environment session params].freeze
 
       # @return [Array<Symbol>] parts of a Notice's *context* payload that can
-      #   be modified by blacklist/whitelist filters
+      #   be modified by blocklist/allowlist filters
       FILTERABLE_CONTEXT_KEYS = %i[
         user
 
@@ -42,7 +42,7 @@ module Airbrake
       # @return [Integer]
       attr_reader :weight
 
-      # Creates a new KeysBlacklist or KeysWhitelist filter that uses the given
+      # Creates a new KeysBlocklist or KeysAllowlist filter that uses the given
       # +patterns+ for filtering a notice's payload.
       #
       # @param [Array<String,Regexp,Symbol>] patterns
