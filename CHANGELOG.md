@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v4.15.0][v4.15.0] (June 17, 2020)
+
 * Deprecated `blacklist_keys` in favor of `blocklist_keys`
   ([#580](https://github.com/airbrake/airbrake-ruby/pull/580))
 * Deprecated `whitelist_keys` in favor of `allowlist_keys`
@@ -966,3 +968,4 @@ Airbrake Ruby Changelog
 [v4.13.4]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.13.4
 [v4.14.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.0
 [v4.14.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.1
+[v4.15.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.15.0
