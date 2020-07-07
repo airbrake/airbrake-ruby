@@ -407,6 +407,19 @@ Airbrake.configure do |c|
 end
 ```
 
+#### error_notifications
+
+Configures Airbrake error reporting. By default, it's enabled (recommended).
+
+When it's disabled, [`Airbrake.notify`](#airbrakenotify) &
+[`Airbrake.notify_sync`](#airbrakenotify_sync) are no-op.
+
+```ruby
+Airbrake.configure do |c|
+  c.error_notifications = true
+end
+```
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do

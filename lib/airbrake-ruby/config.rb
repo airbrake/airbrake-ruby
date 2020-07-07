@@ -4,6 +4,7 @@ module Airbrake
   #
   # @api public
   # @since v1.0.0
+  # rubocop:disable Metrics/ClassLength
   class Config
     # @return [Integer] the project identificator. This value *must* be set.
     # @api public
@@ -113,6 +114,12 @@ module Airbrake
     # @since v4.12.0
     attr_accessor :job_stats
 
+    # @return [Boolean] true if the library should send error reports to
+    #   Airbrake, false otherwise
+    # @api public
+    # @since ?.?.?
+    attr_accessor :error_notifications
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -153,6 +160,7 @@ module Airbrake
       self.performance_stats_flush_period = 15
       self.query_stats = true
       self.job_stats = true
+      self.error_notifications = true
 
       merge(user_config)
     end
@@ -261,4 +269,5 @@ module Airbrake
       raise Airbrake::Error, "unknown option '#{option}'"
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

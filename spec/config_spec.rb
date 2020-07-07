@@ -23,6 +23,7 @@ RSpec.describe Airbrake::Config do
   its(:performance_stats_flush_period) { is_expected.to eq(15) }
   its(:query_stats) { is_expected.to eq(true) }
   its(:job_stats) { is_expected.to eq(true) }
+  its(:error_notifications) { is_expected.to eq(true) }
 
   describe "#new" do
     context "when user config is passed" do
