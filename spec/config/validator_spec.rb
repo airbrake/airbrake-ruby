@@ -169,7 +169,7 @@ RSpec.describe Airbrake::Config::Validator do
         }
       end
 
-      it "returns a rejected promise" do
+      it "returns a resolved promise" do
         promise = described_class.check_notify_ability(config)
         expect(promise).to be_resolved
       end
@@ -178,6 +178,23 @@ RSpec.describe Airbrake::Config::Validator do
         expect(config.logger).to receive(:warn)
           .with(/'ignore_environments' has no effect/)
         described_class.check_notify_ability(config)
+      end
+    end
+
+    context "when the error_notifications option is false" do
+      let(:config_params) do
+        {
+          project_id: valid_id,
+          project_key: valid_key,
+          error_notifications: false,
+        }
+      end
+
+      it "returns a rejected promise" do
+        promise = described_class.check_notify_ability(config)
+        expect(promise.value).to eq(
+          'error' => "error notifications are disabled",
+        )
       end
     end
   end

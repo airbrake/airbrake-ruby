@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added the `error_notifications` option (enabled by default). This option
+  disables `Airbrake.notify` calls (makes them no-op)
+  ([#583](https://github.com/airbrake/airbrake-ruby/pull/583))
+
 ### [v4.15.0][v4.15.0] (June 17, 2020)
 
 * Deprecated `blacklist_keys` in favor of `blocklist_keys`
