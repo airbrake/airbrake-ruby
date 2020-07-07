@@ -1,4 +1,13 @@
 RSpec.describe Airbrake do
+  let(:remote_settings) { instance_double(Airbrake::RemoteSettings) }
+
+  before do
+    allow(Airbrake::RemoteSettings).to receive(:poll).and_return(remote_settings)
+    allow(remote_settings).to receive(:stop_polling)
+  end
+
+  after { described_class.instance_variable_set(:@remote_settings, nil) }
+
   it "gets initialized with a performance notifier" do
     expect(described_class.performance_notifier).not_to be_nil
   end
@@ -178,6 +187,35 @@ RSpec.describe Airbrake do
         expect(Airbrake::Filters::GitLastCheckoutFilter)
           .to receive(:new).with('/my/path')
         described_class.configure { |c| c.root_directory = '/my/path' }
+      end
+    end
+
+    context "when the config doesn't define a project_id" do
+      it "doesn't set remote settings" do
+        expect(Airbrake::RemoteSettings).not_to receive(:poll)
+        described_class.configure { |c| c.project_id = nil }
+      end
+    end
+
+    context "when the config defines a project_id" do
+      context "and when remote configuration is false" do
+        it "doesn't set remote settings" do
+          expect(Airbrake::RemoteSettings).not_to receive(:poll)
+          described_class.configure do |c|
+            c.project_id = 1337
+            c.__remote_configuration = false
+          end
+        end
+      end
+
+      context "and when remote configuration is true" do
+        it "sets remote settings" do
+          expect(Airbrake::RemoteSettings).to receive(:poll)
+          described_class.configure do |c|
+            c.project_id = 1337
+            c.__remote_configuration = true
+          end
+        end
       end
     end
   end
@@ -430,6 +468,20 @@ RSpec.describe Airbrake do
         described_class.instance_variable_set(:@performance_notifier, nil)
         expect_any_instance_of(Airbrake::PerformanceNotifier)
           .not_to receive(:close)
+      end
+    end
+
+    context "when remote settings are defined" do
+      it "stops polling" do
+        described_class.instance_variable_set(:@remote_settings, remote_settings)
+        expect(remote_settings).to receive(:stop_polling)
+      end
+    end
+
+    context "when remote settings are undefined" do
+      it "doesn't stop polling (because they weren't initialized)" do
+        described_class.instance_variable_set(:@remote_settings, nil)
+        expect(remote_settings).not_to receive(:stop_polling)
       end
     end
   end

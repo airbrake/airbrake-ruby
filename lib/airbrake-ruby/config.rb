@@ -120,6 +120,12 @@ module Airbrake
     # @since ?.?.?
     attr_accessor :error_notifications
 
+    # @note Not for public use!
+    # @return [Boolean]
+    # @api private
+    # @since ?.?.?
+    attr_accessor :__remote_configuration
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -161,6 +167,7 @@ module Airbrake
       self.query_stats = true
       self.job_stats = true
       self.error_notifications = true
+      self.__remote_configuration = false
 
       merge(user_config)
     end

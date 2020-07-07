@@ -12,6 +12,8 @@ require 'airbrake-ruby/mergeable'
 require 'airbrake-ruby/grouppable'
 require 'airbrake-ruby/config'
 require 'airbrake-ruby/config/validator'
+require 'airbrake-ruby/remote_settings/settings_data'
+require 'airbrake-ruby/remote_settings'
 require 'airbrake-ruby/promise'
 require 'airbrake-ruby/thread_pool'
 require 'airbrake-ruby/sync_sender'
@@ -262,6 +264,7 @@ module Airbrake
     #
     # @return [void]
     # rubocop:disable Style/GuardClause, Style/IfUnlessModifier
+    # rubocop:disable Metrics/CyclomaticComplexity
     def close
       if defined?(@notice_notifier) && @notice_notifier
         @notice_notifier.close
@@ -270,8 +273,13 @@ module Airbrake
       if defined?(@performance_notifier) && @performance_notifier
         @performance_notifier.close
       end
+
+      if defined?(@remote_settings) && @remote_settings
+        @remote_settings.stop_polling
+      end
     end
     # rubocop:enable Style/GuardClause, Style/IfUnlessModifier
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.
     #
@@ -570,7 +578,7 @@ module Airbrake
 
     private
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def process_config_options(config)
       if config.blocklist_keys.any?
         blocklist = Airbrake::Filters::KeysBlocklist.new(config.blocklist_keys)
@@ -580,6 +588,15 @@ module Airbrake
       if config.allowlist_keys.any?
         allowlist = Airbrake::Filters::KeysAllowlist.new(config.allowlist_keys)
         notice_notifier.add_filter(allowlist)
+      end
+
+      if config.project_id && config.__remote_configuration
+        @remote_settings ||= RemoteSettings.poll(config.project_id) do |data|
+          config.logger.debug("#{LOG_LABEL} applying remote settings: #{data.to_h}")
+
+          config.error_notifications = data.error_notifications?
+          config.performance_stats = data.performance_stats?
+        end
       end
 
       return unless config.root_directory
@@ -595,7 +612,7 @@ module Airbrake
         notice_notifier.add_filter(filter.new(config.root_directory))
       end
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   end
 end
 # rubocop:enable Metrics/ModuleLength
