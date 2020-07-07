@@ -100,10 +100,10 @@ RSpec.describe Airbrake do
     end
 
     context "when blocklist_keys gets configured" do
-      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+      before { allow(described_class.notice_notifier).to receive(:add_filter) }
 
       it "adds blocklist filter" do
-        expect(Airbrake.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter)
           .with(an_instance_of(Airbrake::Filters::KeysBlocklist))
         described_class.configure { |c| c.blocklist_keys = %w[password] }
       end
@@ -115,10 +115,10 @@ RSpec.describe Airbrake do
     end
 
     context "when allowlist_keys gets configured" do
-      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+      before { allow(described_class.notice_notifier).to receive(:add_filter) }
 
       it "adds allowlist filter" do
-        expect(Airbrake.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter)
           .with(an_instance_of(Airbrake::Filters::KeysAllowlist))
         described_class.configure { |c| c.allowlist_keys = %w[banana] }
       end
@@ -130,10 +130,10 @@ RSpec.describe Airbrake do
     end
 
     context "when root_directory gets configured" do
-      before { allow(Airbrake.notice_notifier).to receive(:add_filter) }
+      before { allow(described_class.notice_notifier).to receive(:add_filter) }
 
       it "adds root directory filter" do
-        expect(Airbrake.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter)
           .with(an_instance_of(Airbrake::Filters::RootDirectoryFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
       end
@@ -145,7 +145,7 @@ RSpec.describe Airbrake do
       end
 
       it "adds git revision filter" do
-        expect(Airbrake.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter)
           .with(an_instance_of(Airbrake::Filters::GitRevisionFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
       end
@@ -157,7 +157,7 @@ RSpec.describe Airbrake do
       end
 
       it "adds git repository filter" do
-        expect(Airbrake.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter)
           .with(an_instance_of(Airbrake::Filters::GitRepositoryFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
       end
@@ -169,7 +169,7 @@ RSpec.describe Airbrake do
       end
 
       it "adds git last checkout filter" do
-        expect(Airbrake.notice_notifier).to receive(:add_filter)
+        expect(described_class.notice_notifier).to receive(:add_filter)
           .with(an_instance_of(Airbrake::Filters::GitLastCheckoutFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
       end
@@ -404,30 +404,30 @@ RSpec.describe Airbrake do
   end
 
   describe ".close" do
-    after { Airbrake.reset }
+    after { described_class.reset }
 
     context "when notice_notifier is defined" do
       it "gets closed" do
-        expect(Airbrake.notice_notifier).to receive(:close)
+        expect(described_class.notice_notifier).to receive(:close)
       end
     end
 
     context "when notice_notifier is undefined" do
       it "doesn't get closed (because it wasn't initialized)" do
-        Airbrake.instance_variable_set(:@notice_notifier, nil)
+        described_class.instance_variable_set(:@notice_notifier, nil)
         expect_any_instance_of(Airbrake::NoticeNotifier).not_to receive(:close)
       end
     end
 
     context "when performance_notifier is defined" do
       it "gets closed" do
-        expect(Airbrake.performance_notifier).to receive(:close)
+        expect(described_class.performance_notifier).to receive(:close)
       end
     end
 
     context "when perforance_notifier is undefined" do
       it "doesn't get closed (because it wasn't initialized)" do
-        Airbrake.instance_variable_set(:@performance_notifier, nil)
+        described_class.instance_variable_set(:@performance_notifier, nil)
         expect_any_instance_of(Airbrake::PerformanceNotifier)
           .not_to receive(:close)
       end
