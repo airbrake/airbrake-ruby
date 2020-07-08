@@ -182,7 +182,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_request" do
+  describe ".notify_request" do
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the request" do
         expect(described_class.performance_notifier).to receive(:notify) do |request|
@@ -217,7 +217,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_request_sync" do
+  describe ".notify_request_sync" do
     it "notifies request synchronously" do
       expect(described_class.performance_notifier).to receive(:notify_sync)
 
@@ -233,7 +233,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_query" do
+  describe ".notify_query" do
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the query" do
         expect(described_class.performance_notifier).to receive(:notify) do |query|
@@ -268,7 +268,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_query_sync" do
+  describe ".notify_query_sync" do
     it "notifies query synchronously" do
       expect(described_class.performance_notifier).to receive(:notify_sync)
 
@@ -284,7 +284,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_performance_breakdown" do
+  describe ".notify_performance_breakdown" do
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the performance breakdown" do
         expect(described_class.performance_notifier).to receive(:notify) do |query|
@@ -322,7 +322,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_performance_breakdown_sync" do
+  describe ".notify_performance_breakdown_sync" do
     it "notifies performance breakdown synchronously" do
       expect(described_class.performance_notifier).to receive(:notify_sync)
 
@@ -339,7 +339,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_queue" do
+  describe ".notify_queue" do
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the queue" do
         expect(described_class.performance_notifier).to receive(:notify) do |queue|
@@ -370,7 +370,7 @@ RSpec.describe Airbrake do
     end
   end
 
-  describe "#notify_queue_sync" do
+  describe ".notify_queue_sync" do
     it "notifies queue synchronously" do
       expect(described_class.performance_notifier).to receive(:notify_sync)
 
