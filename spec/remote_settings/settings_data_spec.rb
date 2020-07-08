@@ -1,0 +1,225 @@
+RSpec.describe Airbrake::RemoteSettings::SettingsData do
+  let(:project_id) { 123 }
+
+  describe "#merge!" do
+    it "returns self" do
+      settings_data = described_class.new(project_id, {})
+      expect(settings_data.merge!({})).to eql(settings_data)
+    end
+
+    it "merges the given hash with the data" do
+      settings_data = described_class.new(project_id, {})
+      # rubocop:disable Performance/RedundantMerge
+      settings_data.merge!('poll_sec' => 123, 'config_route' => 'abc')
+      # rubocop:enable Performance/RedundantMerge
+
+      expect(settings_data.interval).to eq(123)
+      expect(settings_data.config_route).to eq('abc')
+    end
+  end
+
+  describe "#interval" do
+    context "when given data has zero interval" do
+      let(:data) do
+        { 'poll_sec' => 0 }
+      end
+
+      it "returns the default interval" do
+        expect(described_class.new(project_id, data).interval).to eq(600)
+      end
+    end
+
+    context "when given data has negative interval" do
+      let(:data) do
+        { 'poll_sec' => -1 }
+      end
+
+      it "returns the default interval" do
+        expect(described_class.new(project_id, data).interval).to eq(600)
+      end
+    end
+
+    context "when given data has nil interval" do
+      let(:data) do
+        { 'poll_sec' => nil }
+      end
+
+      it "returns the default interval" do
+        expect(described_class.new(project_id, data).interval).to eq(600)
+      end
+    end
+
+    context "when given data has a positive interval" do
+      let(:data) do
+        { 'poll_sec' => 123 }
+      end
+
+      it "returns the interval from data" do
+        expect(described_class.new(project_id, data).interval).to eq(123)
+      end
+    end
+  end
+
+  describe "#config_route" do
+    context "when given a pathname" do
+      let(:data) do
+        { 'config_route' => 'http://example.com' }
+      end
+
+      it "returns the given pathname" do
+        expect(described_class.new(project_id, data).config_route)
+          .to eq('http://example.com')
+      end
+    end
+
+    context "when the pathname is nil" do
+      let(:data) do
+        { 'config_route' => nil }
+      end
+
+      it "returns the default pathname" do
+        expect(described_class.new(project_id, data).config_route).to eq(
+          'https://staging-notifier-configs.s3.amazonaws.com/' \
+          "2020-06-18/config/#{project_id}/config.json",
+        )
+      end
+    end
+  end
+
+  describe "#error_notifications?" do
+    context "when the 'errors' setting is present" do
+      context "and when it is enabled" do
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'title' => 'errors',
+                'enabled' => true,
+              },
+            ],
+          }
+        end
+
+        it "returns true" do
+          expect(described_class.new(project_id, data).error_notifications?)
+            .to eq(true)
+        end
+      end
+
+      context "and when it is disabled" do
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'title' => 'errors',
+                'enabled' => false,
+              },
+            ],
+          }
+        end
+
+        it "returns false" do
+          expect(described_class.new(project_id, data).error_notifications?)
+            .to eq(false)
+        end
+      end
+    end
+
+    context "when the 'errors' setting is missing" do
+      let(:data) do
+        { 'settings' => [] }
+      end
+
+      it "returns true" do
+        expect(described_class.new(project_id, data).error_notifications?)
+          .to eq(true)
+      end
+    end
+  end
+
+  describe "#performance_stats?" do
+    context "when the 'apm' setting is present" do
+      context "and when it is enabled" do
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'title' => 'apm',
+                'enabled' => true,
+              },
+            ],
+          }
+        end
+
+        it "returns true" do
+          expect(described_class.new(project_id, data).performance_stats?)
+            .to eq(true)
+        end
+      end
+
+      context "and when it is disabled" do
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'title' => 'apm',
+                'enabled' => false,
+              },
+            ],
+          }
+        end
+
+        it "returns false" do
+          expect(described_class.new(project_id, data).performance_stats?)
+            .to eq(false)
+        end
+      end
+    end
+
+    context "when the 'apm' setting is missing" do
+      let(:data) do
+        { 'settings' => [] }
+      end
+
+      it "returns true" do
+        expect(described_class.new(project_id, data).performance_stats?)
+          .to eq(true)
+      end
+    end
+  end
+
+  describe "#to_h" do
+    let(:data) do
+      {
+        'poll_sec' => 123,
+        'settings' => [
+          {
+            'title' => 'apm',
+            'enabled' => false,
+          },
+        ],
+      }
+    end
+
+    subject { described_class.new(project_id, data) }
+
+    it "returns a hash representation of settings" do
+      expect(described_class.new(project_id, data).to_h).to eq(data)
+    end
+
+    it "doesn't allow mutation of the original data object" do
+      hash = subject.to_h
+      hash['poll_sec'] = 0
+
+      expect(subject.to_h).to eq(
+        'poll_sec' => 123,
+        'settings' => [
+          {
+            'title' => 'apm',
+            'enabled' => false,
+          },
+        ],
+      )
+    end
+  end
+end
