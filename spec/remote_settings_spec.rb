@@ -116,10 +116,7 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "makes the next request to the specified config route" do
-        settings = nil
-        remote_settings = described_class.poll(project_id) do |data|
-          settings = data
-        end
+        remote_settings = described_class.poll(project_id) {}
         sleep(0.2)
 
         remote_settings.stop_polling
