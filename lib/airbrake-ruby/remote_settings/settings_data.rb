@@ -93,7 +93,7 @@ module Airbrake
       def find_setting(name)
         return unless @data.key?('settings')
 
-        @data['settings'].find { |s| s['title'] == name }
+        @data['settings'].find { |s| s['name'] == name }
       end
     end
   end

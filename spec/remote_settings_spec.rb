@@ -11,11 +11,11 @@ RSpec.describe Airbrake::RemoteSettings do
       'poll_sec' => 1,
       'settings' => [
         {
-          'title' => 'apm',
+          'name' => 'apm',
           'enabled' => false,
         },
         {
-          'title' => 'errors',
+          'name' => 'errors',
           'enabled' => true,
         },
       ],

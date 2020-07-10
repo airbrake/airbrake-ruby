@@ -93,7 +93,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
           {
             'settings' => [
               {
-                'title' => 'errors',
+                'name' => 'errors',
                 'enabled' => true,
               },
             ],
@@ -111,7 +111,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
           {
             'settings' => [
               {
-                'title' => 'errors',
+                'name' => 'errors',
                 'enabled' => false,
               },
             ],
@@ -144,7 +144,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
           {
             'settings' => [
               {
-                'title' => 'apm',
+                'name' => 'apm',
                 'enabled' => true,
               },
             ],
@@ -162,7 +162,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
           {
             'settings' => [
               {
-                'title' => 'apm',
+                'name' => 'apm',
                 'enabled' => false,
               },
             ],
@@ -194,7 +194,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
         'poll_sec' => 123,
         'settings' => [
           {
-            'title' => 'apm',
+            'name' => 'apm',
             'enabled' => false,
           },
         ],
@@ -215,7 +215,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
         'poll_sec' => 123,
         'settings' => [
           {
-            'title' => 'apm',
+            'name' => 'apm',
             'enabled' => false,
           },
         ],
