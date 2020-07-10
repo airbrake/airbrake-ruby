@@ -23,7 +23,7 @@ module Airbrake
     # @param [#to_json] data
     # @param [URI::HTTPS] endpoint
     # @return [Hash{String=>String}] the parsed HTTP response
-    def send(data, promise, endpoint = @config.endpoint)
+    def send(data, promise, endpoint = @config.error_endpoint)
       return promise if rate_limited_ip?(promise)
 
       response = nil

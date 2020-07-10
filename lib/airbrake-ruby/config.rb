@@ -193,8 +193,8 @@ module Airbrake
 
     # The full URL to the Airbrake Notice API. Based on the +:host+ option.
     # @return [URI] the endpoint address
-    def endpoint
-      @endpoint ||=
+    def error_endpoint
+      @error_endpoint ||=
         begin
           self.host = ('https://' << host) if host !~ %r{\Ahttps?://}
           api = "api/v3/projects/#{project_id}/notices"

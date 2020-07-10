@@ -10,7 +10,7 @@ RSpec.describe Airbrake::Config do
   its(:app_version) { is_expected.to be_nil }
   its(:versions) { is_expected.to be_empty }
   its(:host) { is_expected.to eq('https://api.airbrake.io') }
-  its(:endpoint) { is_expected.not_to be_nil }
+  its(:error_endpoint) { is_expected.not_to be_nil }
   its(:workers) { is_expected.to eq(1) }
   its(:queue_size) { is_expected.to eq(100) }
   its(:root_directory) { is_expected.to eq(Bundler.root.realpath.to_s) }
@@ -65,13 +65,13 @@ RSpec.describe Airbrake::Config do
     end
   end
 
-  describe "#endpoint" do
+  describe "#error_endpoint" do
     subject { described_class.new(valid_params.merge(user_config)) }
 
     context "when host ends with a URL with a slug with a trailing slash" do
       let(:user_config) { { host: 'https://localhost/bingo/' } }
 
-      its(:endpoint) do
+      its(:error_endpoint) do
         is_expected.to eq(URI('https://localhost/bingo/api/v3/projects/1/notices'))
       end
     end
@@ -79,7 +79,7 @@ RSpec.describe Airbrake::Config do
     context "when host ends with a URL with a slug without a trailing slash" do
       let(:user_config) { { host: 'https://localhost/bingo' } }
 
-      its(:endpoint) do
+      its(:error_endpoint) do
         is_expected.to eq(URI('https://localhost/api/v3/projects/1/notices'))
       end
     end
