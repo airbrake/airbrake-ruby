@@ -188,6 +188,108 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
     end
   end
 
+  describe "#error_host" do
+    context "when the 'errors' setting is present" do
+      context "and when 'endpoint' is specified" do
+        let(:endpoint) { 'https://api.example.com/' }
+
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'name' => 'errors',
+                'enabled' => true,
+                'endpoint' => endpoint,
+              },
+            ],
+          }
+        end
+
+        it "returns the endpoint" do
+          expect(described_class.new(project_id, data).error_host).to eq(endpoint)
+        end
+      end
+
+      context "and when an endpoint is NOT specified" do
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'name' => 'errors',
+                'enabled' => true,
+              },
+            ],
+          }
+        end
+
+        it "returns nil" do
+          expect(described_class.new(project_id, data).error_host).to be_nil
+        end
+      end
+    end
+
+    context "when the 'errors' setting is missing" do
+      let(:data) do
+        { 'settings' => [] }
+      end
+
+      it "returns nil" do
+        expect(described_class.new(project_id, data).error_host).to be_nil
+      end
+    end
+  end
+
+  describe "#apm_host" do
+    context "when the 'apm' setting is present" do
+      context "and when 'endpoint' is specified" do
+        let(:endpoint) { 'https://api.example.com/' }
+
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'name' => 'apm',
+                'enabled' => true,
+                'endpoint' => endpoint,
+              },
+            ],
+          }
+        end
+
+        it "returns the endpoint" do
+          expect(described_class.new(project_id, data).apm_host).to eq(endpoint)
+        end
+      end
+
+      context "and when an endpoint is NOT specified" do
+        let(:data) do
+          {
+            'settings' => [
+              {
+                'name' => 'apm',
+                'enabled' => true,
+              },
+            ],
+          }
+        end
+
+        it "returns nil" do
+          expect(described_class.new(project_id, data).apm_host).to be_nil
+        end
+      end
+    end
+
+    context "when the 'apm' setting is missing" do
+      let(:data) do
+        { 'settings' => [] }
+      end
+
+      it "returns nil" do
+        expect(described_class.new(project_id, data).apm_host).to be_nil
+      end
+    end
+  end
+
   describe "#to_h" do
     let(:data) do
       {
