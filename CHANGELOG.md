@@ -3,9 +3,23 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v5.0.0.rc.1][v5.0.0.rc.1] (July 13, 2020)
+
 * Added the `error_notifications` option (enabled by default). This option
   disables `Airbrake.notify` calls (makes them no-op)
   ([#583](https://github.com/airbrake/airbrake-ruby/pull/583))
+* `Airbrake.close` always returns `nil` now
+  ([#587](https://github.com/airbrake/airbrake-ruby/pull/587))
+* Renamed `Airbrake::Config#endpoint` to `Airbrake::Config#error_endpoint`
+  ([#589](https://github.com/airbrake/airbrake-ruby/pull/589))
+* Added a new configuration option `apm_host`
+  ([#589](https://github.com/airbrake/airbrake-ruby/pull/589))
+* Added an alias for the `host` configuration option - `error_host`
+  ([#589](https://github.com/airbrake/airbrake-ruby/pull/589))
+* Added experimental support for remote configuration (will be elaborated when
+  stable version is released)
+  ([#585](https://github.com/airbrake/airbrake-ruby/pull/585),
+  [#586](https://github.com/airbrake/airbrake-ruby/pull/586))
 
 ### [v4.15.0][v4.15.0] (June 17, 2020)
 
@@ -973,3 +987,4 @@ Airbrake Ruby Changelog
 [v4.14.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.0
 [v4.14.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.1
 [v4.15.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.15.0
+[v5.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.1
