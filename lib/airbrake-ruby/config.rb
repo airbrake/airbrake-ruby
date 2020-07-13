@@ -47,6 +47,17 @@ module Airbrake
     # @api public
     attr_accessor :host
 
+    # @since v?.?.?
+    alias error_host host
+    # @since v?.?.?
+    alias error_host= host=
+
+    # @return [String] the host, which provides the API endpoint to which
+    #   APM data should be sent
+    # @api public
+    # @since v?.?.?
+    attr_accessor :apm_host
+
     # @return [String, Pathname] the working directory of your project
     # @api public
     attr_accessor :root_directory
@@ -147,7 +158,8 @@ module Airbrake
       self.logger = ::Logger.new(File::NULL).tap { |l| l.level = Logger::WARN }
       self.project_id = user_config[:project_id]
       self.project_key = user_config[:project_key]
-      self.host = 'https://api.airbrake.io'
+      self.error_host = 'https://api.airbrake.io'
+      self.apm_host = 'https://api.airbrake.io'
 
       self.ignore_environments = []
 
@@ -191,14 +203,14 @@ module Airbrake
       self.allowlist_keys = keys
     end
 
-    # The full URL to the Airbrake Notice API. Based on the +:host+ option.
+    # The full URL to the Airbrake Notice API. Based on the +:error_host+ option.
     # @return [URI] the endpoint address
     def error_endpoint
       @error_endpoint ||=
         begin
-          self.host = ('https://' << host) if host !~ %r{\Ahttps?://}
+          self.error_host = ('https://' << error_host) if error_host !~ %r{\Ahttps?://}
           api = "api/v3/projects/#{project_id}/notices"
-          URI.join(host, api)
+          URI.join(error_host, api)
         end
     end
 

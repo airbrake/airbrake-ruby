@@ -144,7 +144,7 @@ module Airbrake
 
       with_grouped_payload(payload) do |resource_hash, destination|
         url = URI.join(
-          @config.host,
+          @config.apm_host,
           "api/v5/projects/#{@config.project_id}/#{destination}",
         )
 
