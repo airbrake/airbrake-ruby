@@ -189,35 +189,6 @@ RSpec.describe Airbrake do
         described_class.configure { |c| c.root_directory = '/my/path' }
       end
     end
-
-    context "when the config doesn't define a project_id" do
-      it "doesn't set remote settings" do
-        expect(Airbrake::RemoteSettings).not_to receive(:poll)
-        described_class.configure { |c| c.project_id = nil }
-      end
-    end
-
-    context "when the config defines a project_id" do
-      context "and when remote configuration is false" do
-        it "doesn't set remote settings" do
-          expect(Airbrake::RemoteSettings).not_to receive(:poll)
-          described_class.configure do |c|
-            c.project_id = 1337
-            c.__remote_configuration = false
-          end
-        end
-      end
-
-      context "and when remote configuration is true" do
-        it "sets remote settings" do
-          expect(Airbrake::RemoteSettings).to receive(:poll)
-          described_class.configure do |c|
-            c.project_id = 1337
-            c.__remote_configuration = true
-          end
-        end
-      end
-    end
   end
 
   describe ".notify_request" do
