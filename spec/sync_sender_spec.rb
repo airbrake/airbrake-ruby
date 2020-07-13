@@ -27,7 +27,9 @@ RSpec.describe Airbrake::SyncSender do
       expect(
         a_request(:post, endpoint).with(
           headers: {
-            'User-Agent' => %r{airbrake-ruby/\d+\.\d+\.\d+ Ruby/\d+\.\d+\.\d+},
+            'User-Agent' => %r{
+              airbrake-ruby/\d+\.\d+\.\d+(\.rc\.\d+)?\sRuby/\d+\.\d+\.\d+
+            }x,
           },
         ),
       ).to have_been_made.once
