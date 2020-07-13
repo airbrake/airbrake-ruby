@@ -579,6 +579,7 @@ module Airbrake
     private
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
     def process_config_options(config)
       if config.blocklist_keys.any?
         blocklist = Airbrake::Filters::KeysBlocklist.new(config.blocklist_keys)
@@ -593,6 +594,9 @@ module Airbrake
       if config.project_id && config.__remote_configuration
         @remote_settings ||= RemoteSettings.poll(config.project_id) do |data|
           config.logger.debug("#{LOG_LABEL} applying remote settings: #{data.to_h}")
+
+          config.error_host = data.error_host if data.error_host
+          config.apm_host = data.apm_host if data.apm_host
 
           config.error_notifications = data.error_notifications?
           config.performance_stats = data.performance_stats?
@@ -613,6 +617,7 @@ module Airbrake
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
   end
 end
 # rubocop:enable Metrics/ModuleLength

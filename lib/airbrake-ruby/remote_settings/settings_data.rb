@@ -83,6 +83,22 @@ module Airbrake
         s['enabled']
       end
 
+      # @return [String, nil] the host, which provides the API endpoint to which
+      #   exceptions should be sent
+      def error_host
+        return unless (s = find_setting(SETTINGS[:errors]))
+
+        s['endpoint']
+      end
+
+      # @return [String, nil] the host, which provides the API endpoint to which
+      #   APM data should be sent
+      def apm_host
+        return unless (s = find_setting(SETTINGS[:apm]))
+
+        s['endpoint']
+      end
+
       # @return [Hash{String=>Object}] raw representation of JSON payload
       def to_h
         @data.dup
