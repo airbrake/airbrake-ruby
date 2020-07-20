@@ -4,19 +4,12 @@ module Airbrake
   #
   # @since v1.0.0
   class Notice
-    # @return [Hash{Symbol=>String}] the information about the notifier library
-    NOTIFIER = {
-      name: 'airbrake-ruby'.freeze,
-      version: Airbrake::AIRBRAKE_RUBY_VERSION,
-      url: 'https://github.com/airbrake/airbrake-ruby'.freeze,
-    }.freeze
-
     # @return [Hash{Symbol=>String,Hash}] the information to be displayed in the
     #   Context tab in the dashboard
     CONTEXT = {
       os: RUBY_PLATFORM,
       language: "#{RUBY_ENGINE}/#{RUBY_VERSION}".freeze,
-      notifier: NOTIFIER,
+      notifier: Airbrake::NOTIFIER_INFO,
     }.freeze
 
     # @return [Integer] the maxium size of the JSON payload in bytes
