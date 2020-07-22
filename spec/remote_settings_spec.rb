@@ -25,9 +25,12 @@ RSpec.describe Airbrake::RemoteSettings do
   let(:config_path) { described_class::CONFIG_DUMP_PATH }
   let(:config_dir) { File.dirname(config_path) }
 
-  before do
-    stub_request(:get, endpoint).to_return(status: 200, body: body.to_json)
+  let!(:stub) do
+    stub_request(:get, Regexp.new(endpoint))
+      .to_return(status: 200, body: body.to_json)
+  end
 
+  before do
     # Do not create config dumps on disk.
     allow(Dir).to receive(:mkdir).with(config_dir)
     allow(File).to receive(:write).with(config_path, anything)
@@ -52,7 +55,7 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.2)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.once
+        expect(stub).to have_been_requested.once
       end
 
       it "yields the config to the block twice" do
@@ -63,7 +66,7 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.2)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.once
+        expect(stub).to have_been_requested.once
       end
 
       context "when config loading fails" do
@@ -77,7 +80,7 @@ RSpec.describe Airbrake::RemoteSettings do
           sleep(0.2)
           remote_settings.stop_polling
 
-          expect(a_request(:get, endpoint)).to have_been_made.once
+          expect(stub).to have_been_requested.once
         end
       end
     end
@@ -88,7 +91,18 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.1)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.at_least_once
+        expect(stub).to have_been_requested.at_least_once
+      end
+
+      it "sends params about the environment with the request" do
+        remote_settings = described_class.poll(project_id) {}
+        sleep(0.1)
+        remote_settings.stop_polling
+
+        stub_with_query_params = stub.with(
+          query: URI.decode_www_form(described_class::QUERY_PARAMS).to_h,
+        )
+        expect(stub_with_query_params).to have_been_requested.at_least_once
       end
 
       it "fetches remote settings" do
@@ -118,7 +132,7 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.1)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).not_to have_been_made
+        expect(stub).not_to have_been_requested
         expect(settings.interval).to eq(600)
       end
     end
@@ -136,14 +150,15 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.1)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.once
+        expect(stub).to have_been_requested.once
         expect(settings.interval).to eq(600)
       end
     end
 
     context "when API returns an XML response" do
-      before do
-        stub_request(:get, endpoint).to_return(status: 200, body: '<?xml ...')
+      let!(:stub) do
+        stub_request(:get, Regexp.new(endpoint))
+          .to_return(status: 200, body: '<?xml ...')
       end
 
       it "doesn't update settings data" do
@@ -154,20 +169,23 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.1)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.once
+        expect(stub).to have_been_requested.once
         expect(settings.interval).to eq(600)
       end
     end
 
     context "when a config route is specified in the returned data" do
-      let(:new_endpoint) { 'http://example.com' }
+      let(:new_endpoint) do
+        "http://example.com"
+      end
 
       let(:body) do
         { 'config_route' => new_endpoint, 'poll_sec' => 0.1 }
       end
 
-      before do
-        stub_request(:get, new_endpoint).to_return(status: 200, body: body.to_json)
+      let!(:new_stub) do
+        stub_request(:get, Regexp.new(new_endpoint))
+          .to_return(status: 200, body: body.to_json)
       end
 
       it "makes the next request to the specified config route" do
@@ -176,8 +194,8 @@ RSpec.describe Airbrake::RemoteSettings do
 
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.once
-        expect(a_request(:get, new_endpoint)).to have_been_made.once
+        expect(stub).to have_been_requested.once
+        expect(new_stub).to have_been_requested.once
       end
     end
   end
@@ -191,7 +209,7 @@ RSpec.describe Airbrake::RemoteSettings do
       sleep(0.2)
       remote_settings.stop_polling
 
-      expect(a_request(:get, endpoint)).to have_been_made.once
+      expect(stub).to have_been_requested.once
     end
 
     context "when config dumping fails" do
@@ -205,7 +223,7 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.2)
         remote_settings.stop_polling
 
-        expect(a_request(:get, endpoint)).to have_been_made.once
+        expect(stub).to have_been_requested.once
       end
     end
   end
