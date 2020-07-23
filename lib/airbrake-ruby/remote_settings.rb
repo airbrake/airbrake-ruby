@@ -24,6 +24,15 @@ module Airbrake
       '../../config/config.json',
     ).freeze
 
+    # @return [Hash{Symbol=>String}] metadata to be attached to every GET
+    #   request
+    QUERY_PARAMS = URI.encode_www_form(
+      notifier_name: Airbrake::NOTIFIER_INFO[:name],
+      notifier_version: Airbrake::NOTIFIER_INFO[:version],
+      os: RUBY_PLATFORM,
+      language: "#{RUBY_ENGINE}/#{RUBY_VERSION}".freeze,
+    ).freeze
+
     # Polls remote config of the given project.
     #
     # @param [Integer] project_id
@@ -84,7 +93,7 @@ module Airbrake
     def fetch_config
       response = nil
       begin
-        response = Net::HTTP.get(URI(@data.config_route))
+        response = Net::HTTP.get(build_config_uri)
       rescue StandardError => ex
         logger.error(ex)
         return {}
@@ -106,6 +115,12 @@ module Airbrake
       end
 
       json
+    end
+
+    def build_config_uri
+      uri = URI(@data.config_route)
+      uri.query = QUERY_PARAMS
+      uri
     end
 
     def load_config

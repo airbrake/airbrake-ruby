@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Started sending information about notifier name & version, operating system &
+  language with every remote config GET request
+  ([#594](https://github.com/airbrake/airbrake-ruby/pull/594))
+
 ### [v5.0.0.rc.1][v5.0.0.rc.1] (July 13, 2020)
 
 * Added the `error_notifications` option (enabled by default). This option

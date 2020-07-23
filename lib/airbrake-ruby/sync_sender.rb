@@ -79,7 +79,7 @@ module Airbrake
       req['Authorization'] = "Bearer #{@config.project_key}"
       req['Content-Type'] = CONTENT_TYPE
       req['User-Agent'] =
-        "#{Airbrake::Notice::NOTIFIER[:name]}/#{Airbrake::AIRBRAKE_RUBY_VERSION}" \
+        "#{Airbrake::NOTIFIER_INFO[:name]}/#{Airbrake::AIRBRAKE_RUBY_VERSION}" \
         " Ruby/#{RUBY_VERSION}"
 
       req
