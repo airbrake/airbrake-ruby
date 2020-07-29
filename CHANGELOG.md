@@ -6,6 +6,8 @@ Airbrake Ruby Changelog
 * Started sending information about notifier name & version, operating system &
   language with every remote config GET request
   ([#594](https://github.com/airbrake/airbrake-ruby/pull/594))
+* Remote settings: updated S3 bucket name, which fixed config fetching
+  ([#595](https://github.com/airbrake/airbrake-ruby/pull/595))
 
 ### [v5.0.0.rc.1][v5.0.0.rc.1] (July 13, 2020)
 

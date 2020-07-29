@@ -2,7 +2,7 @@ RSpec.describe Airbrake::RemoteSettings do
   let(:project_id) { 123 }
 
   let(:endpoint) do
-    "https://staging-notifier-configs.s3.amazonaws.com/2020-06-18/config/" \
+    "https://v1-staging-notifier-configs.s3.amazonaws.com/2020-06-18/config/" \
     "#{project_id}/config.json"
   end
 

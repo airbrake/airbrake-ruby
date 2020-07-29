@@ -79,7 +79,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
       it "returns the default pathname" do
         expect(described_class.new(project_id, data).config_route).to eq(
-          'https://staging-notifier-configs.s3.amazonaws.com/' \
+          'https://v1-staging-notifier-configs.s3.amazonaws.com/' \
           "2020-06-18/config/#{project_id}/config.json",
         )
       end
