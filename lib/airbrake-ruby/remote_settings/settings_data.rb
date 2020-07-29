@@ -22,7 +22,7 @@ module Airbrake
 
       # @return [String] what URL to poll
       CONFIG_ROUTE_PATTERN =
-        'https://%<bucket>s.s3.amazonaws.com/' \
+        'https://v1-%<bucket>s.s3.amazonaws.com/' \
         "#{API_VER}/config/%<project_id>s/config.json".freeze
 
       # @return [Hash{Symbol=>String}] the hash of all supported settings where
