@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v5.0.0.rc.2][v5.0.0.rc.2] (July 29, 2020)
+
 * Started sending information about notifier name & version, operating system &
   language with every remote config GET request
   ([#594](https://github.com/airbrake/airbrake-ruby/pull/594))
@@ -994,3 +996,4 @@ Airbrake Ruby Changelog
 [v4.14.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.14.1
 [v4.15.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.15.0
 [v5.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.1
+[v5.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.2
