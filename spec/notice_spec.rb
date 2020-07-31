@@ -268,7 +268,7 @@ RSpec.describe Airbrake::Notice do
     it "sets a payload value" do
       hash = { bingo: 'bango' }
       notice[:params] = hash
-      expect(notice[:params]).to equal(hash)
+      expect(notice[:params]).to eq(hash)
     end
 
     it "raises error if notice is ignored" do

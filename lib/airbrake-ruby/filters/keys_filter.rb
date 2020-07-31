@@ -64,7 +64,10 @@ module Airbrake
           validate_patterns
         end
 
-        FILTERABLE_KEYS.each { |key| filter_hash(notice[key]) }
+        FILTERABLE_KEYS.each do |key|
+          notice[key] = filter_hash(notice[key])
+        end
+
         FILTERABLE_CONTEXT_KEYS.each { |key| filter_context_key(notice, key) }
 
         return unless notice[:context][:url]
@@ -81,15 +84,21 @@ module Airbrake
       def filter_hash(hash)
         return hash unless hash.is_a?(Hash)
 
+        hash_copy = hash.dup
+
         hash.each_key do |key|
           if should_filter?(key.to_s)
-            hash[key] = FILTERED
-          elsif hash[key].is_a?(Hash)
-            filter_hash(hash[key])
+            hash_copy[key] = FILTERED
+          elsif hash_copy[key].is_a?(Hash)
+            hash_copy[key] = filter_hash(hash_copy[key])
           elsif hash[key].is_a?(Array)
-            hash[key].each { |h| filter_hash(h) }
+            hash_copy[key].each_with_index do |h, i|
+              hash_copy[key][i] = filter_hash(h)
+            end
           end
         end
+
+        hash_copy
       end
 
       def filter_url_params(url)
@@ -142,7 +151,9 @@ module Airbrake
       def filter_context_key(notice, key)
         return unless notice[:context][key]
         return if notice[:context][key] == FILTERED
-        return filter_hash(notice[:context][key]) unless should_filter?(key)
+        unless should_filter?(key)
+          return notice[:context][key] = filter_hash(notice[:context][key])
+        end
 
         notice[:context][key] = FILTERED
       end
