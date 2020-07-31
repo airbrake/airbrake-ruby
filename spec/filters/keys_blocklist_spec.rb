@@ -150,6 +150,16 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
           { bongo: { bish: '[Filtered]' } },
         ],
       )
+
+      it "doesn't mutate the original hash" do
+        params = { bongo: { bish: 'bash' } }
+        notice[:params] = params
+
+        blocklist = described_class.new([:bish])
+        blocklist.call(notice)
+
+        expect(params[:bongo][:bish]).to eq('bash')
+      end
     end
 
     context "and it is recursive" do
