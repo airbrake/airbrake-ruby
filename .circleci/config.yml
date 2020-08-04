@@ -92,7 +92,7 @@ jobs:
       - <<: *unit
   "ruby-2.7":
     docker:
-      - image: circleci/ruby:2.7.0
+      - image: circleci/ruby:2.7
     working_directory: ~/airbrake-ruby
     steps:
       - <<: *repo_restore_cache
