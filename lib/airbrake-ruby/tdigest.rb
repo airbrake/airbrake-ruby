@@ -200,6 +200,7 @@ module Airbrake
         unless (0..1).cover?(item)
           raise ArgumentError, "p should be in [0,1], got #{item}"
         end
+
         if size == 0
           nil
         else
@@ -271,6 +272,7 @@ module Airbrake
           shift = 7
           while (v & 0x80) != 0
             raise 'Shift too large in decode' if shift > 28
+
             v = counts_bytes.shift || 0
             z += (v & 0x7f) << shift
             shift += 7

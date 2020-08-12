@@ -24,6 +24,7 @@ module Airbrake
 
       def git_version(spec)
         return unless spec.respond_to?(:git_version) || spec.git_version
+
         spec.git_version.to_s
       end
     end

@@ -34,9 +34,9 @@ RSpec.describe Airbrake::CodeHunk do
           eq(
             1 => 'module Airbrake',
             2 => '  ##',
-            # rubocop:disable Metrics/LineLength
+            # rubocop:disable Layout/LineLength
             3 => '  # Represents a chunk of information that is meant to be either sent to',
-            # rubocop:enable Metrics/LineLength
+            # rubocop:enable Layout/LineLength
           ),
         )
       end

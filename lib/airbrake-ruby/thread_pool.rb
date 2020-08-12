@@ -129,6 +129,7 @@ module Airbrake
       Thread.new do
         while (message = @queue.pop)
           break if message == :stop
+
           @block.call(message)
         end
       end

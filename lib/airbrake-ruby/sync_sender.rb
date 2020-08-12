@@ -47,6 +47,7 @@ module Airbrake
       end
 
       return promise.reject(parsed_resp['error']) if parsed_resp.key?('error')
+
       promise.resolve(parsed_resp)
     end
 

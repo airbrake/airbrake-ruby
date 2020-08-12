@@ -23,7 +23,7 @@ module Airbrake
 
       # @return [Hash{Symbol=>Regexp}] matchers for certain features of SQL
       ALL_FEATURES = {
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         single_quotes: /'(?:[^']|'')*?(?:\\'.*|'(?!'))/,
         double_quotes: /"(?:[^"]|"")*?(?:\\".*|"(?!"))/,
         dollar_quotes: /(\$(?!\d)[^$]*?\$).*?(?:\1|$)/,
@@ -33,13 +33,13 @@ module Airbrake
         hexadecimal_literals: /0x[0-9a-fA-F]+/,
         comments: /(?:#|--).*?(?=\r|\n|$)/i,
         multi_line_comments: %r{/\*(?:[^/]|/[^*])*?(?:\*/|/\*.*)},
-        oracle_quoted_strings: /q'\[.*?(?:\]'|$)|q'\{.*?(?:\}'|$)|q'\<.*?(?:\>'|$)|q'\(.*?(?:\)'|$)/
-        # rubocop:enable Metrics/LineLength
+        oracle_quoted_strings: /q'\[.*?(?:\]'|$)|q'\{.*?(?:\}'|$)|q'\<.*?(?:\>'|$)|q'\(.*?(?:\)'|$)/,
+        # rubocop:enable Layout/LineLength
       }.freeze
 
       # @return [Regexp] the regexp that is applied after the feature regexps
       #   were used
-      POST_FILTER = /(?<=[values|in ]\().+(?=\))/i
+      POST_FILTER = /(?<=[values|in ]\().+(?=\))/i.freeze
 
       # @return [Hash{Symbol=>Array<Symbol>}] a set of features that corresponds
       #   to a certain dialect

@@ -103,6 +103,7 @@ module Airbrake
     #   needed for compatibility but it shouldn't exist in the future
     def value
       return @value['ok'] if resolved?
+
       @value
     end
   end

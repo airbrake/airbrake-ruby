@@ -135,6 +135,7 @@ module Airbrake
       # If true, then it's likely an internal library error. In this case return
       # at least some backtrace to simplify debugging.
       return caller_copy if clean_bt.empty?
+
       clean_bt
     end
   end

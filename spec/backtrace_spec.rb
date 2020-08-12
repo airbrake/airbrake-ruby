@@ -2,7 +2,7 @@ RSpec.describe Airbrake::Backtrace do
   describe ".parse" do
     context "UNIX backtrace" do
       let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceAroundOperators, Layout/SpaceInsideHashLiteralBraces
+        # rubocop:disable Layout/LineLength, Style/HashSyntax, Layout/SpaceAroundOperators, Layout/SpaceInsideHashLiteralBraces
         [{:file=>"/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb", :line=>23, :function=>"<top (required)>"},
          {:file=>"/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb", :line=>54, :function=>"require"},
          {:file=>"/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb", :line=>54, :function=>"require"},
@@ -16,7 +16,7 @@ RSpec.describe Airbrake::Backtrace do
          {:file=>"/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb", :line=>73, :function=>"run"},
          {:file=>"/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb", :line=>41, :function=>"invoke"},
          {:file=>"/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec", :line=>4, :function=>"<main>"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceAroundOperators, Layout/SpaceInsideHashLiteralBraces
+        # rubocop:enable Layout/LineLength, Style/HashSyntax, Layout/SpaceAroundOperators, Layout/SpaceInsideHashLiteralBraces
       end
 
       it "returns a properly formatted array of hashes" do
@@ -34,10 +34,10 @@ RSpec.describe Airbrake::Backtrace do
       let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(windows_bt) } }
 
       let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
+        # rubocop:disable Layout/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
         [{:file=>"C:/Program Files/Server/app/models/user.rb", :line=>13, :function=>"magic"},
          {:file=>"C:/Program Files/Server/app/controllers/users_controller.rb", :line=>8, :function=>"index"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
+        # rubocop:enable Layout/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
       end
 
       it "returns a properly formatted array of hashes" do
@@ -47,7 +47,7 @@ RSpec.describe Airbrake::Backtrace do
 
     context "JRuby Java exceptions" do
       let(:backtrace_array) do
-        # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
+        # rubocop:disable Layout/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
         [{:file=>"InstanceMethodInvoker.java", :line=>26, :function=>"org.jruby.java.invokers.InstanceMethodInvoker.call"},
          {:file=>"Interpreter.java", :line=>126, :function=>"org.jruby.ir.interpreter.Interpreter.INTERPRET_EVAL"},
          {:file=>"RubyKernel$INVOKER$s$0$3$eval19.gen", :line=>nil, :function=>"org.jruby.RubyKernel$INVOKER$s$0$3$eval19.call"},
@@ -59,7 +59,7 @@ RSpec.describe Airbrake::Backtrace do
          {:file=>"Compiler.java", :line=>111, :function=>"org.jruby.ir.Compiler$1.load"},
          {:file=>"Main.java", :line=>225, :function=>"org.jruby.Main.run"},
          {:file=>"Main.java", :line=>197, :function=>"org.jruby.Main.main"}]
-        # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
+        # rubocop:enable Layout/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
       end
 
       it "returns a properly formatted array of hashes" do
@@ -72,21 +72,21 @@ RSpec.describe Airbrake::Backtrace do
 
     context "JRuby classloader exceptions" do
       let(:backtrace) do
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         ['uri_3a_classloader_3a_.META_minus_INF.jruby_dot_home.lib.ruby.stdlib.net.protocol.rbuf_fill(uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/net/protocol.rb:158)',
          'bin.processors.image_uploader.block in make_streams(bin/processors/image_uploader.rb:21)',
          'uri_3a_classloader_3a_.gems.faye_minus_websocket_minus_0_dot_10_dot_5.lib.faye.websocket.api.invokeOther13:dispatch_event(uri_3a_classloader_3a_/gems/faye_minus_websocket_minus_0_dot_10_dot_5/lib/faye/websocket/uri:classloader:/gems/faye-websocket-0.10.5/lib/faye/websocket/api.rb:109)',
          'tmp.jruby9022301782566983632extract.$dot.META_minus_INF.rails.file(/tmp/jruby9022301782566983632extract/./META-INF/rails.rb:13)']
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       end
 
       let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         [{ file: 'uri:classloader:/META-INF/jruby.home/lib/ruby/stdlib/net/protocol.rb', line: 158, function: 'uri_3a_classloader_3a_.META_minus_INF.jruby_dot_home.lib.ruby.stdlib.net.protocol.rbuf_fill' },
          { file: 'bin/processors/image_uploader.rb', line: 21, function: 'bin.processors.image_uploader.block in make_streams' },
          { file: 'uri_3a_classloader_3a_/gems/faye_minus_websocket_minus_0_dot_10_dot_5/lib/faye/websocket/uri:classloader:/gems/faye-websocket-0.10.5/lib/faye/websocket/api.rb', line: 109, function: 'uri_3a_classloader_3a_.gems.faye_minus_websocket_minus_0_dot_10_dot_5.lib.faye.websocket.api.invokeOther13:dispatch_event' },
          { file: '/tmp/jruby9022301782566983632extract/./META-INF/rails.rb', line: 13, function: 'tmp.jruby9022301782566983632extract.$dot.META_minus_INF.rails.file' }]
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       end
 
       let(:ex) { JavaAirbrakeTestError.new.tap { |e| e.set_backtrace(backtrace) } }
@@ -99,19 +99,19 @@ RSpec.describe Airbrake::Backtrace do
 
     context "JRuby non-throwable exceptions" do
       let(:backtrace) do
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         ['org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(org/postgresql/core/v3/ConnectionFactoryImpl.java:257)',
          'org.postgresql.core.ConnectionFactory.openConnection(org/postgresql/core/ConnectionFactory.java:65)',
          'org.postgresql.jdbc2.AbstractJdbc2Connection.<init>(org/postgresql/jdbc2/AbstractJdbc2Connection.java:149)']
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       end
 
       let(:parsed_backtrace) do
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         [{ file: 'org/postgresql/core/v3/ConnectionFactoryImpl.java', line: 257, function: 'org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl' },
          { file: 'org/postgresql/core/ConnectionFactory.java', line: 65, function: 'org.postgresql.core.ConnectionFactory.openConnection' },
          { file: 'org/postgresql/jdbc2/AbstractJdbc2Connection.java', line: 149, function: 'org.postgresql.jdbc2.AbstractJdbc2Connection.<init>' }]
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       end
 
       let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(backtrace) } }
@@ -123,22 +123,22 @@ RSpec.describe Airbrake::Backtrace do
 
     context "generic backtrace" do
       context "when function is absent" do
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         let(:generic_bt) do
           ["/home/bingo/bango/assets/stylesheets/error_pages.scss:139:in `animation'",
            "/home/bingo/bango/assets/stylesheets/error_pages.scss:139",
            "/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb:349:in `block in visit_mixin'"]
         end
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
 
         let(:ex) { AirbrakeTestError.new.tap { |e| e.set_backtrace(generic_bt) } }
 
         let(:parsed_backtrace) do
-          # rubocop:disable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
+          # rubocop:disable Layout/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
           [{:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>"animation"},
            {:file=>"/home/bingo/bango/assets/stylesheets/error_pages.scss", :line=>139, :function=>nil},
            {:file=>"/home/bingo/.gem/ruby/2.2.2/gems/sass-3.4.20/lib/sass/tree/visitors/perform.rb", :line=>349, :function=>"block in visit_mixin"}]
-          # rubocop:enable Metrics/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
+          # rubocop:enable Layout/LineLength, Style/HashSyntax, Layout/SpaceInsideHashLiteralBraces, Layout/SpaceAroundOperators
         end
 
         it "returns a properly formatted array of hashes" do
@@ -277,9 +277,9 @@ RSpec.describe Airbrake::Backtrace do
                 93 => '        begin',
                 94 => '          json = @payload.to_json',
                 95 => '        rescue *JSON_EXCEPTIONS => ex',
-                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:disable Layout/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
-                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:enable Layout/LineLength,Lint/InterpolationCheck
               },
             },
             {
@@ -325,9 +325,9 @@ RSpec.describe Airbrake::Backtrace do
                 93 => '        begin',
                 94 => '          json = @payload.to_json',
                 95 => '        rescue *JSON_EXCEPTIONS => ex',
-                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:disable Layout/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
-                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:enable Layout/LineLength,Lint/InterpolationCheck
               },
             },
           ]
@@ -357,9 +357,9 @@ RSpec.describe Airbrake::Backtrace do
                 93 => '        begin',
                 94 => '          json = @payload.to_json',
                 95 => '        rescue *JSON_EXCEPTIONS => ex',
-                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:disable Layout/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
-                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:enable Layout/LineLength,Lint/InterpolationCheck
               },
             },
             {
@@ -370,9 +370,9 @@ RSpec.describe Airbrake::Backtrace do
                 93 => '        begin',
                 94 => '          json = @payload.to_json',
                 95 => '        rescue *JSON_EXCEPTIONS => ex',
-                # rubocop:disable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:disable Layout/LineLength,Lint/InterpolationCheck
                 96 => '          @config.logger.debug("#{LOG_LABEL} `notice.to_json` failed: #{ex.class}: #{ex}")',
-                # rubocop:enable Metrics/LineLength,Lint/InterpolationCheck
+                # rubocop:enable Layout/LineLength,Lint/InterpolationCheck
                 97 => '        else',
               },
             },

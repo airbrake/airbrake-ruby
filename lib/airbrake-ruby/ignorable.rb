@@ -38,6 +38,7 @@ module Airbrake
     # @raise [Airbrake::Error] when instance is ignored
     def raise_if_ignored
       return unless ignored?
+
       raise Airbrake::Error, "cannot access ignored #{self.class}"
     end
   end

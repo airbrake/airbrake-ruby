@@ -19,6 +19,7 @@ module Airbrake
         notice[:errors].each do |error|
           error[:backtrace].each do |frame|
             next unless (file = frame[:file])
+
             file.sub!(/\A#{@root_directory}/, PROJECT_ROOT_LABEL)
           end
         end

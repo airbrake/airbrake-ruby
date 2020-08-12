@@ -12,6 +12,10 @@ module Airbrake
     #   strings with +ENCODING_OPTIONS+
     TEMP_ENCODING = 'utf-16'.freeze
 
+    # @return [Array<Encoding>] encodings that are eligible for fixing invalid
+    #   characters
+    SUPPORTED_ENCODINGS = [Encoding::UTF_8, Encoding::ASCII].freeze
+
     # @return [String] what to append when something is a circular reference
     CIRCULAR = '[Circular]'.freeze
 
@@ -35,6 +39,7 @@ module Airbrake
     def truncate(object, seen = Set.new)
       if seen.include?(object.object_id)
         return CIRCULAR if CIRCULAR_TYPES.any? { |t| object.is_a?(t) }
+
         return object
       end
       truncate_object(object, seen << object.object_id)
@@ -63,6 +68,7 @@ module Airbrake
     def truncate_string(str)
       fixed_str = replace_invalid_characters(str)
       return fixed_str if fixed_str.length <= @max_size
+
       (fixed_str.slice(0, @max_size) + TRUNCATED).freeze
     end
 
@@ -76,6 +82,7 @@ module Airbrake
       truncated_hash = {}
       hash.each_with_index do |(key, val), idx|
         break if idx + 1 > @max_size
+
         truncated_hash[key] = truncate(val, seen)
       end
 
@@ -103,8 +110,7 @@ module Airbrake
     # @return [String] a UTF-8 encoded string
     # @see https://github.com/flori/json/commit/3e158410e81f94dbbc3da6b7b35f4f64983aa4e3
     def replace_invalid_characters(str)
-      encoding = str.encoding
-      utf8_string = (encoding == Encoding::UTF_8 || encoding == Encoding::ASCII)
+      utf8_string = SUPPORTED_ENCODINGS.include?(str.encoding)
       return str if utf8_string && str.valid_encoding?
 
       temp_str = str.dup

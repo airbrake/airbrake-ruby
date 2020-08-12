@@ -41,12 +41,12 @@ module Airbrake
 
         return unless File.exist?(@git_path)
         return unless (checkout = last_checkout)
+
         notice[:context][:lastCheckout] = checkout
       end
 
       private
 
-      # rubocop:disable Metrics/AbcSize
       def last_checkout
         return unless (line = last_checkout_line)
 
@@ -66,7 +66,6 @@ module Airbrake
           time: timestamp(parts[-2].to_i),
         }
       end
-      # rubocop:enable Metrics/AbcSize
 
       def last_checkout_line
         head_path = File.join(@git_path, 'logs', 'HEAD')

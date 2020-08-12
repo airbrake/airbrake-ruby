@@ -16,6 +16,7 @@ module Airbrake
       # @macro call_filter
       def call(notice)
         return if notice[:errors].none? { |error| error[:type] == SYSTEM_EXIT_TYPE }
+
         notice.ignore!
       end
     end

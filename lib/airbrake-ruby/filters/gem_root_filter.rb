@@ -23,6 +23,7 @@ module Airbrake
               # If the frame is unparseable, then 'file' is nil, thus nothing to
               # filter (all frame's data is in 'function' instead).
               next unless (file = frame[:file])
+
               frame[:file] = file.sub(/\A#{gem_path}/, GEM_ROOT_LABEL)
             end
           end

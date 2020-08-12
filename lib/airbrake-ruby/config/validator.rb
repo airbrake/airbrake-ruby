@@ -61,12 +61,14 @@ module Airbrake
 
         def valid_project_id?(config)
           return true if config.project_id.to_i > 0
+
           false
         end
 
         def valid_project_key?(config)
           return false unless config.project_key.is_a?(String)
           return false if config.project_key.empty?
+
           true
         end
 
