@@ -12,8 +12,7 @@ module Airbrake
     include Mergeable
     include Grouppable
 
-    attr_accessor :method, :route, :query, :func, :file, :line, :start_time,
-                  :end_time, :timing, :time
+    attr_accessor :method, :route, :query, :func, :file, :line, :timing, :time
 
     def initialize(
       method:,
@@ -22,8 +21,6 @@ module Airbrake
       func: nil,
       file: nil,
       line: nil,
-      start_time: Time.now,
-      end_time: start_time + 1,
       timing: nil,
       time: Time.now
     )
@@ -34,8 +31,6 @@ module Airbrake
       @func = func
       @file = file
       @line = line
-      @start_time = start_time
-      @end_time = end_time
       @timing = timing
       @time = time
     end

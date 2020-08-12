@@ -10,15 +10,6 @@ RSpec.describe Airbrake::Stat do
     end
   end
 
-  describe "#increment" do
-    let(:start_time) { Time.new(2018, 1, 1, 0, 0, 20, 0) }
-    let(:end_time) { Time.new(2018, 1, 1, 0, 0, 22, 0) }
-
-    before { subject.increment(start_time, end_time) }
-
-    its(:sum) { is_expected.to eq(2000) }
-  end
-
   describe "#increment_ms" do
     before { subject.increment_ms(1000) }
 

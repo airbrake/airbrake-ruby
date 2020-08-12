@@ -541,31 +541,6 @@ RSpec.describe Airbrake::PerformanceNotifier do
       end
     end
 
-    context "when :start_time is specified (deprecated)" do
-      before do
-        allow(Kernel).to receive(:warn)
-      end
-
-      it "uses the value of :start_time to update stat" do
-        subject.notify(
-          Airbrake::Query.new(
-            method: 'POST',
-            route: '/foo',
-            query: 'SELECT * FROM things',
-            start_time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-            end_time: Time.new(2018, 1, 1, 0, 50, 0, 0),
-          ),
-        )
-        subject.close
-
-        expect(
-          a_request(:put, queries).with(
-            body: /"count":1,"sum":60000.0,"sumsq":3600000000.0/,
-          ),
-        ).to have_been_made
-      end
-    end
-
     context "when provided :timing is zero" do
       it "doesn't notify" do
         queue = Airbrake::Queue.new(queue: 'bananas', error_count: 0, timing: 0)

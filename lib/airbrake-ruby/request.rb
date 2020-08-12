@@ -4,7 +4,6 @@ module Airbrake
   # @see Airbrake.notify_request
   # @api public
   # @since v3.2.0
-  # rubocop:disable Metrics/ParameterLists
   class Request
     include HashKeyable
     include Ignorable
@@ -12,15 +11,12 @@ module Airbrake
     include Mergeable
     include Grouppable
 
-    attr_accessor :method, :route, :status_code, :start_time, :end_time,
-                  :timing, :time
+    attr_accessor :method, :route, :status_code, :timing, :time
 
     def initialize(
       method:,
       route:,
       status_code:,
-      start_time: Time.now,
-      end_time: start_time + 1,
       timing: nil,
       time: Time.now
     )
@@ -28,8 +24,6 @@ module Airbrake
       @method = method
       @route = route
       @status_code = status_code
-      @start_time = start_time
-      @end_time = end_time
       @timing = timing
       @time = time
     end
@@ -51,5 +45,4 @@ module Airbrake
       }.delete_if { |_key, val| val.nil? }
     end
   end
-  # rubocop:enable Metrics/ParameterLists
 end
