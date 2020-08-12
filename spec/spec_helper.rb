@@ -33,7 +33,7 @@ class AirbrakeTestError < RuntimeError
 
   def initialize(*)
     super
-    # rubocop:disable Metrics/LineLength
+    # rubocop:disable Layout/LineLength
     @backtrace = [
       "/home/kyrylo/code/airbrake/ruby/spec/spec_helper.rb:23:in `<top (required)>'",
       "/opt/rubies/ruby-2.2.2/lib/ruby/2.2.0/rubygems/core_ext/kernel_require.rb:54:in `require'",
@@ -49,7 +49,7 @@ class AirbrakeTestError < RuntimeError
       "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/lib/rspec/core/runner.rb:41:in `invoke'",
       "/home/kyrylo/.gem/ruby/2.2.2/gems/rspec-core-3.3.2/exe/rspec:4:in `<main>'",
     ]
-    # rubocop:enable Metrics/LineLength
+    # rubocop:enable Layout/LineLength
   end
 
   # rubocop:disable Naming/AccessorMethodName
@@ -66,7 +66,7 @@ end
 class JavaAirbrakeTestError < AirbrakeTestError
   def initialize(*)
     super
-    # rubocop:disable Metrics/LineLength
+    # rubocop:disable Layout/LineLength
     @backtrace = [
       "org.jruby.java.invokers.InstanceMethodInvoker.call(InstanceMethodInvoker.java:26)",
       "org.jruby.ir.interpreter.Interpreter.INTERPRET_EVAL(Interpreter.java:126)",
@@ -80,7 +80,7 @@ class JavaAirbrakeTestError < AirbrakeTestError
       "org.jruby.Main.run(Main.java:225)",
       "org.jruby.Main.main(Main.java:197)",
     ]
-    # rubocop:enable Metrics/LineLength
+    # rubocop:enable Layout/LineLength
   end
 
   def is_a?(*)

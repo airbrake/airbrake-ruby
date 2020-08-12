@@ -309,7 +309,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
         notice = subject.build_notice(Exception.new)
 
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         expect(notice[:errors].first[:backtrace]).to eq(
           [
             { file: 'org/jruby/RubyKernel.java', line: 998, function: 'eval' },
@@ -317,7 +317,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             { file: '/ruby/stdlib/irb.rb:489', line: 489, function: 'block in eval_input' },
           ],
         )
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       end
     end
 
