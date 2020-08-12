@@ -56,6 +56,7 @@ module Airbrake
       def thread_variables(th)
         th.thread_variables.map.with_object({}) do |var, h|
           next if var.to_s.start_with?(IGNORE_PREFIX)
+
           h[var] = sanitize_value(th.thread_variable_get(var))
         end
       end
@@ -63,6 +64,7 @@ module Airbrake
       def fiber_variables(th)
         th.keys.map.with_object({}) do |key, h|
           next if key.to_s.start_with?(IGNORE_PREFIX)
+
           h[key] = sanitize_value(th[key])
         end
       end

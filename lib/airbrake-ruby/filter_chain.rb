@@ -70,6 +70,7 @@ module Airbrake
     def refine(notice)
       @filters.each do |filter|
         break if notice.ignored?
+
         filter.call(notice)
       end
     end

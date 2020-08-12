@@ -71,6 +71,7 @@ module Airbrake
         FILTERABLE_CONTEXT_KEYS.each { |key| filter_context_key(notice, key) }
 
         return unless notice[:context][:url]
+
         filter_url(notice)
       end
 
@@ -117,6 +118,7 @@ module Airbrake
         end
 
         return unless url.query
+
         notice[:context][:url] = filter_url_params(url)
       end
 
@@ -125,6 +127,7 @@ module Airbrake
 
         @patterns = @patterns.flat_map do |pattern|
           next(pattern) unless pattern.respond_to?(:call)
+
           pattern.call
         end
       end

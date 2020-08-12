@@ -18,6 +18,7 @@ module Airbrake
       # @macro call_filter
       def call(notice)
         return if notice[:context].key?(:repository)
+
         attach_repository(notice)
       end
 
@@ -39,6 +40,7 @@ module Airbrake
           end
 
         return unless @repository
+
         notice[:context][:repository] = @repository
       end
 
@@ -46,6 +48,7 @@ module Airbrake
 
       def detect_git_version
         return unless which('git')
+
         Gem::Version.new(`git --version`.split[2])
       end
 

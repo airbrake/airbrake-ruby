@@ -151,6 +151,7 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
           # thing. One is a Java exception, the other is a Ruby exception.
           # Likely a bug: https://github.com/jruby/jruby/issues/1903
           raise ex unless RUBY_ENGINE == 'jruby'
+
           expect { subject.call(notice) }.to raise_error(java.lang.StackOverflowError)
         end
       end

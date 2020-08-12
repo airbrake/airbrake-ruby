@@ -95,6 +95,7 @@ module Airbrake
     # @return [Array<Hash{Symbol=>String,Integer}>] the parsed backtrace
     def self.parse(exception)
       return [] if exception.backtrace.nil? || exception.backtrace.none?
+
       parse_backtrace(exception)
     end
 

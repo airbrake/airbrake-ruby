@@ -30,6 +30,7 @@ module Airbrake
 
         @revision = find_revision
         return unless @revision
+
         notice[:context][:revision] = @revision
       end
 
@@ -41,6 +42,7 @@ module Airbrake
 
         head = File.read(head_path)
         return head unless head.start_with?(PREFIX)
+
         head = head.chomp[PREFIX.size..-1]
 
         ref_path = File.join(@git_path, head)

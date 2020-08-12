@@ -35,6 +35,7 @@ module Airbrake
     def truncate(object, seen = Set.new)
       if seen.include?(object.object_id)
         return CIRCULAR if CIRCULAR_TYPES.any? { |t| object.is_a?(t) }
+
         return object
       end
       truncate_object(object, seen << object.object_id)
@@ -63,6 +64,7 @@ module Airbrake
     def truncate_string(str)
       fixed_str = replace_invalid_characters(str)
       return fixed_str if fixed_str.length <= @max_size
+
       (fixed_str.slice(0, @max_size) + TRUNCATED).freeze
     end
 
@@ -76,6 +78,7 @@ module Airbrake
       truncated_hash = {}
       hash.each_with_index do |(key, val), idx|
         break if idx + 1 > @max_size
+
         truncated_hash[key] = truncate(val, seen)
       end
 

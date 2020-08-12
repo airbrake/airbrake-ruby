@@ -41,6 +41,7 @@ module Airbrake
 
         return unless File.exist?(@git_path)
         return unless (checkout = last_checkout)
+
         notice[:context][:lastCheckout] = checkout
       end
 
