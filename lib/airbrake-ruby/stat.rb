@@ -9,7 +9,7 @@ module Airbrake
   #
   # @example
   #   stat = Airbrake::Stat.new
-  #   stat.increment(Time.now - 200)
+  #   stat.increment_ms(2000)
   #   stat.to_h # Pack and serialize data so it can be transmitted.
   #
   # @since v3.2.0
@@ -39,17 +39,6 @@ module Airbrake
           'tdigest' => Base64.strict_encode64(tdigest.as_small_bytes),
         }
       end
-    end
-
-    # Increments tdigest timings and updates tdigest with the difference between
-    # +end_time+ and +start_time+.
-    #
-    # @param [Date] start_time
-    # @param [Date] end_time
-    # @return [void]
-    def increment(start_time, end_time = nil)
-      end_time ||= Time.new
-      increment_ms((end_time - start_time) * 1000)
     end
 
     # Increments tdigest timings and updates tdigest with given +ms+ value.

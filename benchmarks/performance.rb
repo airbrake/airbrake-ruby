@@ -15,16 +15,14 @@ query = {
   func: 'foo',
   file: 'foo.rb',
   line: 123,
-  start_time: Time.new - 200,
-  end_time: Time.new,
+  timing: 200,
 }
 
 request = {
   method: 'GET',
   route: '/things/1',
   status_code: 200,
-  start_time: Time.new - 200,
-  end_time: Time.new,
+  timing: 200,
 }
 
 breakdown = {
@@ -32,7 +30,7 @@ breakdown = {
   route: '/things/1',
   response_type: 'json',
   groups: { db: 24.0, view: 0.4 },
-  start_time: Time.new,
+  timing: 200,
 }
 
 Benchmark.ips do |ips|

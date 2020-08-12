@@ -4,21 +4,17 @@ module Airbrake
   # @see Airbrake.notify_queue
   # @api public
   # @since v4.9.0
-  # rubocop:disable Metrics/ParameterLists
   class Queue
     include HashKeyable
     include Ignorable
     include Stashable
 
-    attr_accessor :queue, :error_count, :groups, :start_time, :end_time,
-                  :timing, :time
+    attr_accessor :queue, :error_count, :groups, :timing, :time
 
     def initialize(
       queue:,
       error_count:,
       groups: {},
-      start_time: Time.now,
-      end_time: start_time + 1,
       timing: nil,
       time: Time.now
     )
@@ -26,8 +22,6 @@ module Airbrake
       @queue = queue
       @error_count = error_count
       @groups = groups
-      @start_time = start_time
-      @end_time = end_time
       @timing = timing
       @time = time
     end
@@ -68,5 +62,4 @@ module Airbrake
       ''
     end
   end
-  # rubocop:enable Metrics/ParameterLists
 end
