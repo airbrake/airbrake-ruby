@@ -20,7 +20,7 @@ references:
 jobs:
   rubocop_lint:
     docker:
-      - image: circleci/ruby:2.6
+      - image: circleci/ruby:2.7
     working_directory: ~/airbrake-ruby
     steps:
       - checkout
@@ -31,7 +31,7 @@ jobs:
           command: bundle exec rubocop --parallel
   yard_lint:
     docker:
-      - image: circleci/ruby:2.6
+      - image: circleci/ruby:2.7
     working_directory: ~/airbrake-ruby
     steps:
       - checkout
