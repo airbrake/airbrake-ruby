@@ -33,7 +33,7 @@ module Airbrake
         hexadecimal_literals: /0x[0-9a-fA-F]+/,
         comments: /(?:#|--).*?(?=\r|\n|$)/i,
         multi_line_comments: %r{/\*(?:[^/]|/[^*])*?(?:\*/|/\*.*)},
-        oracle_quoted_strings: /q'\[.*?(?:\]'|$)|q'\{.*?(?:\}'|$)|q'\<.*?(?:\>'|$)|q'\(.*?(?:\)'|$)/
+        oracle_quoted_strings: /q'\[.*?(?:\]'|$)|q'\{.*?(?:\}'|$)|q'\<.*?(?:\>'|$)|q'\(.*?(?:\)'|$)/,
         # rubocop:enable Layout/LineLength
       }.freeze
 
