@@ -103,13 +103,7 @@ module Airbrake
 
       def filter_url_params(url)
         url.query = Hash[URI.decode_www_form(url.query)].map do |key, val|
-          # Ruby < 2.2 raises InvalidComponentError if the query contains
-          # invalid characters, so be sure to escape individual components.
-          if should_filter?(key)
-            "#{URI.encode_www_form_component(key)}=[Filtered]"
-          else
-            "#{URI.encode_www_form_component(key)}=#{URI.encode_www_form_component(val)}"
-          end
+          should_filter?(key) ? "#{key}=[Filtered]" : "#{key}=#{val}"
         end.join('&')
 
         url.to_s
