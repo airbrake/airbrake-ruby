@@ -1186,7 +1186,7 @@ end
 Supported Rubies
 ----------------
 
-* CRuby >= 2.2.0
+* CRuby >= 2.3.0
 * JRuby >= 9k
 * Rubinius >= 2.2.10
 

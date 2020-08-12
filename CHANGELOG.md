@@ -5,7 +5,8 @@ Airbrake Ruby Changelog
 
 * Fixed unwanted mutation of nested hashes passed through `Notice#[]=`
   ([#597](https://github.com/airbrake/airbrake-ruby/pull/597))
-* Dropped support for Ruby 2.1 ([#602](https://github.com/airbrake/airbrake-ruby/pull/602))
+* Dropped support for Ruby 2.1 ([#603](https://github.com/airbrake/airbrake-ruby/pull/603))
+* Dropped support for Ruby 2.2 ([#604](https://github.com/airbrake/airbrake-ruby/pull/604))
 
 ### [v5.0.0.rc.2][v5.0.0.rc.2] (July 29, 2020)
 
