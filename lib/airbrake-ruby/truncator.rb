@@ -12,6 +12,10 @@ module Airbrake
     #   strings with +ENCODING_OPTIONS+
     TEMP_ENCODING = 'utf-16'.freeze
 
+    # @return [Array<Encoding>] encodings that are eligible for fixing invalid
+    #   characters
+    SUPPORTED_ENCODINGS = [Encoding::UTF_8, Encoding::ASCII].freeze
+
     # @return [String] what to append when something is a circular reference
     CIRCULAR = '[Circular]'.freeze
 
@@ -106,8 +110,7 @@ module Airbrake
     # @return [String] a UTF-8 encoded string
     # @see https://github.com/flori/json/commit/3e158410e81f94dbbc3da6b7b35f4f64983aa4e3
     def replace_invalid_characters(str)
-      encoding = str.encoding
-      utf8_string = (encoding == Encoding::UTF_8 || encoding == Encoding::ASCII)
+      utf8_string = SUPPORTED_ENCODINGS.include?(str.encoding)
       return str if utf8_string && str.valid_encoding?
 
       temp_str = str.dup
