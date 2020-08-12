@@ -12,6 +12,8 @@ Airbrake Ruby Changelog
 * Dropped support for `:start_time` & `:end_time` params for APM methods such as
   `Airbrake.notify_request`
   ([#609](https://github.com/airbrake/airbrake-ruby/pull/609))
+* Dropped support for `blacklist_keys` & `whitelist_keys`
+  ([#610](https://github.com/airbrake/airbrake-ruby/pull/610))
 
 ### [v5.0.0.rc.2][v5.0.0.rc.2] (July 29, 2020)
 
