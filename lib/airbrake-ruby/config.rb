@@ -4,7 +4,6 @@ module Airbrake
   #
   # @api public
   # @since v1.0.0
-  # rubocop:disable Metrics/ClassLength
   class Config
     # @return [Integer] the project identificator. This value *must* be set.
     # @api public
@@ -83,17 +82,11 @@ module Airbrake
     # @since v4.15.0
     attr_accessor :allowlist_keys
 
-    # @deprecated Use allowlist_keys instead
-    alias whitelist_keys allowlist_keys
-
     # @return [Array<String, Symbol, Regexp>] the keys, which should be
     #   filtered
     # @api public
     # @since v4.15.0
     attr_accessor :blocklist_keys
-
-    # @deprecated Use blocklist_keys instead
-    alias blacklist_keys blocklist_keys
 
     # @return [Boolean] true if the library should attach code hunks to each
     #   frame in a backtrace, false otherwise
@@ -185,24 +178,6 @@ module Airbrake
     end
     # rubocop:enable Metrics/AbcSize
 
-    def blacklist_keys=(keys)
-      loc = caller_locations(1..1).first
-      Kernel.warn(
-        "#{loc.path}:#{loc.lineno}: warning: blacklist_keys= is deprecated " \
-        "use blocklist_keys= instead",
-      )
-      self.blocklist_keys = keys
-    end
-
-    def whitelist_keys=(keys)
-      loc = caller_locations(1..1).first
-      Kernel.warn(
-        "#{loc.path}:#{loc.lineno}: warning: whitelist_keys= is deprecated " \
-        "use allowlist_keys= instead",
-      )
-      self.allowlist_keys = keys
-    end
-
     # The full URL to the Airbrake Notice API. Based on the +:error_host+ option.
     # @return [URI] the endpoint address
     def error_endpoint
@@ -288,5 +263,4 @@ module Airbrake
       raise Airbrake::Error, "unknown option '#{option}'"
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

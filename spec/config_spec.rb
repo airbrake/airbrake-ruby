@@ -173,32 +173,4 @@ RSpec.describe Airbrake::Config do
       expect(subject.logger.level).to eq(Logger::WARN)
     end
   end
-
-  describe "#blacklist_keys=" do
-    before { allow(Kernel).to receive(:warn) }
-
-    it "sets blocklist_keys instead" do
-      subject.blacklist_keys = [1, 2, 3]
-      expect(subject.blocklist_keys).to eq([1, 2, 3])
-    end
-
-    it "prints a warning" do
-      expect(Kernel).to receive(:warn).with(/use blocklist_keys= instead/)
-      subject.blacklist_keys = [1, 2, 3]
-    end
-  end
-
-  describe "#whitelist_keys=" do
-    before { allow(Kernel).to receive(:warn) }
-
-    it "sets allowlist_keys instead" do
-      subject.whitelist_keys = [1, 2, 3]
-      expect(subject.allowlist_keys).to eq([1, 2, 3])
-    end
-
-    it "prints a warning" do
-      expect(Kernel).to receive(:warn).with(/use allowlist_keys= instead/)
-      subject.whitelist_keys = [1, 2, 3]
-    end
-  end
 end
