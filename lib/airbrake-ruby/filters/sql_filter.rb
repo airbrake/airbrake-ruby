@@ -39,7 +39,7 @@ module Airbrake
 
       # @return [Regexp] the regexp that is applied after the feature regexps
       #   were used
-      POST_FILTER = /(?<=[values|in ]\().+(?=\))/i
+      POST_FILTER = /(?<=[values|in ]\().+(?=\))/i.freeze
 
       # @return [Hash{Symbol=>Array<Symbol>}] a set of features that corresponds
       #   to a certain dialect
