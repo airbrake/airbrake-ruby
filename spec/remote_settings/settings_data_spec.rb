@@ -9,9 +9,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
     it "merges the given hash with the data" do
       settings_data = described_class.new(project_id, {})
-      # rubocop:disable Performance/RedundantMerge
       settings_data.merge!('poll_sec' => 123, 'config_route' => 'abc')
-      # rubocop:enable Performance/RedundantMerge
 
       expect(settings_data.interval).to eq(123)
       expect(settings_data.config_route).to eq('abc')
