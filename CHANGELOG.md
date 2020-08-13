@@ -14,6 +14,9 @@ Airbrake Ruby Changelog
   ([#609](https://github.com/airbrake/airbrake-ruby/pull/609))
 * Dropped support for `blacklist_keys` & `whitelist_keys`
   ([#610](https://github.com/airbrake/airbrake-ruby/pull/610))
+* Added the `remote_config_host` option, which is responsible for specifying the
+  host, which provides the remote config
+  ([#611](https://github.com/airbrake/airbrake-ruby/pull/611))
 
 ### [v5.0.0.rc.2][v5.0.0.rc.2] (July 29, 2020)
 

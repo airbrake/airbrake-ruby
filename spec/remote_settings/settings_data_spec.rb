@@ -12,7 +12,8 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
       settings_data.merge!('poll_sec' => 123, 'config_route' => 'abc')
 
       expect(settings_data.interval).to eq(123)
-      expect(settings_data.config_route).to eq('abc')
+      expect(settings_data.config_route(''))
+        .to eq('abc/2020-06-18/config/123/config.json')
     end
   end
 
@@ -59,25 +60,64 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
   end
 
   describe "#config_route" do
-    context "when given a pathname" do
-      let(:data) do
-        { 'config_route' => 'http://example.com' }
+    let(:host) { 'https://v1-production-notifier-configs.s3.amazonaws.com' }
+
+    context "when given a remote host through the remote config" do
+      context "and when the remote host ends with a slash" do
+        let(:data) do
+          { 'config_route' => 'http://example.com/' }
+        end
+
+        it "returns the route with the host" do
+          expect(described_class.new(project_id, data).config_route(host)).to eq(
+            "http://example.com/2020-06-18/config/#{project_id}/config.json",
+          )
+        end
       end
 
-      it "returns the given pathname" do
-        expect(described_class.new(project_id, data).config_route)
-          .to eq('http://example.com')
+      context "and when the remote host doesn't with a slash" do
+        let(:data) do
+          { 'config_route' => 'http://example.com' }
+        end
+
+        it "returns the route with the host" do
+          expect(described_class.new(project_id, data).config_route(host)).to eq(
+            "http://example.com/2020-06-18/config/#{project_id}/config.json",
+          )
+        end
       end
     end
 
-    context "when the pathname is nil" do
+    context "when given a remote host through local configuration" do
+      context "and when the remote host ends with a slash" do
+        let(:host) { 'http://example.com/' }
+
+        it "returns the route with the host" do
+          expect(described_class.new(project_id, {}).config_route(host)).to eq(
+            "http://example.com/2020-06-18/config/#{project_id}/config.json",
+          )
+        end
+      end
+
+      context "and when the remote host doesn't with a slash" do
+        let(:host) { 'http://example.com' }
+
+        it "returns the route with the host" do
+          expect(described_class.new(project_id, {}).config_route(host)).to eq(
+            "http://example.com/2020-06-18/config/#{project_id}/config.json",
+          )
+        end
+      end
+    end
+
+    context "when the given remote host in the remote config is nil" do
       let(:data) do
         { 'config_route' => nil }
       end
 
-      it "returns the default pathname" do
-        expect(described_class.new(project_id, data).config_route).to eq(
-          'https://v1-staging-notifier-configs.s3.amazonaws.com/' \
+      it "returns the route with the given host instead" do
+        expect(described_class.new(project_id, data).config_route(host)).to eq(
+          'https://v1-production-notifier-configs.s3.amazonaws.com/' \
           "2020-06-18/config/#{project_id}/config.json",
         )
       end

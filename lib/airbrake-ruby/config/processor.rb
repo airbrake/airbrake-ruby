@@ -42,7 +42,11 @@ module Airbrake
       def process_remote_configuration
         return if !@project_id || !@config.__remote_configuration
 
-        RemoteSettings.poll(@project_id, &method(:poll_callback))
+        RemoteSettings.poll(
+          @project_id,
+          @config.remote_config_host,
+          &method(:poll_callback)
+        )
       end
 
       # @param [Airbrake::NoticeNotifier] notifier

@@ -20,16 +20,15 @@ module Airbrake
       # @return [String] API version of the S3 API to poll
       API_VER = '2020-06-18'.freeze
 
-      # @return [String] what URL to poll
+      # @return [String] what path to poll
       CONFIG_ROUTE_PATTERN =
-        'https://v1-%<bucket>s.s3.amazonaws.com/' \
-        "#{API_VER}/config/%<project_id>s/config.json".freeze
+        "%<host>s/#{API_VER}/config/%<project_id>s/config.json".freeze
 
       # @return [Hash{Symbol=>String}] the hash of all supported settings where
       #   the value is the name of the setting returned by the API
       SETTINGS = {
-        errors: 'errors',
-        apm: 'apm',
+        errors: 'errors'.freeze,
+        apm: 'apm'.freeze,
       }.freeze
 
       # @param [Integer] project_id
@@ -56,17 +55,22 @@ module Airbrake
         @data['poll_sec'] > 0 ? @data['poll_sec'] : DEFAULT_INTERVAL
       end
 
+      # @param [String] remote_config_host
       # @return [String] where the config is stored on S3.
-      def config_route
+      def config_route(remote_config_host)
         if !@data.key?('config_route') || !@data['config_route']
           return format(
             CONFIG_ROUTE_PATTERN,
-            bucket: 'staging-notifier-configs',
+            host: remote_config_host.chomp('/'),
             project_id: @project_id,
           )
         end
 
-        @data['config_route']
+        format(
+          CONFIG_ROUTE_PATTERN,
+          host: @data['config_route'].chomp('/'),
+          project_id: @project_id,
+        )
       end
 
       # @return [Boolean] whether error notifications are enabled
