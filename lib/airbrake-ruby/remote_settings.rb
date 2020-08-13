@@ -36,18 +36,20 @@ module Airbrake
     # Polls remote config of the given project.
     #
     # @param [Integer] project_id
+    # @param [String] host
     # @yield [data]
     # @yieldparam data [Airbrake::RemoteSettings::SettingsData]
     # @return [Airbrake::RemoteSettings]
-    def self.poll(project_id, &block)
-      new(project_id, &block).poll
+    def self.poll(project_id, host, &block)
+      new(project_id, host, &block).poll
     end
 
     # @param [Integer] project_id
     # @yield [data]
     # @yieldparam data [Airbrake::RemoteSettings::SettingsData]
-    def initialize(project_id, &block)
+    def initialize(project_id, host, &block)
       @data = SettingsData.new(project_id, {})
+      @host = host
       @block = block
       @poll = nil
     end
@@ -118,7 +120,7 @@ module Airbrake
     end
 
     def build_config_uri
-      uri = URI(@data.config_route)
+      uri = URI(@data.config_route(@host))
       uri.query = QUERY_PARAMS
       uri
     end

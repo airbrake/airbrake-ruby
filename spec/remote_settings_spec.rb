@@ -1,9 +1,9 @@
 RSpec.describe Airbrake::RemoteSettings do
   let(:project_id) { 123 }
+  let(:host) { 'https://v1-production-notifier-configs.s3.amazonaws.com' }
 
   let(:endpoint) do
-    "https://v1-staging-notifier-configs.s3.amazonaws.com/2020-06-18/config/" \
-    "#{project_id}/config.json"
+    "#{host}/2020-06-18/config/#{project_id}/config.json"
   end
 
   let(:body) do
@@ -51,7 +51,7 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(File).to receive(:read).with(config_path)
         expect(settings_data).to receive(:merge!).with(body).twice
 
-        remote_settings = described_class.poll(project_id) {}
+        remote_settings = described_class.poll(project_id, host) {}
         sleep(0.2)
         remote_settings.stop_polling
 
@@ -62,7 +62,7 @@ RSpec.describe Airbrake::RemoteSettings do
         block = proc {}
         expect(block).to receive(:call).twice
 
-        remote_settings = described_class.poll(project_id, &block)
+        remote_settings = described_class.poll(project_id, host, &block)
         sleep(0.2)
         remote_settings.stop_polling
 
@@ -76,7 +76,7 @@ RSpec.describe Airbrake::RemoteSettings do
             '**Airbrake: config loading failed: StandardError',
           )
 
-          remote_settings = described_class.poll(project_id) {}
+          remote_settings = described_class.poll(project_id, host) {}
           sleep(0.2)
           remote_settings.stop_polling
 
@@ -87,7 +87,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
     context "when no errors are raised" do
       it "makes a request to AWS S3" do
-        remote_settings = described_class.poll(project_id) {}
+        remote_settings = described_class.poll(project_id, host) {}
         sleep(0.1)
         remote_settings.stop_polling
 
@@ -95,7 +95,7 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "sends params about the environment with the request" do
-        remote_settings = described_class.poll(project_id) {}
+        remote_settings = described_class.poll(project_id, host) {}
         sleep(0.1)
         remote_settings.stop_polling
 
@@ -107,7 +107,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
       it "fetches remote settings" do
         settings = nil
-        remote_settings = described_class.poll(project_id) do |data|
+        remote_settings = described_class.poll(project_id, host) do |data|
           settings = data
         end
         sleep(0.1)
@@ -126,7 +126,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
       it "doesn't fetch remote settings" do
         settings = nil
-        remote_settings = described_class.poll(project_id) do |data|
+        remote_settings = described_class.poll(project_id, host) do |data|
           settings = data
         end
         sleep(0.1)
@@ -144,7 +144,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
       it "doesn't update settings data" do
         settings = nil
-        remote_settings = described_class.poll(project_id) do |data|
+        remote_settings = described_class.poll(project_id, host) do |data|
           settings = data
         end
         sleep(0.1)
@@ -163,7 +163,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
       it "doesn't update settings data" do
         settings = nil
-        remote_settings = described_class.poll(project_id) do |data|
+        remote_settings = described_class.poll(project_id, host) do |data|
           settings = data
         end
         sleep(0.1)
@@ -189,7 +189,7 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "makes the next request to the specified config route" do
-        remote_settings = described_class.poll(project_id) {}
+        remote_settings = described_class.poll(project_id, host) {}
         sleep(0.2)
 
         remote_settings.stop_polling
@@ -205,7 +205,7 @@ RSpec.describe Airbrake::RemoteSettings do
       expect(Dir).to receive(:mkdir).with(config_dir)
       expect(File).to receive(:write).with(config_path, body.to_json)
 
-      remote_settings = described_class.poll(project_id) {}
+      remote_settings = described_class.poll(project_id, host) {}
       sleep(0.2)
       remote_settings.stop_polling
 
@@ -219,7 +219,7 @@ RSpec.describe Airbrake::RemoteSettings do
           '**Airbrake: config dumping failed: StandardError',
         )
 
-        remote_settings = described_class.poll(project_id) {}
+        remote_settings = described_class.poll(project_id, host) {}
         sleep(0.2)
         remote_settings.stop_polling
 
