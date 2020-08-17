@@ -40,7 +40,7 @@ module Airbrake
 
       # @return [Airbrake::RemoteSettings]
       def process_remote_configuration
-        return if !@project_id || !@config.__remote_configuration
+        return unless @project_id
 
         RemoteSettings.poll(
           @project_id,

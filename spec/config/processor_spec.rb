@@ -54,26 +54,13 @@ RSpec.describe Airbrake::Config::Processor do
     end
 
     context "when the config defines a project_id" do
-      context "and when remote configuration is false" do
-        let(:config) do
-          Airbrake::Config.new(project_id: 123, __remote_configuration: false)
-        end
-
-        it "doesn't set remote settings" do
-          expect(Airbrake::RemoteSettings).not_to receive(:poll)
-          described_class.new(config).process_remote_configuration
-        end
+      let(:config) do
+        Airbrake::Config.new(project_id: 123)
       end
 
-      context "and when remote configuration is true" do
-        let(:config) do
-          Airbrake::Config.new(project_id: 123, __remote_configuration: true)
-        end
-
-        it "sets remote settings" do
-          expect(Airbrake::RemoteSettings).to receive(:poll)
-          described_class.new(config).process_remote_configuration
-        end
+      it "sets remote settings" do
+        expect(Airbrake::RemoteSettings).to receive(:poll)
+        described_class.new(config).process_remote_configuration
       end
     end
   end
@@ -142,7 +129,6 @@ RSpec.describe Airbrake::Config::Processor do
     let(:config) do
       Airbrake::Config.new(
         project_id: 123,
-        __remote_configuration: true,
         logger: logger,
       )
     end
