@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v5.0.1][v5.0.1] (August 17, 2020)
+
 * Remote config: fixed bug where remote config cannot be applied when the remote
   config's `config_route` is an empty string
   ([#614](https://github.com/airbrake/airbrake-ruby/pull/614))
@@ -1027,3 +1029,4 @@ Features:
 [v5.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.1
 [v5.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.2
 [v5.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0
+[v5.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.1
