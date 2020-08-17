@@ -128,12 +128,6 @@ module Airbrake
     #   configuration options (example: "https://bucket-name.s3.amazonaws.com")
     attr_accessor :remote_config_host
 
-    # @note Not for public use!
-    # @return [Boolean]
-    # @api private
-    # @since ?.?.?
-    attr_accessor :__remote_configuration
-
     class << self
       # @return [Config]
       attr_writer :instance
@@ -146,7 +140,7 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def initialize(user_config = {})
       self.proxy = {}
       self.queue_size = 100
@@ -177,11 +171,10 @@ module Airbrake
       self.query_stats = true
       self.job_stats = true
       self.error_notifications = true
-      self.__remote_configuration = false
 
       merge(user_config)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     # The full URL to the Airbrake Notice API. Based on the +:error_host+ option.
     # @return [URI] the endpoint address

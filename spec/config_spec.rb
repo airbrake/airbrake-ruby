@@ -31,8 +31,6 @@ RSpec.describe Airbrake::Config do
     is_expected.to eq('https://v1-production-notifier-configs.s3.amazonaws.com')
   end
 
-  its(:__remote_configuration) { is_expected.to eq(false) }
-
   describe "#new" do
     context "when user config is passed" do
       subject { described_class.new(logger: StringIO.new) }
