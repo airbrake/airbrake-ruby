@@ -102,7 +102,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
       context "and when the remote host doesn't with a slash" do
         let(:host) { 'http://example.com' }
 
-        it "returns the route with the host" do
+        it "returns the route with the given host" do
           expect(described_class.new(project_id, {}).config_route(host)).to eq(
             "http://example.com/2020-06-18/config/#{project_id}/config.json",
           )
@@ -116,6 +116,19 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
       end
 
       it "returns the route with the given host instead" do
+        expect(described_class.new(project_id, data).config_route(host)).to eq(
+          'https://v1-production-notifier-configs.s3.amazonaws.com/' \
+          "2020-06-18/config/#{project_id}/config.json",
+        )
+      end
+    end
+
+    context "when the given remote host in the remote config is an empty string" do
+      let(:data) do
+        { 'config_route' => '' }
+      end
+
+      it "returns the route with the default instead" do
         expect(described_class.new(project_id, data).config_route(host)).to eq(
           'https://v1-production-notifier-configs.s3.amazonaws.com/' \
           "2020-06-18/config/#{project_id}/config.json",
