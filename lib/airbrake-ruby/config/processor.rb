@@ -3,7 +3,7 @@ module Airbrake
     # Processor is a helper class, which is responsible for setting default
     # config values, default notifier filters and remote configuration changes.
     #
-    # @since v?.?.?
+    # @since 5.0.0
     # @api private
     class Processor
       # @param [Airbrake::Config] config

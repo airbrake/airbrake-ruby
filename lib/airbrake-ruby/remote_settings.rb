@@ -13,7 +13,7 @@ module Airbrake
   #
   # When {#stop_polling} is called, the current config will be dumped to disk.
   #
-  # @since ?.?.?
+  # @since 5.0.0
   # @api private
   class RemoteSettings
     include Airbrake::Loggable

@@ -3,8 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
-* Fixed unwanted mutation of nested hashes passed through `Notice#[]=`
-  ([#597](https://github.com/airbrake/airbrake-ruby/pull/597))
+### [v5.0.0][v5.0.0] (August 17, 2020)
+
+Breaking changes:
+
 * Dropped support for Ruby 2.1
   ([#603](https://github.com/airbrake/airbrake-ruby/pull/603))
 * Dropped support for Ruby 2.2
@@ -14,6 +16,14 @@ Airbrake Ruby Changelog
   ([#609](https://github.com/airbrake/airbrake-ruby/pull/609))
 * Dropped support for `blacklist_keys` & `whitelist_keys`
   ([#610](https://github.com/airbrake/airbrake-ruby/pull/610))
+
+Bug fixes:
+
+* Fixed unwanted mutation of nested hashes passed through `Notice#[]=`
+  ([#597](https://github.com/airbrake/airbrake-ruby/pull/597))
+
+Features:
+
 * Added the `remote_config_host` option, which is responsible for specifying the
   host, which provides the remote config
   ([#611](https://github.com/airbrake/airbrake-ruby/pull/611))
@@ -1012,3 +1022,4 @@ Airbrake Ruby Changelog
 [v4.15.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v4.15.0
 [v5.0.0.rc.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.1
 [v5.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.2
+[v5.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0

@@ -46,15 +46,15 @@ module Airbrake
     # @api public
     attr_accessor :host
 
-    # @since v?.?.?
+    # @since v5.0.0
     alias error_host host
-    # @since v?.?.?
+    # @since v5.0.0
     alias error_host= host=
 
     # @return [String] the host, which provides the API endpoint to which
     #   APM data should be sent
     # @api public
-    # @since v?.?.?
+    # @since v5.0.0
     attr_accessor :apm_host
 
     # @return [String, Pathname] the working directory of your project
@@ -121,7 +121,7 @@ module Airbrake
     # @return [Boolean] true if the library should send error reports to
     #   Airbrake, false otherwise
     # @api public
-    # @since ?.?.?
+    # @since 5.0.0
     attr_accessor :error_notifications
 
     # @return [String] the host such as which should be used for fetching remote
