@@ -18,6 +18,7 @@ module Airbrake
         @blocklist_keys = @config.blocklist_keys
         @allowlist_keys = @config.allowlist_keys
         @project_id = @config.project_id
+        @poll_callback = Airbrake::RemoteSettings::Callback.new(config)
       end
 
       # @param [Airbrake::NoticeNotifier] notifier
@@ -42,11 +43,9 @@ module Airbrake
       def process_remote_configuration
         return unless @project_id
 
-        RemoteSettings.poll(
-          @project_id,
-          @config.remote_config_host,
-          &method(:poll_callback)
-        )
+        RemoteSettings.poll(@project_id, @config.remote_config_host) do |data|
+          @poll_callback.call(data)
+        end
       end
 
       # @param [Airbrake::NoticeNotifier] notifier
@@ -64,20 +63,6 @@ module Airbrake
 
           notifier.add_filter(filter.new(@config.root_directory))
         end
-      end
-
-      # @param [Airbrake::RemoteSettings::SettingsData] data
-      # @return [void]
-      def poll_callback(data)
-        @config.logger.debug(
-          "#{LOG_LABEL} applying remote settings: #{data.to_h}",
-        )
-
-        @config.error_host = data.error_host if data.error_host
-        @config.apm_host = data.apm_host if data.apm_host
-
-        @config.error_notifications = data.error_notifications?
-        @config.performance_stats = data.performance_stats?
       end
     end
   end
