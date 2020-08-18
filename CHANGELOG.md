@@ -5,6 +5,9 @@ Airbrake Ruby Changelog
 
 * Remote config: fixed bug where remote config can disappear from the queried
   URL ([#616](https://github.com/airbrake/airbrake-ruby/pull/616))
+* Remote config: fixed bug where setting `performance_stats` or
+  `error_notifications` has no effect
+  ([#618](https://github.com/airbrake/airbrake-ruby/pull/618))
 
 ### [v5.0.1][v5.0.1] (August 17, 2020)
 
