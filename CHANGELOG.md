@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v5.0.2][v5.0.2] (August 18, 2020)
+
 * Remote config: fixed bug where remote config can disappear from the queried
   URL ([#616](https://github.com/airbrake/airbrake-ruby/pull/616))
 * Remote config: fixed bug where setting `performance_stats` or
@@ -1036,3 +1038,4 @@ Features:
 [v5.0.0.rc.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0.rc.2
 [v5.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0
 [v5.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.1
+[v5.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.2
