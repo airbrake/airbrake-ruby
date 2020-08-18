@@ -175,16 +175,16 @@ RSpec.describe Airbrake::RemoteSettings do
     end
 
     context "when a config route is specified in the returned data" do
-      let(:new_endpoint) do
-        "http://example.com"
+      let(:new_config_route) do
+        '213/config/111/config.json'
       end
 
       let(:body) do
-        { 'config_route' => new_endpoint, 'poll_sec' => 0.1 }
+        { 'config_route' => new_config_route, 'poll_sec' => 0.1 }
       end
 
       let!(:new_stub) do
-        stub_request(:get, Regexp.new(new_endpoint))
+        stub_request(:get, Regexp.new(new_config_route))
           .to_return(status: 200, body: body.to_json)
       end
 
