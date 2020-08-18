@@ -13,7 +13,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
       expect(settings_data.interval).to eq(123)
       expect(settings_data.config_route(''))
-        .to eq('abc/2020-06-18/config/123/config.json')
+        .to eq('/abc')
     end
   end
 
@@ -60,78 +60,48 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
   end
 
   describe "#config_route" do
-    let(:host) { 'https://v1-production-notifier-configs.s3.amazonaws.com' }
+    let(:host) { 'http://example.com/' }
 
-    context "when given a remote host through the remote config" do
-      context "and when the remote host ends with a slash" do
-        let(:data) do
-          { 'config_route' => 'http://example.com/' }
-        end
-
-        it "returns the route with the host" do
-          expect(described_class.new(project_id, data).config_route(host)).to eq(
-            "http://example.com/2020-06-18/config/#{project_id}/config.json",
-          )
-        end
-      end
-
-      context "and when the remote host doesn't with a slash" do
-        let(:data) do
-          { 'config_route' => 'http://example.com' }
-        end
-
-        it "returns the route with the host" do
-          expect(described_class.new(project_id, data).config_route(host)).to eq(
-            "http://example.com/2020-06-18/config/#{project_id}/config.json",
-          )
-        end
-      end
-    end
-
-    context "when given a remote host through local configuration" do
-      context "and when the remote host ends with a slash" do
-        let(:host) { 'http://example.com/' }
-
-        it "returns the route with the host" do
-          expect(described_class.new(project_id, {}).config_route(host)).to eq(
-            "http://example.com/2020-06-18/config/#{project_id}/config.json",
-          )
-        end
-      end
-
-      context "and when the remote host doesn't with a slash" do
-        let(:host) { 'http://example.com' }
-
-        it "returns the route with the given host" do
-          expect(described_class.new(project_id, {}).config_route(host)).to eq(
-            "http://example.com/2020-06-18/config/#{project_id}/config.json",
-          )
-        end
-      end
-    end
-
-    context "when the given remote host in the remote config is nil" do
+    context "when remote config specifies a config route" do
       let(:data) do
-        { 'config_route' => nil }
+        { 'config_route' => '123/cfg/321/cfg.json' }
       end
 
-      it "returns the route with the given host instead" do
+      it "returns the config route with the provided location" do
         expect(described_class.new(project_id, data).config_route(host)).to eq(
-          'https://v1-production-notifier-configs.s3.amazonaws.com/' \
-          "2020-06-18/config/#{project_id}/config.json",
+          'http://example.com/123/cfg/321/cfg.json',
         )
       end
     end
 
-    context "when the given remote host in the remote config is an empty string" do
+    context "when remote config DOES NOT specify a config route" do
+      it "returns the config route with the default location" do
+        expect(described_class.new(project_id, {}).config_route(host)).to eq(
+          "http://example.com/2020-06-18/config/#{project_id}/config.json",
+        )
+      end
+    end
+
+    context "when a config route is specified but is set to nil" do
+      let(:data) do
+        { 'config_route' => nil }
+      end
+
+      it "returns the config route with the default location" do
+        expect(described_class.new(project_id, data).config_route(host)).to eq(
+          "http://example.com/2020-06-18/config/#{project_id}/config.json",
+        )
+      end
+    end
+
+    context "when a config route is specified but is set to an empty string" do
       let(:data) do
         { 'config_route' => '' }
       end
 
       it "returns the route with the default instead" do
         expect(described_class.new(project_id, data).config_route(host)).to eq(
-          'https://v1-production-notifier-configs.s3.amazonaws.com/' \
-          "2020-06-18/config/#{project_id}/config.json",
+          "http://example.com/2020-06-18/config/#{project_id}/config.json",
         )
       end
     end
