@@ -15,9 +15,9 @@ module Airbrake
       # @param [Airbrake::RemoteSettings::SettingsData] data
       # @return [void]
       def call(data)
-        @config.logger.debug(
-          "#{LOG_LABEL} applying remote settings: #{data.to_h}",
-        )
+        @config.logger.debug do
+          "#{LOG_LABEL} applying remote settings: #{data.to_h}"
+        end
 
         @config.error_host = data.error_host if data.error_host
         @config.apm_host = data.apm_host if data.apm_host

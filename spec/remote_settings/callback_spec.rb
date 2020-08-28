@@ -22,7 +22,9 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
     end
 
     it "logs given data" do
-      expect(logger).to receive(:debug).with(/applying remote settings/)
+      expect(logger).to receive(:debug) do |&block|
+        expect(block.call).to match(/applying remote settings/)
+      end
       described_class.new(config).call(data)
     end
 
