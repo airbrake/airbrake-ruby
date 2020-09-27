@@ -124,6 +124,12 @@ module Airbrake
     # @since 5.0.0
     attr_accessor :error_notifications
 
+    # @return [Boolean] true if the library should fetch remote configurations,
+    #   false otherwise
+    # @api public
+    # @since v5.0.3
+    attr_accessor :remote_config
+
     # @return [String] the host such as which should be used for fetching remote
     #   configuration options (example: "https://bucket-name.s3.amazonaws.com")
     attr_accessor :remote_config_host
@@ -140,7 +146,7 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def initialize(user_config = {})
       self.proxy = {}
       self.queue_size = 100
@@ -151,6 +157,7 @@ module Airbrake
       self.project_key = user_config[:project_key]
       self.error_host = 'https://api.airbrake.io'
       self.apm_host = 'https://api.airbrake.io'
+      self.remote_config = false
       self.remote_config_host = 'https://v1-production-notifier-configs.s3.amazonaws.com'
 
       self.ignore_environments = []
@@ -174,7 +181,7 @@ module Airbrake
 
       merge(user_config)
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # The full URL to the Airbrake Notice API. Based on the +:error_host+ option.
     # @return [URI] the endpoint address

@@ -280,6 +280,19 @@ Airbrake.notify('App crashed!', {
 #     credit_card: '[Filtered]' }
 ```
 
+#### remote_config and remote_config_host
+
+Airbrake Ruby can fetch its configuration from a remote site and updates them in
+regular intervals. By default, this feature is disabled and uses the host
+`https://v1-production-notifier-configs.s3.amazonaws.com`.
+
+```ruby
+Airbrake.configure do |c|
+  c.remote_config = true
+  c.remote_config_host = 'https://some-configuration-bucket.s3.amazonaws.com'
+end
+```
+
 ##### Using Procs to delay filters configuration
 
 If you cannot inline your keys (for example, they should be loaded from external
