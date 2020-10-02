@@ -22,18 +22,9 @@ RSpec.describe Airbrake::RemoteSettings do
     }
   end
 
-  let(:config_path) { described_class::CONFIG_DUMP_PATH }
-  let(:config_dir) { File.dirname(config_path) }
-
   let!(:stub) do
     stub_request(:get, Regexp.new(endpoint))
       .to_return(status: 200, body: body.to_json)
-  end
-
-  before do
-    # Do not create config dumps on disk.
-    allow(Dir).to receive(:mkdir).with(config_dir)
-    allow(File).to receive(:write).with(config_path, anything)
   end
 
   describe ".poll" do
@@ -41,21 +32,7 @@ RSpec.describe Airbrake::RemoteSettings do
       let(:settings_data) { described_class::SettingsData.new(project_id, body) }
 
       before do
-        allow(File).to receive(:exist?).with(config_path).and_return(true)
-        allow(File).to receive(:read).with(config_path).and_return(body.to_json)
-
         allow(described_class::SettingsData).to receive(:new).and_return(settings_data)
-      end
-
-      it "loads the config from disk" do
-        expect(File).to receive(:read).with(config_path)
-        expect(settings_data).to receive(:merge!).with(body).twice
-
-        remote_settings = described_class.poll(project_id, host) {}
-        sleep(0.2)
-        remote_settings.stop_polling
-
-        expect(stub).to have_been_requested.once
       end
 
       it "yields the config to the block twice" do
@@ -67,21 +44,6 @@ RSpec.describe Airbrake::RemoteSettings do
         remote_settings.stop_polling
 
         expect(stub).to have_been_requested.once
-      end
-
-      context "when config loading fails" do
-        it "logs an error" do
-          expect(File).to receive(:read).and_raise(StandardError)
-          expect(Airbrake::Loggable.instance).to receive(:error).with(
-            '**Airbrake: config loading failed: StandardError',
-          )
-
-          remote_settings = described_class.poll(project_id, host) {}
-          sleep(0.2)
-          remote_settings.stop_polling
-
-          expect(stub).to have_been_requested.once
-        end
       end
     end
 
@@ -196,34 +158,6 @@ RSpec.describe Airbrake::RemoteSettings do
 
         expect(stub).to have_been_requested.once
         expect(new_stub).to have_been_requested.once
-      end
-    end
-  end
-
-  describe "#stop_polling" do
-    it "dumps config data to disk" do
-      expect(Dir).to receive(:mkdir).with(config_dir)
-      expect(File).to receive(:write).with(config_path, body.to_json)
-
-      remote_settings = described_class.poll(project_id, host) {}
-      sleep(0.2)
-      remote_settings.stop_polling
-
-      expect(stub).to have_been_requested.once
-    end
-
-    context "when config dumping fails" do
-      it "logs an error" do
-        expect(File).to receive(:write).and_raise(StandardError)
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          '**Airbrake: config dumping failed: StandardError',
-        )
-
-        remote_settings = described_class.poll(project_id, host) {}
-        sleep(0.2)
-        remote_settings.stop_polling
-
-        expect(stub).to have_been_requested.once
       end
     end
   end

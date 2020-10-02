@@ -8,21 +8,10 @@ module Airbrake
   #     config.error_notifications = data.error_notifications?
   #   end
   #
-  # When {#poll} is called, it will try to load remote settings from disk, so
-  # that it doesn't wait on the result from the API call.
-  #
-  # When {#stop_polling} is called, the current config will be dumped to disk.
-  #
   # @since 5.0.0
   # @api private
   class RemoteSettings
     include Airbrake::Loggable
-
-    # @return [String] the path to the persistent config
-    CONFIG_DUMP_PATH = File.join(
-      File.expand_path(__dir__),
-      '../../config/config.json',
-    ).freeze
 
     # @return [Hash{Symbol=>String}] metadata to be attached to every GET
     #   request
@@ -54,18 +43,11 @@ module Airbrake
       @poll = nil
     end
 
-    # Polls remote config of the given project in background. Loads local config
-    # first (if exists).
+    # Polls remote config of the given project in background.
     #
     # @return [self]
     def poll
       @poll ||= Thread.new do
-        begin
-          load_config
-        rescue StandardError => ex
-          logger.error("#{LOG_LABEL} config loading failed: #{ex}")
-        end
-
         @block.call(@data)
 
         loop do
@@ -77,17 +59,11 @@ module Airbrake
       self
     end
 
-    # Stops the background poller thread. Dumps current config to disk.
+    # Stops the background poller thread.
     #
     # @return [void]
     def stop_polling
       @poll.kill if @poll
-
-      begin
-        dump_config
-      rescue StandardError => ex
-        logger.error("#{LOG_LABEL} config dumping failed: #{ex}")
-      end
     end
 
     private
@@ -123,23 +99,6 @@ module Airbrake
       uri = URI(@data.config_route(@host))
       uri.query = QUERY_PARAMS
       uri
-    end
-
-    def load_config
-      config_dir = File.dirname(CONFIG_DUMP_PATH)
-      Dir.mkdir(config_dir) unless File.directory?(config_dir)
-
-      return unless File.exist?(CONFIG_DUMP_PATH)
-
-      config = File.read(CONFIG_DUMP_PATH)
-      @data.merge!(JSON.parse(config))
-    end
-
-    def dump_config
-      config_dir = File.dirname(CONFIG_DUMP_PATH)
-      Dir.mkdir(config_dir) unless File.directory?(config_dir)
-
-      File.write(CONFIG_DUMP_PATH, JSON.dump(@data.to_h))
     end
   end
 end

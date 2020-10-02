@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Deleted support for dumping/loading the remote config
+  ([#621](https://github.com/airbrake/airbrake-ruby/pull/621))
+
 ### [v5.0.2][v5.0.2] (August 18, 2020)
 
 * Remote config: fixed bug where remote config can disappear from the queried
