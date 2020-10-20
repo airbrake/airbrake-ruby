@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Deleted support for dumping/loading the remote config
   ([#621](https://github.com/airbrake/airbrake-ruby/pull/621))
+* Stopped fetching notifier config when Airbrake's environment is configured to
+  `test` ([#622](https://github.com/airbrake/airbrake-ruby/pull/622))
 
 ### [v5.0.2][v5.0.2] (August 18, 2020)
 

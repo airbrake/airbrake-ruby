@@ -42,6 +42,7 @@ module Airbrake
       # @return [Airbrake::RemoteSettings]
       def process_remote_configuration
         return unless @project_id
+        return if @config.environment == 'test'
 
         RemoteSettings.poll(@project_id, @config.remote_config_host) do |data|
           @poll_callback.call(data)
