@@ -53,9 +53,18 @@ RSpec.describe Airbrake::Config::Processor do
       end
     end
 
+    context "when the config sets environment to 'test'" do
+      let(:config) { Airbrake::Config.new(project_id: 123, environment: 'test') }
+
+      it "doesn't set remote settings" do
+        expect(Airbrake::RemoteSettings).not_to receive(:poll)
+        described_class.new(config).process_remote_configuration
+      end
+    end
+
     context "when the config defines a project_id" do
       let(:config) do
-        Airbrake::Config.new(project_id: 123)
+        Airbrake::Config.new(project_id: 123, environment: 'not-test')
       end
 
       it "sets remote settings" do
