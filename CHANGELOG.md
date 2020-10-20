@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v5.1.0][v5.1.0] (October 20, 2020)
+
 * Deleted support for dumping/loading the remote config
   ([#621](https://github.com/airbrake/airbrake-ruby/pull/621))
 * Stopped fetching notifier config when Airbrake's environment is configured to
@@ -1044,3 +1046,4 @@ Features:
 [v5.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.0
 [v5.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.1
 [v5.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.2
+[v5.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.1.0
