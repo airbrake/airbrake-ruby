@@ -181,15 +181,17 @@ Airbrake.configure do |c|
 end
 ```
 
-#### host
+#### error_host
 
-By default, it is set to `airbrake.io`. A `host` is a web address containing a
-scheme ("http" or "https"), a host and a port. You can omit the port (80 will be
-assumed) and the scheme ("https" will be assumed).
+A web address to which the notifier should send errors.
+
+By default, it is set to `airbrake.io`. It contains a scheme ("http" or
+"https"), a host and a port. You can omit the port (80 will be assumed) and the
+scheme ("https" will be assumed).
 
 ```ruby
 Airbrake.configure do |c|
-  c.host = 'http://localhost:8080'
+  c.error_host = 'http://localhost:8080'
 end
 ```
 
@@ -198,7 +200,30 @@ make sure to append a trailing slash to the end of the URL:
 
 ```ruby
 Airbrake.configure do |c|
-  c.host = 'http://localhost:8080/api/' # Note the trailing slash
+  c.error_host = 'http://localhost:8080/api/' # Note the trailing slash
+end
+```
+
+#### apm_host
+
+A web address to which the notifier should send APM events.
+
+By default, it is set to `airbrake.io`. It contains a scheme ("http" or
+"https"), a host and a port. You can omit the port (80 will be assumed) and the
+scheme ("https" will be assumed).
+
+```ruby
+Airbrake.configure do |c|
+  c.apm_host = 'http://localhost:8080'
+end
+```
+
+If your backend is hosted behind a subpath such as `http://localhost:8080/api`,
+make sure to append a trailing slash to the end of the URL:
+
+```ruby
+Airbrake.configure do |c|
+  c.apm_host = 'http://localhost:8080/api/' # Note the trailing slash
 end
 ```
 
@@ -644,7 +669,7 @@ The library provides two default filters that you can use to filter notices:
 
 #### Airbrake.build_notice
 
-Builds an [Airbrake notice][notice-v3]. This is useful, if you want to add or
+Builds an [Airbrake notice][notice-v3]. This is useful if you want to add or
 modify a value only for a specific notice. When you're done modifying the
 notice, send it with `Airbrake.notify` or `Airbrake.notify_sync`.
 
@@ -1183,12 +1208,17 @@ at_exit do
 end
 ```
 
+### Remote configuration
+
+Every 10 minutes the notifier issues an HTTP GET request to fetch remote
+configuration. This might be undesirable while running tests. To suppress this
+HTTP call, you need to configure your [environment](#environment) to `test`.
+
 Supported Rubies
 ----------------
 
 * CRuby >= 2.3.0
 * JRuby >= 9k
-* Rubinius >= 2.2.10
 
 Contact
 -------
@@ -1220,3 +1250,4 @@ The project uses the MIT License. See LICENSE.md for details.
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
 [monotonic]: http://pubs.opengroup.org/onlinepubs/9699919799/functions/clock_getres.html
 [airbrake-performance-monitoring]: https://airbrake.io/product/performance
+[notice-v3]: https://airbrake.io/docs/api/#create-notice-v3

@@ -126,6 +126,8 @@ module Airbrake
 
     # @return [String] the host such as which should be used for fetching remote
     #   configuration options (example: "https://bucket-name.s3.amazonaws.com")
+    # @api private
+    # @since 5.0.0
     attr_accessor :remote_config_host
 
     class << self
