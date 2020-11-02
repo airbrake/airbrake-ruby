@@ -521,7 +521,7 @@ default, it's set to `error`. To redefine severity, simply overwrite
 `context/severity` of a notice object. For example:
 
 ```ruby
-Airbrake.notify do |notice|
+Airbrake.notify('App crashed!') do |notice|
   notice[:context][:severity] = 'critical'
 end
 ```
