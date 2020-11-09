@@ -116,8 +116,8 @@ Configuration
 
 You **must** set both `project_id` & `project_key`.
 
-To find your `project_id` and `project_key` navigate to your project's _General
-Settings_ and copy the values from the right sidebar.
+To find your `project_id` and `project_key` navigate to your project's
+_Settings_ and copy the values from the right sidebar.
 
 ![][project-idkey]
 
