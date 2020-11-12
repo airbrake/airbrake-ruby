@@ -22,6 +22,9 @@ module Airbrake
       language: "#{RUBY_ENGINE}/#{RUBY_VERSION}".freeze,
     ).freeze
 
+    # @return [String]
+    HTTP_OK = '200'.freeze
+
     # Polls remote config of the given project.
     #
     # @param [Integer] project_id
@@ -71,22 +74,20 @@ module Airbrake
     def fetch_config
       response = nil
       begin
-        response = Net::HTTP.get(build_config_uri)
+        response = Net::HTTP.get_response(build_config_uri)
       rescue StandardError => ex
         logger.error(ex)
         return {}
       end
 
-      # AWS S3 API returns XML when request is not valid. In this case we just
-      # print the returned body and exit the method.
-      if response.start_with?('<?xml ') || response.start_with?('<html>')
-        logger.error(response)
+      unless response.code == HTTP_OK
+        logger.error(response.body)
         return {}
       end
 
       json = nil
       begin
-        json = JSON.parse(response)
+        json = JSON.parse(response.body)
       rescue JSON::ParserError => ex
         logger.error(ex)
         return {}
