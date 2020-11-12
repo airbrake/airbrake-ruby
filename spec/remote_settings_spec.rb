@@ -83,7 +83,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
     context "when an error is raised while making a HTTP request" do
       before do
-        allow(Net::HTTP).to receive(:get).and_raise(StandardError)
+        allow(Net::HTTP).to receive(:get_response).and_raise(StandardError)
       end
 
       it "doesn't fetch remote settings" do
@@ -117,10 +117,10 @@ RSpec.describe Airbrake::RemoteSettings do
       end
     end
 
-    context "when API returns an XML response" do
+    context "when API returns a non-200 response" do
       let!(:stub) do
         stub_request(:get, Regexp.new(endpoint))
-          .to_return(status: 200, body: '<?xml ...')
+          .to_return(status: 201, body: body.to_json)
       end
 
       it "doesn't update settings data" do
@@ -133,25 +133,29 @@ RSpec.describe Airbrake::RemoteSettings do
 
         expect(stub).to have_been_requested.once
         expect(settings.interval).to eq(600)
+      end
+
+      it "logs error" do
+        expect(Airbrake::Loggable.instance).to receive(:error).with(body.to_json)
+
+        remote_settings = described_class.poll(project_id, host) {}
+        sleep(0.1)
+        remote_settings.stop_polling
       end
     end
 
-    context "when API returns an HTML response" do
+    context "when API returns a 200 response" do
       let!(:stub) do
         stub_request(:get, Regexp.new(endpoint))
-          .to_return(status: 200, body: '<html>...')
+          .to_return(status: 200, body: body.to_json)
       end
 
-      it "doesn't update settings data" do
-        settings = nil
-        remote_settings = described_class.poll(project_id, host) do |data|
-          settings = data
-        end
+      it "doesn't log errors" do
+        expect(Airbrake::Loggable.instance).not_to receive(:error)
+
+        remote_settings = described_class.poll(project_id, host) {}
         sleep(0.1)
         remote_settings.stop_polling
-
-        expect(stub).to have_been_requested.once
-        expect(settings.interval).to eq(600)
       end
     end
 
