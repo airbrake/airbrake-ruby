@@ -136,6 +136,25 @@ RSpec.describe Airbrake::RemoteSettings do
       end
     end
 
+    context "when API returns an HTML response" do
+      let!(:stub) do
+        stub_request(:get, Regexp.new(endpoint))
+          .to_return(status: 200, body: '<html>...')
+      end
+
+      it "doesn't update settings data" do
+        settings = nil
+        remote_settings = described_class.poll(project_id, host) do |data|
+          settings = data
+        end
+        sleep(0.1)
+        remote_settings.stop_polling
+
+        expect(stub).to have_been_requested.once
+        expect(settings.interval).to eq(600)
+      end
+    end
+
     context "when a config route is specified in the returned data" do
       let(:new_config_route) do
         '213/config/111/config.json'
