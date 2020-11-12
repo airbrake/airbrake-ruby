@@ -79,7 +79,7 @@ module Airbrake
 
       # AWS S3 API returns XML when request is not valid. In this case we just
       # print the returned body and exit the method.
-      if response.start_with?('<?xml ')
+      if response.start_with?('<?xml ') || response.start_with?('<html>')
         logger.error(response)
         return {}
       end

@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Remote config: improved handling of responses that return HTML (they will be
+  logged correctly) ([#627](https://github.com/airbrake/airbrake-ruby/pull/627))
+
 ### [v5.1.0][v5.1.0] (October 20, 2020)
 
 * Deleted support for dumping/loading the remote config
