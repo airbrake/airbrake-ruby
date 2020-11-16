@@ -153,7 +153,7 @@ module Airbrake
       self.project_key = user_config[:project_key]
       self.error_host = 'https://api.airbrake.io'
       self.apm_host = 'https://api.airbrake.io'
-      self.remote_config_host = 'https://v1-production-notifier-configs.s3.amazonaws.com'
+      self.remote_config_host = 'https://notifier-configs.airbrake.io'
 
       self.ignore_environments = []
 
