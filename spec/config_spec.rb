@@ -28,7 +28,7 @@ RSpec.describe Airbrake::Config do
   its(:error_notifications) { is_expected.to eq(true) }
 
   its(:remote_config_host) do
-    is_expected.to eq('https://v1-production-notifier-configs.s3.amazonaws.com')
+    is_expected.to eq('https://notifier-configs.airbrake.io')
   end
 
   describe "#new" do
