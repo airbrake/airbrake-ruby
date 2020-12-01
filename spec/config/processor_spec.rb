@@ -72,6 +72,15 @@ RSpec.describe Airbrake::Config::Processor do
         described_class.new(config).process_remote_configuration
       end
     end
+
+    context "when the config doesn't define a remote_config_host" do
+      let(:config) { Airbrake::Config.new(project_id: 123, remote_config_host: nil) }
+
+      it "doesn't set remote settings" do
+        expect(Airbrake::RemoteSettings).not_to receive(:poll)
+        described_class.new(config).process_remote_configuration
+      end
+    end
   end
 
   describe "#add_filters" do
