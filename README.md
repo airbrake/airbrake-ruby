@@ -447,6 +447,21 @@ Airbrake.configure do |c|
 end
 ```
 
+#### remote_config_host
+
+Configures the host from which the notifier should pull remote configuration. By
+default, it is set to `https://notifier-configs.airbrake.io`:
+
+```rb
+Airbrake.configure do |c|
+  c.remote_config_host = 'https://notifier-configs.example.com'
+end
+```
+
+Note: setting this option to `nil` will disable the remote configuration
+feature. It also might negatively impact how your notifier works. Please use
+this option with caution.
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do
