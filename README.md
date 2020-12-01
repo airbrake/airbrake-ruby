@@ -7,7 +7,9 @@ Airbrake Ruby
 [![Documentation Status](http://inch-ci.org/github/airbrake/airbrake-ruby.svg?branch=master)](http://inch-ci.org/github/airbrake/airbrake-ruby)
 [![Downloads](https://img.shields.io/gem/dt/airbrake-ruby.svg?style=flat)](https://rubygems.org/gems/airbrake-ruby)
 
-![Airbrake Ruby][arthur-ruby]
+<p align="center">
+  <img src="https://airbrake-github-assets.s3.amazonaws.com/brand/airbrake-full-logo.png" width="200">
+</p>
 
 * [Airbrake README][airbrake-gem]
 * [Airbrake Ruby README](https://github.com/airbrake/airbrake-ruby)
@@ -1246,7 +1248,6 @@ The project uses the MIT License. See LICENSE.md for details.
 [keysallowlist]: https://github.com/airbrake/airbrake-ruby/blob/master/lib/airbrake-ruby/filters/keys_allowlist.rb
 [golang]: https://golang.org/
 [yard-api]: http://www.rubydoc.info/gems/airbrake-ruby
-[arthur-ruby]: https://s3.amazonaws.com/airbrake-github-assets/airbrake-ruby/arthur-ruby.jpg
 [what-is-severity]: https://airbrake.io/docs/airbrake-faq/what-is-severity/
 [monotonic]: http://pubs.opengroup.org/onlinepubs/9699919799/functions/clock_getres.html
 [airbrake-performance-monitoring]: https://airbrake.io/product/performance
