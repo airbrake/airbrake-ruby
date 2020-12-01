@@ -124,9 +124,9 @@ module Airbrake
     # @since 5.0.0
     attr_accessor :error_notifications
 
-    # @return [String] the host such as which should be used for fetching remote
-    #   configuration options (example: "https://bucket-name.s3.amazonaws.com")
-    # @api private
+    # @return [String] the host which should be used for fetching remote
+    #   configuration options
+    # @api public
     # @since 5.0.0
     attr_accessor :remote_config_host
 
