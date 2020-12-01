@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Added ability to disable remote configuration by setting `remote_config_host`
+  to `nil` ([#632](https://github.com/airbrake/airbrake-ruby/pull/632))
+
 ### [v5.1.1][v5.1.1] (November 17, 2020)
 
 * Remote config: improved handling of responses that return HTML (they will be
