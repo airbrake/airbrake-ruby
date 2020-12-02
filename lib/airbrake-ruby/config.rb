@@ -130,6 +130,12 @@ module Airbrake
     # @since v5.0.0
     attr_accessor :remote_config_host
 
+    # @return [String] true if notifier should periodically fetch remote
+    #   configuration, false otherwise
+    # @api public
+    # @since v5.2.0
+    attr_accessor :remote_config
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -142,7 +148,7 @@ module Airbrake
 
     # @param [Hash{Symbol=>Object}] user_config the hash to be used to build the
     #   config
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def initialize(user_config = {})
       self.proxy = {}
       self.queue_size = 100
@@ -173,10 +179,11 @@ module Airbrake
       self.query_stats = true
       self.job_stats = true
       self.error_notifications = true
+      self.remote_config = true
 
       merge(user_config)
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # The full URL to the Airbrake Notice API. Based on the +:error_host+ option.
     # @return [URI] the endpoint address
