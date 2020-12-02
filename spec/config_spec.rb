@@ -26,6 +26,7 @@ RSpec.describe Airbrake::Config do
   its(:query_stats) { is_expected.to eq(true) }
   its(:job_stats) { is_expected.to eq(true) }
   its(:error_notifications) { is_expected.to eq(true) }
+  its(:remote_config) { is_expected.to eq(true) }
 
   its(:remote_config_host) do
     is_expected.to eq('https://notifier-configs.airbrake.io')
