@@ -11,7 +11,7 @@ module Airbrake
     #
     #   settings_data.interval #=> 600
     #
-    # @since 5.0.0
+    # @since v5.0.0
     # @api private
     class SettingsData
       # @return [Integer] how frequently we should poll the config API

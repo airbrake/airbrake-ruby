@@ -6,7 +6,7 @@ module Airbrake
   AIRBRAKE_RUBY_VERSION = '5.1.1'.freeze
 
   # @return [Hash{Symbol=>String}] the information about the notifier library
-  # @since 5.0.0
+  # @since v5.0.0
   # @api public
   NOTIFIER_INFO = {
     name: 'airbrake-ruby'.freeze,

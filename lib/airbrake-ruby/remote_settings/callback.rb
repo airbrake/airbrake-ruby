@@ -4,7 +4,7 @@ module Airbrake
     # updates the local config according to the data.
     #
     # @api private
-    # @since 5.0.2
+    # @since v5.0.2
     class Callback
       def initialize(config)
         @config = config
