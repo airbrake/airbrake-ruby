@@ -8,7 +8,7 @@ module Airbrake
   #     config.error_notifications = data.error_notifications?
   #   end
   #
-  # @since 5.0.0
+  # @since v5.0.0
   # @api private
   class RemoteSettings
     include Airbrake::Loggable

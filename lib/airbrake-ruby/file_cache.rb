@@ -40,7 +40,7 @@ module Airbrake
       data.empty?
     end
 
-    # @since 4.7.0
+    # @since v4.7.0
     # @return [void]
     def self.reset
       @data = {}

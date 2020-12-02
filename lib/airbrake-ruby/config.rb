@@ -121,13 +121,13 @@ module Airbrake
     # @return [Boolean] true if the library should send error reports to
     #   Airbrake, false otherwise
     # @api public
-    # @since 5.0.0
+    # @since v5.0.0
     attr_accessor :error_notifications
 
     # @return [String] the host which should be used for fetching remote
     #   configuration options
     # @api public
-    # @since 5.0.0
+    # @since v5.0.0
     attr_accessor :remote_config_host
 
     class << self
