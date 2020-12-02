@@ -5,7 +5,7 @@ Airbrake Ruby Changelog
 
 * Added the `remote_config` option. This option configures the remote
   configuration feature
-  ([#634](https://github.com/airbrake/airbrake-ruby/pull/634))
+  ([#636](https://github.com/airbrake/airbrake-ruby/pull/636))
 
 ### [v5.1.1][v5.1.1] (November 17, 2020)
 
