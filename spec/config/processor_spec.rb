@@ -73,8 +73,8 @@ RSpec.describe Airbrake::Config::Processor do
       end
     end
 
-    context "when the config doesn't define a remote_config_host" do
-      let(:config) { Airbrake::Config.new(project_id: 123, remote_config_host: nil) }
+    context "when the config disables the remote_config option" do
+      let(:config) { Airbrake::Config.new(project_id: 123, remote_config: false) }
 
       it "doesn't set remote settings" do
         expect(Airbrake::RemoteSettings).not_to receive(:poll)

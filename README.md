@@ -458,10 +458,6 @@ Airbrake.configure do |c|
 end
 ```
 
-Note: setting this option to `nil` will disable the remote configuration
-feature. It also might negatively impact how your notifier works. Please use
-this option with caution.
-
 #### remote_config
 
 Configures the remote configuration feature. At regular intervals the notifier
