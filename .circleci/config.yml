@@ -48,6 +48,10 @@ jobs:
           command: |
             touch README # Workaround for "incorrect" anchor links in README.md
             bundle exec yardoc --fail-on-warning --no-progress --readme=README
+      - run:
+          name: Verify all @since tag versions start with letter 'v'
+          command: |
+            ! egrep -r "# @since [0-9]" lib
   "ruby-2.3":
     docker:
       - image: circleci/ruby:2.3
