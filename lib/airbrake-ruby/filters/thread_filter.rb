@@ -41,8 +41,7 @@ module Airbrake
           thread_info[:fiber_variables] = vars
         end
 
-        # Present in Ruby 2.3+.
-        if th.respond_to?(:name) && (name = th.name)
+        if (name = th.name)
           thread_info[:name] = name
         end
 

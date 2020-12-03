@@ -234,7 +234,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     end
   end
 
-  it "appends name", skip: !Thread.current.respond_to?(:name) do
+  it "appends name" do
     new_thread do |th|
       th.name = 'bingo'
       subject.call(notice)
