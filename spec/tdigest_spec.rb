@@ -86,7 +86,7 @@ RSpec.describe Airbrake::TDigest do
           maxerr = [maxerr, (i - q).abs].max
         end
 
-        expect(maxerr).to be < 0.01
+        expect(maxerr).to be < 0.02
       end
     end
   end
