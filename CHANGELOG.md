@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v5.2.0][v5.2.0] (December 4, 2020)
+
 * Added the `remote_config` option. This option configures the remote
   configuration feature
   ([#636](https://github.com/airbrake/airbrake-ruby/pull/636))
@@ -1060,3 +1062,4 @@ Features:
 [v5.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.0.2
 [v5.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.1.0
 [v5.1.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.1.1
+[v5.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.2.0
