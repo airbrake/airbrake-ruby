@@ -465,6 +465,14 @@ will be making `GET` requests to Airbrake servers and fetching a JSON document
 containing configuration settings of the notifier. The notifier will apply these
 new settings at runtime. By default, it is enabled.
 
+To disable this feature, configure your notifier with:
+
+```rb
+Airbrake.configure do |c|
+  c.remote_config = false
+end
+```
+
 Note: it is not recommended to disable this feature. It might negatively impact
 how your notifier works. Please use this option with caution.
 
