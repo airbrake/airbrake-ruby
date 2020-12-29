@@ -21,11 +21,21 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
       allow(data).to receive(:performance_stats?)
     end
 
-    it "logs given data" do
-      expect(logger).to receive(:debug) do |&block|
-        expect(block.call).to match(/applying remote settings/)
+    context "when remote_config_logging is true" do
+      it "logs given data" do
+        expect(logger).to receive(:debug) do |&block|
+          expect(block.call).to match(/applying remote settings/)
+        end
+        described_class.new(config).call(data)
       end
-      described_class.new(config).call(data)
+    end
+
+    context "when remote_config_logging is false" do
+      it "does not log data" do
+        expect(logger).to_not receive(:debug)
+        config.remote_config_logging = false
+        described_class.new(config).call(data)
+      end
     end
 
     context "when the config disables error notifications" do

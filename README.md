@@ -476,6 +476,22 @@ end
 Note: it is not recommended to disable this feature. It might negatively impact
 how your notifier works. Please use this option with caution.
 
+#### remote_config_logging
+
+Configures logging from the remote configuration feature. At intervals as
+described above, new settings will be fetched and output to the logger. These
+may be disabled to avoid extra log-lines, but maintaining the other logs that
+this gem will write.
+
+To silance the log-lines, configure as such:
+
+```rb
+Airbrake.configure do |c|
+  c.remote_config = true
+  c.remote_config_logging = false
+end
+```
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do

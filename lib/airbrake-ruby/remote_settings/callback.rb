@@ -6,6 +6,7 @@ module Airbrake
     # @api private
     # @since v5.0.2
     class Callback
+      # @param [Airbrake::Config] config
       def initialize(config)
         @config = config
         @orig_error_notifications = config.error_notifications
@@ -15,8 +16,10 @@ module Airbrake
       # @param [Airbrake::RemoteSettings::SettingsData] data
       # @return [void]
       def call(data)
-        @config.logger.debug do
-          "#{LOG_LABEL} applying remote settings: #{data.to_h}"
+        if @config.remote_config_logging
+          @config.logger.debug do
+            "#{LOG_LABEL} applying remote settings: #{data.to_h}"
+          end
         end
 
         @config.error_host = data.error_host if data.error_host

@@ -136,6 +136,11 @@ module Airbrake
     # @since v5.2.0
     attr_accessor :remote_config
 
+    # @return [Boolean] true if notifier should log when fetching remote
+    #   configuration, false otherwise
+    # @api public
+    attr_accessor :remote_config_logging
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -180,6 +185,7 @@ module Airbrake
       self.job_stats = true
       self.error_notifications = true
       self.remote_config = true
+      self.remote_config_logging = true
 
       merge(user_config)
     end
