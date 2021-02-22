@@ -22,7 +22,7 @@ module Airbrake
       @config = Airbrake::Config.instance
       @context = {}
       @filter_chain = FilterChain.new
-      @async_sender = AsyncSender.new
+      @async_sender = AsyncSender.new(:post, self.class.name)
       @sync_sender = SyncSender.new
 
       DEFAULT_FILTERS.each { |filter| add_filter(filter.new) }

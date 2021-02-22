@@ -605,7 +605,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     it "logs the exit message" do
       allow(Airbrake::Loggable.instance).to receive(:debug)
       expect(Airbrake::Loggable.instance).to receive(:debug).with(
-        /performance notifier closed/,
+        /Airbrake::PerformanceNotifier thread pool closed/,
       )
       subject.close
     end

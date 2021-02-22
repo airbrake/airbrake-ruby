@@ -6,6 +6,7 @@ module Airbrake
   #   # Initialize a new thread pool with 5 workers and a queue size of 100. Set
   #   # the block to be run concurrently.
   #   thread_pool = ThreadPool.new(
+  #     name: 'performance-notifier',
   #     worker_size: 5,
   #     queue_size: 100,
   #     block: proc { |message| print "ECHO: #{message}..."}
@@ -24,7 +25,8 @@ module Airbrake
     # @note This is exposed for eaiser unit testing
     attr_reader :workers
 
-    def initialize(worker_size:, queue_size:, block:)
+    def initialize(name: nil, worker_size:, queue_size:, block:)
+      @name = name
       @worker_size = worker_size
       @queue_size = queue_size
       @block = block
@@ -111,7 +113,7 @@ module Airbrake
       end
 
       threads.each(&:join)
-      logger.debug("#{LOG_LABEL} thread pool closed")
+      logger.debug("#{LOG_LABEL} #{@name} thread pool closed")
     end
 
     def closed?
