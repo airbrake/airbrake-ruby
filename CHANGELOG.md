@@ -3,6 +3,9 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Improved logging on closing notifiers
+  ([#644](https://github.com/airbrake/airbrake-ruby/pull/644))
+
 ### [v5.2.0][v5.2.0] (December 4, 2020)
 
 * Added the `remote_config` option. This option configures the remote

@@ -12,7 +12,7 @@ module Airbrake
     def initialize
       @config = Airbrake::Config.instance
       @flush_period = Airbrake::Config.instance.performance_stats_flush_period
-      @async_sender = AsyncSender.new(:put)
+      @async_sender = AsyncSender.new(:put, self.class.name)
       @sync_sender = SyncSender.new(:put)
       @schedule_flush = nil
       @filter_chain = FilterChain.new
@@ -51,7 +51,6 @@ module Airbrake
       @payload.synchronize do
         @schedule_flush.kill if @schedule_flush
         @async_sender.close
-        logger.debug("#{LOG_LABEL} performance notifier closed")
       end
     end
 

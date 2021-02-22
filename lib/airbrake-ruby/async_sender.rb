@@ -7,9 +7,10 @@ module Airbrake
   class AsyncSender
     include Loggable
 
-    def initialize(method = :post)
+    def initialize(method = :post, name = 'async-sender')
       @config = Airbrake::Config.instance
       @method = method
+      @name = name
     end
 
     # Asynchronously sends a notice to Airbrake.
@@ -47,6 +48,7 @@ module Airbrake
       @thread_pool ||= begin
         sender = SyncSender.new(@method)
         ThreadPool.new(
+          name: @name,
           worker_size: @config.workers,
           queue_size: @config.queue_size,
           block: proc { |args| sender.send(*args) },

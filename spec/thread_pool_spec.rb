@@ -127,13 +127,13 @@ RSpec.describe Airbrake::ThreadPool do
     context "when there's some work to do" do
       it "logs how many tasks are left to process" do
         thread_pool = described_class.new(
-          worker_size: 0, queue_size: 2, block: proc {},
+          name: 'foo', worker_size: 0, queue_size: 2, block: proc {},
         )
 
         expect(Airbrake::Loggable.instance).to receive(:debug).with(
           /waiting to process \d+ task\(s\)/,
         )
-        expect(Airbrake::Loggable.instance).to receive(:debug).with(/closed/)
+        expect(Airbrake::Loggable.instance).to receive(:debug).with(/foo.+closed/)
 
         2.times { thread_pool << 1 }
         thread_pool.close
