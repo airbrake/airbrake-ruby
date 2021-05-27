@@ -590,6 +590,7 @@ Instead, you can ignore notices based on some condition.
 ```ruby
 Airbrake.add_filter do |notice|
   notice.ignore! if notice.stash[:exception].is_a?(StandardError)
+  notice.ignore! if notice.stash[:exception].is_a?(Net::ReadTimeout) if ENV['HOSTNAME'].match('storage-server')
 end
 ```
 
