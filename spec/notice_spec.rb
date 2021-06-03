@@ -152,6 +152,7 @@ RSpec.describe Airbrake::Notice do
         # serialize them.
         #
         # @see https://goo.gl/0A3xNC
+        # rubocop:disable Lint/ConstantDefinitionInBlock
         class ObjectWithIoIvars
           def initialize
             @bongo = Tempfile.new('bongo').tap(&:close)
@@ -162,8 +163,10 @@ RSpec.describe Airbrake::Notice do
             raise NotImplementedError
           end
         end
+        # rubocop:enable Lint/ConstantDefinitionInBlock
 
         # @see ObjectWithIoIvars
+        # rubocop:disable Lint/ConstantDefinitionInBlock
         class ObjectWithNestedIoIvars
           def initialize
             @bish = ObjectWithIoIvars.new
@@ -174,6 +177,7 @@ RSpec.describe Airbrake::Notice do
             raise NotImplementedError
           end
         end
+        # rubocop:enable Lint/ConstantDefinitionInBlock
 
         context "and also when it's a closed Tempfile" do
           it "doesn't fail" do
