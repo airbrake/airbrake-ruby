@@ -104,7 +104,7 @@ module Airbrake
 
         unless @queue.empty?
           msg = "#{LOG_LABEL} waiting to process #{@queue.size} task(s)..."
-          logger.debug(msg + ' (Ctrl-C to abort)')
+          logger.debug("#{msg} (Ctrl-C to abort)")
         end
 
         @worker_size.times { @queue << :stop }

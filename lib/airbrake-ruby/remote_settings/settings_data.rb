@@ -59,7 +59,7 @@ module Airbrake
       # @return [String] where the config is stored on S3.
       def config_route(remote_config_host)
         if @data['config_route'] && !@data['config_route'].empty?
-          return remote_config_host.chomp('/') + '/' + @data['config_route']
+          return "#{remote_config_host.chomp('/')}/#{@data['config_route']}"
         end
 
         format(

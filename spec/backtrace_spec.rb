@@ -298,9 +298,9 @@ RSpec.describe Airbrake::Backtrace do
         it "attaches code to those frames files of which match root_directory" do
           ex = RuntimeError.new
           backtrace = [
-            project_root_path('code.rb') + ":94:in `to_json'",
-            fixture_path('notroot.txt' + ":3:in `pineapple'"),
-            project_root_path('vendor/bundle/ignored_file.rb') + ":2:in `ignore_me'",
+            "#{project_root_path('code.rb')}:94:in `to_json'",
+            fixture_path("notroot.txt:3:in `pineapple'"),
+            "#{project_root_path('vendor/bundle/ignored_file.rb')}:2:in `ignore_me'",
           ]
           ex.set_backtrace(backtrace)
           expect(described_class.parse(ex)).to eq(parsed_backtrace)
@@ -335,7 +335,7 @@ RSpec.describe Airbrake::Backtrace do
 
         it "attaches code to those frames files of which match root_directory" do
           ex = RuntimeError.new
-          ex.set_backtrace([project_root_path('code.rb') + ":94:in `to_json'"])
+          ex.set_backtrace(["#{project_root_path('code.rb')}:94:in `to_json'"])
           expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
       end
@@ -387,9 +387,9 @@ RSpec.describe Airbrake::Backtrace do
         it "attaches code to first N frames" do
           ex = RuntimeError.new
           backtrace = [
-            project_root_path('code.rb') + ":94:in `to_json'",
-            project_root_path('code.rb') + ":95:in `to_json'",
-            project_root_path('code.rb') + ":96:in `to_json'",
+            "#{project_root_path('code.rb')}:94:in `to_json'",
+            "#{project_root_path('code.rb')}:95:in `to_json'",
+            "#{project_root_path('code.rb')}:96:in `to_json'",
           ]
           ex.set_backtrace(backtrace)
           expect(described_class.parse(ex)).to eq(parsed_backtrace)
@@ -417,7 +417,7 @@ RSpec.describe Airbrake::Backtrace do
 
         it "doesn't attach code to frames" do
           ex = RuntimeError.new
-          backtrace = [project_root_path('code.rb') + ":94:in `to_json'"]
+          backtrace = ["#{project_root_path('code.rb')}:94:in `to_json'"]
           ex.set_backtrace(backtrace)
           expect(described_class.parse(ex)).to eq(parsed_backtrace)
         end
