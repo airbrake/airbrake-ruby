@@ -13,7 +13,7 @@ module Airbrake
       end
 
       # @macro call_filter
-      def call(notice)
+      def call(notice) # rubocop:disable Metrics/AbcSize
         exception = notice.stash[:exception]
         return unless exception.respond_to?(:to_airbrake)
 
