@@ -25,7 +25,7 @@ module Airbrake
     # @note This is exposed for eaiser unit testing
     attr_reader :workers
 
-    def initialize(name: nil, worker_size:, queue_size:, block:)
+    def initialize(worker_size:, queue_size:, block:, name: nil)
       @name = name
       @worker_size = worker_size
       @queue_size = queue_size
