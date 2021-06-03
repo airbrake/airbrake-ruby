@@ -1,0 +1,33 @@
+name: airbrake-ruby
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
+        ruby: [2.5, 2.6, 2.7, '3.0', head, jruby, jruby-head]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+
+    - name: Rubocop lint
+      run: bundle exec rubocop
+
+    - name: YARD lint
+      run: |
+        touch README # Workaround for "incorrect" anchor links in README.md
+        bundle exec yardoc --fail-on-warning --no-progress --readme=README
+
+    - name: Test
+      run: bundle exec rake
