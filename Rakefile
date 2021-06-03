@@ -5,8 +5,8 @@ RSpec::Core::RakeTask.new(:spec)
 task default: :spec
 
 # rubocop:disable Security/Eval
-def modify_base_gemspec
-  eval(File.read('airbrake-ruby.gemspec')).tap { |s| yield s }
+def modify_base_gemspec(&block)
+  eval(File.read('airbrake-ruby.gemspec')).tap(&block)
 end
 # rubocop:enable Security/Eval
 
