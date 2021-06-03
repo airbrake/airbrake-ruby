@@ -131,7 +131,7 @@ module Airbrake
       points = to_a
       reset!
       push_centroid(points.shuffle)
-      _cumulate(true, true)
+      _cumulate(exact: true, force: true)
       nil
     end
 
@@ -176,7 +176,7 @@ module Airbrake
         elsif item > max[1].mean
           1.0
         else
-          _cumulate(true)
+          _cumulate(exact: true)
           bound = bound_mean(item)
           lower, upper = bound
           mean_cumn = lower.mean_cumn
@@ -205,7 +205,7 @@ module Airbrake
         if size == 0
           nil
         else
-          _cumulate(true)
+          _cumulate(exact: true)
           h = @size * item
           lower, upper = bound_mean_cumn(h)
           if lower.nil? && upper.nil?
@@ -307,7 +307,7 @@ module Airbrake
         centroid.mean += n * (x - centroid.mean) / (centroid.n + n)
       end
 
-      _cumulate(false, true) if centroid.mean_cumn.nil?
+      _cumulate(exact: false, force: true) if centroid.mean_cumn.nil?
 
       centroid.cumn += n
       centroid.mean_cumn += n / 2.0
@@ -315,7 +315,7 @@ module Airbrake
     end
 
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-    def _cumulate(exact = false, force = false)
+    def _cumulate(exact: false, force: false)
       unless force
         factor = if @last_cumulate == 0
                    Float::INFINITY
@@ -362,7 +362,7 @@ module Airbrake
         end
       end
 
-      _cumulate(false)
+      _cumulate(exact: false)
 
       # If the number of centroids has grown to a very large size,
       # it may be due to values being inserted in sorted order.
