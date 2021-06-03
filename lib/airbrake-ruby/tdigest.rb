@@ -24,6 +24,7 @@ module Airbrake
     # @since v3.2.0
     class Centroid
       attr_accessor :mean, :n, :cumn, :mean_cumn
+
       def initialize(mean, n, cumn, mean_cumn = nil)
         @mean      = mean
         @n         = n
