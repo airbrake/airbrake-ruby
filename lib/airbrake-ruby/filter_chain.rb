@@ -57,7 +57,9 @@ module Airbrake
     # @return [void]
     # @since v3.1.0
     def delete_filter(filter_class)
+      # rubocop:disable Style/ClassEqualityComparison
       index = @filters.index { |f| f.class.name == filter_class.name }
+      # rubocop:enable Style/ClassEqualityComparison
       @filters.delete_at(index) if index
     end
 

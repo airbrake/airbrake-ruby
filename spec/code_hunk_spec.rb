@@ -93,7 +93,7 @@ RSpec.describe Airbrake::CodeHunk do
       end
 
       it "strips the line" do
-        expect(subject[1]).to eq('l' + 'o' * 196 + 'ng')
+        expect(subject[1]).to eq("l#{'o' * 196}ng")
       end
     end
 

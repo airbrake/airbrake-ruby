@@ -18,11 +18,9 @@ module Airbrake
     # Checks whether the instance was ignored.
     # @return [Boolean]
     # @see #ignore!
-    # rubocop:disable Style/DoubleNegation
     def ignored?
       !!ignored
     end
-    # rubocop:enable Style/DoubleNegation
 
     # Ignores an instance. Ignored instances must never reach the Airbrake
     # dashboard.

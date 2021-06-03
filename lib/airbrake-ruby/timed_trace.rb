@@ -50,9 +50,7 @@ module Airbrake
 
     # @return [Hash<String=>Float>]
     def spans
-      @spans.each_with_object({}) do |(label, benchmark), new_spans|
-        new_spans[label] = benchmark.duration
-      end
+      @spans.transform_values(&:duration)
     end
   end
 end

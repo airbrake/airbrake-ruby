@@ -30,11 +30,9 @@ RSpec.describe Airbrake do
 
     it "yields the config" do
       expect do |b|
-        begin
-          described_class.configure(&b)
-        rescue Airbrake::Error
-          nil
-        end
+        described_class.configure(&b)
+      rescue Airbrake::Error
+        nil
       end.to yield_with_args(Airbrake::Config)
     end
 

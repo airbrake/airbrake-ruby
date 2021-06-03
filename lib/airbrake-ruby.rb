@@ -273,7 +273,7 @@ module Airbrake
     #   Airbrake.notify('App crashed!') #=> raises Airbrake::Error
     #
     # @return [nil]
-    # rubocop:disable Style/IfUnlessModifier, Metrics/CyclomaticComplexity
+    # rubocop:disable Style/IfUnlessModifier
     def close
       if defined?(@notice_notifier) && @notice_notifier
         @notice_notifier.close
@@ -289,7 +289,7 @@ module Airbrake
 
       nil
     end
-    # rubocop:enable Style/IfUnlessModifier, Metrics/CyclomaticComplexity
+    # rubocop:enable Style/IfUnlessModifier
 
     # Pings the Airbrake Deploy API endpoint about the occurred deploy.
     #

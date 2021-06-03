@@ -82,7 +82,7 @@ module Airbrake
 
       private
 
-      def filter_hash(hash)
+      def filter_hash(hash) # rubocop:disable Metrics/AbcSize
         return hash unless hash.is_a?(Hash)
 
         hash_copy = hash.dup

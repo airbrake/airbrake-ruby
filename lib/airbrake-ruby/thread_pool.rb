@@ -25,7 +25,7 @@ module Airbrake
     # @note This is exposed for eaiser unit testing
     attr_reader :workers
 
-    def initialize(name: nil, worker_size:, queue_size:, block:)
+    def initialize(worker_size:, queue_size:, block:, name: nil)
       @name = name
       @worker_size = worker_size
       @queue_size = queue_size
@@ -104,7 +104,7 @@ module Airbrake
 
         unless @queue.empty?
           msg = "#{LOG_LABEL} waiting to process #{@queue.size} task(s)..."
-          logger.debug(msg + ' (Ctrl-C to abort)')
+          logger.debug("#{msg} (Ctrl-C to abort)")
         end
 
         @worker_size.times { @queue << :stop }

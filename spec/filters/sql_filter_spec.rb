@@ -20,14 +20,14 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     end
   end
 
-  ALL_DIALECTS = %i[mysql postgres sqlite cassandra oracle].freeze
+  all_dialects = %i[mysql postgres sqlite cassandra oracle].freeze
 
   # rubocop:disable Layout/LineLength
   [
     {
       input: 'SELECT * FROM things;',
       output: 'SELECT * FROM things;',
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT `t001`.`c2` FROM `t001` WHERE `t001`.`c2` = 'value' AND c3=\"othervalue\" LIMIT ?",
       output: "SELECT `t001`.`c2` FROM `t001` WHERE `t001`.`c2` = ? AND c3=? LIMIT ?",
@@ -39,7 +39,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT * FROM t WHERE foo='bar/*' AND baz='whatever */qux'",
       output: "SELECT * FROM t WHERE foo=? AND baz=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT \"t001\".\"c2\" FROM \"t001\" WHERE \"t001\".\"c2\" = 'value' AND c3=1234 LIMIT 1",
       output: "SELECT \"t001\".\"c2\" FROM \"t001\" WHERE \"t001\".\"c2\" = ? AND c3=? LIMIT ?",
@@ -51,19 +51,19 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT * FROM t WHERE foo='bar--' AND\n  baz='qux--'",
       output: "SELECT * FROM t WHERE foo=? AND\n  baz=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM foo WHERE bar='baz' /* Hide Me */",
       output: "SELECT * FROM foo WHERE bar=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM foobar WHERE password='hunter2'\n-- No peeking!",
       output: "SELECT * FROM foobar WHERE password=?\n?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT foo, bar FROM baz WHERE password='hunter2' # Secret",
       output: "SELECT foo, bar FROM baz WHERE password=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT \"col1\", \"col2\" from \"table\" WHERE \"col3\"=E'foo\\'bar\\\\baz' AND country=e'foo\\'bar\\\\baz'",
       output: "SELECT \"col1\", \"col2\" from \"table\" WHERE \"col3\"=E?",
@@ -79,11 +79,11 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT c11.col1, c22.col2 FROM table c11, table c22 WHERE value='nothing'",
       output: "SELECT c11.col1, c22.col2 FROM table c11, table c22 WHERE value=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "INSERT INTO X VALUES(1, 23456, 123.456, 99+100)",
       output: "INSERT INTO X VALUES(?)",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM table WHERE name=\"foo\" AND value=\"don't\"",
       output: "SELECT * FROM table WHERE name=? AND value=?",
@@ -91,19 +91,19 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT * FROM table WHERE name='foo' AND value = 'bar'",
       output: "SELECT * FROM table WHERE name=? AND value = ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM table WHERE col='foo\\''bar'",
       output: "SELECT * FROM table WHERE col=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM table WHERE col1='foo\"bar' AND col2='what\"ever'",
       output: "SELECT * FROM table WHERE col1=? AND col2=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "select * from accounts where accounts.name != 'dude\n newline' order by accounts.name",
       output: "select * from accounts where accounts.name != ? order by accounts.name",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM table WHERE col1=\"don't\" AND col2=\"won't\"",
       output: "SELECT * FROM table WHERE col1=? AND col2=?",
@@ -115,7 +115,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT * FROM table WHERE name='foo\\' AND color='blue'",
       output: "SELECT * FROM table WHERE name=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM table WHERE foo=\"this string ends with a backslash\\\\\"",
       output: "SELECT * FROM table WHERE foo=?",
@@ -123,36 +123,36 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT * FROM table WHERE foo='this string ends with a backslash\\\\'",
       output: "SELECT * FROM table WHERE foo=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       # TODO: fix this example.
       input: "SELECT * FROM table WHERE name='foo\'' AND color='blue'",
       output: "Error: Airbrake::Query was not filtered",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "INSERT INTO X values('', 'a''b c',0, 1 , 'd''e f''s h')",
       output: "INSERT INTO X values(?)",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM t WHERE -- '\n  bar='baz' -- '",
       output: "SELECT * FROM t WHERE ?\n  bar=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM t WHERE /* ' */\n  bar='baz' -- '",
       output: "SELECT * FROM t WHERE ?\n  bar=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM t WHERE -- '\n  /* ' */ c2='xxx' /* ' */\n  c='x\n  xx' -- '",
       output: "SELECT * FROM t WHERE ?\n  ? c2=? ?\n  c=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM t WHERE -- '\n  c='x\n  xx' -- '",
       output: "SELECT * FROM t WHERE ?\n  c=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM foo WHERE col='value1' AND /* don't */ col2='value1' /* won't */",
       output: "SELECT * FROM foo WHERE col=? AND ? col2=? ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM table WHERE foo='bar' AND baz=\"nothing to see here'",
       output: "Error: Airbrake::Query was not filtered",
@@ -160,7 +160,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "SELECT * FROM table WHERE foo='bar' AND baz='nothing to see here",
       output: "Error: Airbrake::Query was not filtered",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "SELECT * FROM \"foo\" WHERE \"foo\" = $a$dollar quotes can be $b$nested$b$$a$ and bar = 'baz'",
       output: "SELECT * FROM \"foo\" WHERE \"foo\" = ? and bar = ?",
@@ -172,11 +172,11 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "select * from foo where bar = 'some\\tthing' and baz = 10",
       output: "select * from foo where bar = ? and baz = ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "select * from users where user = 'user1\\' password = 'hunter 2' -- ->don't count this quote",
       output: "select * from users where user = ?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "select * from foo where bar=q'[baz's]' and x=5",
       output: "select * from foo where bar=? and x=?",
@@ -204,7 +204,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
     }, {
       input: "select * from foo where bar=1.234e-5 and x=5",
       output: "select * from foo where bar=? and x=?",
-      dialects: ALL_DIALECTS,
+      dialects: all_dialects,
     }, {
       input: "select * from foo where bar=01234567-89ab-cdef-0123-456789abcdef and x=5",
       output: "select * from foo where bar=? and x=?",
