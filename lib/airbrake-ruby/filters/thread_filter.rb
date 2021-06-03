@@ -83,7 +83,7 @@ module Airbrake
         when Array
           value = value.map { |elem| sanitize_value(elem) }
         when Hash
-          Hash[value.map { |k, v| [k, sanitize_value(v)] }]
+          value.transform_values { |v| sanitize_value(v) }
         else
           value.to_s
         end
