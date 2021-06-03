@@ -39,8 +39,4 @@ DESC
   s.add_development_dependency 'webmock', '~> 3.8'
   s.add_development_dependency 'benchmark-ips', '~> 2'
   s.add_development_dependency 'yard', '~> 0.9'
-
-  # Fixes build failure with public_suffix v3
-  # https://circleci.com/gh/airbrake/airbrake-ruby/889
-  s.add_development_dependency 'public_suffix', '~> 4.0', '< 5.0'
 end
