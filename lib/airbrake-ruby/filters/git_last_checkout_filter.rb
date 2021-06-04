@@ -50,7 +50,7 @@ module Airbrake
       def last_checkout
         return unless (line = last_checkout_line)
 
-        parts = line.chomp.split("\t").first.split(' ')
+        parts = line.chomp.split("\t").first.split
         if parts.size < MIN_HEAD_COLS
           logger.error(
             "#{LOG_LABEL} Airbrake::#{self.class.name}: can't parse line: #{line}",
