@@ -156,9 +156,10 @@ RSpec.describe Airbrake::TDigest do
     end
 
     describe "adding two tdigests" do
+      let(:other) { described_class.new(0.001, 50, 1.2) }
+
       before do
-        @other = described_class.new(0.001, 50, 1.2)
-        [tdigest, @other].each do |td|
+        [tdigest, other].each do |td|
           td.push(60, 100)
           10.times { td.push(rand * 100) }
         end
@@ -166,7 +167,7 @@ RSpec.describe Airbrake::TDigest do
 
       # rubocop:disable RSpec/MultipleExpectations
       it "has the parameters of the left argument (the calling tdigest)" do
-        new_tdigest = tdigest + @other
+        new_tdigest = tdigest + other
         expect(new_tdigest.instance_variable_get(:@delta)).to eq(
           tdigest.instance_variable_get(:@delta),
         )
@@ -180,14 +181,14 @@ RSpec.describe Airbrake::TDigest do
       # rubocop:enable RSpec/MultipleExpectations
 
       it "returns a tdigest with less than or equal centroids" do
-        new_tdigest = tdigest + @other
+        new_tdigest = tdigest + other
         expect(new_tdigest.centroids.size)
-          .to be <= tdigest.centroids.size + @other.centroids.size
+          .to be <= tdigest.centroids.size + other.centroids.size
       end
 
       it "has the size of the two digests combined" do
-        new_tdigest = tdigest + @other
-        expect(new_tdigest.size).to eq(tdigest.size + @other.size)
+        new_tdigest = tdigest + other
+        expect(new_tdigest.size).to eq(tdigest.size + other.size)
       end
     end
   end
@@ -200,9 +201,10 @@ RSpec.describe Airbrake::TDigest do
     end
 
     describe "with populated tdigests" do
+      let(:other) { described_class.new(0.001, 50, 1.2) }
+
       before do
-        @other = described_class.new(0.001, 50, 1.2)
-        [tdigest, @other].each do |td|
+        [tdigest, other].each do |td|
           td.push(60, 100)
           10.times { td.push(rand * 100) }
         end
@@ -211,21 +213,21 @@ RSpec.describe Airbrake::TDigest do
       it "has the parameters of the calling tdigest" do
         vars = %i[@delta @k @cx]
         expected = vars.map { |v| [v, tdigest.instance_variable_get(v)] }.to_h
-        tdigest.merge!(@other)
+        tdigest.merge!(other)
         vars.each do |v|
           expect(tdigest.instance_variable_get(v)).to eq(expected[v])
         end
       end
 
       it "returns a tdigest with less than or equal centroids" do
-        combined_size = tdigest.centroids.size + @other.centroids.size
-        tdigest.merge!(@other)
+        combined_size = tdigest.centroids.size + other.centroids.size
+        tdigest.merge!(other)
         expect(tdigest.centroids.size).to be <= combined_size
       end
 
       it "has the size of the two digests combined" do
-        combined_size = tdigest.size + @other.size
-        tdigest.merge!(@other)
+        combined_size = tdigest.size + other.size
+        tdigest.merge!(other)
         expect(tdigest.size).to eq(combined_size)
       end
     end
