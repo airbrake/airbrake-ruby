@@ -122,3 +122,6 @@ RSpec/ExampleLength:
 
 RSpec/MultipleExpectations:
   Max: 2
+
+RSpec/ContextWording:
+  Enabled: false
