@@ -4,11 +4,11 @@ RSpec.describe Airbrake::Truncator do
   end
 
   describe "#truncate" do
+    subject { described_class.new(max_size).truncate(object) }
+
     let(:max_size) { 3 }
     let(:truncated) { '[Truncated]' }
     let(:max_len) { max_size + truncated.length }
-
-    subject { described_class.new(max_size).truncate(object) }
 
     context "given a frozen string" do
       let(:object) { multiply_by_2_max_len('a') }

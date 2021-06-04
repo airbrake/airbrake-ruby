@@ -236,7 +236,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         expect(other[:params]).to eq(foo: 'bar')
       end
 
-      it "it returns the provided notice" do
+      it "returns the provided notice" do
         notice = subject.build_notice('ex')
         other = subject.build_notice(notice, foo: 'bar')
         expect(other).to eq(notice)

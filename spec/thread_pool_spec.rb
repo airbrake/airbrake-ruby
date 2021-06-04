@@ -1,8 +1,4 @@
 RSpec.describe Airbrake::ThreadPool do
-  let(:tasks) { [] }
-  let(:worker_size) { 1 }
-  let(:queue_size) { 2 }
-
   subject do
     described_class.new(
       worker_size: worker_size,
@@ -10,6 +6,10 @@ RSpec.describe Airbrake::ThreadPool do
       block: proc { |message| tasks << message },
     )
   end
+
+  let(:tasks) { [] }
+  let(:worker_size) { 1 }
+  let(:queue_size) { 2 }
 
   describe "#<<" do
     it "returns true" do
@@ -27,16 +27,16 @@ RSpec.describe Airbrake::ThreadPool do
     end
 
     context "when the queue is full" do
-      before do
-        allow(subject).to receive(:backlog).and_return(queue_size)
-      end
-
       subject do
         described_class.new(
           worker_size: 1,
           queue_size: 1,
           block: proc { |message| tasks << message },
         )
+      end
+
+      before do
+        allow(subject).to receive(:backlog).and_return(queue_size)
       end
 
       it "returns false" do

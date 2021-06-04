@@ -166,6 +166,7 @@ RSpec.describe Airbrake::Promise do
   describe "#rejected?" do
     context "when it was rejected" do
       before { subject.reject(1) }
+
       it { is_expected.to be_rejected }
     end
 
@@ -175,6 +176,7 @@ RSpec.describe Airbrake::Promise do
 
     context "when it was resolved" do
       before { subject.resolve }
+
       it { is_expected.not_to be_rejected }
     end
   end
@@ -182,6 +184,7 @@ RSpec.describe Airbrake::Promise do
   describe "#resolved?" do
     context "when it was resolved" do
       before { subject.resolve }
+
       it { is_expected.to be_resolved }
     end
 
@@ -191,6 +194,7 @@ RSpec.describe Airbrake::Promise do
 
     context "when it was rejected" do
       before { subject.reject(1) }
+
       it { is_expected.not_to be_resolved }
     end
   end

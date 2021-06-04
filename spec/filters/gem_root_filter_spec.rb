@@ -4,6 +4,7 @@ RSpec.describe Airbrake::Filters::GemRootFilter do
   let(:root2) { '/my/other/gem/root' }
 
   before { Gem.path << root1 << root2 }
+
   after { 2.times { Gem.path.pop } }
 
   it "replaces gem root in the backtrace with a label" do

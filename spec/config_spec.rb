@@ -35,6 +35,7 @@ RSpec.describe Airbrake::Config do
   describe "#new" do
     context "when user config is passed" do
       subject { described_class.new(logger: StringIO.new) }
+
       its(:logger) { is_expected.to be_a(StringIO) }
     end
   end
@@ -42,11 +43,13 @@ RSpec.describe Airbrake::Config do
   describe "#valid?" do
     context "when #validate returns a resolved promise" do
       before { expect(subject).to receive(:validate).and_return(resolved_promise) }
+
       it { is_expected.to be_valid }
     end
 
     context "when #validate returns a rejected promise" do
       before { expect(subject).to receive(:validate).and_return(rejected_promise) }
+
       it { is_expected.not_to be_valid }
     end
   end
@@ -96,19 +99,21 @@ RSpec.describe Airbrake::Config do
   end
 
   describe "#check_configuration" do
-    let(:user_config) { {} }
-
     subject { described_class.new(valid_params.merge(user_config)) }
+
+    let(:user_config) { {} }
 
     its(:check_configuration) { is_expected.to be_an(Airbrake::Promise) }
 
     context "when config is invalid" do
       let(:user_config) { { project_id: nil } }
+
       its(:check_configuration) { is_expected.to be_rejected }
     end
 
     context "when current environment is ignored" do
       let(:user_config) { { environment: 'test', ignore_environments: ['test'] } }
+
       its(:check_configuration) { is_expected.to be_rejected }
     end
 

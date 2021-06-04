@@ -30,7 +30,7 @@ RSpec.describe Airbrake::CodeHunk do
       subject { described_class.new.get(project_root_path('code.rb'), 1) }
 
       it do
-        is_expected.to(
+        expect(subject).to(
           eq(
             1 => 'module Airbrake',
             2 => '  ##',
@@ -46,7 +46,7 @@ RSpec.describe Airbrake::CodeHunk do
       subject { described_class.new.get(project_root_path('code.rb'), 222) }
 
       it do
-        is_expected.to(
+        expect(subject).to(
           eq(
             220 => '  end',
             221 => 'end',
@@ -61,7 +61,7 @@ RSpec.describe Airbrake::CodeHunk do
       end
 
       it do
-        is_expected.to(
+        expect(subject).to(
           eq(
             1 => 'module Banana',
             2 => '  attr_reader :bingo',
@@ -75,7 +75,7 @@ RSpec.describe Airbrake::CodeHunk do
       subject { described_class.new.get(project_root_path('code.rb'), 100) }
 
       it do
-        is_expected.to(
+        expect(subject).to(
           eq(
             98 => '          return json if json && json.bytesize <= MAX_NOTICE_SIZE',
             99 => '        end',
