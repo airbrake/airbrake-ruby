@@ -163,6 +163,7 @@ RSpec.describe Airbrake::RemoteSettings do
         remote_settings.stop_polling
 
         expect(Airbrake::Loggable.instance).not_to have_received(:error)
+        expect(stub).to have_been_requested.once
       end
     end
 
