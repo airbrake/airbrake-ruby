@@ -49,7 +49,7 @@ RSpec.describe Airbrake::RemoteSettings do
 
     context "when no errors are raised" do
       it "makes a request to AWS S3" do
-        remote_settings = described_class.poll(project_id, host) {}
+        remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
 
@@ -57,7 +57,7 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "sends params about the environment with the request" do
-        remote_settings = described_class.poll(project_id, host) {}
+        remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
 
@@ -138,7 +138,7 @@ RSpec.describe Airbrake::RemoteSettings do
       it "logs error" do
         expect(Airbrake::Loggable.instance).to receive(:error).with(body.to_json)
 
-        remote_settings = described_class.poll(project_id, host) {}
+        remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
       end
@@ -153,7 +153,7 @@ RSpec.describe Airbrake::RemoteSettings do
       it "doesn't log errors" do
         expect(Airbrake::Loggable.instance).not_to receive(:error)
 
-        remote_settings = described_class.poll(project_id, host) {}
+        remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
       end
@@ -174,7 +174,7 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "makes the next request to the specified config route" do
-        remote_settings = described_class.poll(project_id, host) {}
+        remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.2)
 
         remote_settings.stop_polling

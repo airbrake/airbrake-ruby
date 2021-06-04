@@ -57,7 +57,7 @@ module Airbrake
 
         File.readlines(packed_refs_path).each do |line|
           next if %w[# ^].include?(line[0])
-          next unless (parts = line.split(' ')).size == 2
+          next unless (parts = line.split).size == 2
           return parts.first if parts.last == head
         end
 

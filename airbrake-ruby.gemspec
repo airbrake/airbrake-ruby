@@ -3,7 +3,6 @@ require './lib/airbrake-ruby/version'
 Gem::Specification.new do |s|
   s.name        = 'airbrake-ruby'
   s.version     = Airbrake::AIRBRAKE_RUBY_VERSION.dup
-  s.date        = Time.now.strftime('%Y-%m-%d')
   s.summary     = 'Ruby notifier for https://airbrake.io'
   s.description = <<DESC
 Airbrake Ruby is a plain Ruby notifier for Airbrake (https://airbrake.io), the

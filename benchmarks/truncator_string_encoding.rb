@@ -15,7 +15,7 @@ module StringGenerator
 
     # @return [String] a UTF-8 string with invalid encoding and characters.
     def invalid_utf8
-      [invalid_string, invalid_string, invalid_string].join("").encode('utf-8')
+      [invalid_string, invalid_string, invalid_string].join.encode('utf-8')
     end
 
     # @return [String] a UTF-8 string with valid encoding and charaters from

@@ -60,26 +60,26 @@ RSpec.describe Airbrake do
 
     context "when called multiple times" do
       it "doesn't overwrite performance notifier" do
-        described_class.configure {}
+        described_class.configure { anything }
         performance_notifier = described_class.performance_notifier
 
-        described_class.configure {}
+        described_class.configure { anything }
         expect(described_class.performance_notifier).to eql(performance_notifier)
       end
 
       it "doesn't overwrite notice notifier" do
-        described_class.configure {}
+        described_class.configure { anything }
         notice_notifier = described_class.notice_notifier
 
-        described_class.configure {}
+        described_class.configure { anything }
         expect(described_class.notice_notifier).to eql(notice_notifier)
       end
 
       it "doesn't overwrite deploy notifier" do
-        described_class.configure {}
+        described_class.configure { anything }
         deploy_notifier = described_class.deploy_notifier
 
-        described_class.configure {}
+        described_class.configure { anything }
         expect(described_class.deploy_notifier).to eql(deploy_notifier)
       end
 
@@ -90,7 +90,7 @@ RSpec.describe Airbrake do
         end
 
         expect(described_class.notice_notifier).not_to receive(:add_filter)
-        10.times { described_class.configure {} }
+        10.times { described_class.configure { anything } }
       end
 
       it "appends some default filters" do

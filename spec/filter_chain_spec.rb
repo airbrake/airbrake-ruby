@@ -93,7 +93,7 @@ RSpec.describe Airbrake::FilterChain do
   describe "#includes?" do
     context "when a custom filter class is included in the filter chain" do
       it "returns true" do
-        klass = Class.new {}
+        klass = Class.new
 
         subject.add_filter(klass.new)
         expect(subject.includes?(klass)).to eq(true)
@@ -109,7 +109,7 @@ RSpec.describe Airbrake::FilterChain do
 
     context "when filter class is NOT included in the filter chain" do
       it "returns false" do
-        klass = Class.new {}
+        klass = Class.new
 
         subject.add_filter(proc {})
         expect(subject.includes?(klass)).to eq(false)
