@@ -134,3 +134,6 @@ RSpec/NestedGroups:
 
 RSpec/MultipleMemoizedHelpers:
   Max: 6
+
+RSpec/AnyInstance:
+  Enabled: false
