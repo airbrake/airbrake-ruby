@@ -116,3 +116,6 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+RSpec/ExampleLength:
+  Enabled: false
