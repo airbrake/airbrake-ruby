@@ -12,7 +12,6 @@ RSpec.describe Airbrake::NestedException do
         nested_exception = described_class.new(ex)
         exceptions = nested_exception.as_json
 
-
         expect(exceptions.size).to eq(2)
         expect(exceptions[0][:message]).to eq('bingo')
         expect(exceptions[1][:message]).to eq('App crashed!')
@@ -67,7 +66,6 @@ RSpec.describe Airbrake::NestedException do
         expect(exceptions.size).to eq(2)
         expect(exceptions[0][:backtrace]).to be_empty
         expect(exceptions[1][:backtrace]).to be_empty
-
       end
       # rubocop:enable RSpec/MultipleExpectations
     end

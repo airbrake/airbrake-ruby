@@ -229,7 +229,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |request|
           expect(request.stash).to be_empty
         end
@@ -249,7 +249,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |request|
           expect(request.stash).to eq(request_id: 1)
         end
@@ -290,7 +290,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |query|
           expect(query.stash).to be_empty
         end
@@ -310,7 +310,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |query|
           expect(query.stash).to eq(request_id: 1)
         end
@@ -351,7 +351,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |query|
           expect(query.stash).to be_empty
         end
@@ -412,7 +412,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |queue|
           expect(queue.stash).to be_empty
         end
@@ -430,7 +430,7 @@ RSpec.describe Airbrake do
         )
 
         expect(
-          described_class.performance_notifier
+          described_class.performance_notifier,
         ).to have_received(:notify) do |queue|
           expect(queue.stash).to eq(request_id: 1)
         end

@@ -159,7 +159,9 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
           # Likely a bug: https://github.com/jruby/jruby/issues/1903
           raise ex unless RUBY_ENGINE == 'jruby'
 
-          expect { keys_allowlist_filter.call(notice) }.to raise_error(java.lang.StackOverflowError)
+          expect do
+            keys_allowlist_filter.call(notice)
+          end.to raise_error(java.lang.StackOverflowError)
         end
       end
     end

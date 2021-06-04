@@ -38,7 +38,6 @@ RSpec.describe Airbrake::FilterChain do
 
       [f2, f1, f0].each { |f| filter_chain.add_filter(f) }
 
-
       filter_chain.refine(notice)
 
       expect(f2).to have_received(:call)
