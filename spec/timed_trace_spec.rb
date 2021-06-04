@@ -1,18 +1,18 @@
 RSpec.describe Airbrake::TimedTrace do
   describe ".span" do
     it "returns a timed trace" do
-      expect(described_class.span('operation') {}).to be_a(described_class)
+      expect(described_class.span('operation') { anything }).to be_a(described_class)
     end
 
     it "returns a timed trace with a stopped span" do
-      timed_trace = described_class.span('operation') {}
+      timed_trace = described_class.span('operation') { anything }
       expect(timed_trace.spans).to match('operation' => be > 0)
     end
   end
 
   describe "#span" do
     it "captures a span" do
-      subject.span('operation') {}
+      subject.span('operation') { anything }
       expect(subject.spans).to match('operation' => be > 0)
     end
   end
