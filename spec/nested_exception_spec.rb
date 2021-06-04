@@ -1,6 +1,7 @@
 RSpec.describe Airbrake::NestedException do
   describe "#as_json" do
     context "given exceptions with backtraces" do
+      # rubocop:disable RSpec/MultipleExpectations
       it "unwinds nested exceptions" do
         begin
           raise AirbrakeTestError
@@ -11,13 +12,16 @@ RSpec.describe Airbrake::NestedException do
         nested_exception = described_class.new(ex)
         exceptions = nested_exception.as_json
 
+
         expect(exceptions.size).to eq(2)
         expect(exceptions[0][:message]).to eq('bingo')
         expect(exceptions[1][:message]).to eq('App crashed!')
         expect(exceptions[0][:backtrace]).not_to be_empty
         expect(exceptions[1][:backtrace]).not_to be_empty
       end
+      # rubocop:enable RSpec/MultipleExpectations
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "unwinds no more than 3 nested exceptions" do
         begin
           raise AirbrakeTestError
@@ -43,9 +47,11 @@ RSpec.describe Airbrake::NestedException do
         expect(exceptions[0][:backtrace]).not_to be_empty
         expect(exceptions[1][:backtrace]).not_to be_empty
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "given exceptions without backtraces" do
+      # rubocop:disable RSpec/MultipleExpectations
       it "sets backtrace to nil" do
         begin
           raise AirbrakeTestError
@@ -61,7 +67,9 @@ RSpec.describe Airbrake::NestedException do
         expect(exceptions.size).to eq(2)
         expect(exceptions[0][:backtrace]).to be_empty
         expect(exceptions[1][:backtrace]).to be_empty
+
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
   end
 end

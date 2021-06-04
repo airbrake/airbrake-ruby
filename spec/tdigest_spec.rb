@@ -164,6 +164,7 @@ RSpec.describe Airbrake::TDigest do
         end
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "has the parameters of the left argument (the calling tdigest)" do
         new_tdigest = tdigest + @other
         expect(new_tdigest.instance_variable_get(:@delta)).to eq(
@@ -176,6 +177,7 @@ RSpec.describe Airbrake::TDigest do
           tdigest.instance_variable_get(:@cx),
         )
       end
+      # rubocop:enable RSpec/MultipleExpectations
 
       it "returns a tdigest with less than or equal centroids" do
         new_tdigest = tdigest + @other

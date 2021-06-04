@@ -93,6 +93,7 @@ RSpec.describe Airbrake::ThreadPool do
         end
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "respawns workers on fork()" do
         pid = fork { expect(thread_pool).to have_workers }
         Process.wait(pid)
@@ -101,6 +102,7 @@ RSpec.describe Airbrake::ThreadPool do
         expect(Process.last_status).to be_success
         expect(thread_pool).not_to have_workers
       end
+      # rubocop:enable RSpec/MultipleExpectations
 
       it "ensures that a new thread group is created per process" do
         thread_pool << 1
@@ -171,17 +173,19 @@ RSpec.describe Airbrake::ThreadPool do
   end
 
   describe "#spawn_workers" do
-    it "spawns alive threads in an enclosed ThreadGroup" do
-      expect(thread_pool.workers).to be_a(ThreadGroup)
-      expect(thread_pool.workers.list).to all(be_alive)
-      expect(thread_pool.workers).to be_enclosed
+    after { thread_pool.close }
 
-      thread_pool.close
+    it "spawns an enclosed thread group" do
+      expect(thread_pool.workers).to be_a(ThreadGroup)
+      expect(thread_pool.workers).to be_enclosed
+    end
+
+    it "spawns threads that are alive" do
+      expect(thread_pool.workers.list).to all(be_alive)
     end
 
     it "spawns exactly `workers_size` workers" do
       expect(thread_pool.workers.list.size).to eq(worker_size)
-      thread_pool.close
     end
   end
 end

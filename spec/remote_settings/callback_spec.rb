@@ -34,6 +34,7 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         allow(data).to receive(:error_notifications?).and_return(true)
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "keeps the option disabled forever" do
         callback = described_class.new(config)
 
@@ -46,11 +47,13 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         callback.call(data)
         expect(config.error_notifications).to eq(false)
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when the config enables error notifications" do
       before { config.error_notifications = true }
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "can disable and enable error notifications" do
         expect(data).to receive(:error_notifications?).and_return(false)
 
@@ -62,6 +65,7 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         callback.call(data)
         expect(config.error_notifications).to eq(true)
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when the config disables performance_stats" do
@@ -70,6 +74,7 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         allow(data).to receive(:performance_stats?).and_return(true)
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "keeps the option disabled forever" do
         callback = described_class.new(config)
 
@@ -82,11 +87,13 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         callback.call(data)
         expect(config.performance_stats).to eq(false)
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when the config enables performance stats" do
       before { config.performance_stats = true }
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "can disable and enable performance_stats" do
         expect(data).to receive(:performance_stats?).and_return(false)
 
@@ -98,6 +105,7 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         callback.call(data)
         expect(config.performance_stats).to eq(true)
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when error_host returns a value" do

@@ -212,6 +212,9 @@ RSpec.describe Airbrake::NoticeNotifier do
           expect(Airbrake::Notice).not_to receive(:new)
           expect(notice_notifier.notify_sync(ex))
             .to eq('error' => "current environment 'development' is ignored")
+        end
+
+        it "doesn't make an HTTP request" do
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end

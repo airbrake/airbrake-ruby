@@ -50,14 +50,25 @@ RSpec.describe Airbrake::SyncSender do
       https = double("foo")
       allow(sync_sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
-      expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /HTTP error: foo/,
-      )
+
       expect(sync_sender.send({}, promise)).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('error' => '**Airbrake: HTTP error: foo')
     end
 
+    it "logs exceptions raised while sending" do
+      https = double("foo")
+      allow(sync_sender).to receive(:build_https).and_return(https)
+      allow(https).to receive(:request).and_raise(StandardError.new('foo'))
+
+      expect(Airbrake::Loggable.instance).to receive(:error).with(
+        /HTTP error: foo/,
+      )
+
+      sync_sender.send({}, promise)
+    end
+
     context "when request body is nil" do
+      # rubocop:disable RSpec/MultipleExpectations
       it "doesn't send data" do
         expect_any_instance_of(Airbrake::Truncator)
           .to receive(:reduce_max_size).and_return(0)
@@ -82,6 +93,7 @@ RSpec.describe Airbrake::SyncSender do
         expect(promise.value)
           .to match('error' => '**Airbrake: data was not sent because of missing body')
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when IP is rate limited" do
@@ -95,6 +107,7 @@ RSpec.describe Airbrake::SyncSender do
         )
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "returns error" do
         p1 = Airbrake::Promise.new
         sync_sender.send({}, p1)
@@ -114,6 +127,7 @@ RSpec.describe Airbrake::SyncSender do
 
         expect(a_request(:post, endpoint)).to have_been_made.twice
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when the provided method is :put" do

@@ -67,6 +67,7 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(stub_with_query_params).to have_been_requested.at_least_once
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "fetches remote settings" do
         settings = nil
         remote_settings = described_class.poll(project_id, host) do |data|
@@ -79,6 +80,7 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(settings.performance_stats?).to eq(false)
         expect(settings.interval).to eq(1)
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when an error is raised while making a HTTP request" do
