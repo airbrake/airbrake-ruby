@@ -1,16 +1,18 @@
 RSpec.describe Airbrake::TDigest do
+  subject(:tdigest) { described_class.new }
+
   describe "byte serialization" do
     it "loads serialized data" do
-      subject.push(60, 100)
-      10.times { subject.push(rand * 100) }
-      bytes = subject.as_bytes
+      tdigest.push(60, 100)
+      10.times { tdigest.push(rand * 100) }
+      bytes = tdigest.as_bytes
       new_tdigest = described_class.from_bytes(bytes)
-      expect(new_tdigest.percentile(0.9)).to eq(subject.percentile(0.9))
+      expect(new_tdigest.percentile(0.9)).to eq(tdigest.percentile(0.9))
       expect(new_tdigest.as_bytes).to eq(bytes)
     end
 
     it "handles zero size" do
-      bytes = subject.as_bytes
+      bytes = tdigest.as_bytes
       expect(described_class.from_bytes(bytes).size).to be_zero
     end
 
@@ -24,49 +26,49 @@ RSpec.describe Airbrake::TDigest do
 
   describe "small byte serialization" do
     it "loads serialized data" do
-      10.times { subject.push(10) }
-      bytes = subject.as_small_bytes
+      10.times { tdigest.push(10) }
+      bytes = tdigest.as_small_bytes
       new_tdigest = described_class.from_bytes(bytes)
       # Expect some rounding error due to compression
       expect(new_tdigest.percentile(0.9).round(5)).to eq(
-        subject.percentile(0.9).round(5),
+        tdigest.percentile(0.9).round(5),
       )
       expect(new_tdigest.as_small_bytes).to eq(bytes)
     end
 
     it "handles zero size" do
-      bytes = subject.as_small_bytes
+      bytes = tdigest.as_small_bytes
       expect(described_class.from_bytes(bytes).size).to be_zero
     end
   end
 
   describe "JSON serialization" do
     it "loads serialized data" do
-      subject.push(60, 100)
-      json = subject.as_json
+      tdigest.push(60, 100)
+      json = tdigest.as_json
       new_tdigest = described_class.from_json(json)
-      expect(new_tdigest.percentile(0.9)).to eq(subject.percentile(0.9))
+      expect(new_tdigest.percentile(0.9)).to eq(tdigest.percentile(0.9))
     end
   end
 
   describe "#percentile" do
     it "returns nil if empty" do
-      expect(subject.percentile(0.90)).to be_nil # This should not crash
+      expect(tdigest.percentile(0.90)).to be_nil # This should not crash
     end
 
     it "raises ArgumentError of input not between 0 and 1" do
-      expect { subject.percentile(1.1) }.to raise_error(ArgumentError)
+      expect { tdigest.percentile(1.1) }.to raise_error(ArgumentError)
     end
 
     describe "with only single value" do
       it "returns the value" do
-        subject.push(60, 100)
-        expect(subject.percentile(0.90)).to eq(60)
+        tdigest.push(60, 100)
+        expect(tdigest.percentile(0.90)).to eq(60)
       end
 
       it "returns 0 for all percentiles when only 0 present" do
-        subject.push(0)
-        expect(subject.percentile([0.0, 0.5, 1.0])).to eq([0, 0, 0])
+        tdigest.push(0)
+        expect(tdigest.percentile([0.0, 0.5, 1.0])).to eq([0, 0, 0])
       end
     end
 
@@ -77,11 +79,11 @@ RSpec.describe Airbrake::TDigest do
         values = Array.new(100_000).map { rand }
         srand(seed)
 
-        subject.push(values)
-        subject.compress!
+        tdigest.push(values)
+        tdigest.compress!
 
         0.step(1, 0.1).each do |i|
-          q = subject.percentile(i)
+          q = tdigest.percentile(i)
           maxerr = [maxerr, (i - q).abs].max
         end
 
@@ -92,7 +94,7 @@ RSpec.describe Airbrake::TDigest do
 
   describe "#push" do
     it "calls _cumulate so won't crash because of uninitialized mean_cumn" do
-      subject.push(
+      tdigest.push(
         [
           125000000.0,
           104166666.66666666,
@@ -131,59 +133,59 @@ RSpec.describe Airbrake::TDigest do
     end
 
     it "does not blow up if data comes in sorted" do
-      subject.push(0..10_000)
-      expect(subject.centroids.size).to be < 5_000
-      subject.compress!
-      expect(subject.centroids.size).to be < 1_000
+      tdigest.push(0..10_000)
+      expect(tdigest.centroids.size).to be < 5_000
+      tdigest.compress!
+      expect(tdigest.centroids.size).to be < 1_000
     end
   end
 
   describe "#size" do
     it "reports the number of observations" do
       n = 10_000
-      n.times { subject.push(rand) }
-      subject.compress!
-      expect(subject.size).to eq(n)
+      n.times { tdigest.push(rand) }
+      tdigest.compress!
+      expect(tdigest.size).to eq(n)
     end
   end
 
   describe "#+" do
     it "works with empty tdigests" do
       other = described_class.new(0.001, 50, 1.2)
-      expect((subject + other).centroids.size).to eq(0)
+      expect((tdigest + other).centroids.size).to eq(0)
     end
 
     describe "adding two tdigests" do
       before do
         @other = described_class.new(0.001, 50, 1.2)
-        [subject, @other].each do |td|
+        [tdigest, @other].each do |td|
           td.push(60, 100)
           10.times { td.push(rand * 100) }
         end
       end
 
       it "has the parameters of the left argument (the calling tdigest)" do
-        new_tdigest = subject + @other
+        new_tdigest = tdigest + @other
         expect(new_tdigest.instance_variable_get(:@delta)).to eq(
-          subject.instance_variable_get(:@delta),
+          tdigest.instance_variable_get(:@delta),
         )
         expect(new_tdigest.instance_variable_get(:@k)).to eq(
-          subject.instance_variable_get(:@k),
+          tdigest.instance_variable_get(:@k),
         )
         expect(new_tdigest.instance_variable_get(:@cx)).to eq(
-          subject.instance_variable_get(:@cx),
+          tdigest.instance_variable_get(:@cx),
         )
       end
 
       it "returns a tdigest with less than or equal centroids" do
-        new_tdigest = subject + @other
+        new_tdigest = tdigest + @other
         expect(new_tdigest.centroids.size)
-          .to be <= subject.centroids.size + @other.centroids.size
+          .to be <= tdigest.centroids.size + @other.centroids.size
       end
 
       it "has the size of the two digests combined" do
-        new_tdigest = subject + @other
-        expect(new_tdigest.size).to eq(subject.size + @other.size)
+        new_tdigest = tdigest + @other
+        expect(new_tdigest.size).to eq(tdigest.size + @other.size)
       end
     end
   end
@@ -191,14 +193,14 @@ RSpec.describe Airbrake::TDigest do
   describe "#merge!" do
     it "works with empty tdigests" do
       other = described_class.new(0.001, 50, 1.2)
-      subject.merge!(other)
-      expect(subject.centroids.size).to be_zero
+      tdigest.merge!(other)
+      expect(tdigest.centroids.size).to be_zero
     end
 
     describe "with populated tdigests" do
       before do
         @other = described_class.new(0.001, 50, 1.2)
-        [subject, @other].each do |td|
+        [tdigest, @other].each do |td|
           td.push(60, 100)
           10.times { td.push(rand * 100) }
         end
@@ -206,23 +208,23 @@ RSpec.describe Airbrake::TDigest do
 
       it "has the parameters of the calling tdigest" do
         vars = %i[@delta @k @cx]
-        expected = vars.map { |v| [v, subject.instance_variable_get(v)] }.to_h
-        subject.merge!(@other)
+        expected = vars.map { |v| [v, tdigest.instance_variable_get(v)] }.to_h
+        tdigest.merge!(@other)
         vars.each do |v|
-          expect(subject.instance_variable_get(v)).to eq(expected[v])
+          expect(tdigest.instance_variable_get(v)).to eq(expected[v])
         end
       end
 
       it "returns a tdigest with less than or equal centroids" do
-        combined_size = subject.centroids.size + @other.centroids.size
-        subject.merge!(@other)
-        expect(subject.centroids.size).to be <= combined_size
+        combined_size = tdigest.centroids.size + @other.centroids.size
+        tdigest.merge!(@other)
+        expect(tdigest.centroids.size).to be <= combined_size
       end
 
       it "has the size of the two digests combined" do
-        combined_size = subject.size + @other.size
-        subject.merge!(@other)
-        expect(subject.size).to eq(combined_size)
+        combined_size = tdigest.size + @other.size
+        tdigest.merge!(@other)
+        expect(tdigest.size).to eq(combined_size)
       end
     end
   end

@@ -1,5 +1,5 @@
 RSpec.describe Airbrake::Filters::KeysBlocklist do
-  subject { described_class.new(patterns) }
+  subject(:keys_blocklist_filter) { described_class.new(patterns) }
 
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
@@ -8,7 +8,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
 
     it "filters out the matching values" do
       notice[:params] = params.first
-      subject.call(notice)
+      keys_blocklist_filter.call(notice)
       expect(notice[:params]).to eq(params.last)
     end
   end
@@ -29,7 +29,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
       # https://github.com/airbrake/airbrake/issues/739
       it "doesn't fail" do
         notice[:params] = { bingo: { {} => 'unfiltered' } }
-        expect { subject.call(notice) }.not_to raise_error
+        expect { keys_blocklist_filter.call(notice) }.not_to raise_error
       end
     end
   end
@@ -114,7 +114,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
       context "and when the filter is called twice" do
         it "unwinds procs and filters keys" do
           notice[:params] = { bingo: 'bango', bongo: 'bish' }
-          2.times { subject.call(notice) }
+          2.times { keys_blocklist_filter.call(notice) }
           expect(notice[:params]).to eq(bingo: '[Filtered]', bongo: 'bish')
         end
       end
@@ -185,7 +185,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
         notice[:context][:url] =
           'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash&color=%23FFAAFF'
 
-        subject.call(notice)
+        keys_blocklist_filter.call(notice)
         expect(notice[:context][:url]).to(
           eq('http://localhost:3000/crash?foo=bar&baz=bongo&bish=[Filtered]&color=%23FFAAFF'),
         )
@@ -197,7 +197,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
 
       it "filters out the user" do
         notice[:context][:user] = { id: 1337, name: 'Bingo Bango' }
-        subject.call(notice)
+        keys_blocklist_filter.call(notice)
         expect(notice[:context][:user]).to eq('[Filtered]')
       end
     end
@@ -207,7 +207,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
 
       it "filters out individual user fields" do
         notice[:context][:user] = { id: 1337, name: 'Bingo Bango' }
-        subject.call(notice)
+        keys_blocklist_filter.call(notice)
         expect(notice[:context][:user][:name]).to eq('[Filtered]')
       end
     end
@@ -218,7 +218,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
 
     it "filters out the headers" do
       notice[:context][:headers] = { 'HTTP_COOKIE' => 'banana' }
-      subject.call(notice)
+      keys_blocklist_filter.call(notice)
       expect(notice[:context][:headers]).to eq('[Filtered]')
     end
 
@@ -227,7 +227,7 @@ RSpec.describe Airbrake::Filters::KeysBlocklist do
 
       it "filters out individual header fields" do
         notice[:context][:headers] = { 'HTTP_COOKIE' => 'banana' }
-        subject.call(notice)
+        keys_blocklist_filter.call(notice)
         expect(notice[:context][:headers]['HTTP_COOKIE']).to eq('[Filtered]')
       end
     end

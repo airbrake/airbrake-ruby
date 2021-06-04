@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::CodeHunk do
+  subject(:code_hunk) { described_class.new }
+
   after do
     %w[empty_file.rb code.rb banana.rb short_file.rb long_line.txt].each do |f|
       Airbrake::FileCache[project_root_path(f)] = nil
@@ -27,10 +29,12 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a file has less than NLINES lines before start line" do
-      subject { described_class.new.get(project_root_path('code.rb'), 1) }
+      subject(:code_hunk) do
+        described_class.new.get(project_root_path('code.rb'), 1)
+      end
 
       it do
-        expect(subject).to(
+        expect(code_hunk).to(
           eq(
             1 => 'module Airbrake',
             2 => '  ##',
@@ -43,10 +47,12 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a file has less than NLINES lines after end line" do
-      subject { described_class.new.get(project_root_path('code.rb'), 222) }
+      subject(:code_hunk) do
+        described_class.new.get(project_root_path('code.rb'), 222)
+      end
 
       it do
-        expect(subject).to(
+        expect(code_hunk).to(
           eq(
             220 => '  end',
             221 => 'end',
@@ -56,12 +62,12 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a file has less than NLINES lines before and after" do
-      subject do
+      subject(:code_hunk) do
         described_class.new.get(project_root_path('short_file.rb'), 2)
       end
 
       it do
-        expect(subject).to(
+        expect(code_hunk).to(
           eq(
             1 => 'module Banana',
             2 => '  attr_reader :bingo',
@@ -72,10 +78,12 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a file has enough lines before and after" do
-      subject { described_class.new.get(project_root_path('code.rb'), 100) }
+      subject(:code_hunk) do
+        described_class.new.get(project_root_path('code.rb'), 100)
+      end
 
       it do
-        expect(subject).to(
+        expect(code_hunk).to(
           eq(
             98 => '          return json if json && json.bytesize <= MAX_NOTICE_SIZE',
             99 => '        end',
@@ -88,12 +96,12 @@ RSpec.describe Airbrake::CodeHunk do
     end
 
     context "when a line exceeds the length limit" do
-      subject do
+      subject(:code_hunk) do
         described_class.new.get(project_root_path('long_line.txt'), 1)
       end
 
       it "strips the line" do
-        expect(subject[1]).to eq("l#{'o' * 196}ng")
+        expect(code_hunk[1]).to eq("l#{'o' * 196}ng")
       end
     end
 
@@ -106,7 +114,7 @@ RSpec.describe Airbrake::CodeHunk do
         expect(Airbrake::Loggable.instance).to receive(:error).with(
           /can't read code hunk.+Permission denied/,
         )
-        expect(subject.get(project_root_path('code.rb'), 1)).to(
+        expect(code_hunk.get(project_root_path('code.rb'), 1)).to(
           eq(1 => ''),
         )
       end

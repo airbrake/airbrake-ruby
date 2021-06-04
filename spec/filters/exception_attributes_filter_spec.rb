@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
+  subject(:exception_attributes_filter) { described_class.new }
+
   describe "#call" do
     let(:notice) { Airbrake::Notice.new(ex) }
 
@@ -12,7 +14,7 @@ RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
       end
 
       it "doesn't raise" do
-        expect { subject.call(notice) }.not_to raise_error
+        expect { exception_attributes_filter.call(notice) }.not_to raise_error
         expect(notice[:params]).to be_empty
       end
     end
@@ -27,7 +29,7 @@ RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
       end
 
       it "doesn't raise" do
-        expect { subject.call(notice) }.not_to raise_error
+        expect { exception_attributes_filter.call(notice) }.not_to raise_error
         expect(notice[:params]).to be_empty
       end
     end
@@ -42,7 +44,7 @@ RSpec.describe Airbrake::Filters::ExceptionAttributesFilter do
       end
 
       it "merges parameters with the notice" do
-        subject.call(notice)
+        exception_attributes_filter.call(notice)
         expect(notice[:params]).to eq(foo: '1')
       end
     end

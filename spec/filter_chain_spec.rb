@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::FilterChain do
+  subject(:filter_chain) { described_class.new }
+
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   describe "#refine" do
@@ -19,8 +21,8 @@ RSpec.describe Airbrake::FilterChain do
     it "executes filters from heaviest to lightest" do
       notice[:params][:bingo] = []
 
-      (0...3).reverse_each { |i| subject.add_filter(filter.new(i)) }
-      subject.refine(notice)
+      (0...3).reverse_each { |i| filter_chain.add_filter(filter.new(i)) }
+      filter_chain.refine(notice)
 
       expect(notice[:params][:bingo]).to eq([2, 1, 0])
     end
@@ -34,9 +36,9 @@ RSpec.describe Airbrake::FilterChain do
       f0 = filter.new(-1)
       expect(f0).not_to receive(:call)
 
-      [f2, f1, f0].each { |f| subject.add_filter(f) }
+      [f2, f1, f0].each { |f| filter_chain.add_filter(f) }
 
-      subject.refine(notice)
+      filter_chain.refine(notice)
     end
   end
 
@@ -63,30 +65,30 @@ RSpec.describe Airbrake::FilterChain do
       notice[:params][:foo] = []
 
       f1 = filter.new(1)
-      subject.add_filter(f1)
+      filter_chain.add_filter(f1)
 
       foo_filter_mock = double
       expect(foo_filter_mock).to(
         receive(:name).at_least(:once).and_return('FooFilter'),
       )
-      subject.delete_filter(foo_filter_mock)
+      filter_chain.delete_filter(foo_filter_mock)
 
       f2 = filter.new(2)
-      subject.add_filter(f2)
+      filter_chain.add_filter(f2)
 
-      subject.refine(notice)
+      filter_chain.refine(notice)
       expect(notice[:params][:foo]).to eq([2])
     end
   end
 
   describe "#inspect" do
     it "returns a string representation of an empty FilterChain" do
-      expect(subject.inspect).to eq('[]')
+      expect(filter_chain.inspect).to eq('[]')
     end
 
     it "returns a string representation of a non-empty FilterChain" do
-      subject.add_filter(proc {})
-      expect(subject.inspect).to eq('[Proc]')
+      filter_chain.add_filter(proc {})
+      expect(filter_chain.inspect).to eq('[Proc]')
     end
   end
 
@@ -95,15 +97,15 @@ RSpec.describe Airbrake::FilterChain do
       it "returns true" do
         klass = Class.new
 
-        subject.add_filter(klass.new)
-        expect(subject.includes?(klass)).to eq(true)
+        filter_chain.add_filter(klass.new)
+        expect(filter_chain.includes?(klass)).to eq(true)
       end
     end
 
     context "when Proc filter class is included in the filter chain" do
       it "returns true" do
-        subject.add_filter(proc {})
-        expect(subject.includes?(Proc)).to eq(true)
+        filter_chain.add_filter(proc {})
+        expect(filter_chain.includes?(Proc)).to eq(true)
       end
     end
 
@@ -111,8 +113,8 @@ RSpec.describe Airbrake::FilterChain do
       it "returns false" do
         klass = Class.new
 
-        subject.add_filter(proc {})
-        expect(subject.includes?(klass)).to eq(false)
+        filter_chain.add_filter(proc {})
+        expect(filter_chain.includes?(klass)).to eq(false)
       end
     end
   end

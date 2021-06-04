@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::PerformanceNotifier do
+  subject(:perf_notifier) { described_class.new }
+
   let(:routes) { 'https://api.airbrake.io/api/v5/projects/1/routes-stats' }
   let(:queries) { 'https://api.airbrake.io/api/v5/projects/1/queries-stats' }
   let(:breakdowns) { 'https://api.airbrake.io/api/v5/projects/1/routes-breakdowns' }
@@ -22,7 +24,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
   describe "#notify" do
     it "sends full query" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Query.new(
           method: 'POST',
           route: '/foo',
@@ -34,7 +36,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, queries).with(body: %r|
@@ -55,7 +57,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "sends full request" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'POST',
           route: '/foo',
@@ -64,7 +66,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, routes).with(body: %r|
@@ -82,7 +84,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "sends full performance breakdown" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::PerformanceBreakdown.new(
           method: 'DELETE',
           route: '/routes-breakdowns',
@@ -92,7 +94,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           groups: { db: 131, view: 421 },
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, breakdowns).with(body: %r|
@@ -124,7 +126,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "sends full queue" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Queue.new(
           queue: 'emails',
           error_count: 2,
@@ -133,7 +135,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, queues).with(body: /
@@ -164,7 +166,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "rounds time to the floor minute" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -173,7 +175,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 0, 20, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, routes).with(body: /"time":"2018-01-01T00:00:00\+00:00"/),
@@ -181,7 +183,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "increments routes with the same key" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -189,7 +191,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           timing: 213,
         ),
       )
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -197,7 +199,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           timing: 123,
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, routes).with(body: /"count":2/),
@@ -205,7 +207,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "groups routes by time" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -214,7 +216,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 0, 49, 0),
         ),
       )
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -223,7 +225,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 1, 49, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, routes).with(
@@ -241,7 +243,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "groups routes by route key" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -250,7 +252,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'POST',
           route: '/foo',
@@ -259,7 +261,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, routes).with(
@@ -277,7 +279,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "groups performance breakdowns by route key" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::PerformanceBreakdown.new(
           method: 'DELETE',
           route: '/routes-breakdowns',
@@ -287,7 +289,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           groups: { db: 131, view: 421 },
         ),
       )
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::PerformanceBreakdown.new(
           method: 'DELETE',
           route: '/routes-breakdowns',
@@ -297,7 +299,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           groups: { db: 55, view: 11 },
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, breakdowns).with(body: %r|
@@ -329,7 +331,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "groups queues by queue key" do
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Queue.new(
           queue: 'emails',
           error_count: 2,
@@ -338,7 +340,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Queue.new(
           queue: 'emails',
           error_count: 3,
@@ -347,7 +349,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, queues).with(body: /
@@ -378,7 +380,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     it "returns a promise" do
-      promise = subject.notify(
+      promise = perf_notifier.notify(
         Airbrake::Request.new(
           method: 'GET',
           route: '/foo',
@@ -386,7 +388,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           timing: 123,
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(promise).to be_an(Airbrake::Promise)
       expect(promise.value).to eq('' => '')
@@ -398,14 +400,14 @@ RSpec.describe Airbrake::PerformanceNotifier do
       )
       expect(Airbrake::Config.instance).to receive(:check_performance_options)
         .with(request).and_return(Airbrake::Promise.new)
-      subject.notify(request)
-      subject.close
+      perf_notifier.notify(request)
+      perf_notifier.close
     end
 
     it "sends environment when it's specified" do
       Airbrake::Config.instance.merge(performance_stats: true, environment: 'test')
 
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'POST',
           route: '/foo',
@@ -413,7 +415,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           timing: 123,
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(
         a_request(:put, routes).with(
@@ -426,7 +428,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       before { Airbrake::Config.instance.merge(project_id: nil) }
 
       it "returns a rejected promise" do
-        promise = subject.notify({})
+        promise = perf_notifier.notify({})
         expect(promise).to be_rejected
       end
     end
@@ -442,7 +444,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           performance_stats_flush_period: flush_period,
         )
 
-        subject.notify(
+        perf_notifier.notify(
           Airbrake::Request.new(
             method: 'GET',
             route: '/foo',
@@ -451,7 +453,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           ),
         )
 
-        subject.notify(
+        perf_notifier.notify(
           Airbrake::Query.new(
             method: 'POST',
             route: '/foo',
@@ -468,10 +470,10 @@ RSpec.describe Airbrake::PerformanceNotifier do
     end
 
     context "when an ignore filter was defined" do
-      before { subject.add_filter(&:ignore!) }
+      before { perf_notifier.add_filter(&:ignore!) }
 
       it "doesn't notify airbrake of requests" do
-        subject.notify(
+        perf_notifier.notify(
           Airbrake::Request.new(
             method: 'GET',
             route: '/foo',
@@ -479,13 +481,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
             timing: 1,
           ),
         )
-        subject.close
+        perf_notifier.close
 
         expect(a_request(:put, routes)).not_to have_been_made
       end
 
       it "doesn't notify airbrake of queries" do
-        subject.notify(
+        perf_notifier.notify(
           Airbrake::Query.new(
             method: 'POST',
             route: '/foo',
@@ -493,13 +495,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
             timing: 1,
           ),
         )
-        subject.close
+        perf_notifier.close
 
         expect(a_request(:put, queries)).not_to have_been_made
       end
 
       it "returns a rejected promise" do
-        promise = subject.notify(
+        promise = perf_notifier.notify(
           Airbrake::Query.new(
             method: 'POST',
             route: '/foo',
@@ -507,7 +509,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             timing: 1,
           ),
         )
-        subject.close
+        perf_notifier.close
 
         expect(promise.value).to eq(
           'error' => 'Airbrake::Query was ignored by a filter',
@@ -517,13 +519,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     context "when a filter that modifies payload was defined" do
       before do
-        subject.add_filter do |resource|
+        perf_notifier.add_filter do |resource|
           resource.route = '[Filtered]'
         end
       end
 
       it "notifies airbrake with modified payload" do
-        subject.notify(
+        perf_notifier.notify(
           Airbrake::Query.new(
             method: 'POST',
             route: '/foo',
@@ -531,7 +533,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             timing: 123,
           ),
         )
-        subject.close
+        perf_notifier.close
 
         expect(
           a_request(:put, queries).with(
@@ -544,16 +546,16 @@ RSpec.describe Airbrake::PerformanceNotifier do
     context "when provided :timing is zero" do
       it "doesn't notify" do
         queue = Airbrake::Queue.new(queue: 'bananas', error_count: 0, timing: 0)
-        subject.notify(queue)
-        subject.close
+        perf_notifier.notify(queue)
+        perf_notifier.close
 
         expect(a_request(:put, queues)).not_to have_been_made
       end
 
       it "returns a rejected promise" do
         queue = Airbrake::Queue.new(queue: 'bananas', error_count: 0, timing: 0)
-        promise = subject.notify(queue)
-        subject.close
+        promise = perf_notifier.notify(queue)
+        perf_notifier.close
 
         expect(promise.value).to eq('error' => ':timing cannot be zero')
       end
@@ -562,7 +564,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
   describe "#notify_sync" do
     it "notifies synchronously" do
-      retval = subject.notify_sync(
+      retval = perf_notifier.notify_sync(
         Airbrake::Query.new(
           method: 'POST',
           route: '/foo',
@@ -591,7 +593,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     it "kills the background thread" do
       expect_any_instance_of(Thread).to receive(:kill).and_call_original
-      subject.notify(
+      perf_notifier.notify(
         Airbrake::Query.new(
           method: 'POST',
           route: '/foo',
@@ -599,7 +601,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           timing: 123,
         ),
       )
-      subject.close
+      perf_notifier.close
     end
 
     it "logs the exit message" do
@@ -607,7 +609,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       expect(Airbrake::Loggable.instance).to receive(:debug).with(
         /Airbrake::PerformanceNotifier thread pool closed/,
       )
-      subject.close
+      perf_notifier.close
     end
   end
 
@@ -618,11 +620,11 @@ RSpec.describe Airbrake::PerformanceNotifier do
       end
     end
 
-    before { subject.add_filter(filter.new) }
+    before { perf_notifier.add_filter(filter.new) }
 
     it "deletes a filter" do
-      subject.delete_filter(filter)
-      subject.notify(
+      perf_notifier.delete_filter(filter)
+      perf_notifier.notify(
         Airbrake::Request.new(
           method: 'POST',
           route: '/foo',
@@ -630,7 +632,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
           timing: 123,
         ),
       )
-      subject.close
+      perf_notifier.close
 
       expect(a_request(:put, routes)).to have_been_made
     end

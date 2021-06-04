@@ -312,7 +312,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
   end
 
   describe "#to_h" do
-    subject { described_class.new(project_id, data) }
+    subject(:settings_data) { described_class.new(project_id, data) }
 
     let(:data) do
       {
@@ -331,10 +331,10 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
     end
 
     it "doesn't allow mutation of the original data object" do
-      hash = subject.to_h
+      hash = settings_data.to_h
       hash['poll_sec'] = 0
 
-      expect(subject.to_h).to eq(
+      expect(settings_data.to_h).to eq(
         'poll_sec' => 123,
         'settings' => [
           {

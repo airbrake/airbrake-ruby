@@ -1,7 +1,9 @@
 RSpec.describe Airbrake::Stat do
+  subject(:stat) { described_class.new }
+
   describe "#to_h" do
     it "converts to a hash" do
-      expect(subject.to_h).to eq(
+      expect(stat.to_h).to eq(
         'count' => 0,
         'sum' => 0.0,
         'sumsq' => 0.0,
@@ -11,19 +13,19 @@ RSpec.describe Airbrake::Stat do
   end
 
   describe "#increment_ms" do
-    before { subject.increment_ms(1000) }
+    before { stat.increment_ms(1000) }
 
     its(:sum) { is_expected.to eq(1000) }
     its(:sumsq) { is_expected.to eq(1000000) }
 
     it "updates tdigest" do
-      expect(subject.tdigest.size).to eq(1)
+      expect(stat.tdigest.size).to eq(1)
     end
   end
 
   describe "#inspect" do
     it "provides custom inspect output" do
-      expect(subject.inspect).to eq(
+      expect(stat.inspect).to eq(
         '#<struct Airbrake::Stat count=0, sum=0.0, sumsq=0.0>',
       )
     end
@@ -31,7 +33,7 @@ RSpec.describe Airbrake::Stat do
 
   describe "#pretty_print" do
     it "is an alias of #inspect" do
-      expect(subject.method(:pretty_print)).to eql(subject.method(:inspect))
+      expect(stat.method(:pretty_print)).to eql(stat.method(:inspect))
     end
   end
 end

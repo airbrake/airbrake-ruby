@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::Filters::GemRootFilter do
+  subject(:gem_root_filter) { described_class.new }
+
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
   let(:root1) { '/my/gem/root' }
   let(:root2) { '/my/other/gem/root' }
@@ -17,7 +19,7 @@ RSpec.describe Airbrake::Filters::GemRootFilter do
     ]
     # rubocop:enable Layout/LineLength
 
-    subject.call(notice)
+    gem_root_filter.call(notice)
 
     # rubocop:disable Layout/LineLength
     expect(notice[:errors].first[:backtrace]).to(
@@ -35,7 +37,7 @@ RSpec.describe Airbrake::Filters::GemRootFilter do
 
   it "does not filter file when it is nil" do
     expect(notice[:errors].first[:file]).to be_nil
-    expect { subject.call(notice) }.not_to(
+    expect { gem_root_filter.call(notice) }.not_to(
       change { notice[:errors].first[:file] },
     )
   end

@@ -6,12 +6,12 @@ RSpec.describe Airbrake::Loggable do
   end
 
   describe "#logger" do
-    let(:subject) do
+    subject(:class_with_logger) do
       Class.new { include Airbrake::Loggable }.new
     end
 
     it "returns a logger that has Logger::WARN severity" do
-      expect(subject.logger.level).to eq(Logger::WARN)
+      expect(class_with_logger.logger.level).to eq(Logger::WARN)
     end
   end
 end

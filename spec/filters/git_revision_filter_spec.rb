@@ -1,5 +1,5 @@
 RSpec.describe Airbrake::Filters::GitRevisionFilter do
-  subject { described_class.new('root/dir') }
+  subject(:git_revision_filter) { described_class.new('root/dir') }
 
   # 'let!', not 'let' to make sure Notice doesn't call File.exist? with
   # unexpected arguments.
@@ -8,14 +8,14 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
   context "when context/revision is defined" do
     it "doesn't attach anything to context/revision" do
       notice[:context][:revision] = '1.2.3'
-      subject.call(notice)
+      git_revision_filter.call(notice)
       expect(notice[:context][:revision]).to eq('1.2.3')
     end
   end
 
   context "when .git directory doesn't exist" do
     it "doesn't attach anything to context/revision" do
-      subject.call(notice)
+      git_revision_filter.call(notice)
       expect(notice[:context][:revision]).to be_nil
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
       end
 
       it "doesn't attach anything to context/revision" do
-        subject.call(notice)
+        git_revision_filter.call(notice)
         expect(notice[:context][:revision]).to be_nil
       end
     end
@@ -49,7 +49,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
         end
 
         it "attaches the content of HEAD to context/revision" do
-          subject.call(notice)
+          git_revision_filter.call(notice)
           expect(notice[:context][:revision]).to eq('refs/foo')
         end
       end
@@ -72,7 +72,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
           end
 
           it "attaches the revision from the ref to context/revision" do
-            subject.call(notice)
+            git_revision_filter.call(notice)
             expect(notice[:context][:revision]).to eq('d34db33f')
           end
         end
@@ -102,7 +102,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
             end
 
             it "attaches the revision from 'packed-refs' to context/revision" do
-              subject.call(notice)
+              git_revision_filter.call(notice)
               expect(notice[:context][:revision]).to eq('d34db33f')
             end
           end
@@ -115,7 +115,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
             end
 
             it "attaches the content of HEAD to context/revision" do
-              subject.call(notice)
+              git_revision_filter.call(notice)
               expect(notice[:context][:revision]).to eq('refs/foo')
             end
           end
