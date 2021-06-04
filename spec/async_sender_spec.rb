@@ -13,18 +13,20 @@ RSpec.describe Airbrake::AsyncSender do
   end
 
   describe "#send" do
+    subject(:async_sender) { described_class.new }
+
     context "when sender has the capacity to send" do
       it "sends notices to Airbrake" do
-        2.times { subject.send(notice, Airbrake::Promise.new) }
-        subject.close
+        2.times { async_sender.send(notice, Airbrake::Promise.new) }
+        async_sender.close
 
         expect(a_request(:post, endpoint)).to have_been_made.twice
       end
 
       it "returns a resolved promise" do
         promise = Airbrake::Promise.new
-        subject.send(notice, promise)
-        subject.close
+        async_sender.send(notice, promise)
+        async_sender.close
 
         expect(promise).to be_resolved
       end
@@ -40,8 +42,8 @@ RSpec.describe Airbrake::AsyncSender do
       end
 
       it "doesn't send the exceeded notices to Airbrake" do
-        15.times { subject.send(notice, Airbrake::Promise.new) }
-        subject.close
+        15.times { async_sender.send(notice, Airbrake::Promise.new) }
+        async_sender.close
 
         expect(a_request(:post, endpoint)).not_to have_been_made
       end
@@ -49,9 +51,9 @@ RSpec.describe Airbrake::AsyncSender do
       it "returns a rejected promise" do
         promise = nil
         15.times do
-          promise = subject.send(notice, Airbrake::Promise.new)
+          promise = async_sender.send(notice, Airbrake::Promise.new)
         end
-        subject.close
+        async_sender.close
 
         expect(promise).to be_rejected
         expect(promise.value).to eq(

@@ -89,20 +89,24 @@ RSpec.describe Airbrake do
           c.project_key = '2'
         end
 
-        expect(described_class.notice_notifier).not_to receive(:add_filter)
+        allow(described_class.notice_notifier).to receive(:add_filter)
+
         10.times { described_class.configure { anything } }
+
+        expect(described_class.notice_notifier).not_to have_received(:add_filter)
       end
 
       it "appends some default filters" do
         allow(described_class.notice_notifier).to receive(:add_filter)
-        expect(described_class.notice_notifier).to receive(:add_filter).with(
-          an_instance_of(Airbrake::Filters::RootDirectoryFilter),
-        )
 
         described_class.configure do |c|
           c.project_id = 1
           c.project_key = '2'
         end
+
+        expect(described_class.notice_notifier).to have_received(:add_filter).with(
+          an_instance_of(Airbrake::Filters::RootDirectoryFilter),
+        )
       end
     end
 
@@ -110,14 +114,21 @@ RSpec.describe Airbrake do
       before { allow(described_class.notice_notifier).to receive(:add_filter) }
 
       it "adds blocklist filter" do
-        expect(described_class.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::KeysBlocklist))
+        allow(described_class.notice_notifier).to receive(:add_filter)
+
         described_class.configure { |c| c.blocklist_keys = %w[password] }
+
+        expect(described_class.notice_notifier).to have_received(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::KeysBlocklist))
       end
 
       it "initializes blocklist with specified parameters" do
-        expect(Airbrake::Filters::KeysBlocklist).to receive(:new).with(%w[password])
+        allow(Airbrake::Filters::KeysBlocklist).to receive(:new)
+
         described_class.configure { |c| c.blocklist_keys = %w[password] }
+
+        expect(Airbrake::Filters::KeysBlocklist)
+          .to have_received(:new).with(%w[password])
       end
     end
 
@@ -125,14 +136,17 @@ RSpec.describe Airbrake do
       before { allow(described_class.notice_notifier).to receive(:add_filter) }
 
       it "adds allowlist filter" do
-        expect(described_class.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::KeysAllowlist))
         described_class.configure { |c| c.allowlist_keys = %w[banana] }
+        expect(described_class.notice_notifier).to have_received(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::KeysAllowlist))
       end
 
       it "initializes allowlist with specified parameters" do
-        expect(Airbrake::Filters::KeysAllowlist).to receive(:new).with(%w[banana])
+        allow(Airbrake::Filters::KeysAllowlist).to receive(:new)
+
         described_class.configure { |c| c.allowlist_keys = %w[banana] }
+        expect(Airbrake::Filters::KeysAllowlist)
+          .to have_received(:new).with(%w[banana])
       end
     end
 
@@ -140,77 +154,90 @@ RSpec.describe Airbrake do
       before { allow(described_class.notice_notifier).to receive(:add_filter) }
 
       it "adds root directory filter" do
-        expect(described_class.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::RootDirectoryFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
+
+        expect(described_class.notice_notifier).to have_received(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::RootDirectoryFilter))
       end
 
       it "initializes root directory filter with specified path" do
-        expect(Airbrake::Filters::RootDirectoryFilter)
-          .to receive(:new).with('/my/path')
+        allow(Airbrake::Filters::RootDirectoryFilter).to receive(:new)
         described_class.configure { |c| c.root_directory = '/my/path' }
+
+        expect(Airbrake::Filters::RootDirectoryFilter)
+          .to have_received(:new).with('/my/path')
       end
 
       it "adds git revision filter" do
-        expect(described_class.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::GitRevisionFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
+        expect(described_class.notice_notifier).to have_received(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::GitRevisionFilter))
       end
 
       it "initializes git revision filter with correct root directory" do
-        expect(Airbrake::Filters::GitRevisionFilter)
-          .to receive(:new).with('/my/path')
+        allow(Airbrake::Filters::GitRevisionFilter).to receive(:new)
         described_class.configure { |c| c.root_directory = '/my/path' }
+
+        expect(Airbrake::Filters::GitRevisionFilter)
+          .to have_received(:new).with('/my/path')
       end
 
       it "adds git repository filter" do
-        expect(described_class.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::GitRepositoryFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
+
+        expect(described_class.notice_notifier).to have_received(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::GitRepositoryFilter))
       end
 
       it "initializes git repository filter with correct root directory" do
-        expect(Airbrake::Filters::GitRepositoryFilter)
-          .to receive(:new).with('/my/path')
+        allow(Airbrake::Filters::GitRepositoryFilter).to receive(:new)
+
         described_class.configure { |c| c.root_directory = '/my/path' }
+
+        expect(Airbrake::Filters::GitRepositoryFilter)
+          .to have_received(:new).with('/my/path')
       end
 
       it "adds git last checkout filter" do
-        expect(described_class.notice_notifier).to receive(:add_filter)
-          .with(an_instance_of(Airbrake::Filters::GitLastCheckoutFilter))
         described_class.configure { |c| c.root_directory = '/my/path' }
+        expect(described_class.notice_notifier).to have_received(:add_filter)
+          .with(an_instance_of(Airbrake::Filters::GitLastCheckoutFilter))
       end
 
       it "initializes git last checkout filter with correct root directory" do
-        expect(Airbrake::Filters::GitLastCheckoutFilter)
-          .to receive(:new).with('/my/path')
+        allow(Airbrake::Filters::GitLastCheckoutFilter).to receive(:new)
         described_class.configure { |c| c.root_directory = '/my/path' }
+
+        expect(Airbrake::Filters::GitLastCheckoutFilter)
+          .to have_received(:new).with('/my/path')
       end
     end
   end
 
   describe ".notify_request" do
+    before do
+      allow(described_class.performance_notifier).to receive(:notify)
+    end
+
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the request" do
-        expect(described_class.performance_notifier).to receive(:notify) do |request|
-          expect(request.stash).to be_empty
-        end
-
         described_class.notify_request(
           method: 'GET',
           route: '/',
           status_code: 200,
           timing: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |request|
+          expect(request.stash).to be_empty
+        end
       end
     end
 
     context "when :stash key is provided" do
       it "adds the value as the stash of the request" do
-        expect(described_class.performance_notifier).to receive(:notify) do |request|
-          expect(request.stash).to eq(request_id: 1)
-        end
-
         described_class.notify_request(
           {
             method: 'GET',
@@ -220,13 +247,19 @@ RSpec.describe Airbrake do
           },
           request_id: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |request|
+          expect(request.stash).to eq(request_id: 1)
+        end
       end
     end
   end
 
   describe ".notify_request_sync" do
     it "notifies request synchronously" do
-      expect(described_class.performance_notifier).to receive(:notify_sync)
+      allow(described_class.performance_notifier).to receive(:notify_sync)
 
       described_class.notify_request_sync(
         {
@@ -237,31 +270,35 @@ RSpec.describe Airbrake do
         },
         request_id: 1,
       )
+
+      expect(described_class.performance_notifier).to have_received(:notify_sync)
     end
   end
 
   describe ".notify_query" do
+    before do
+      allow(described_class.performance_notifier).to receive(:notify)
+    end
+
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the query" do
-        expect(described_class.performance_notifier).to receive(:notify) do |query|
-          expect(query.stash).to be_empty
-        end
-
         described_class.notify_query(
           method: 'GET',
           route: '/',
           query: '',
           timing: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |query|
+          expect(query.stash).to be_empty
+        end
       end
     end
 
     context "when :stash key is provided" do
       it "adds the value as the stash of the query" do
-        expect(described_class.performance_notifier).to receive(:notify) do |query|
-          expect(query.stash).to eq(request_id: 1)
-        end
-
         described_class.notify_query(
           {
             method: 'GET',
@@ -271,13 +308,19 @@ RSpec.describe Airbrake do
           },
           request_id: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |query|
+          expect(query.stash).to eq(request_id: 1)
+        end
       end
     end
   end
 
   describe ".notify_query_sync" do
     it "notifies query synchronously" do
-      expect(described_class.performance_notifier).to receive(:notify_sync)
+      allow(described_class.performance_notifier).to receive(:notify_sync)
 
       described_class.notify_query_sync(
         {
@@ -288,33 +331,35 @@ RSpec.describe Airbrake do
         },
         request_id: 1,
       )
+
+      expect(described_class.performance_notifier).to have_received(:notify_sync)
     end
   end
 
   describe ".notify_performance_breakdown" do
+    before do
+      allow(described_class.performance_notifier).to receive(:notify)
+    end
+
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the performance breakdown" do
-        expect(described_class.performance_notifier).to receive(:notify) do |query|
-          expect(query.stash).to be_empty
-        end
-
         described_class.notify_query(
           method: 'GET',
           route: '/',
           query: '',
           timing: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |query|
+          expect(query.stash).to be_empty
+        end
       end
     end
 
     context "when :stash key is provided" do
       it "adds the value as the stash of the performance breakdown" do
-        expect(
-          described_class.performance_notifier,
-        ).to receive(:notify) do |performance_breakdown|
-          expect(performance_breakdown.stash).to eq(request_id: 1)
-        end
-
         described_class.notify_performance_breakdown(
           {
             method: 'GET',
@@ -325,13 +370,19 @@ RSpec.describe Airbrake do
           },
           request_id: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |performance_breakdown|
+          expect(performance_breakdown.stash).to eq(request_id: 1)
+        end
       end
     end
   end
 
   describe ".notify_performance_breakdown_sync" do
     it "notifies performance breakdown synchronously" do
-      expect(described_class.performance_notifier).to receive(:notify_sync)
+      allow(described_class.performance_notifier).to receive(:notify_sync)
 
       described_class.notify_performance_breakdown_sync(
         {
@@ -343,29 +394,33 @@ RSpec.describe Airbrake do
         },
         request_id: 1,
       )
+
+      expect(described_class.performance_notifier).to have_received(:notify_sync)
     end
   end
 
   describe ".notify_queue" do
+    before do
+      allow(described_class.performance_notifier).to receive(:notify)
+    end
+
     context "when :stash key is not provided" do
       it "doesn't add anything to the stash of the queue" do
-        expect(described_class.performance_notifier).to receive(:notify) do |queue|
-          expect(queue.stash).to be_empty
-        end
-
         described_class.notify_queue(
           queue: 'bananas',
           error_count: 10,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |queue|
+          expect(queue.stash).to be_empty
+        end
       end
     end
 
     context "when :stash key is provided" do
       it "adds the value as the stash of the queue" do
-        expect(described_class.performance_notifier).to receive(:notify) do |queue|
-          expect(queue.stash).to eq(request_id: 1)
-        end
-
         described_class.notify_queue(
           {
             queue: 'bananas',
@@ -373,13 +428,19 @@ RSpec.describe Airbrake do
           },
           request_id: 1,
         )
+
+        expect(
+          described_class.performance_notifier,
+        ).to have_received(:notify) do |queue|
+          expect(queue.stash).to eq(request_id: 1)
+        end
       end
     end
   end
 
   describe ".notify_queue_sync" do
     it "notifies queue synchronously" do
-      expect(described_class.performance_notifier).to receive(:notify_sync)
+      allow(described_class.performance_notifier).to receive(:notify_sync)
 
       described_class.notify_queue_sync(
         {
@@ -388,6 +449,8 @@ RSpec.describe Airbrake do
         },
         request_id: 1,
       )
+
+      expect(described_class.performance_notifier).to have_received(:notify_sync)
     end
   end
 
@@ -410,6 +473,7 @@ RSpec.describe Airbrake do
     end
   end
 
+  # rubocop:disable RSpec/MessageSpies
   describe ".close" do
     after { described_class.reset }
 
@@ -454,4 +518,5 @@ RSpec.describe Airbrake do
       end
     end
   end
+  # rubocop:enable RSpec/MessageSpies
 end

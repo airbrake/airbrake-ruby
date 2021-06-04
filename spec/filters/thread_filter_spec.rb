@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::Filters::ThreadFilter do
+  subject(:thread_filter) { described_class.new }
+
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   def new_thread
@@ -17,7 +19,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       it "attaches the thread variable" do
         new_thread do |th|
           th.thread_variable_set(:bingo, var)
-          subject.call(notice)
+          thread_filter.call(notice)
         end
 
         expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(var)
@@ -60,7 +62,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       it "converts it to a String and attaches" do
         new_thread do |th|
           th.thread_variable_set(:bingo, Object.new)
-          subject.call(notice)
+          thread_filter.call(notice)
         end
 
         vars = notice[:params][:thread][:thread_variables]
@@ -90,7 +92,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       it "converts objects to a safe objects" do
         new_thread do |th|
           th.thread_variable_set(:bingo, var)
-          subject.call(notice)
+          thread_filter.call(notice)
         end
 
         vars = notice[:params][:thread][:thread_variables]
@@ -121,7 +123,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
 
       new_thread do |th|
         th.thread_variable_set(var, :bingo)
-        subject.call(notice)
+        thread_filter.call(notice)
       end
 
       thread_variables = notice[:params][:thread][:thread_variables]
@@ -134,7 +136,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       it "attaches the fiber variable" do
         new_thread do |th|
           th[:bingo] = var
-          subject.call(notice)
+          thread_filter.call(notice)
         end
 
         expect(notice[:params][:thread][:fiber_variables][:bingo]).to eq(var)
@@ -177,7 +179,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       it "converts it to a String and attaches" do
         new_thread do |th|
           th[:bingo] = Object.new
-          subject.call(notice)
+          thread_filter.call(notice)
         end
 
         vars = notice[:params][:thread][:fiber_variables]
@@ -207,7 +209,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
       it "converts objects to a safe objects" do
         new_thread do |th|
           th[:bingo] = var
-          subject.call(notice)
+          thread_filter.call(notice)
         end
 
         vars = notice[:params][:thread][:fiber_variables]
@@ -237,31 +239,31 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
   it "appends name" do
     new_thread do |th|
       th.name = 'bingo'
-      subject.call(notice)
+      thread_filter.call(notice)
     end
 
     expect(notice[:params][:thread][:name]).to eq('bingo')
   end
 
   it "appends thread inspect (self)" do
-    subject.call(notice)
+    thread_filter.call(notice)
     expect(notice[:params][:thread][:self]).to match(/\A#<Thread:.+>\z/)
   end
 
   it "appends thread group" do
-    subject.call(notice)
+    thread_filter.call(notice)
     expect(notice[:params][:thread][:group][0]).to match(/\A#<Thread:.+>\z/)
   end
 
   it "appends priority" do
-    subject.call(notice)
+    thread_filter.call(notice)
     expect(notice[:params][:thread][:priority]).to eq(0)
   end
 
   it "appends safe_level", skip: (
     "Not supported on this version of Ruby." unless Airbrake::HAS_SAFE_LEVEL
   ) do
-    subject.call(notice)
+    thread_filter.call(notice)
     expect(notice[:params][:thread][:safe_level]).to eq(0)
   end
 
@@ -270,7 +272,7 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
 
     new_thread do |th|
       th[key] = :bingo
-      subject.call(notice)
+      thread_filter.call(notice)
     end
 
     fiber_variables = notice[:params][:thread][:fiber_variables]

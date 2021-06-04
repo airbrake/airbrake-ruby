@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::NoticeNotifier do
+  subject(:notice_notifier) { described_class.new }
+
   let(:project_id) { 105138 }
   let(:project_key) { 'fd04e13d806a90f96614ad8e529b2822' }
   let(:localhost) { 'http://localhost:8080' }
@@ -27,7 +29,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
           example(title) do
             stub_request(:post, endpoint).to_return(status: 201, body: '{}')
-            subject.notify_sync(ex)
+            notice_notifier.notify_sync(ex)
 
             expect(a_request(:post, endpoint)).to have_been_made.once
           end
@@ -35,7 +37,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
         path = '/api/v3/projects/105138/notices'
 
-        context "given a full host" do
+        context "given a full host with port" do
           include_examples('endpoint', localhost = 'http://localhost:8080',
                            URI.join(localhost, path),
                            "sends notices to the specified host's endpoint")
@@ -63,13 +65,13 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     describe ":root_directory" do
       before do
-        subject.add_filter(
+        notice_notifier.add_filter(
           Airbrake::Filters::RootDirectoryFilter.new('/home/kyrylo/code'),
         )
       end
 
       it "filters out frames" do
-        subject.notify_sync(ex)
+        notice_notifier.notify_sync(ex)
 
         expect(
           a_request(:post, endpoint)
@@ -82,7 +84,7 @@ RSpec.describe Airbrake::NoticeNotifier do
           before { Airbrake::Config.instance.merge(root_directory: dir) }
 
           it "being included into the notice's payload" do
-            subject.notify_sync(ex)
+            notice_notifier.notify_sync(ex)
             expect(
               a_request(:post, endpoint)
               .with(body: %r{"rootDirectory":"/bingo/bango"}),
@@ -100,6 +102,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
     end
 
+    # rubocop:disable RSpec/MultipleMemoizedHelpers
     describe ":proxy" do
       let(:proxy) do
         WEBrick::HTTPServer.new(
@@ -142,7 +145,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             "safe to run this test on 2.6+ once we upgrade to Webmock 3.5+",
           )
         end
-        subject.notify_sync(ex)
+        notice_notifier.notify_sync(ex)
 
         proxied_request = requests.pop(true)
 
@@ -155,13 +158,14 @@ RSpec.describe Airbrake::NoticeNotifier do
         # rubocop:enable Layout/LineLength
       end
     end
+    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     describe ":environment" do
       context "when present" do
         before { Airbrake::Config.instance.merge(environment: :production) }
 
         it "being included into the notice's payload" do
-          subject.notify_sync(ex)
+          notice_notifier.notify_sync(ex)
           expect(
             a_request(:post, endpoint)
             .with(body: /"context":{.*"environment":"production".*}/),
@@ -175,7 +179,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         before { Airbrake::Config.instance.merge(params) }
 
         it "sends a notice" do
-          subject.notify_sync(ex)
+          notice_notifier.notify_sync(ex)
           expect(a_request(:post, endpoint)).to have_been_made
         end
       end
@@ -184,7 +188,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         before { Airbrake::Config.instance.merge(params) }
 
         it "ignores exceptions occurring in envs that were not configured" do
-          subject.notify_sync(ex)
+          notice_notifier.notify_sync(ex)
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end
@@ -207,9 +211,15 @@ RSpec.describe Airbrake::NoticeNotifier do
         include_examples 'ignored notice', params
 
         it "returns early and doesn't try to parse the given exception" do
-          expect(Airbrake::Notice).not_to receive(:new)
-          expect(subject.notify_sync(ex))
+          allow(Airbrake::Notice).to receive(:new)
+
+          expect(notice_notifier.notify_sync(ex))
             .to eq('error' => "current environment 'development' is ignored")
+
+          expect(Airbrake::Notice).not_to have_received(:new)
+        end
+
+        it "doesn't make an HTTP request" do
           expect(a_request(:post, endpoint)).not_to have_been_made
         end
       end
@@ -246,9 +256,9 @@ RSpec.describe Airbrake::NoticeNotifier do
           end
 
           it "sends a notice" do
-            notice = subject.build_notice(ex)
+            notice = notice_notifier.build_notice(ex)
             notice[:context][:headers] = 'banana'
-            subject.notify_sync(notice)
+            notice_notifier.notify_sync(notice)
 
             expect(a_request(:post, endpoint)).to have_been_made
           end

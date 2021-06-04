@@ -37,13 +37,14 @@ RSpec.describe Airbrake::RemoteSettings do
 
       it "yields the config to the block twice" do
         block = proc {}
-        expect(block).to receive(:call).twice
+        allow(block).to receive(:call)
 
         remote_settings = described_class.poll(project_id, host, &block)
         sleep(0.2)
         remote_settings.stop_polling
 
         expect(stub).to have_been_requested.once
+        expect(block).to have_received(:call).twice
       end
     end
 
@@ -67,6 +68,7 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(stub_with_query_params).to have_been_requested.at_least_once
       end
 
+      # rubocop:disable RSpec/MultipleExpectations
       it "fetches remote settings" do
         settings = nil
         remote_settings = described_class.poll(project_id, host) do |data|
@@ -79,6 +81,7 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(settings.performance_stats?).to eq(false)
         expect(settings.interval).to eq(1)
       end
+      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context "when an error is raised while making a HTTP request" do
@@ -136,11 +139,13 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "logs error" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(body.to_json)
+        allow(Airbrake::Loggable.instance).to receive(:error)
 
         remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(body.to_json)
       end
     end
 
@@ -151,14 +156,18 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "doesn't log errors" do
-        expect(Airbrake::Loggable.instance).not_to receive(:error)
+        allow(Airbrake::Loggable.instance).to receive(:error)
 
         remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
+
+        expect(Airbrake::Loggable.instance).not_to have_received(:error)
+        expect(stub).to have_been_requested.once
       end
     end
 
+    # rubocop:disable RSpec/MultipleMemoizedHelpers
     context "when a config route is specified in the returned data" do
       let(:new_config_route) do
         '213/config/111/config.json'
@@ -183,5 +192,6 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(new_stub).to have_been_requested.once
       end
     end
+    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end

@@ -1,5 +1,5 @@
 RSpec.describe Airbrake::Filters::KeysAllowlist do
-  subject { described_class.new(patterns) }
+  subject(:keys_allowlist_filter) { described_class.new(patterns) }
 
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
@@ -8,9 +8,13 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
 
     it "filters out the matching values" do
       notice[:params] = params.first
-      subject.call(notice)
+      keys_allowlist_filter.call(notice)
       expect(notice[:params]).to eq(params.last)
     end
+  end
+
+  before do
+    allow(Airbrake::Loggable.instance).to receive(:error)
   end
 
   context "when a pattern is a Regexp" do
@@ -69,11 +73,12 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
       )
 
       it "logs an error" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
-        )
         keys_allowlist = described_class.new(patterns)
         keys_allowlist.call(notice)
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
+          /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
+        )
       end
     end
 
@@ -82,11 +87,12 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
 
       context "and when the filter is called once" do
         it "logs an error" do
-          expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /KeysAllowlist is invalid.+patterns: \[#<Proc:.+>\]/,
-          )
           keys_allowlist = described_class.new(patterns)
           keys_allowlist.call(notice)
+
+          expect(Airbrake::Loggable.instance).to have_received(:error).with(
+            /KeysAllowlist is invalid.+patterns: \[#<Proc:.+>\]/,
+          )
         end
 
         include_examples(
@@ -112,11 +118,12 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
     )
 
     it "logs an error" do
-      expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
-      )
       keys_allowlist = described_class.new(patterns)
       keys_allowlist.call(notice)
+
+      expect(Airbrake::Loggable.instance).to have_received(:error).with(
+        /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
+      )
     end
   end
 
@@ -145,14 +152,16 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
         notice[:params] = bongo
 
         begin
-          expect { subject.call(notice) }.to raise_error(SystemStackError)
+          expect { keys_allowlist_filter.call(notice) }.to raise_error(SystemStackError)
         rescue RSpec::Expectations::ExpectationNotMetError => ex
           # JRuby might raise two different exceptions, which represent the same
           # thing. One is a Java exception, the other is a Ruby exception.
           # Likely a bug: https://github.com/jruby/jruby/issues/1903
           raise ex unless RUBY_ENGINE == 'jruby'
 
-          expect { subject.call(notice) }.to raise_error(java.lang.StackOverflowError)
+          expect do
+            keys_allowlist_filter.call(notice)
+          end.to raise_error(java.lang.StackOverflowError)
         end
       end
     end
@@ -165,7 +174,7 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
       context "when it contains query params" do
         it "filters the params" do
           notice[:context][:url] = 'http://localhost:3000/crash?foo=bar&baz=bongo&bish=bash'
-          subject.call(notice)
+          keys_allowlist_filter.call(notice)
           expect(notice[:context][:url]).to(
             eq('http://localhost:3000/crash?foo=[Filtered]&baz=[Filtered]&bish=bash'),
           )
@@ -176,7 +185,7 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
         it "leaves the URL unfiltered" do
           notice[:context][:url] =
             'http://localhost:3000/cra]]]sh?foo=bar&baz=bongo&bish=bash'
-          subject.call(notice)
+          keys_allowlist_filter.call(notice)
           expect(notice[:context][:url]).to(
             eq('http://localhost:3000/cra]]]sh?foo=bar&baz=bongo&bish=bash'),
           )
@@ -186,7 +195,7 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
       context "when it is without a query" do
         it "leaves the URL untouched" do
           notice[:context][:url] = 'http://localhost:3000/crash'
-          subject.call(notice)
+          keys_allowlist_filter.call(notice)
           expect(notice[:context][:url]).to(eq('http://localhost:3000/crash'))
         end
       end

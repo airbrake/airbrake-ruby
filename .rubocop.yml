@@ -1,4 +1,6 @@
-require: rubocop-rake
+require:
+  - rubocop-rake
+  - rubocop-rspec
 
 # Explanations of all possible options:
 #   https://github.com/bbatsov/rubocop/blob/master/config/default.yml
@@ -114,3 +116,24 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 2
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 6
+
+RSpec/AnyInstance:
+  Enabled: false

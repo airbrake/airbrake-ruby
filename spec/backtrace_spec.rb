@@ -177,10 +177,13 @@ RSpec.describe Airbrake::Backtrace do
       end
 
       it "logs frames that cannot be parsed" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
+        allow(Airbrake::Loggable.instance).to receive(:error)
+
+        described_class.parse(ex)
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
           /can't parse 'a b c 1 23 321 .rb'/,
         )
-        described_class.parse(ex)
       end
     end
 

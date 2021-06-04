@@ -4,17 +4,19 @@ RSpec.describe Airbrake::DeployNotifier do
   end
 
   describe "#notify" do
+    subject(:deploy_notifier) { described_class.new }
+
     it "returns a promise" do
       stub_request(:post, 'https://api.airbrake.io/api/v4/projects/1/deploys')
         .to_return(status: 201, body: '{}')
-      expect(subject.notify({})).to be_an(Airbrake::Promise)
+      expect(deploy_notifier.notify({})).to be_an(Airbrake::Promise)
     end
 
     context "when config is invalid" do
       before { Airbrake::Config.instance.merge(project_id: nil) }
 
       it "returns a rejected promise" do
-        promise = subject.notify({})
+        promise = deploy_notifier.notify({})
         expect(promise).to be_rejected
       end
     end
@@ -28,7 +30,7 @@ RSpec.describe Airbrake::DeployNotifier do
           instance_of(Airbrake::Promise),
           URI('https://api.airbrake.io/api/v4/projects/1/deploys'),
         )
-        subject.notify(environment: 'barenv')
+        deploy_notifier.notify(environment: 'barenv')
       end
     end
 
@@ -41,7 +43,7 @@ RSpec.describe Airbrake::DeployNotifier do
           instance_of(Airbrake::Promise),
           URI('https://api.airbrake.io/api/v4/projects/1/deploys'),
         )
-        subject.notify({})
+        deploy_notifier.notify({})
       end
     end
   end

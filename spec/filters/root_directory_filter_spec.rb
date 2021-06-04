@@ -1,5 +1,5 @@
 RSpec.describe Airbrake::Filters::RootDirectoryFilter do
-  subject { described_class.new(root_directory) }
+  subject(:root_directory_filter) { described_class.new(root_directory) }
 
   let(:root_directory) { '/var/www/project' }
   let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
@@ -14,7 +14,7 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
     ]
     # rubocop:enable Layout/LineLength
 
-    subject.call(notice)
+    root_directory_filter.call(notice)
 
     # rubocop:disable Layout/LineLength
     expect(notice[:errors].first[:backtrace]).to(
@@ -32,7 +32,7 @@ RSpec.describe Airbrake::Filters::RootDirectoryFilter do
 
   it "does not filter file when it is nil" do
     expect(notice[:errors].first[:file]).to be_nil
-    expect { subject.call(notice) }.not_to(
+    expect { root_directory_filter.call(notice) }.not_to(
       change { notice[:errors].first[:file] },
     )
   end

@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::NoticeNotifier do
+  subject(:notice_notifier) { described_class.new }
+
   before do
     Airbrake::Config.instance = Airbrake::Config.new(
       project_id: 1,
@@ -15,13 +17,13 @@ RSpec.describe Airbrake::NoticeNotifier do
       it "appends the context filter" do
         expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
           .with(instance_of(Airbrake::Filters::ContextFilter))
-        subject
+        notice_notifier
       end
 
       it "appends the exception attributes filter" do
         expect_any_instance_of(Airbrake::FilterChain).to receive(:add_filter)
           .with(instance_of(Airbrake::Filters::ExceptionAttributesFilter))
-        subject
+        notice_notifier
       end
     end
   end
@@ -39,14 +41,14 @@ RSpec.describe Airbrake::NoticeNotifier do
     before { stub_request(:post, endpoint).to_return(status: 201, body: body) }
 
     it "returns a promise" do
-      expect(subject.notify('ex')).to be_an(Airbrake::Promise)
+      expect(notice_notifier.notify('ex')).to be_an(Airbrake::Promise)
       sleep 1
     end
 
     it "refines the notice object" do
-      subject.add_filter { |n| n[:params] = { foo: 'bar' } }
-      notice = subject.build_notice('ex')
-      subject.notify(notice)
+      notice_notifier.add_filter { |n| n[:params] = { foo: 'bar' } }
+      notice = notice_notifier.build_notice('ex')
+      notice_notifier.notify(notice)
       expect(notice[:params]).to eq(foo: 'bar')
       sleep 1
     end
@@ -55,54 +57,55 @@ RSpec.describe Airbrake::NoticeNotifier do
       before { Airbrake::Config.instance.merge(project_id: nil) }
 
       it "returns a rejected promise" do
-        promise = subject.notify({})
+        promise = notice_notifier.notify({})
         expect(promise).to be_rejected
       end
     end
 
     context "when a notice is not ignored" do
       it "yields the notice" do
-        expect { |b| subject.notify('ex', &b) }
+        expect { |b| notice_notifier.notify('ex', &b) }
           .to yield_with_args(Airbrake::Notice)
         sleep 1
       end
     end
 
     context "when a notice is ignored via a filter" do
-      before { subject.add_filter(&:ignore!) }
+      before { notice_notifier.add_filter(&:ignore!) }
 
       it "yields the notice" do
-        expect { |b| subject.notify('ex', &b) }
+        expect { |b| notice_notifier.notify('ex', &b) }
           .to yield_with_args(Airbrake::Notice)
       end
 
       it "returns a rejected promise" do
-        value = subject.notify('ex').value
+        value = notice_notifier.notify('ex').value
         expect(value['error']).to match(/was marked as ignored/)
       end
     end
 
     context "when a notice is ignored via an inline filter" do
-      before { subject.add_filter { raise AirbrakeTestError } }
+      before { notice_notifier.add_filter { raise AirbrakeTestError } }
 
       it "doesn't invoke regular filters" do
-        expect { subject.notify('ex', &:ignore!) }.not_to raise_error
+        expect { notice_notifier.notify('ex', &:ignore!) }.not_to raise_error
       end
     end
 
     context "when async sender has workers" do
       it "sends an exception asynchronously" do
         expect_any_instance_of(Airbrake::AsyncSender).to receive(:send)
-        subject.notify('foo', bingo: 'bango')
+        notice_notifier.notify('foo', bingo: 'bango')
       end
     end
 
     context "when async sender doesn't have workers" do
       it "sends an exception synchronously" do
-        expect_any_instance_of(Airbrake::AsyncSender)
+        allow_any_instance_of(Airbrake::AsyncSender)
           .to receive(:has_workers?).and_return(false)
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send)
-        subject.notify('foo', bingo: 'bango')
+
+        notice_notifier.notify('foo', bingo: 'bango')
       end
     end
 
@@ -116,11 +119,11 @@ RSpec.describe Airbrake::NoticeNotifier do
 
       it "doesn't send an notice" do
         expect_any_instance_of(Airbrake::AsyncSender).not_to receive(:send)
-        subject.notify('foo', bingo: 'bango')
+        notice_notifier.notify('foo', bingo: 'bango')
       end
 
       it "returns a rejected promise" do
-        promise = subject.notify('foo', bingo: 'bango')
+        promise = notice_notifier.notify('foo', bingo: 'bango')
         expect(promise.value).to eq('error' => "current environment 'test' is ignored")
       end
     end
@@ -139,18 +142,18 @@ RSpec.describe Airbrake::NoticeNotifier do
     before { stub_request(:post, endpoint).to_return(status: 201, body: body.to_json) }
 
     it "returns a reponse hash" do
-      expect(subject.notify_sync('ex')).to eq(body)
+      expect(notice_notifier.notify_sync('ex')).to eq(body)
     end
 
     it "refines the notice object" do
-      subject.add_filter { |n| n[:params] = { foo: 'bar' } }
-      notice = subject.build_notice('ex')
-      subject.notify_sync(notice)
+      notice_notifier.add_filter { |n| n[:params] = { foo: 'bar' } }
+      notice = notice_notifier.build_notice('ex')
+      notice_notifier.notify_sync(notice)
       expect(notice[:params]).to eq(foo: 'bar')
     end
 
     it "sends an exception synchronously" do
-      subject.notify_sync('foo', bingo: 'bango')
+      notice_notifier.notify_sync('foo', bingo: 'bango')
       expect(
         a_request(:post, endpoint).with(
           body: /"params":{.*"bingo":"bango".*}/,
@@ -160,30 +163,30 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     context "when a notice is not ignored" do
       it "yields the notice" do
-        expect { |b| subject.notify_sync('ex', &b) }
+        expect { |b| notice_notifier.notify_sync('ex', &b) }
           .to yield_with_args(Airbrake::Notice)
       end
     end
 
     context "when a notice is ignored via a filter" do
-      before { subject.add_filter(&:ignore!) }
+      before { notice_notifier.add_filter(&:ignore!) }
 
       it "yields the notice" do
-        expect { |b| subject.notify_sync('ex', &b) }
+        expect { |b| notice_notifier.notify_sync('ex', &b) }
           .to yield_with_args(Airbrake::Notice)
       end
 
       it "returns an error hash" do
-        response = subject.notify_sync('ex')
+        response = notice_notifier.notify_sync('ex')
         expect(response['error']).to match(/was marked as ignored/)
       end
     end
 
     context "when a notice is ignored via an inline filter" do
-      before { subject.add_filter { raise AirbrakeTestError } }
+      before { notice_notifier.add_filter { raise AirbrakeTestError } }
 
       it "doesn't invoke regular filters" do
-        expect { subject.notify('ex', &:ignore!) }.not_to raise_error
+        expect { notice_notifier.notify('ex', &:ignore!) }.not_to raise_error
       end
     end
 
@@ -196,11 +199,11 @@ RSpec.describe Airbrake::NoticeNotifier do
 
       it "doesn't send an notice" do
         expect_any_instance_of(Airbrake::SyncSender).not_to receive(:send)
-        subject.notify_sync('foo', bingo: 'bango')
+        notice_notifier.notify_sync('foo', bingo: 'bango')
       end
 
       it "returns an error hash" do
-        expect(subject.notify_sync('foo'))
+        expect(notice_notifier.notify_sync('foo'))
           .to eq('error' => "current environment 'test' is ignored")
       end
     end
@@ -209,17 +212,19 @@ RSpec.describe Airbrake::NoticeNotifier do
   describe "#add_filter" do
     context "given a block" do
       it "appends a new filter to the filter chain" do
-        notifier = subject
+        notifier = notice_notifier
         b = proc {}
+        # rubocop:disable RSpec/StubbedMock
         expect_any_instance_of(Airbrake::FilterChain)
           .to receive(:add_filter) { |*args| expect(args.last).to be(b) }
+        # rubocop:enable RSpec/StubbedMock
         notifier.add_filter(&b)
       end
     end
 
     context "given a class" do
       it "appends a new filter to the filter chain" do
-        notifier = subject
+        notifier = notice_notifier
         klass = Class.new
         expect_any_instance_of(Airbrake::FilterChain)
           .to receive(:add_filter).with(klass)
@@ -231,14 +236,14 @@ RSpec.describe Airbrake::NoticeNotifier do
   describe "#build_notice" do
     context "when given exception is another notice" do
       it "merges params with the notice" do
-        notice = subject.build_notice('ex')
-        other = subject.build_notice(notice, foo: 'bar')
+        notice = notice_notifier.build_notice('ex')
+        other = notice_notifier.build_notice(notice, foo: 'bar')
         expect(other[:params]).to eq(foo: 'bar')
       end
 
-      it "it returns the provided notice" do
-        notice = subject.build_notice('ex')
-        other = subject.build_notice(notice, foo: 'bar')
+      it "returns the provided notice" do
+        notice = notice_notifier.build_notice('ex')
+        other = notice_notifier.build_notice(notice, foo: 'bar')
         expect(other).to eq(notice)
       end
     end
@@ -246,7 +251,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     context "when given exception is an Exception" do
       it "prevents mutation of passed-in params hash" do
         params = { immutable: true }
-        notice = subject.build_notice('ex', params)
+        notice = notice_notifier.build_notice('ex', params)
         notice[:params][:mutable] = true
         expect(params).to eq(immutable: true)
       end
@@ -260,7 +265,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             ]
             allow(Kernel).to receive(:caller).and_return(backtrace)
 
-            notice = subject.build_notice(Exception.new)
+            notice = notice_notifier.build_notice(Exception.new)
 
             expect(notice[:errors].first[:backtrace]).to eq(
               [
@@ -280,7 +285,7 @@ RSpec.describe Airbrake::NoticeNotifier do
             ]
             allow(Kernel).to receive(:caller).and_return(backtrace)
 
-            notice = subject.build_notice(Exception.new)
+            notice = notice_notifier.build_notice(Exception.new)
 
             expect(notice[:errors].first[:backtrace]).to eq(
               [
@@ -296,7 +301,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     # TODO: this seems to be bugged. Fix later.
     context "when given exception is a Java exception", skip: true do
       before do
-        expect(Airbrake::Backtrace).to receive(:java_exception?).and_return(true)
+        allow(Airbrake::Backtrace).to receive(:java_exception?).and_return(true)
       end
 
       it "automatically generates the backtrace" do
@@ -307,7 +312,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         ]
         allow(Kernel).to receive(:caller).and_return(backtrace)
 
-        notice = subject.build_notice(Exception.new)
+        notice = notice_notifier.build_notice(Exception.new)
 
         # rubocop:disable Layout/LineLength
         expect(notice[:errors].first[:backtrace]).to eq(
@@ -323,12 +328,12 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     context "when async sender is closed" do
       before do
-        expect_any_instance_of(Airbrake::AsyncSender)
+        allow_any_instance_of(Airbrake::AsyncSender)
           .to receive(:closed?).and_return(true)
       end
 
       it "raises error" do
-        expect { subject.build_notice(Exception.new('oops')) }.to raise_error(
+        expect { notice_notifier.build_notice(Exception.new('oops')) }.to raise_error(
           Airbrake::Error,
           "Airbrake is closed; can't build exception: Exception: oops",
         )
@@ -339,7 +344,7 @@ RSpec.describe Airbrake::NoticeNotifier do
   describe "#close" do
     it "sends the close message to async sender" do
       expect_any_instance_of(Airbrake::AsyncSender).to receive(:close)
-      subject.close
+      notice_notifier.close
     end
   end
 
@@ -350,7 +355,7 @@ RSpec.describe Airbrake::NoticeNotifier do
   describe "#merge_context" do
     it "merges the provided context with the notice object" do
       expect_any_instance_of(Hash).to receive(:merge!).with(apples: 'oranges')
-      subject.merge_context(apples: 'oranges')
+      notice_notifier.merge_context(apples: 'oranges')
     end
   end
 end

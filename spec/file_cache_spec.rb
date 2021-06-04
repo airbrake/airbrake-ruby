@@ -1,5 +1,6 @@
 RSpec.describe Airbrake::FileCache do
   before { described_class.reset }
+
   after { described_class.reset }
 
   describe ".[]=" do

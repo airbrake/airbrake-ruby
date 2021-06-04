@@ -4,18 +4,18 @@ RSpec.describe Airbrake::Truncator do
   end
 
   describe "#truncate" do
+    subject(:truncator) { described_class.new(max_size).truncate(object) }
+
     let(:max_size) { 3 }
     let(:truncated) { '[Truncated]' }
     let(:max_len) { max_size + truncated.length }
-
-    subject { described_class.new(max_size).truncate(object) }
 
     context "given a frozen string" do
       let(:object) { multiply_by_2_max_len('a') }
 
       it "returns a new truncated frozen string" do
-        expect(subject.length).to eq(max_len)
-        expect(subject).to be_frozen
+        expect(truncator.length).to eq(max_len)
+        expect(truncator).to be_frozen
       end
     end
 
@@ -29,16 +29,27 @@ RSpec.describe Airbrake::Truncator do
         }.freeze
       end
 
-      it "returns a new truncated frozen hash" do
-        expect(subject.size).to eq(max_size)
-        expect(subject).to be_frozen
+      it "returns a hash of the same size" do
+        expect(truncator.size).to eq(max_size)
+      end
 
-        expect(subject).to eq(
+      it "returns a frozen hash" do
+        expect(truncator).to be_frozen
+      end
+
+      it "returns a hash with truncated values" do
+        expect(truncator).to eq(
           banana: 'aaa[Truncated]', kiwi: 'bbb[Truncated]', strawberry: 'c',
         )
-        expect(subject[:banana]).to be_frozen
-        expect(subject[:kiwi]).to be_frozen
-        expect(subject[:strawberry]).not_to be_frozen
+      end
+
+      it "returns a hash with truncated strings that are frozen" do
+        expect(truncator[:banana]).to be_frozen
+        expect(truncator[:kiwi]).to be_frozen
+      end
+
+      it "returns a hash unfrozen untruncated strings" do
+        expect(truncator[:strawberry]).not_to be_frozen
       end
     end
 
@@ -52,14 +63,25 @@ RSpec.describe Airbrake::Truncator do
         ].freeze
       end
 
-      it "returns a new truncated frozen array" do
-        expect(subject.size).to eq(max_size)
-        expect(subject).to be_frozen
+      it "returns an array of the same size" do
+        expect(truncator.size).to eq(max_size)
+      end
 
-        expect(subject).to eq(['aaa[Truncated]', 'b', 'ccc[Truncated]'])
-        expect(subject[0]).to be_frozen
-        expect(subject[1]).not_to be_frozen
-        expect(subject[2]).to be_frozen
+      it "returns a frozen array" do
+        expect(truncator).to be_frozen
+      end
+
+      it "returns an array with truncated values" do
+        expect(truncator).to eq(['aaa[Truncated]', 'b', 'ccc[Truncated]'])
+      end
+
+      it "returns an array with truncated strings that are frozen" do
+        expect(truncator[0]).to be_frozen
+        expect(truncator[2]).to be_frozen
+      end
+
+      it "returns an array with unfrozen untruncated strings" do
+        expect(truncator[1]).not_to be_frozen
       end
     end
 
@@ -73,14 +95,16 @@ RSpec.describe Airbrake::Truncator do
         ]).freeze
       end
 
-      it "returns a new truncated frozen array" do
-        expect(subject.size).to eq(max_size)
-        expect(subject).to be_frozen
+      it "returns a set of the same size" do
+        expect(truncator.size).to eq(max_size)
+      end
 
-        expect(subject).to eq(
-          Set.new(['aaa[Truncated]', 'b', 'ccc[Truncated]']),
-        )
-        expect(subject).to be_frozen
+      it "returns a frozen set" do
+        expect(truncator).to be_frozen
+      end
+
+      it "returns a set with truncated values" do
+        expect(truncator).to eq(Set.new(['aaa[Truncated]', 'b', 'ccc[Truncated]']))
       end
     end
 
@@ -93,11 +117,16 @@ RSpec.describe Airbrake::Truncator do
         obj.freeze
       end
 
-      it "converts the object to truncated JSON" do
-        expect(subject.length).to eq(max_len)
-        expect(subject).to be_frozen
+      it "returns a string of a max len size" do
+        expect(truncator.length).to eq(max_len)
+      end
 
-        expect(subject).to eq('{"o[Truncated]')
+      it "returns a frozen object" do
+        expect(truncator).to be_frozen
+      end
+
+      it "converts the object to truncated JSON" do
+        expect(truncator).to eq('{"o[Truncated]')
       end
     end
 
@@ -110,8 +139,8 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "converts the object to a truncated string" do
-        expect(subject.length).to eq(max_len)
-        expect(subject).to eq('#<O[Truncated]')
+        expect(truncator.length).to eq(max_len)
+        expect(truncator).to eq('#<O[Truncated]')
       end
     end
 
@@ -134,7 +163,7 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "prevents recursion" do
-        expect(subject).to eq(['aaa[Truncated]', 'bb', '[Circular]'])
+        expect(truncator).to eq(['aaa[Truncated]', 'bb', '[Circular]'])
       end
     end
 
@@ -149,8 +178,8 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "prevents recursion" do
-        expect(subject).to eq(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]'])
-        expect(subject).to be_frozen
+        expect(truncator).to eq(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]'])
+        expect(truncator).to be_frozen
       end
     end
 
@@ -165,10 +194,10 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "prevents recursion" do
-        expect(subject).to eq(
+        expect(truncator).to eq(
           Set.new(['[Circular]', { k: '[Circular]' }, 'aaa[Truncated]']),
         )
-        expect(subject).to be_frozen
+        expect(truncator).to be_frozen
       end
     end
 
@@ -182,10 +211,10 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "truncates the long strings" do
-        expect(subject).to eq(
+        expect(truncator).to eq(
           a: 'aaa[Truncated]', b: 'bbb[Truncated]', c: { d: 'ddd[Truncated]', e: 'e' },
         )
-        expect(subject).to be_frozen
+        expect(truncator).to be_frozen
       end
     end
 
@@ -193,7 +222,7 @@ RSpec.describe Airbrake::Truncator do
       let(:object) { "€€€€€" }
 
       it "truncates the string" do
-        expect(subject).to eq("€€€[Truncated]")
+        expect(truncator).to eq("€€€[Truncated]")
       end
     end
 
@@ -205,8 +234,8 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "converts and truncates the string to UTF-8" do
-        expect(subject).to eq("���[Truncated]")
-        expect(subject).to be_frozen
+        expect(truncator).to eq("���[Truncated]")
+        expect(truncator).to be_frozen
       end
     end
 
@@ -224,14 +253,14 @@ RSpec.describe Airbrake::Truncator do
       end
 
       it "truncates values" do
-        expect(subject).to eq(
+        expect(truncator).to eq(
           errors: [
             { file: 'a' },
             { file: 'a' },
             hashie.new.merge(file: 'bcd[Truncated]'),
           ],
         )
-        expect(subject).to be_frozen
+        expect(truncator).to be_frozen
       end
     end
   end

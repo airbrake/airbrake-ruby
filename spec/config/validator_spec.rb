@@ -175,9 +175,12 @@ RSpec.describe Airbrake::Config::Validator do
       end
 
       it "warns about 'no effect'" do
-        expect(config.logger).to receive(:warn)
-          .with(/'ignore_environments' has no effect/)
+        allow(config.logger).to receive(:warn)
+
         described_class.check_notify_ability(config)
+
+        expect(config.logger).to have_received(:warn)
+          .with(/'ignore_environments' has no effect/)
       end
     end
 

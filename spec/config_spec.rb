@@ -1,4 +1,6 @@
 RSpec.describe Airbrake::Config do
+  subject(:config) { described_class.new }
+
   let(:resolved_promise) { Airbrake::Promise.new.resolve }
   let(:rejected_promise) { Airbrake::Promise.new.reject }
 
@@ -35,18 +37,22 @@ RSpec.describe Airbrake::Config do
   describe "#new" do
     context "when user config is passed" do
       subject { described_class.new(logger: StringIO.new) }
+
       its(:logger) { is_expected.to be_a(StringIO) }
     end
   end
 
   describe "#valid?" do
-    context "when #validate returns a resolved promise" do
-      before { expect(subject).to receive(:validate).and_return(resolved_promise) }
+    context "when the config is valid" do
+      before do
+        config.project_id = 123
+        config.project_key = 'abc'
+      end
+
       it { is_expected.to be_valid }
     end
 
-    context "when #validate returns a rejected promise" do
-      before { expect(subject).to receive(:validate).and_return(rejected_promise) }
+    context "when the config is invalid" do
       it { is_expected.not_to be_valid }
     end
   end
@@ -54,7 +60,7 @@ RSpec.describe Airbrake::Config do
   describe "#ignored_environment?" do
     context "when Validator returns a resolved promise" do
       before do
-        expect(Airbrake::Config::Validator).to receive(:check_notify_ability)
+        allow(Airbrake::Config::Validator).to receive(:check_notify_ability)
           .and_return(resolved_promise)
       end
 
@@ -63,7 +69,7 @@ RSpec.describe Airbrake::Config do
 
     context "when Validator returns a rejected promise" do
       before do
-        expect(Airbrake::Config::Validator).to receive(:check_notify_ability)
+        allow(Airbrake::Config::Validator).to receive(:check_notify_ability)
           .and_return(rejected_promise)
       end
 
@@ -96,19 +102,21 @@ RSpec.describe Airbrake::Config do
   end
 
   describe "#check_configuration" do
-    let(:user_config) { {} }
-
     subject { described_class.new(valid_params.merge(user_config)) }
+
+    let(:user_config) { {} }
 
     its(:check_configuration) { is_expected.to be_an(Airbrake::Promise) }
 
     context "when config is invalid" do
       let(:user_config) { { project_id: nil } }
+
       its(:check_configuration) { is_expected.to be_rejected }
     end
 
     context "when current environment is ignored" do
       let(:user_config) { { environment: 'test', ignore_environments: ['test'] } }
+
       its(:check_configuration) { is_expected.to be_rejected }
     end
 
@@ -120,12 +128,12 @@ RSpec.describe Airbrake::Config do
   describe "#check_performance_options" do
     it "returns a promise" do
       resource = Airbrake::Query.new(method: '', route: '', query: '', timing: 1)
-      expect(subject.check_performance_options(resource))
+      expect(config.check_performance_options(resource))
         .to be_an(Airbrake::Promise)
     end
 
     context "when performance stats are disabled" do
-      before { subject.performance_stats = false }
+      before { config.performance_stats = false }
 
       let(:resource) do
         Airbrake::Request.new(
@@ -134,7 +142,7 @@ RSpec.describe Airbrake::Config do
       end
 
       it "returns a rejected promise" do
-        promise = subject.check_performance_options(resource)
+        promise = config.check_performance_options(resource)
         expect(promise.value).to eq(
           'error' => "The Performance Stats feature is disabled",
         )
@@ -142,14 +150,14 @@ RSpec.describe Airbrake::Config do
     end
 
     context "when query stats are disabled" do
-      before { subject.query_stats = false }
+      before { config.query_stats = false }
 
       let(:resource) do
         Airbrake::Query.new(method: 'GET', route: '/foo', query: '', timing: 1)
       end
 
       it "returns a rejected promise" do
-        promise = subject.check_performance_options(resource)
+        promise = config.check_performance_options(resource)
         expect(promise.value).to eq(
           'error' => "The Query Stats feature is disabled",
         )
@@ -157,14 +165,14 @@ RSpec.describe Airbrake::Config do
     end
 
     context "when job stats are disabled" do
-      before { subject.job_stats = false }
+      before { config.job_stats = false }
 
       let(:resource) do
         Airbrake::Queue.new(queue: 'foo_queue', error_count: 0, timing: 1)
       end
 
       it "returns a rejected promise" do
-        promise = subject.check_performance_options(resource)
+        promise = config.check_performance_options(resource)
         expect(promise.value).to eq(
           'error' => "The Job Stats feature is disabled",
         )
@@ -174,7 +182,7 @@ RSpec.describe Airbrake::Config do
 
   describe "#logger" do
     it "sets logger level to Logger::WARN" do
-      expect(subject.logger.level).to eq(Logger::WARN)
+      expect(config.logger.level).to eq(Logger::WARN)
     end
   end
 end
