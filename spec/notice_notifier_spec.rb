@@ -101,9 +101,10 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     context "when async sender doesn't have workers" do
       it "sends an exception synchronously" do
-        expect_any_instance_of(Airbrake::AsyncSender)
+        allow_any_instance_of(Airbrake::AsyncSender)
           .to receive(:has_workers?).and_return(false)
         expect_any_instance_of(Airbrake::SyncSender).to receive(:send)
+
         notice_notifier.notify('foo', bingo: 'bango')
       end
     end
@@ -213,8 +214,10 @@ RSpec.describe Airbrake::NoticeNotifier do
       it "appends a new filter to the filter chain" do
         notifier = notice_notifier
         b = proc {}
+        # rubocop:disable RSpec/StubbedMock
         expect_any_instance_of(Airbrake::FilterChain)
           .to receive(:add_filter) { |*args| expect(args.last).to be(b) }
+        # rubocop:enable RSpec/StubbedMock
         notifier.add_filter(&b)
       end
     end
@@ -325,7 +328,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
     context "when async sender is closed" do
       before do
-        expect_any_instance_of(Airbrake::AsyncSender)
+        allow_any_instance_of(Airbrake::AsyncSender)
           .to receive(:closed?).and_return(true)
       end
 

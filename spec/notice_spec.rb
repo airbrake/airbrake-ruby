@@ -85,7 +85,7 @@ RSpec.describe Airbrake::Notice do
 
       context "when truncation failed" do
         it "returns nil" do
-          expect_any_instance_of(Airbrake::Truncator)
+          allow_any_instance_of(Airbrake::Truncator)
             .to receive(:reduce_max_size).and_return(0)
 
           encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')

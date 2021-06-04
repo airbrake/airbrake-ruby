@@ -81,7 +81,7 @@ RSpec.describe Airbrake::SyncSender do
       it "doesn't send data" do
         allow(Airbrake::Loggable.instance).to receive(:error)
 
-        expect_any_instance_of(Airbrake::Truncator)
+        allow_any_instance_of(Airbrake::Truncator)
           .to receive(:reduce_max_size).and_return(0)
 
         encoded = Base64.encode64("\xD3\xE6\xBC\x9D\xBA").encode!('ASCII-8BIT')
