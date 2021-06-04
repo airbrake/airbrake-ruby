@@ -36,7 +36,9 @@ RSpec.describe Airbrake::ThreadPool do
       end
 
       before do
+        # rubocop:disable RSpec/SubjectStub
         allow(full_thread_pool).to receive(:backlog).and_return(queue_size)
+        # rubocop:enable RSpec/SubjectStub
       end
 
       it "returns false" do

@@ -43,15 +43,16 @@ RSpec.describe Airbrake::Config do
   end
 
   describe "#valid?" do
-    context "when #validate returns a resolved promise" do
-      before { allow(config).to receive(:validate).and_return(resolved_promise) }
+    context "when the config is valid" do
+      before do
+        config.project_id = 123
+        config.project_key = 'abc'
+      end
 
       it { is_expected.to be_valid }
     end
 
-    context "when #validate returns a rejected promise" do
-      before { allow(config).to receive(:validate).and_return(rejected_promise) }
-
+    context "when the config is invalid" do
       it { is_expected.not_to be_valid }
     end
   end

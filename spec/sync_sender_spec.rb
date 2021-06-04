@@ -48,7 +48,10 @@ RSpec.describe Airbrake::SyncSender do
 
     it "catches exceptions raised while sending" do
       https = double("foo")
+      # rubocop:disable RSpec/SubjectStub
       allow(sync_sender).to receive(:build_https).and_return(https)
+      # rubocop:enable RSpec/SubjectStub
+
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
 
       expect(sync_sender.send({}, promise)).to be_an(Airbrake::Promise)
@@ -59,7 +62,11 @@ RSpec.describe Airbrake::SyncSender do
       allow(Airbrake::Loggable.instance).to receive(:error)
 
       https = double("foo")
+
+      # rubocop:disable RSpec/SubjectStub
       allow(sync_sender).to receive(:build_https).and_return(https)
+      # rubocop:enable RSpec/SubjectStub
+
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
 
       sync_sender.send({}, promise)
