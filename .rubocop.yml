@@ -125,3 +125,6 @@ RSpec/MultipleExpectations:
 
 RSpec/ContextWording:
   Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
