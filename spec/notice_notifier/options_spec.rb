@@ -37,7 +37,7 @@ RSpec.describe Airbrake::NoticeNotifier do
 
         path = '/api/v3/projects/105138/notices'
 
-        context "given a full host" do
+        context "given a full host with port" do
           include_examples('endpoint', localhost = 'http://localhost:8080',
                            URI.join(localhost, path),
                            "sends notices to the specified host's endpoint")
