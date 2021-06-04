@@ -47,7 +47,10 @@ RSpec.describe Airbrake::SyncSender do
     end
 
     it "catches exceptions raised while sending" do
+      # rubocop:disable RSpec/VerifiedDoubles
       https = double("foo")
+      # rubocop:enable RSpec/VerifiedDoubles
+
       # rubocop:disable RSpec/SubjectStub
       allow(sync_sender).to receive(:build_https).and_return(https)
       # rubocop:enable RSpec/SubjectStub
@@ -61,7 +64,9 @@ RSpec.describe Airbrake::SyncSender do
     it "logs exceptions raised while sending" do
       allow(Airbrake::Loggable.instance).to receive(:error)
 
+      # rubocop:disable RSpec/VerifiedDoubles
       https = double("foo")
+      # rubocop:enable RSpec/VerifiedDoubles
 
       # rubocop:disable RSpec/SubjectStub
       allow(sync_sender).to receive(:build_https).and_return(https)
