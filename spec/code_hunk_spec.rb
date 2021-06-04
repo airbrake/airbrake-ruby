@@ -107,15 +107,16 @@ RSpec.describe Airbrake::CodeHunk do
 
     context "when an error occurrs while fetching code" do
       before do
-        expect(Airbrake::FileCache).to receive(:[]).and_raise(Errno::EACCES)
+        allow(Airbrake::Loggable.instance).to receive(:error)
+        allow(Airbrake::FileCache).to receive(:[]).and_raise(Errno::EACCES)
       end
 
       it "logs error and returns nil" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /can't read code hunk.+Permission denied/,
-        )
         expect(code_hunk.get(project_root_path('code.rb'), 1)).to(
           eq(1 => ''),
+        )
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
+          /can't read code hunk.+Permission denied/,
         )
       end
     end

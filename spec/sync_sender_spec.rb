@@ -56,20 +56,24 @@ RSpec.describe Airbrake::SyncSender do
     end
 
     it "logs exceptions raised while sending" do
+      allow(Airbrake::Loggable.instance).to receive(:error)
+
       https = double("foo")
       allow(sync_sender).to receive(:build_https).and_return(https)
       allow(https).to receive(:request).and_raise(StandardError.new('foo'))
 
-      expect(Airbrake::Loggable.instance).to receive(:error).with(
+      sync_sender.send({}, promise)
+
+      expect(Airbrake::Loggable.instance).to have_received(:error).with(
         /HTTP error: foo/,
       )
-
-      sync_sender.send({}, promise)
     end
 
     context "when request body is nil" do
       # rubocop:disable RSpec/MultipleExpectations
       it "doesn't send data" do
+        allow(Airbrake::Loggable.instance).to receive(:error)
+
         expect_any_instance_of(Airbrake::Truncator)
           .to receive(:reduce_max_size).and_return(0)
 
@@ -83,15 +87,16 @@ RSpec.describe Airbrake::SyncSender do
 
         notice = Airbrake::Notice.new(ex)
 
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /data was not sent/,
-        )
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /truncation failed/,
-        )
         expect(sync_sender.send(notice, promise)).to be_an(Airbrake::Promise)
         expect(promise.value)
           .to match('error' => '**Airbrake: data was not sent because of missing body')
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
+          /data was not sent/,
+        )
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
+          /truncation failed/,
+        )
       end
       # rubocop:enable RSpec/MultipleExpectations
     end

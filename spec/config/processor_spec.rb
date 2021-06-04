@@ -44,12 +44,17 @@ RSpec.describe Airbrake::Config::Processor do
   end
 
   describe "#process_remote_configuration" do
+    before do
+      allow(Airbrake::RemoteSettings).to receive(:poll)
+    end
+
     context "when the config doesn't define a project_id" do
       let(:config) { Airbrake::Config.new(project_id: nil) }
 
       it "doesn't set remote settings" do
-        expect(Airbrake::RemoteSettings).not_to receive(:poll)
         described_class.new(config).process_remote_configuration
+
+        expect(Airbrake::RemoteSettings).not_to have_received(:poll)
       end
     end
 
@@ -57,8 +62,9 @@ RSpec.describe Airbrake::Config::Processor do
       let(:config) { Airbrake::Config.new(project_id: 123, environment: 'test') }
 
       it "doesn't set remote settings" do
-        expect(Airbrake::RemoteSettings).not_to receive(:poll)
         described_class.new(config).process_remote_configuration
+
+        expect(Airbrake::RemoteSettings).not_to have_received(:poll)
       end
     end
 
@@ -68,8 +74,9 @@ RSpec.describe Airbrake::Config::Processor do
       end
 
       it "sets remote settings" do
-        expect(Airbrake::RemoteSettings).to receive(:poll)
         described_class.new(config).process_remote_configuration
+
+        expect(Airbrake::RemoteSettings).to have_received(:poll)
       end
     end
 
@@ -77,8 +84,9 @@ RSpec.describe Airbrake::Config::Processor do
       let(:config) { Airbrake::Config.new(project_id: 123, remote_config: false) }
 
       it "doesn't set remote settings" do
-        expect(Airbrake::RemoteSettings).not_to receive(:poll)
         described_class.new(config).process_remote_configuration
+
+        expect(Airbrake::RemoteSettings).not_to have_received(:poll)
       end
     end
   end

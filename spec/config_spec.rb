@@ -44,13 +44,13 @@ RSpec.describe Airbrake::Config do
 
   describe "#valid?" do
     context "when #validate returns a resolved promise" do
-      before { expect(config).to receive(:validate).and_return(resolved_promise) }
+      before { allow(config).to receive(:validate).and_return(resolved_promise) }
 
       it { is_expected.to be_valid }
     end
 
     context "when #validate returns a rejected promise" do
-      before { expect(config).to receive(:validate).and_return(rejected_promise) }
+      before { allow(config).to receive(:validate).and_return(rejected_promise) }
 
       it { is_expected.not_to be_valid }
     end
@@ -59,7 +59,7 @@ RSpec.describe Airbrake::Config do
   describe "#ignored_environment?" do
     context "when Validator returns a resolved promise" do
       before do
-        expect(Airbrake::Config::Validator).to receive(:check_notify_ability)
+        allow(Airbrake::Config::Validator).to receive(:check_notify_ability)
           .and_return(resolved_promise)
       end
 
@@ -68,7 +68,7 @@ RSpec.describe Airbrake::Config do
 
     context "when Validator returns a rejected promise" do
       before do
-        expect(Airbrake::Config::Validator).to receive(:check_notify_ability)
+        allow(Airbrake::Config::Validator).to receive(:check_notify_ability)
           .and_return(rejected_promise)
       end
 

@@ -209,9 +209,12 @@ RSpec.describe Airbrake::NoticeNotifier do
         include_examples 'ignored notice', params
 
         it "returns early and doesn't try to parse the given exception" do
-          expect(Airbrake::Notice).not_to receive(:new)
+          allow(Airbrake::Notice).to receive(:new)
+
           expect(notice_notifier.notify_sync(ex))
             .to eq('error' => "current environment 'development' is ignored")
+
+          expect(Airbrake::Notice).not_to have_received(:new)
         end
 
         it "doesn't make an HTTP request" do

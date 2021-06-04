@@ -298,7 +298,7 @@ RSpec.describe Airbrake::NoticeNotifier do
     # TODO: this seems to be bugged. Fix later.
     context "when given exception is a Java exception", skip: true do
       before do
-        expect(Airbrake::Backtrace).to receive(:java_exception?).and_return(true)
+        allow(Airbrake::Backtrace).to receive(:java_exception?).and_return(true)
       end
 
       it "automatically generates the backtrace" do

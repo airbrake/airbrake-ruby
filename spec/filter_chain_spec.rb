@@ -29,16 +29,20 @@ RSpec.describe Airbrake::FilterChain do
 
     it "stops execution once a notice was ignored" do
       f2 = filter.new(2)
-      expect(f2).to receive(:call)
+      allow(f2).to receive(:call)
 
       f1 = proc { |notice| notice.ignore! }
 
       f0 = filter.new(-1)
-      expect(f0).not_to receive(:call)
+      allow(f0).to receive(:call)
 
       [f2, f1, f0].each { |f| filter_chain.add_filter(f) }
 
+
       filter_chain.refine(notice)
+
+      expect(f2).to have_received(:call)
+      expect(f0).not_to have_received(:call)
     end
   end
 
@@ -68,10 +72,10 @@ RSpec.describe Airbrake::FilterChain do
       filter_chain.add_filter(f1)
 
       foo_filter_mock = double
-      expect(foo_filter_mock).to(
-        receive(:name).at_least(:once).and_return('FooFilter'),
-      )
+      allow(foo_filter_mock).to receive(:name).at_least(:once).and_return('FooFilter')
       filter_chain.delete_filter(foo_filter_mock)
+
+      expect(foo_filter_mock).to have_received(:name)
 
       f2 = filter.new(2)
       filter_chain.add_filter(f2)

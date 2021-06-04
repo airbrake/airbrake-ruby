@@ -53,12 +53,14 @@ RSpec.describe Airbrake::ThreadPool do
       end
 
       it "logs discarded tasks" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /reached its capacity/,
-        ).exactly(15).times
+        allow(Airbrake::Loggable.instance).to receive(:error)
 
         15.times { full_thread_pool << 1 }
         full_thread_pool.close
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
+          /reached its capacity/,
+        ).exactly(15).times
       end
     end
   end
@@ -128,17 +130,19 @@ RSpec.describe Airbrake::ThreadPool do
 
     context "when there's some work to do" do
       it "logs how many tasks are left to process" do
+        allow(Airbrake::Loggable.instance).to receive(:debug)
+
         thread_pool = described_class.new(
           name: 'foo', worker_size: 0, queue_size: 2, block: proc {},
         )
 
-        expect(Airbrake::Loggable.instance).to receive(:debug).with(
-          /waiting to process \d+ task\(s\)/,
-        )
-        expect(Airbrake::Loggable.instance).to receive(:debug).with(/foo.+closed/)
-
         2.times { thread_pool << 1 }
         thread_pool.close
+
+        expect(Airbrake::Loggable.instance).to have_received(:debug).with(
+          /waiting to process \d+ task\(s\)/,
+        )
+        expect(Airbrake::Loggable.instance).to have_received(:debug).with(/foo.+closed/)
       end
 
       it "waits until the queue gets empty" do

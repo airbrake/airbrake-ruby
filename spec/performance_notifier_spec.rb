@@ -398,10 +398,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
       request = Airbrake::Request.new(
         method: 'GET', route: '/foo', status_code: 200, timing: 123,
       )
-      expect(Airbrake::Config.instance).to receive(:check_performance_options)
-        .with(request).and_return(Airbrake::Promise.new)
+      allow(Airbrake::Config.instance).to receive(:check_performance_options)
+        .and_return(Airbrake::Promise.new)
       perf_notifier.notify(request)
       perf_notifier.close
+
+      expect(Airbrake::Config.instance)
+        .to have_received(:check_performance_options).with(request)
     end
 
     it "sends environment when it's specified" do
@@ -606,10 +609,12 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     it "logs the exit message" do
       allow(Airbrake::Loggable.instance).to receive(:debug)
-      expect(Airbrake::Loggable.instance).to receive(:debug).with(
+
+      perf_notifier.close
+
+      expect(Airbrake::Loggable.instance).to have_received(:debug).with(
         /Airbrake::PerformanceNotifier thread pool closed/,
       )
-      perf_notifier.close
     end
   end
 

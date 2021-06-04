@@ -37,13 +37,14 @@ RSpec.describe Airbrake::RemoteSettings do
 
       it "yields the config to the block twice" do
         block = proc {}
-        expect(block).to receive(:call).twice
+        allow(block).to receive(:call)
 
         remote_settings = described_class.poll(project_id, host, &block)
         sleep(0.2)
         remote_settings.stop_polling
 
         expect(stub).to have_been_requested.once
+        expect(block).to have_received(:call).twice
       end
     end
 
@@ -138,11 +139,13 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "logs error" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(body.to_json)
+        allow(Airbrake::Loggable.instance).to receive(:error)
 
         remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(body.to_json)
       end
     end
 
@@ -153,11 +156,13 @@ RSpec.describe Airbrake::RemoteSettings do
       end
 
       it "doesn't log errors" do
-        expect(Airbrake::Loggable.instance).not_to receive(:error)
+        allow(Airbrake::Loggable.instance).to receive(:error)
 
         remote_settings = described_class.poll(project_id, host) { anything }
         sleep(0.1)
         remote_settings.stop_polling
+
+        expect(Airbrake::Loggable.instance).not_to have_received(:error)
       end
     end
 

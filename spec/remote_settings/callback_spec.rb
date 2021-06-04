@@ -22,10 +22,13 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
     end
 
     it "logs given data" do
-      expect(logger).to receive(:debug) do |&block|
+      allow(logger).to receive(:debug)
+
+      described_class.new(config).call(data)
+
+      expect(logger).to have_received(:debug) do |&block|
         expect(block.call).to match(/applying remote settings/)
       end
-      described_class.new(config).call(data)
     end
 
     context "when the config disables error notifications" do
@@ -55,15 +58,19 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
 
       # rubocop:disable RSpec/MultipleExpectations
       it "can disable and enable error notifications" do
-        expect(data).to receive(:error_notifications?).and_return(false)
-
         callback = described_class.new(config)
+
+        allow(data).to receive(:error_notifications?).and_return(false)
+
         callback.call(data)
         expect(config.error_notifications).to eq(false)
 
-        expect(data).to receive(:error_notifications?).and_return(true)
+        allow(data).to receive(:error_notifications?).and_return(true)
+
         callback.call(data)
         expect(config.error_notifications).to eq(true)
+
+        expect(data).to have_received(:error_notifications?).twice
       end
       # rubocop:enable RSpec/MultipleExpectations
     end
@@ -95,15 +102,19 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
 
       # rubocop:disable RSpec/MultipleExpectations
       it "can disable and enable performance_stats" do
-        expect(data).to receive(:performance_stats?).and_return(false)
-
         callback = described_class.new(config)
+
+        allow(data).to receive(:performance_stats?).and_return(false)
+
         callback.call(data)
         expect(config.performance_stats).to eq(false)
 
-        expect(data).to receive(:performance_stats?).and_return(true)
+        allow(data).to receive(:performance_stats?).and_return(true)
+
         callback.call(data)
         expect(config.performance_stats).to eq(true)
+
+        expect(data).to have_received(:performance_stats?).twice
       end
       # rubocop:enable RSpec/MultipleExpectations
     end

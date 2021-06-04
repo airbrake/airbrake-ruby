@@ -13,6 +13,10 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
     end
   end
 
+  before do
+    allow(Airbrake::Loggable.instance).to receive(:error)
+  end
+
   context "when a pattern is a Regexp" do
     include_examples(
       'pattern matching',
@@ -69,11 +73,12 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
       )
 
       it "logs an error" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
-          /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
-        )
         keys_allowlist = described_class.new(patterns)
         keys_allowlist.call(notice)
+
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
+          /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
+        )
       end
     end
 
@@ -82,11 +87,12 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
 
       context "and when the filter is called once" do
         it "logs an error" do
-          expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /KeysAllowlist is invalid.+patterns: \[#<Proc:.+>\]/,
-          )
           keys_allowlist = described_class.new(patterns)
           keys_allowlist.call(notice)
+
+          expect(Airbrake::Loggable.instance).to have_received(:error).with(
+            /KeysAllowlist is invalid.+patterns: \[#<Proc:.+>\]/,
+          )
         end
 
         include_examples(
@@ -112,11 +118,12 @@ RSpec.describe Airbrake::Filters::KeysAllowlist do
     )
 
     it "logs an error" do
-      expect(Airbrake::Loggable.instance).to receive(:error).with(
-        /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
-      )
       keys_allowlist = described_class.new(patterns)
       keys_allowlist.call(notice)
+
+      expect(Airbrake::Loggable.instance).to have_received(:error).with(
+        /KeysAllowlist is invalid.+patterns: \[#<Object:.+>\]/,
+      )
     end
   end
 

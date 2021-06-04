@@ -2,23 +2,33 @@ RSpec.describe Airbrake::Response do
   describe ".parse" do
     [200, 201, 204].each do |code|
       context "when response code is #{code}" do
+        before do
+          allow(Airbrake::Loggable.instance).to receive(:debug)
+        end
+
         it "logs response body" do
-          expect(Airbrake::Loggable.instance).to receive(:debug).with(
+          described_class.parse(OpenStruct.new(code: code, body: '{}'))
+
+          expect(Airbrake::Loggable.instance).to have_received(:debug).with(
             /Airbrake::Response \(#{code}\): {}/,
           )
-          described_class.parse(OpenStruct.new(code: code, body: '{}'))
         end
       end
     end
 
     [400, 401, 403, 420].each do |code|
       context "when response code is #{code}" do
+        before do
+          allow(Airbrake::Loggable.instance).to receive(:error)
+        end
+
         it "logs response message" do
-          expect(Airbrake::Loggable.instance).to receive(:error).with(
-            /Airbrake: foo/,
-          )
           described_class.parse(
             OpenStruct.new(code: code, body: '{"message":"foo"}'),
+          )
+
+          expect(Airbrake::Loggable.instance).to have_received(:error).with(
+            /Airbrake: foo/,
           )
         end
       end
@@ -27,11 +37,15 @@ RSpec.describe Airbrake::Response do
     context "when response code is 429" do
       let(:response) { OpenStruct.new(code: 429, body: '{"message":"rate limited"}') }
 
+      before do
+        allow(Airbrake::Loggable.instance).to receive(:error)
+      end
+
       it "logs response message" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
+        described_class.parse(response)
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
           /Airbrake: rate limited/,
         )
-        described_class.parse(response)
       end
 
       it "returns an error response" do
@@ -49,11 +63,15 @@ RSpec.describe Airbrake::Response do
     context "when response code is unhandled" do
       let(:response) { OpenStruct.new(code: 500, body: 'foo') }
 
+      before do
+        allow(Airbrake::Loggable.instance).to receive(:error)
+      end
+
       it "logs response body" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
+        described_class.parse(response)
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
           /Airbrake: unexpected code \(500\)\. Body: foo/,
         )
-        described_class.parse(response)
       end
 
       it "returns an error response" do
@@ -71,11 +89,15 @@ RSpec.describe Airbrake::Response do
     context "when response body can't be parsed as JSON" do
       let(:response) { OpenStruct.new(code: 201, body: 'foo') }
 
+      before do
+        allow(Airbrake::Loggable.instance).to receive(:error)
+      end
+
       it "logs response body" do
-        expect(Airbrake::Loggable.instance).to receive(:error).with(
+        described_class.parse(response)
+        expect(Airbrake::Loggable.instance).to have_received(:error).with(
           /Airbrake: error while parsing body \(.*unexpected token.*\)\. Body: foo/,
         )
-        described_class.parse(response)
       end
 
       it "returns an error message" do
