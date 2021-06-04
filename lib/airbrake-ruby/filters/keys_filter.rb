@@ -103,7 +103,7 @@ module Airbrake
       end
 
       def filter_url_params(url)
-        url.query = Hash[URI.decode_www_form(url.query)].map do |key, val|
+        url.query = URI.decode_www_form(url.query).to_h.map do |key, val|
           should_filter?(key) ? "#{key}=[Filtered]" : "#{key}=#{val}"
         end.join('&')
 
