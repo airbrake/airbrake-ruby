@@ -166,6 +166,7 @@ RSpec.describe Airbrake::RemoteSettings do
       end
     end
 
+    # rubocop:disable RSpec/MultipleMemoizedHelpers
     context "when a config route is specified in the returned data" do
       let(:new_config_route) do
         '213/config/111/config.json'
@@ -190,5 +191,6 @@ RSpec.describe Airbrake::RemoteSettings do
         expect(new_stub).to have_been_requested.once
       end
     end
+    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end

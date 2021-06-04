@@ -102,6 +102,7 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
     end
 
+    # rubocop:disable RSpec/MultipleMemoizedHelpers
     describe ":proxy" do
       let(:proxy) do
         WEBrick::HTTPServer.new(
@@ -157,6 +158,7 @@ RSpec.describe Airbrake::NoticeNotifier do
         # rubocop:enable Layout/LineLength
       end
     end
+    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     describe ":environment" do
       context "when present" do

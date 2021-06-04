@@ -131,3 +131,6 @@ RSpec/FilePath:
 
 RSpec/NestedGroups:
   Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 6
