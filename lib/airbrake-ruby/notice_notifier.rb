@@ -20,14 +20,13 @@ module Airbrake
 
     def initialize
       @config = Airbrake::Config.instance
-      @context = {}
       @filter_chain = FilterChain.new
       @async_sender = AsyncSender.new(:post, self.class.name)
       @sync_sender = SyncSender.new
 
       DEFAULT_FILTERS.each { |filter| add_filter(filter.new) }
 
-      add_filter(Airbrake::Filters::ContextFilter.new(@context))
+      add_filter(Airbrake::Filters::ContextFilter.new)
       add_filter(Airbrake::Filters::ExceptionAttributesFilter.new)
     end
 
@@ -79,7 +78,7 @@ module Airbrake
 
     # @see Airbrake.merge_context
     def merge_context(context)
-      @context.merge!(context)
+      Airbrake::Context.current.merge!(context)
     end
 
     # @return [Boolean]
