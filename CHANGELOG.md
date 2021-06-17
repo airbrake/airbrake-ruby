@@ -5,6 +5,8 @@ Airbrake Ruby Changelog
 
 * Improved logging on closing notifiers
   ([#644](https://github.com/airbrake/airbrake-ruby/pull/644))
+* Improved `Airbrake.merge_context` thread-safety
+  ([#659](https://github.com/airbrake/airbrake-ruby/pull/659))
 
 ### [v5.2.0][v5.2.0] (December 4, 2020)
 

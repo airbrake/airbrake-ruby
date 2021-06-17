@@ -9,8 +9,7 @@ module Airbrake
       # @return [Integer]
       attr_reader :weight
 
-      def initialize(context)
-        @context = context
+      def initialize
         @weight = 119
         @mutex = Mutex.new
       end
@@ -18,10 +17,10 @@ module Airbrake
       # @macro call_filter
       def call(notice)
         @mutex.synchronize do
-          return if @context.empty?
+          return if Airbrake::Context.current.empty?
 
-          notice[:params][:airbrake_context] = @context.dup
-          @context.clear
+          notice[:params][:airbrake_context] = Airbrake::Context.current.to_h
+          Airbrake::Context.current.clear
         end
       end
     end
