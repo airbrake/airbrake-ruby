@@ -4,15 +4,11 @@ How to contribute
 Pull requests
 -------------
 
-<img align="right" src="https://img-fotki.yandex.ru/get/15568/98991937.1f/0_b5d09_41234679_orig"/>
-
 We love your contributions, thanks for taking the time to contribute!
 
 It's really easy to start contributing, just follow these simple steps:
 
 1. [Fork][fork-article] the [repo][airbrake-ruby]:
-
- ![Fork][fork]
 
 2. Run the test suite to make sure the tests pass:
 
@@ -36,13 +32,19 @@ It's really easy to start contributing, just follow these simple steps:
   bundle exec rubocop
   ```
 
-5. Run the test suite again (new tests are always welcome):
+5. Verify that your code's documentation is correct:
+
+  ```
+  bundle exec yardoc --fail-on-warning --no-progress --readme=README
+  ```
+
+6. Run the test suite again (new tests are always welcome):
 
   ```
   bundle exec rake
   ```
 
-6. [Make a pull request][pr]
+7. [Make a pull request][pr]
 
 Submitting issues
 -----------------
@@ -70,14 +72,8 @@ actual results, any code snippets or even test repositories, so we could clone
 it and test}
 ```
 
-<p align="center">
-  <img src="https://img-fotki.yandex.ru/get/4702/98991937.1f/0_b5d0a_ba0c0ee6_orig">
-  <b>Build Better Software</b>
-</p>
-
 [airbrake-ruby]: https://github.com/airbrake/airbrake-ruby
 [fork-article]: https://help.github.com/articles/fork-a-repo
-[fork]: https://img-fotki.yandex.ru/get/3800/98991937.1f/0_b5c39_839c8786_orig
 [branch]: https://help.github.com/articles/creating-and-deleting-branches-within-your-repository/
 [pr]: https://help.github.com/articles/using-pull-requests
 [issues]: https://github.com/airbrake/airbrake-ruby/issues
