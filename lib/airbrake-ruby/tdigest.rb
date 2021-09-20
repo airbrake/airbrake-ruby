@@ -256,7 +256,7 @@ module Airbrake
         array = bytes[start_idx..-1].unpack("G#{size}N#{size}")
         means, counts = array.each_slice(size).to_a if array.any?
       when SMALL_ENCODING
-        means = bytes[start_idx..(start_idx + 4 * size)].unpack("g#{size}")
+        means = bytes[start_idx..(start_idx + (4 * size))].unpack("g#{size}")
         # Decode delta encoding of means
         x = 0
         means.map! do |m|
@@ -264,7 +264,7 @@ module Airbrake
           x = m
           m
         end
-        counts_bytes = bytes[(start_idx + 4 * size)..-1].unpack('C*')
+        counts_bytes = bytes[(start_idx + (4 * size))..-1].unpack('C*')
         counts = []
         # Decode variable length integer bytes
         size.times do
@@ -327,7 +327,7 @@ module Airbrake
 
       cumn = 0
       @centroids.each_value do |c|
-        c.mean_cumn = cumn + c.n / 2.0
+        c.mean_cumn = cumn + (c.n / 2.0)
         cumn = c.cumn = cumn + c.n
       end
       @size = @last_cumulate = cumn

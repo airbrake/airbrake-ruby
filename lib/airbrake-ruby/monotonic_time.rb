@@ -39,7 +39,7 @@ module Airbrake
 
         def time_in_nanoseconds
           time = Time.now
-          time.to_i * (10**9) + time.nsec
+          (time.to_i * (10**9)) + time.nsec
         end
 
       end

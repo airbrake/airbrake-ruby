@@ -36,7 +36,7 @@ module Airbrake
             `cd #{@git_path} && git config --get remote.origin.url`.chomp
           else
             "`git remote get-url` is unsupported in git #{@git_version}. " \
-            'Consider an upgrade to 2.7+'
+              'Consider an upgrade to 2.7+'
           end
 
         return unless @repository
