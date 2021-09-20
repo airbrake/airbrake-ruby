@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Dropped support for Ruby 2.3
+  ([#663](https://github.com/airbrake/airbrake-ruby/pull/663))
+* Dropped support for Ruby 2.4
+  ([#663](https://github.com/airbrake/airbrake-ruby/pull/663))
+
 ### [v5.2.1][v5.2.1] (June 22, 2021)
 
 * Improved logging on closing notifiers

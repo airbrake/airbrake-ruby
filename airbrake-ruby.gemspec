@@ -23,7 +23,7 @@ DESC
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
   s.test_files   = Dir.glob('spec/**/*')
 
-  s.required_ruby_version = '>= 2.3'
+  s.required_ruby_version = '>= 2.5'
 
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
