@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v6.0.0][v6.0.0] (September 20, 2021)
+
+Breaking changes:
+
 * Dropped support for Ruby 2.3
   ([#663](https://github.com/airbrake/airbrake-ruby/pull/663))
 * Dropped support for Ruby 2.4
@@ -1076,3 +1080,4 @@ Features:
 [v5.1.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.1.1
 [v5.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.2.0
 [v5.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.2.1
+[v6.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.0
