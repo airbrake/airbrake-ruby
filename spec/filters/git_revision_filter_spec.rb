@@ -54,7 +54,7 @@ RSpec.describe Airbrake::Filters::GitRevisionFilter do
         end
       end
 
-      context "and also when HEAD starts with 'ref: " do
+      context "and also when HEAD starts with 'ref: '" do
         before do
           allow(File).to(
             receive(:read).with('root/dir/.git/HEAD').and_return("ref: refs/foo\n"),
