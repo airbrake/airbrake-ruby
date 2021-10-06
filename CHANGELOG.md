@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Changed the severity of the log message that gets printed when AsyncSender's
+  thread pool capacity reaches the limit from `error` to `info`. With this new
+  severity the message will be silenced by default.
+  ([#667](https://github.com/airbrake/airbrake-ruby/pull/667))
+
 ### [v6.0.0][v6.0.0] (September 20, 2021)
 
 Breaking changes:

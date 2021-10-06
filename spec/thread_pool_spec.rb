@@ -55,14 +55,13 @@ RSpec.describe Airbrake::ThreadPool do
       end
 
       it "logs discarded tasks" do
-        allow(Airbrake::Loggable.instance).to receive(:error)
+        allow(Airbrake::Loggable.instance).to receive(:info)
 
         15.times { full_thread_pool << 1 }
         full_thread_pool.close
 
-        expect(Airbrake::Loggable.instance).to have_received(:error).with(
-          /reached its capacity/,
-        ).exactly(15).times
+        expect(Airbrake::Loggable.instance)
+          .to have_received(:info).exactly(15).times
       end
     end
   end

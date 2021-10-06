@@ -48,11 +48,11 @@ module Airbrake
     #   false if the queue is full
     def <<(message)
       if backlog >= @queue_size
-        logger.error(
+        logger.info do
           "#{LOG_LABEL} ThreadPool has reached its capacity of " \
           "#{@queue_size} and the following message will not be " \
-          "processed: #{message.inspect}",
-        )
+          "processed: #{message.inspect}"
+        end
         return false
       end
 

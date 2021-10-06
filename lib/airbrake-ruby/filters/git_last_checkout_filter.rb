@@ -72,7 +72,7 @@ module Airbrake
         return unless File.exist?(head_path)
 
         last_line = nil
-        IO.foreach(head_path) do |line|
+        File.foreach(head_path) do |line|
           last_line = line if checkout_line?(line)
         end
         last_line
