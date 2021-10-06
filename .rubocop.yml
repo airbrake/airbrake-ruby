@@ -137,3 +137,6 @@ RSpec/MultipleMemoizedHelpers:
 
 RSpec/AnyInstance:
   Enabled: false
+
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: false
