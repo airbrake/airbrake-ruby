@@ -7,6 +7,8 @@ Airbrake Ruby Changelog
   thread pool capacity reaches the limit from `error` to `info`. With this new
   severity the message will be silenced by default.
   ([#667](https://github.com/airbrake/airbrake-ruby/pull/667))
+* Added support for proxies when fetching remote configs
+  ([#668](https://github.com/airbrake/airbrake-ruby/pull/668))
 
 ### [v6.0.0][v6.0.0] (September 20, 2021)
 

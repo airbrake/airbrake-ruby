@@ -85,8 +85,12 @@ RSpec.describe Airbrake::RemoteSettings do
     end
 
     context "when an error is raised while making a HTTP request" do
+      let(:https) { instance_double(Net::HTTP) }
+
       before do
-        allow(Net::HTTP).to receive(:get_response).and_raise(StandardError)
+        allow(Net::HTTP).to receive(:new).and_return(https)
+        allow(https).to receive(:use_ssl=).with(true)
+        allow(https).to receive(:request).and_raise(StandardError)
       end
 
       it "doesn't fetch remote settings" do

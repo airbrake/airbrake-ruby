@@ -1,7 +1,7 @@
 module Airbrake
   # RemoteSettings polls the remote config of the passed project at fixed
   # intervals. The fetched config is yielded as a callback parameter so that the
-  # invoker can define read config values.
+  # invoker can define read config values. Supports proxies.
   #
   # @example Disable/enable error notifications based on the remote value
   #   RemoteSettings.poll do |data|
@@ -43,6 +43,7 @@ module Airbrake
       @data = SettingsData.new(project_id, {})
       @host = host
       @block = block
+      @config = Airbrake::Config.instance
       @poll = nil
     end
 
@@ -72,11 +73,16 @@ module Airbrake
     private
 
     def fetch_config
+      uri = build_config_uri
+      https = build_https(uri)
+      req = Net::HTTP::Get.new(uri.request_uri)
       response = nil
+
       begin
-        response = Net::HTTP.get_response(build_config_uri)
+        response = https.request(req)
       rescue StandardError => ex
-        logger.error(ex)
+        reason = "#{LOG_LABEL} HTTP error: #{ex}"
+        logger.error(reason)
         return {}
       end
 
@@ -100,6 +106,23 @@ module Airbrake
       uri = URI(@data.config_route(@host))
       uri.query = QUERY_PARAMS
       uri
+    end
+
+    def build_https(uri)
+      Net::HTTP.new(uri.host, uri.port, *proxy_params).tap do |https|
+        https.use_ssl = uri.is_a?(URI::HTTPS)
+        if @config.timeout
+          https.open_timeout = @config.timeout
+          https.read_timeout = @config.timeout
+        end
+      end
+    end
+
+    def proxy_params
+      return unless @config.proxy.key?(:host)
+
+      [@config.proxy[:host], @config.proxy[:port], @config.proxy[:user],
+       @config.proxy[:password]]
     end
   end
 end
