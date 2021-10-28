@@ -364,9 +364,6 @@ module Airbrake
     #     method: 'POST',
     #     route: '/thing/:id/create',
     #     status_code: 200,
-    #     func: 'do_stuff',
-    #     file: 'app/models/foo.rb',
-    #     line: 452,
     #     timing: 123.45 # ms
     #   )
     #
@@ -375,12 +372,6 @@ module Airbrake
     # @option request_info [String] :route The route that was invoked
     # @option request_info [Integer] :status_code The respose code that the
     #   route returned
-    # @option request_info [String] :func The function that called the query
-    #   (optional)
-    # @option request_info [String] :file The file that has the function that
-    #   called the query (optional)
-    # @option request_info [Integer] :line The line that executes the query
-    #   (optional)
     # @option request_info [Float] :timing  How much time it took to process the
     #   request (in ms)
     # @param [Hash] stash What needs to be appeneded to the stash, so it's
@@ -415,6 +406,9 @@ module Airbrake
     #     method: 'GET',
     #     route: '/things',
     #     query: 'SELECT * FROM things',
+    #     func: 'do_stuff',
+    #     file: 'app/models/foo.rb',
+    #     line: 452,
     #     timing: 123.45 # ms
     #   )
     #
@@ -424,6 +418,12 @@ module Airbrake
     # @option query_info [String] :route The route that triggered this SQL
     #    query (optional)
     # @option query_info [String] :query The query that was executed
+    # @option request_info [String] :func The function that called the query
+    #   (optional)
+    # @option request_info [String] :file The file that has the function that
+    #   called the query (optional)
+    # @option request_info [Integer] :line The line that executes the query
+    #   (optional)
     # @option query_info [Float] :timing How much time it took to process the
     #   query (in ms)
     # @param [Hash] stash What needs to be appeneded to the stash, so it's
