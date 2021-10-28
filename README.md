@@ -30,28 +30,30 @@ integrations with Resque, Sidekiq, Delayed Job and many more.
 Key features
 ------------
 
-* Simple, consistent and easy-to-use library API<sup>[[link](#api)]</sup>
-* Awesome performance (check out our benchmarks)<sup>[[link](#running-benchmarks)]</sup>
-* Asynchronous exception reporting<sup>[[link](#asynchronous-airbrake-options)]</sup>
-* Promise support<sup>[[link](#promise)]</sup>
-* Flexible configuration options<sup>[[link](#configuration)]</sup>
-* Support for proxying<sup>[[link](#proxy)]</sup>
-* Support for environments<sup>[[link](#environment)]</sup>
-* Filters support (filter out sensitive or unwanted data that shouldn't be sent)<sup>[[link](#airbrakeadd_filter)]</sup>
-* Ability to ignore exceptions based on their class, backtrace or any other
-  condition<sup>[[link](#airbrakeadd_filter)]</sup>
+* Simple, consistent and easy-to-use [library API](#api)
+* Awesome performance (check out our [benchmarks](#running-benchmarks))
+* [Asynchronous exception reporting](#asynchronous-airbrake-options)
+* [Promise support](#promise)
+* Flexible [configuration options](#configuration)
+* Support for [proxying](#proxy)
+* Support for [environments](#environment)
+* [Filters](#airbrakeadd_filter) support (filter out sensitive or unwanted data
+  that shouldn't be sent)
+* Ability to [ignore exceptions](#airbrakeadd_filter) based on their class,
+  backtrace or any other condition
 * Support for Java exceptions occurring in JRuby
 * SSL support (all communication with Airbrake is encrypted by default)
-* Support for fatal exceptions (the ones that terminate your program)
-* Support for custom exception attributes<sup>[[link](#custom-exception-attributes)]</sup>
-* Severity support<sup>[[link](#setting-severity)]</sup>
-* Support for code hunks (lines of code surrounding each backtrace frame)<sup>[[link](#code_hunks)]</sup>
-* Ability to add context to reported exceptions<sup>[[link](#airbrakemerge_context)]</sup>
-* Dependency tracking<sup>[[link](#airbrakefiltersdependencyfilter)]</sup>
-* Automatic and manual deploy tracking <sup>[[link](#airbrakenotify_deploy)]</sup>
-* Performance monitoring for web applications (route statistics, SQL queries,
-  Job execution statistics) <sup>[[link](#performance_stats)]</sup>
-* Last but not least, we follow semantic versioning 2.0.0<sup>[[link][semver2]]</sup>
+* Support for fatal exception reporting (the ones that terminate your program)
+* Support for [custom exception attributes](#custom-exception-attributes)
+* [Severity](#setting-severity) support
+* Support for [code hunks](#code_hunks) (lines of code surrounding each
+  backtrace frame)
+* Ability to add [context](#airbrakemerge_context) to reported exceptions
+* [Dependency tracking](#airbrakefiltersdependencyfilter) support
+* Automatic and manual [deploy tracking](#airbrakenotify_deploy)
+* [Performance monitoring](#performance_stats) (APM) for web applications (route
+  statistics, SQL queries, Job execution statistics)
+* Last but not least, we follow [semantic versioning 2.0.0][semver2]
 
 Installation
 ------------
