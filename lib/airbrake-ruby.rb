@@ -370,7 +370,7 @@ module Airbrake
     # @param [Hash{Symbol=>Object}] request_info
     # @option request_info [String] :method The HTTP method that was invoked
     # @option request_info [String] :route The route that was invoked
-    # @option request_info [Integer] :status_code The respose code that the
+    # @option request_info [Integer] :status_code The response code that the
     #   route returned
     # @option request_info [Float] :timing  How much time it took to process the
     #   request (in ms)
