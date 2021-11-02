@@ -451,7 +451,7 @@ module Airbrake
     # Increments performance breakdown statistics of a certain route.
     #
     # @example
-    #   Airbrake.notify_request(
+    #   Airbrake.notify_performance_breakdown(
     #     method: 'POST',
     #     route: '/thing/:id/create',
     #     response_type: 'json',
@@ -523,9 +523,9 @@ module Airbrake
       performance_notifier.notify_sync(queue)
     end
 
-    # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
-    # is useful if you want to ignore specific metrics or filter the data the
-    # metric contains.
+    # Runs a callback before {.notify_request}, {.notify_query}, {.notify_queue}
+    # or {.notify_performance_breakdown} kicks in. This is useful if you want to
+    # ignore specific metrics or filter the data the metric contains.
     #
     # @example Ignore all metrics
     #   Airbrake.add_performance_filter(&:ignore!)
