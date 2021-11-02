@@ -522,8 +522,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
 
     context "when a filter that modifies payload was defined" do
       before do
-        perf_notifier.add_filter do |resource|
-          resource.route = '[Filtered]'
+        perf_notifier.add_filter do |metric|
+          metric.route = '[Filtered]'
         end
       end
 
@@ -621,7 +621,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
   describe "#delete_filter" do
     let(:filter) do
       Class.new do
-        def call(resource); end
+        def call(metric); end
       end
     end
 

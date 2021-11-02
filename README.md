@@ -849,7 +849,7 @@ Airbrake.notify_request(
 ```
 
 This stash can be accessed from performance filters as
-`resource.stash[:request_id]`.
+`metric.stash[:request_id]`.
 
 ##### Return value
 
@@ -902,7 +902,7 @@ Airbrake.notify_query(
 ```
 
 This stash can be accessed from performance filters as
-`resource.stash[:request_id]`.
+`metric.stash[:request_id]`.
 
 ##### Return value
 
@@ -953,7 +953,7 @@ Airbrake.notify_performance_breakdown(
 ```
 
 This stash can be accessed from performance filters as
-`resource.stash[:request_id]`.
+`metric.stash[:request_id]`.
 
 ##### Return value
 
@@ -1007,7 +1007,7 @@ Airbrake.notify_queue(
 ```
 
 This stash can be accessed from performance filters as
-`resource.stash[:job_id]`.
+`metric.stash[:job_id]`.
 
 ##### Return value
 
@@ -1038,8 +1038,8 @@ instead of `Airbrake::Notice` it yields performance data (such as
 don't trigger it!).
 
 ```ruby
-Airbrake.add_performance_filter do |resource|
-  resource.ignore! if resource.route =~ %r{/health_check}
+Airbrake.add_performance_filter do |metric|
+  metric.ignore! if metric.route =~ %r{/health_check}
 end
 ```
 

@@ -194,10 +194,10 @@ Features:
 
 ### [v4.11.1][v4.11.1] (December 20, 2019)
 
-* `PerformanceNotifier`: started rejecting resources with zero timing
+* `PerformanceNotifier`: started rejecting metrics with zero timing
   ([#528](https://github.com/airbrake/airbrake-ruby/pull/528))
 * `PerformanceNotifier` started returning a rejected promise if a filter ignores
-  a resource ([#529](https://github.com/airbrake/airbrake-ruby/pull/529))
+  a metric ([#529](https://github.com/airbrake/airbrake-ruby/pull/529))
 
 ### [v4.11.0][v4.11.0] (December 20, 2019)
 
@@ -237,10 +237,10 @@ Features:
 
 ### [v4.10.1][v4.10.1] (December 12, 2019)
 
-* Fixed bug in `PerformanceNotifier` where resource's `start_time` and
+* Fixed bug in `PerformanceNotifier` where metric's `start_time` and
   `end_time` could be the same. This was resulting into sending `sum` statistics
   for `:total` payload to equal to `0.0`. Zero `sum` is rejected by the backend,
-  and as result, the whole resource is rejected as well
+  and as result, the whole metric is rejected as well
   ([#522](https://github.com/airbrake/airbrake-ruby/pull/522))
 
 ### [v4.10.0][v4.10.0] (December 12, 2019)

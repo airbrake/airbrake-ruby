@@ -21,20 +21,20 @@ module Airbrake
       @has_payload = @payload.new_cond
     end
 
-    # @param [Hash] resource
+    # @param [Hash] metric
     # @see Airbrake.notify_query
     # @see Airbrake.notify_request
-    def notify(resource)
+    def notify(metric)
       @payload.synchronize do
-        send_resource(resource, sync: false)
+        send_metric(metric, sync: false)
       end
     end
 
-    # @param [Hash] resource
+    # @param [Hash] metric
     # @since v4.10.0
     # @see Airbrake.notify_queue_sync
-    def notify_sync(resource)
-      send_resource(resource, sync: true).value
+    def notify_sync(metric)
+      send_metric(metric, sync: true).value
     end
 
     # @see Airbrake.add_performance_filter
@@ -78,16 +78,16 @@ module Airbrake
       end
     end
 
-    def send_resource(resource, sync:)
-      promise = check_configuration(resource)
+    def send_metric(metric, sync:)
+      promise = check_configuration(metric)
       return promise if promise.rejected?
 
-      @filter_chain.refine(resource)
-      if resource.ignored?
-        return Promise.new.reject("#{resource.class} was ignored by a filter")
+      @filter_chain.refine(metric)
+      if metric.ignored?
+        return Promise.new.reject("#{metric.class} was ignored by a filter")
       end
 
-      update_payload(resource)
+      update_payload(metric)
       if sync || @flush_period == 0
         send(@sync_sender, @payload, promise)
       else
@@ -96,29 +96,29 @@ module Airbrake
       end
     end
 
-    def update_payload(resource)
-      if (total_stat = @payload[resource])
-        @payload.key(total_stat).merge(resource)
+    def update_payload(metric)
+      if (total_stat = @payload[metric])
+        @payload.key(total_stat).merge(metric)
       else
-        @payload[resource] = { total: Airbrake::Stat.new }
+        @payload[metric] = { total: Airbrake::Stat.new }
       end
 
-      @payload[resource][:total].increment_ms(resource.timing)
+      @payload[metric][:total].increment_ms(metric.timing)
 
-      resource.groups.each do |name, ms|
-        @payload[resource][name] ||= Airbrake::Stat.new
-        @payload[resource][name].increment_ms(ms)
+      metric.groups.each do |name, ms|
+        @payload[metric][name] ||= Airbrake::Stat.new
+        @payload[metric][name].increment_ms(ms)
       end
     end
 
-    def check_configuration(resource)
+    def check_configuration(metric)
       promise = @config.check_configuration
       return promise if promise.rejected?
 
-      promise = @config.check_performance_options(resource)
+      promise = @config.check_performance_options(metric)
       return promise if promise.rejected?
 
-      if resource.timing && resource.timing == 0
+      if metric.timing && metric.timing == 0
         return Promise.new.reject(':timing cannot be zero')
       end
 
@@ -128,47 +128,47 @@ module Airbrake
     def send(sender, payload, promise)
       raise "payload cannot be empty. Race?" if payload.none?
 
-      with_grouped_payload(payload) do |resource_hash, destination|
+      with_grouped_payload(payload) do |metric_hash, destination|
         url = URI.join(
           @config.apm_host,
           "api/v5/projects/#{@config.project_id}/#{destination}",
         )
 
         logger.debug do
-          "#{LOG_LABEL} #{self.class.name}##{__method__}: #{resource_hash}"
+          "#{LOG_LABEL} #{self.class.name}##{__method__}: #{metric_hash}"
         end
-        sender.send(resource_hash, promise, url)
+        sender.send(metric_hash, promise, url)
       end
 
       promise
     end
 
     def with_grouped_payload(raw_payload)
-      grouped_payload = raw_payload.group_by do |resource, _stats|
-        [resource.cargo, resource.destination]
+      grouped_payload = raw_payload.group_by do |metric, _stats|
+        [metric.cargo, metric.destination]
       end
 
-      grouped_payload.each do |(cargo, destination), resources|
+      grouped_payload.each do |(cargo, destination), metrics|
         payload = {}
-        payload[cargo] = serialize_resources(resources)
+        payload[cargo] = serialize_metrics(metrics)
         payload['environment'] = @config.environment if @config.environment
 
         yield(payload, destination)
       end
     end
 
-    def serialize_resources(resources)
-      resources.map do |resource, stats|
-        resource_hash = resource.to_h.merge!(stats[:total].to_h)
+    def serialize_metrics(metrics)
+      metrics.map do |metric, stats|
+        metric_hash = metric.to_h.merge!(stats[:total].to_h)
 
-        if resource.groups.any?
+        if metric.groups.any?
           group_stats = stats.reject { |name, _stat| name == :total }
-          resource_hash['groups'] = group_stats.merge(group_stats) do |_name, stat|
+          metric_hash['groups'] = group_stats.merge(group_stats) do |_name, stat|
             stat.to_h
           end
         end
 
-        resource_hash
+        metric_hash
       end
     end
   end

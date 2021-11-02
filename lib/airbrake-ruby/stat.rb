@@ -4,7 +4,7 @@ module Airbrake
   # Stat is a data structure that allows accumulating performance data (route
   # performance, SQL query performance and such). It's powered by TDigests.
   #
-  # Usually, one Stat corresponds to one resource (route or query,
+  # Usually, one Stat corresponds to one metric (route or query,
   # etc.). Incrementing a stat means pushing new performance statistics.
   #
   # @example

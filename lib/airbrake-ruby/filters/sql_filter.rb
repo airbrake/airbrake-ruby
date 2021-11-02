@@ -108,20 +108,20 @@ module Airbrake
         @regexp = Regexp.union(features)
       end
 
-      # @param [Airbrake::Query] resource
-      def call(resource)
-        return unless resource.respond_to?(:query)
+      # @param [Airbrake::Query] metric
+      def call(metric)
+        return unless metric.respond_to?(:query)
 
-        query = resource.query
+        query = metric.query
         if IGNORED_QUERIES.any? { |q| q =~ query }
-          resource.ignore!
+          metric.ignore!
           return
         end
 
         q = query.gsub(@regexp, FILTERED)
         q.gsub!(POST_FILTER, FILTERED) if q =~ POST_FILTER
         q = ERROR_MSG if UNMATCHED_PAIR[@dialect] =~ q
-        resource.query = q
+        metric.query = q
       end
     end
   end
