@@ -127,22 +127,22 @@ RSpec.describe Airbrake::Config do
 
   describe "#check_performance_options" do
     it "returns a promise" do
-      resource = Airbrake::Query.new(method: '', route: '', query: '', timing: 1)
-      expect(config.check_performance_options(resource))
+      metric = Airbrake::Query.new(method: '', route: '', query: '', timing: 1)
+      expect(config.check_performance_options(metric))
         .to be_an(Airbrake::Promise)
     end
 
     context "when performance stats are disabled" do
       before { config.performance_stats = false }
 
-      let(:resource) do
+      let(:metric) do
         Airbrake::Request.new(
           method: 'GET', route: '/foo', status_code: 200, timing: 1,
         )
       end
 
       it "returns a rejected promise" do
-        promise = config.check_performance_options(resource)
+        promise = config.check_performance_options(metric)
         expect(promise.value).to eq(
           'error' => "The Performance Stats feature is disabled",
         )
@@ -152,12 +152,12 @@ RSpec.describe Airbrake::Config do
     context "when query stats are disabled" do
       before { config.query_stats = false }
 
-      let(:resource) do
+      let(:metric) do
         Airbrake::Query.new(method: 'GET', route: '/foo', query: '', timing: 1)
       end
 
       it "returns a rejected promise" do
-        promise = config.check_performance_options(resource)
+        promise = config.check_performance_options(metric)
         expect(promise.value).to eq(
           'error' => "The Query Stats feature is disabled",
         )
@@ -167,12 +167,12 @@ RSpec.describe Airbrake::Config do
     context "when job stats are disabled" do
       before { config.job_stats = false }
 
-      let(:resource) do
+      let(:metric) do
         Airbrake::Queue.new(queue: 'foo_queue', error_count: 0, timing: 1)
       end
 
       it "returns a rejected promise" do
-        promise = config.check_performance_options(resource)
+        promise = config.check_performance_options(metric)
         expect(promise.value).to eq(
           'error' => "The Job Stats feature is disabled",
         )

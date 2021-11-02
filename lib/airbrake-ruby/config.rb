@@ -248,14 +248,14 @@ module Airbrake
 
     # @return [Promise] resolved promise if neither of the performance options
     #   reject it, false otherwise
-    def check_performance_options(resource)
+    def check_performance_options(metric)
       promise = Airbrake::Promise.new
 
       if !performance_stats
         promise.reject("The Performance Stats feature is disabled")
-      elsif resource.is_a?(Airbrake::Query) && !query_stats
+      elsif metric.is_a?(Airbrake::Query) && !query_stats
         promise.reject("The Query Stats feature is disabled")
-      elsif resource.is_a?(Airbrake::Queue) && !job_stats
+      elsif metric.is_a?(Airbrake::Queue) && !job_stats
         promise.reject("The Job Stats feature is disabled")
       else
         promise

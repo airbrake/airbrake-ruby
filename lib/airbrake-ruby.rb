@@ -524,23 +524,23 @@ module Airbrake
     end
 
     # Runs a callback before {.notify_request} or {.notify_query} kicks in. This
-    # is useful if you want to ignore specific resources or filter the data the
-    # resource contains.
+    # is useful if you want to ignore specific metrics or filter the data the
+    # metric contains.
     #
-    # @example Ignore all resources
+    # @example Ignore all metrics
     #   Airbrake.add_performance_filter(&:ignore!)
     # @example Filter sensitive data
-    #   Airbrake.add_performance_filter do |resource|
-    #     case resource
+    #   Airbrake.add_performance_filter do |metric|
+    #     case metric
     #     when Airbrake::Query
-    #       resource.route = '[Filtered]'
+    #       metric.route = '[Filtered]'
     #     when Airbrake::Request
-    #       resource.query = '[Filtered]'
+    #       metric.query = '[Filtered]'
     #     end
     #   end
     # @example Filter with help of a class
     #   class MyFilter
-    #     def call(resource)
+    #     def call(metric)
     #       # ...
     #     end
     #   end
@@ -548,7 +548,7 @@ module Airbrake
     #   Airbrake.add_performance_filter(MyFilter.new)
     #
     # @param [#call] filter The filter object
-    # @yield [resource] The resource to filter
+    # @yield [metric] The metric to filter
     # @yieldparam [Airbrake::Query, Airbrake::Request]
     # @yieldreturn [void]
     # @return [void]
