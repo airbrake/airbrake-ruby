@@ -3,6 +3,13 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v6.0.2][v6.0.2] (January 10, 2022)
+
+* Fixed `NoMethodError: undefined method `getutc'` for `#notify_request` and
+  other APM methods, which accept `time` parameter
+  ([#673](https://github.com/airbrake/airbrake-ruby/pull/673),
+  [#676](https://github.com/airbrake/airbrake-ruby/pull/676))
+
 ### [v6.0.1][v6.0.1] (September 20, 2021)
 
 * Changed the severity of the log message that gets printed when AsyncSender's
@@ -1091,3 +1098,4 @@ Features:
 [v5.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v5.2.1
 [v6.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.0
 [v6.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.1
+[v6.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.2
