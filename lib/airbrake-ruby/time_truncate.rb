@@ -9,7 +9,8 @@ module Airbrake
     # @param [Time] time
     # @return [String]
     def self.utc_truncate_minutes(time)
-      tm = time.getutc
+      # time does not have getutc method instead of Time on Rails 7.0.0
+      tm = time.respond_to?(:getutc) ? time.getutc : Time.at(time).getutc
 
       Time.utc(tm.year, tm.month, tm.day, tm.hour, tm.min).to_datetime.rfc3339
     end

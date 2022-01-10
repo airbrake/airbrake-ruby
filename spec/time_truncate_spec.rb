@@ -11,5 +11,11 @@ RSpec.describe Airbrake::TimeTruncate do
       expect(described_class.utc_truncate_minutes(time))
         .to eq('2018-01-01T05:00:00+00:00')
     end
+
+    it "converts it well even if the argument is an instance of Float" do
+      time = Time.new(2018, 1, 1, 0, 0, 20, '-05:00').to_f
+      expect(described_class.utc_truncate_minutes(time))
+        .to eq('2018-01-01T05:00:00+00:00')
+    end
   end
 end
