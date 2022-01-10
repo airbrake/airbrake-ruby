@@ -24,6 +24,9 @@ DESC
   s.test_files   = Dir.glob('spec/**/*')
 
   s.required_ruby_version = '>= 2.5'
+  s.metadata = {
+    'rubygems_mfa_required' => 'true',
+  }
 
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
