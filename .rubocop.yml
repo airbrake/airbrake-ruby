@@ -140,3 +140,7 @@ RSpec/AnyInstance:
 
 Layout/LineEndStringConcatenationIndentation:
   Enabled: false
+
+Style/OpenStructUse:
+  Exclude:
+    - 'spec/**/*'
