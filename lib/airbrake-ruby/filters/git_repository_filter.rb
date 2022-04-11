@@ -49,7 +49,13 @@ module Airbrake
       def detect_git_version
         return unless which('git')
 
-        Gem::Version.new(`git --version`.split[2])
+        begin
+          Gem::Version.new(`git --version`.split[2])
+        rescue Errno::EAGAIN
+          # Bugfix for the case when the system cannot allocate memory for
+          # a fork() call: https://github.com/airbrake/airbrake-ruby/issues/680
+          nil
+        end
       end
 
       # Cross-platform way to tell if an executable is accessible.
