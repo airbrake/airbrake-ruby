@@ -2,6 +2,9 @@ name: airbrake-ruby
 
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
