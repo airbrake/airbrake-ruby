@@ -15,7 +15,7 @@ RSpec.describe Airbrake::ThreadPool do
     it "returns true" do
       retval = thread_pool << 1
       thread_pool.close
-      expect(retval).to eq(true)
+      expect(retval).to be(true)
     end
 
     it "performs work in background" do
@@ -44,7 +44,7 @@ RSpec.describe Airbrake::ThreadPool do
       it "returns false" do
         retval = full_thread_pool << 1
         full_thread_pool.close
-        expect(retval).to eq(false)
+        expect(retval).to be(false)
       end
 
       it "discards tasks" do

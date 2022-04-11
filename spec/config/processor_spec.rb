@@ -7,7 +7,7 @@ RSpec.describe Airbrake::Config::Processor do
     context "when there ARE blocklist keys" do
       it "adds the blocklist filter" do
         described_class.new(config).process_blocklist(notifier)
-        expect(notifier.has_filter?(Airbrake::Filters::KeysBlocklist)).to eq(true)
+        expect(notifier.has_filter?(Airbrake::Filters::KeysBlocklist)).to be(true)
       end
     end
 
@@ -17,7 +17,7 @@ RSpec.describe Airbrake::Config::Processor do
       it "doesn't add the blocklist filter" do
         described_class.new(config).process_blocklist(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::KeysBlocklist))
-          .to eq(false)
+          .to be(false)
       end
     end
   end
@@ -28,7 +28,7 @@ RSpec.describe Airbrake::Config::Processor do
     context "when there ARE allowlist keys" do
       it "adds the allowlist filter" do
         described_class.new(config).process_allowlist(notifier)
-        expect(notifier.has_filter?(Airbrake::Filters::KeysAllowlist)).to eq(true)
+        expect(notifier.has_filter?(Airbrake::Filters::KeysAllowlist)).to be(true)
       end
     end
 
@@ -38,7 +38,7 @@ RSpec.describe Airbrake::Config::Processor do
       it "doesn't add the allowlist filter" do
         described_class.new(config).process_allowlist(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::KeysAllowlist))
-          .to eq(false)
+          .to be(false)
       end
     end
   end
@@ -98,25 +98,25 @@ RSpec.describe Airbrake::Config::Processor do
       it "adds RootDirectoryFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::RootDirectoryFilter))
-          .to eq(true)
+          .to be(true)
       end
 
       it "adds GitRevisionFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::GitRevisionFilter))
-          .to eq(true)
+          .to be(true)
       end
 
       it "adds GitRepositoryFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::GitRepositoryFilter))
-          .to eq(true)
+          .to be(true)
       end
 
       it "adds GitLastCheckoutFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::GitLastCheckoutFilter))
-          .to eq(true)
+          .to be(true)
       end
     end
 
@@ -126,25 +126,25 @@ RSpec.describe Airbrake::Config::Processor do
       it "doesn't add RootDirectoryFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::RootDirectoryFilter))
-          .to eq(false)
+          .to be(false)
       end
 
       it "doesn't add GitRevisionFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::GitRevisionFilter))
-          .to eq(false)
+          .to be(false)
       end
 
       it "doesn't add GitRepositoryFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::GitRepositoryFilter))
-          .to eq(false)
+          .to be(false)
       end
 
       it "doesn't add GitLastCheckoutFilter" do
         described_class.new(config).add_filters(notifier)
         expect(notifier.has_filter?(Airbrake::Filters::GitLastCheckoutFilter))
-          .to eq(false)
+          .to be(false)
       end
     end
   end

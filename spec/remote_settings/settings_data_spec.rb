@@ -123,7 +123,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
         it "returns true" do
           expect(described_class.new(project_id, data).error_notifications?)
-            .to eq(true)
+            .to be(true)
         end
       end
 
@@ -141,7 +141,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
         it "returns false" do
           expect(described_class.new(project_id, data).error_notifications?)
-            .to eq(false)
+            .to be(false)
         end
       end
     end
@@ -153,7 +153,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
       it "returns true" do
         expect(described_class.new(project_id, data).error_notifications?)
-          .to eq(true)
+          .to be(true)
       end
     end
   end
@@ -174,7 +174,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
         it "returns true" do
           expect(described_class.new(project_id, data).performance_stats?)
-            .to eq(true)
+            .to be(true)
         end
       end
 
@@ -192,7 +192,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
         it "returns false" do
           expect(described_class.new(project_id, data).performance_stats?)
-            .to eq(false)
+            .to be(false)
         end
       end
     end
@@ -204,7 +204,7 @@ RSpec.describe Airbrake::RemoteSettings::SettingsData do
 
       it "returns true" do
         expect(described_class.new(project_id, data).performance_stats?)
-          .to eq(true)
+          .to be(true)
       end
     end
   end

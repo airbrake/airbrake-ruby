@@ -101,14 +101,14 @@ RSpec.describe Airbrake::FilterChain do
         klass = Class.new
 
         filter_chain.add_filter(klass.new)
-        expect(filter_chain.includes?(klass)).to eq(true)
+        expect(filter_chain.includes?(klass)).to be(true)
       end
     end
 
     context "when Proc filter class is included in the filter chain" do
       it "returns true" do
         filter_chain.add_filter(proc {})
-        expect(filter_chain.includes?(Proc)).to eq(true)
+        expect(filter_chain.includes?(Proc)).to be(true)
       end
     end
 
@@ -117,7 +117,7 @@ RSpec.describe Airbrake::FilterChain do
         klass = Class.new
 
         filter_chain.add_filter(proc {})
-        expect(filter_chain.includes?(klass)).to eq(false)
+        expect(filter_chain.includes?(klass)).to be(false)
       end
     end
   end

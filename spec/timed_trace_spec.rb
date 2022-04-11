@@ -22,7 +22,7 @@ RSpec.describe Airbrake::TimedTrace do
   describe "#start_span" do
     context "when called once" do
       it "returns true" do
-        expect(timed_trace.start_span('operation')).to eq(true)
+        expect(timed_trace.start_span('operation')).to be(true)
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe Airbrake::TimedTrace do
       before { timed_trace.start_span('operation') }
 
       it "returns false" do
-        expect(timed_trace.start_span('operation')).to eq(false)
+        expect(timed_trace.start_span('operation')).to be(false)
       end
     end
 
@@ -38,7 +38,7 @@ RSpec.describe Airbrake::TimedTrace do
       before { timed_trace.start_span('operation') }
 
       it "returns true" do
-        expect(timed_trace.start_span('another operation')).to eq(true)
+        expect(timed_trace.start_span('another operation')).to be(true)
       end
     end
 
@@ -54,7 +54,7 @@ RSpec.describe Airbrake::TimedTrace do
   describe "#stop_span" do
     context "when #start_span wasn't invoked" do
       it "returns false" do
-        expect(timed_trace.stop_span('operation')).to eq(false)
+        expect(timed_trace.stop_span('operation')).to be(false)
       end
     end
 
@@ -62,7 +62,7 @@ RSpec.describe Airbrake::TimedTrace do
       before { timed_trace.start_span('operation') }
 
       it "returns true" do
-        expect(timed_trace.stop_span('operation')).to eq(true)
+        expect(timed_trace.stop_span('operation')).to be(true)
       end
     end
 
@@ -74,15 +74,15 @@ RSpec.describe Airbrake::TimedTrace do
 
       context "and when stopping in LIFO order" do
         it "returns true for all spans" do
-          expect(timed_trace.stop_span('another operation')).to eq(true)
-          expect(timed_trace.stop_span('operation')).to eq(true)
+          expect(timed_trace.stop_span('another operation')).to be(true)
+          expect(timed_trace.stop_span('operation')).to be(true)
         end
       end
 
       context "and when stopping in FIFO order" do
         it "returns true for all spans" do
-          expect(timed_trace.stop_span('operation')).to eq(true)
-          expect(timed_trace.stop_span('another operation')).to eq(true)
+          expect(timed_trace.stop_span('operation')).to be(true)
+          expect(timed_trace.stop_span('another operation')).to be(true)
         end
       end
     end
