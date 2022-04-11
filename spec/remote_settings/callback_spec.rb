@@ -42,13 +42,13 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         callback = described_class.new(config)
 
         callback.call(data)
-        expect(config.error_notifications).to eq(false)
+        expect(config.error_notifications).to be(false)
 
         callback.call(data)
-        expect(config.error_notifications).to eq(false)
+        expect(config.error_notifications).to be(false)
 
         callback.call(data)
-        expect(config.error_notifications).to eq(false)
+        expect(config.error_notifications).to be(false)
       end
       # rubocop:enable RSpec/MultipleExpectations
     end
@@ -63,12 +63,12 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         allow(data).to receive(:error_notifications?).and_return(false)
 
         callback.call(data)
-        expect(config.error_notifications).to eq(false)
+        expect(config.error_notifications).to be(false)
 
         allow(data).to receive(:error_notifications?).and_return(true)
 
         callback.call(data)
-        expect(config.error_notifications).to eq(true)
+        expect(config.error_notifications).to be(true)
 
         expect(data).to have_received(:error_notifications?).twice
       end
@@ -86,13 +86,13 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         callback = described_class.new(config)
 
         callback.call(data)
-        expect(config.performance_stats).to eq(false)
+        expect(config.performance_stats).to be(false)
 
         callback.call(data)
-        expect(config.performance_stats).to eq(false)
+        expect(config.performance_stats).to be(false)
 
         callback.call(data)
-        expect(config.performance_stats).to eq(false)
+        expect(config.performance_stats).to be(false)
       end
       # rubocop:enable RSpec/MultipleExpectations
     end
@@ -107,12 +107,12 @@ RSpec.describe Airbrake::RemoteSettings::Callback do
         allow(data).to receive(:performance_stats?).and_return(false)
 
         callback.call(data)
-        expect(config.performance_stats).to eq(false)
+        expect(config.performance_stats).to be(false)
 
         allow(data).to receive(:performance_stats?).and_return(true)
 
         callback.call(data)
-        expect(config.performance_stats).to eq(true)
+        expect(config.performance_stats).to be(true)
 
         expect(data).to have_received(:performance_stats?).twice
       end

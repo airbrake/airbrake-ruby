@@ -77,8 +77,8 @@ RSpec.describe Airbrake::RemoteSettings do
         sleep(0.1)
         remote_settings.stop_polling
 
-        expect(settings.error_notifications?).to eq(true)
-        expect(settings.performance_stats?).to eq(false)
+        expect(settings.error_notifications?).to be(true)
+        expect(settings.performance_stats?).to be(false)
         expect(settings.interval).to eq(1)
       end
       # rubocop:enable RSpec/MultipleExpectations

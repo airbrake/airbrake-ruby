@@ -11,13 +11,13 @@ RSpec.describe Airbrake::Benchmark do
     before { benchmark }
 
     context "when called one time" do
-      its(:stop) { is_expected.to eq(true) }
+      its(:stop) { is_expected.to be(true) }
     end
 
     context "when called twice or more" do
       before { benchmark.stop }
 
-      its(:stop) { is_expected.to eq(false) }
+      its(:stop) { is_expected.to be(false) }
     end
   end
 
