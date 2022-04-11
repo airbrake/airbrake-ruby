@@ -21,6 +21,14 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
         .to receive(:`).and_return('git version 2.17.2 (Apple Git-113)')
       expect { git_repository_filter }.not_to raise_error
     end
+
+    context "when Errno::EAGAIN is raised when detecting git version" do
+      it "doesn't attach anything to context/repository" do
+        allow_any_instance_of(Kernel).to receive(:`).and_raise(Errno::EAGAIN)
+        git_repository_filter.call(notice)
+        expect(notice[:context][:repository]).to be_nil
+      end
+    end
   end
 
   context "when context/repository is defined" do

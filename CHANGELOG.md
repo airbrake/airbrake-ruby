@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `Errno::EAGAIN`, which may happen in certain environments when
+  configuring Airbrake
+  ([#684](https://github.com/airbrake/airbrake-ruby/pull/684))
+
 ### [v6.0.2][v6.0.2] (January 10, 2022)
 
 * Fixed `NoMethodError: undefined method `getutc'` for `#notify_request` and
