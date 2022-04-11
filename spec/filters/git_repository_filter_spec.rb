@@ -1,9 +1,7 @@
 RSpec.describe Airbrake::Filters::GitRepositoryFilter do
   subject(:git_repository_filter) { described_class.new('.') }
 
-  let(:notice) do
-    Airbrake::Notice.new(Airbrake::Config.new, AirbrakeTestError.new)
-  end
+  let(:notice) { Airbrake::Notice.new(AirbrakeTestError.new) }
 
   describe "#initialize" do
     it "parses standard git version" do
@@ -34,7 +32,7 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
   end
 
   context "when .git directory doesn't exist" do
-    git_repository_filter { described_class.new('root/dir') }
+    subject(:git_repository_filter) { described_class.new('root/dir') }
 
     it "doesn't attach anything to context/repository" do
       git_repository_filter.call(notice)
@@ -45,15 +43,20 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
   context "when .git directory exists" do
     it "attaches context/repository" do
       git_repository_filter.call(notice)
-      expect(notice[:context][:repository]).to eq(
-        'ssh://git@github.com/airbrake/airbrake-ruby.git',
+      expect(notice[:context][:repository]).to match(
+        'github.com/airbrake/airbrake-ruby',
       )
     end
   end
 
   context "when git is not in PATH" do
+    let!(:path) { ENV['PATH'] }
+
+    before { ENV['PATH'] = '' }
+
+    after { ENV['PATH'] = path }
+
     it "does not attach context/repository" do
-      ENV['PATH'] = ''
       git_repository_filter.call(notice)
       expect(notice[:context][:repository]).to be_nil
     end
