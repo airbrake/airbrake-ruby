@@ -43,7 +43,13 @@ module Airbrake
       def process_remote_configuration
         return unless @config.remote_config
         return unless @project_id
+
+        # Never poll remote configuration in the test environment.
         return if @config.environment == 'test'
+
+        # If the current environment is ignored, don't try to poll remote
+        # configuration.
+        return if @config.ignore_environments.include?(@config.environment)
 
         RemoteSettings.poll(@project_id, @config.remote_config_host) do |data|
           @poll_callback.call(data)

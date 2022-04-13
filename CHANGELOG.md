@@ -6,6 +6,11 @@ Airbrake Ruby Changelog
 * Fixed `Errno::EAGAIN`, which may happen in certain environments when
   configuring Airbrake
   ([#684](https://github.com/airbrake/airbrake-ruby/pull/684))
+* The `ignore_environments` option can now control remote configuration. If the
+  current `environment` matches an environment specified in
+  `ignore_environments`, then the remote configuration won't be fetched. This is
+  equivalent to having `remote_config = false`
+  ([#685](https://github.com/airbrake/airbrake-ruby/pull/685))
 
 ### [v6.0.2][v6.0.2] (January 10, 2022)
 
