@@ -14,7 +14,7 @@ Airbrake Ruby Changelog
 
 ### [v6.0.2][v6.0.2] (January 10, 2022)
 
-* Fixed `NoMethodError: undefined method `getutc'` for `#notify_request` and
+* Fixed ``NoMethodError: undefined method `getutc'`` for `#notify_request` and
   other APM methods, which accept `time` parameter
   ([#673](https://github.com/airbrake/airbrake-ruby/pull/673),
   [#676](https://github.com/airbrake/airbrake-ruby/pull/676))
