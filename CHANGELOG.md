@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v6.1.0][v6.1.0] (April 13, 2022)
+
 * Fixed `Errno::EAGAIN`, which may happen in certain environments when
   configuring Airbrake
   ([#684](https://github.com/airbrake/airbrake-ruby/pull/684))
@@ -1108,3 +1110,4 @@ Features:
 [v6.0.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.0
 [v6.0.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.1
 [v6.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.2
+[v6.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.0
