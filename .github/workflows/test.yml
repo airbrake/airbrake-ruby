@@ -12,9 +12,9 @@ jobs:
         os: [ubuntu-latest]
         ruby: [2.5, 2.6, 2.7, 3.0, 3.1, head, jruby]
 
-        # Temporarily disable jruby-head temporarily because it rubocop-ast
-        # chokes on it: https://github.com/airbrake/airbrake-ruby/runs/5969451901
-        # with: TypeError: nil can't be coerced into Integer
+        # Temporarily disable jruby-head because rubocop-ast chokes on it
+        # with `TypeError: nil can't be coerced into Integer`
+        # See: bundle exec yardoc --fail-on-warning --no-progress --readme=README
         #
         # ruby: [2.5, 2.6, 2.7, 3.0, 3.1, head, jruby, jruby-head]
 
