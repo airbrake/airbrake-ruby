@@ -7,6 +7,7 @@ require:
 AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
+  TargetRubyVersion: 2.5
   Exclude:
     - 'pkg/**/*'
     - 'vendor/**/*'
