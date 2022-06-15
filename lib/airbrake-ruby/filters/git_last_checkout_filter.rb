@@ -27,7 +27,7 @@ module Airbrake
         @git_path = File.join(root_directory, '.git')
         @weight = 116
         @last_checkout = nil
-        @deploy_username = ENV['AIRBRAKE_DEPLOY_USERNAME']
+        @deploy_username = ENV.fetch('AIRBRAKE_DEPLOY_USERNAME', nil)
       end
 
       # @macro call_filter

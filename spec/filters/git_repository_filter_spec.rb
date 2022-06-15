@@ -58,7 +58,7 @@ RSpec.describe Airbrake::Filters::GitRepositoryFilter do
   end
 
   context "when git is not in PATH" do
-    let!(:path) { ENV['PATH'] }
+    let!(:path) { ENV.fetch('PATH', nil) }
 
     before { ENV['PATH'] = '' }
 
