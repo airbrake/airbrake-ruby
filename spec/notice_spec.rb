@@ -103,6 +103,8 @@ RSpec.describe Airbrake::Notice do
       end
 
       describe "object replacement with its string version" do
+        subject(:json) { notice.to_json }
+
         let(:klass) { Class.new }
         let(:ex) { AirbrakeTestError.new }
         let(:params) { { bingo: [Object.new, klass.new] } }
@@ -118,19 +120,15 @@ RSpec.describe Airbrake::Notice do
           let(:backtrace_size) { 1000 }
 
           it "doesn't happen" do
-            expect(notice.to_json)
-              .to match(/bingo":\["#<Object:.+>","#<#<Class:.+>:.+>"/)
+            expect(json).to match(/bingo":\["#<Object:.+>","#<#<Class:.+>:.+>"/)
           end
         end
 
         context "with payload bigger than the limit" do
-          context "with payload within the limits" do
-            let(:backtrace_size) { 50_000 }
+          let(:backtrace_size) { 50_000 }
 
-            it "happens" do
-              expect(notice.to_json)
-                .to match(/bingo":\[".+Object.+",".+Class.+"/)
-            end
+          it "happens" do
+            expect(json).to match(/bingo":\[".+Object.+",".+Class.+"/)
           end
         end
       end
