@@ -21,7 +21,6 @@ DESC
 
   s.require_path = 'lib'
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
-  s.test_files   = Dir.glob('spec/**/*')
 
   s.required_ruby_version = '>= 2.5'
   s.metadata = {
