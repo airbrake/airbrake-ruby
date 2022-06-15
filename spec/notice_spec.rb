@@ -49,6 +49,13 @@ RSpec.describe Airbrake::Notice do
     end
 
     context "truncation" do
+      it "truncates context/error_message" do
+        msg = 'message-' * 64000
+        notice = described_class.new(StandardError.new(msg))
+        expect(notice[:context][:error_message]).to(include('message-[Truncated]'))
+        expect(notice[:context][:error_message].length).to be < msg.length
+      end
+
       shared_examples 'payloads' do |size, msg|
         it msg do
           ex = AirbrakeTestError.new

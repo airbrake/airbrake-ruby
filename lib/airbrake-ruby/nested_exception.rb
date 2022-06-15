@@ -9,6 +9,15 @@ module Airbrake
     #   can unwrap. Exceptions that have a longer cause chain will be ignored
     MAX_NESTED_EXCEPTIONS = 3
 
+    # On Ruby 3.1+, the error highlighting gem can produce messages that can
+    # span multiple lines. We don't display multiline error messages in the
+    # title of the notice in the Airbrake dashboard. Therefore, we want to strip
+    # out the higlighting part so that the errors look consistent. The full
+    # message with the exception will be attached to the notice body.
+    #
+    # @return [String]
+    RUBY_31_ERROR_HIGHLIGHTING_DIVIDER = "\n\n".freeze
+
     def initialize(exception)
       @exception = exception
     end
@@ -16,7 +25,7 @@ module Airbrake
     def as_json
       unwind_exceptions.map do |exception|
         { type: exception.class.name,
-          message: exception.message,
+          message: exception.message.split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER).first,
           backtrace: Backtrace.parse(exception) }
       end
     end

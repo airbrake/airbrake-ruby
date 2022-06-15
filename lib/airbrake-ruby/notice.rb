@@ -49,16 +49,17 @@ module Airbrake
     # @api private
     def initialize(exception, params = {})
       @config = Airbrake::Config.instance
+      @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
+
       @payload = {
         errors: NestedException.new(exception).as_json,
-        context: context,
+        context: context(exception),
         environment: {
           program_name: $PROGRAM_NAME,
         },
         session: {},
         params: params,
       }
-      @truncator = Airbrake::Truncator.new(PAYLOAD_MAX_SIZE)
 
       stash[:exception] = exception
     end
@@ -118,7 +119,7 @@ module Airbrake
 
     private
 
-    def context
+    def context(exception)
       {
         version: @config.app_version,
         versions: @config.versions,
@@ -132,6 +133,7 @@ module Airbrake
         hostname: HOSTNAME,
 
         severity: DEFAULT_SEVERITY,
+        error_message: @truncator.truncate(exception.message),
       }.merge(CONTEXT).delete_if { |_key, val| val.nil? || val.empty? }
     end
 

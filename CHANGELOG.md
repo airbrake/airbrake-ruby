@@ -3,6 +3,12 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Improved support of Ruby 3.1's error highlighting. The error highlighting now
+  gets stripped from the exception message. The error message with the
+  highlighting gets added to `context/error_message`
+  ([#690](https://github.com/airbrake/airbrake-ruby/pull/690))
+
+
 ### [v6.1.0][v6.1.0] (April 13, 2022)
 
 * Fixed `Errno::EAGAIN`, which may happen in certain environments when
