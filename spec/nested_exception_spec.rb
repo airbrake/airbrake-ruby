@@ -47,6 +47,20 @@ RSpec.describe Airbrake::NestedException do
         expect(exceptions[1][:backtrace]).not_to be_empty
       end
       # rubocop:enable RSpec/MultipleExpectations
+
+      context "and when the exception message contains error highlighting" do
+        it "strips the highlighting part from the message" do
+          raise "undefined method `[]' for nil:NilClass\n\n    " \
+            "data[:result].first[:first_name]\n                       ^^^^^^^^^^^^^"
+        rescue StandardError => ex
+          nested_exception = described_class.new(ex)
+          exceptions = nested_exception.as_json
+
+          expect(exceptions.size).to eq(1)
+          expect(exceptions[0][:message])
+            .to eq("undefined method `[]' for nil:NilClass")
+        end
+      end
     end
 
     context "given exceptions without backtraces" do
