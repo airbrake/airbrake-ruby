@@ -3,6 +3,10 @@ Airbrake Ruby Changelog
 
 ### master
 
+* Fixed `ArgumentError: invalid byte sequence in UTF-8` which could be raised
+  during notifying exceptions with invalid characters in their messages
+  ([#694](https://github.com/airbrake/airbrake-ruby/pull/694))
+
 ### [v6.1.1][v6.1.1] (June 15, 2022)
 
 * Improved support of Ruby 3.1's error highlighting. The error highlighting now
