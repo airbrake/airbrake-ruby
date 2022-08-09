@@ -18,6 +18,9 @@ module Airbrake
     # @return [String]
     RUBY_31_ERROR_HIGHLIGHTING_DIVIDER = "\n\n".freeze
 
+    # @return [Hash] the options for +String#encode+
+    ENCODING_OPTIONS = { invalid: :replace, undef: :replace }.freeze
+
     def initialize(exception)
       @exception = exception
     end
@@ -25,7 +28,7 @@ module Airbrake
     def as_json
       unwind_exceptions.map do |exception|
         { type: exception.class.name,
-          message: exception.message.split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER).first,
+          message: message(exception),
           backtrace: Backtrace.parse(exception) }
       end
     end
@@ -42,6 +45,14 @@ module Airbrake
       end
 
       exception_list
+    end
+
+    def message(exception)
+      exception
+        .message
+        .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
+        .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
+        .first
     end
   end
 end
