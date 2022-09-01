@@ -15,10 +15,10 @@ module Airbrake
 
     # Asynchronously sends a notice to Airbrake.
     #
-    # @param [Hash] payload Whatever needs to be sent
+    # @param [Airbrake::Notice] payload Whatever needs to be sent
     # @return [Airbrake::Promise]
-    def send(payload, promise, endpoint = @config.error_endpoint)
-      unless thread_pool << [payload, promise, endpoint]
+    def send(notice, promise, endpoint = @config.error_endpoint)
+      unless thread_pool << [notice, promise, endpoint]
         return promise.reject(
           "AsyncSender has reached its capacity of #{@config.queue_size}",
         )
