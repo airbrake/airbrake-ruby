@@ -48,8 +48,9 @@ module Airbrake
     end
 
     def message(exception)
-      exception
-        .message
+      return unless (msg = exception.message)
+
+      msg
         .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
         .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
         .first
