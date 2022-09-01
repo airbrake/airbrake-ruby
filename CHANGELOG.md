@@ -3,6 +3,8 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v6.1.2][v6.1.2] (September 1, 2022)
+
 * Fixed `ArgumentError: invalid byte sequence in UTF-8` which could be raised
   during notifying exceptions with invalid characters in their messages
   ([#694](https://github.com/airbrake/airbrake-ruby/pull/694))
@@ -1127,3 +1129,4 @@ Features:
 [v6.0.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.0.2
 [v6.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.0
 [v6.1.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.1
+[v6.1.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.2
