@@ -95,4 +95,20 @@ RSpec.describe Airbrake::NestedException do
       raise 'expected JSON.parse to raise JSON::ParserError but nothing was raised'
     end
   end
+
+  context "when the exception's message is nil" do
+    subject(:exception) {  Class.new(StandardError) { def message; end }.new }
+
+    it "leaves the message field empty" do
+      expect(described_class.new(exception).as_json).to eq(
+        [
+          {
+            backtrace: [],
+            message: nil,
+            type: nil,
+          },
+        ],
+      )
+    end
+  end
 end
