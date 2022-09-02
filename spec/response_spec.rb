@@ -76,13 +76,13 @@ RSpec.describe Airbrake::Response do
 
       it "returns an error response" do
         resp = described_class.parse(response)
-        expect(resp).to eq('error' => 'foo')
+        expect(resp).to eq('code' => 500, 'error' => 'foo')
       end
 
       it "truncates body" do
         response.body *= 1000
         resp = described_class.parse(response)
-        expect(resp).to eq('error' => "#{'foo' * 33}fo...")
+        expect(resp).to eq('code' => 500, 'error' => "#{'foo' * 33}fo...")
       end
     end
 
