@@ -68,7 +68,7 @@ RSpec.describe Airbrake::Backlog do
         sleep 0.2
 
         expect(Airbrake::Loggable.instance).to have_received(:error).with(
-          '**Airbrake: Backlog is full',
+          '**Airbrake: Airbrake::Backlog full',
         ).twice
       end
     end

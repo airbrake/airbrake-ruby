@@ -43,7 +43,7 @@ module Airbrake
         begin
           @queue.push(data, true)
         rescue ThreadError
-          logger.error("#{LOG_LABEL} Backlog is full")
+          logger.error("#{LOG_LABEL} Airbrake::Backlog full")
           return self
         end
 
@@ -59,7 +59,12 @@ module Airbrake
     # @return [void]
     # @since v6.2.0
     def close
-      @queue.synchronize { @schedule_flush.kill if @schedule_flush }
+      @queue.synchronize do
+        if @schedule_flush
+          @schedule_flush.kill
+          logger.debug("#{LOG_LABEL} Airbrake::Backlog closed")
+        end
+      end
     end
 
     private
@@ -92,7 +97,9 @@ module Airbrake
 
     def flush
       unless @queue.empty?
-        logger.debug("#{LOG_LABEL} backlog: flushing #{@queue.size} messages")
+        logger.debug(
+          "#{LOG_LABEL} Airbrake::Backlog flushing #{@queue.size} messages",
+        )
       end
 
       failed = 0
@@ -105,7 +112,9 @@ module Airbrake
       end
 
       if failed > 0
-        logger.debug("#{LOG_LABEL} backlog: #{failed} messages were not flushed")
+        logger.debug(
+          "#{LOG_LABEL} Airbrake::Backlog #{failed} messages were not flushed",
+        )
       end
 
       @seen.clear

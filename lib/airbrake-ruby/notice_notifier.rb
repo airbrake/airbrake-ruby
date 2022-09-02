@@ -68,6 +68,7 @@ module Airbrake
 
     # @see Airbrake.close
     def close
+      @sync_sender.close
       @async_sender.close
     end
 

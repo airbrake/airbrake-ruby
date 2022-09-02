@@ -50,6 +50,7 @@ module Airbrake
     def close
       @payload.synchronize do
         @schedule_flush.kill if @schedule_flush
+        @sync_sender.close
         @async_sender.close
       end
     end
