@@ -478,6 +478,23 @@ end
 Note: it is not recommended to disable this feature. It might negatively impact
 how your notifier works. Please use this option with caution.
 
+#### backlog
+
+Turns on/off the backlog feature. The backlog keeps track of errors or events
+that Airbrake Ruby couldn't send due to a faulty network, Airbake API being at
+send time, etc. The backlog is flushed every 2 minutes, meaning everything in
+the backlog will be attempted to be sent to the Airbrake API again. If the error
+or event can't be successfully sent from the backlog, it gets rejected
+permanently.
+
+The maximum backlog size is 100. By default, it's enabled.
+
+```ruby
+Airbrake.configure do |c|
+  c.backlog = true
+end
+```
+
 ### Asynchronous Airbrake options
 
 The options listed below apply to [`Airbrake.notify`](#airbrakenotify), they do

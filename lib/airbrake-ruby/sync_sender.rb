@@ -30,7 +30,7 @@ module Airbrake
       @config = Airbrake::Config.instance
       @method = method
       @rate_limit_reset = Time.now
-      @backlog = Backlog.new(self)
+      @backlog = Backlog.new(self) if @config.backlog
     end
 
     # Sends a POST or PUT request to the given +endpoint+ with the +data+ payload.
@@ -41,15 +41,11 @@ module Airbrake
     def send(data, promise, endpoint = @config.error_endpoint)
       return promise if rate_limited_ip?(promise)
 
-      response = nil
       req = build_request(endpoint, data)
-
       return promise if missing_body?(req, promise)
 
-      https = build_https(endpoint)
-
       begin
-        response = https.request(req)
+        response = build_https(endpoint).request(req)
       rescue StandardError => ex
         reason = "#{LOG_LABEL} HTTP error: #{ex}"
         logger.error(reason)
@@ -57,10 +53,7 @@ module Airbrake
       end
 
       parsed_resp = Response.parse(response)
-      if parsed_resp.key?('rate_limit_reset')
-        @rate_limit_reset = parsed_resp['rate_limit_reset']
-      end
-
+      handle_rate_limit(parsed_resp)
       @backlog << [data, endpoint] if add_to_backlog?(parsed_resp)
 
       return promise.reject(parsed_resp['error']) if parsed_resp.key?('error')
@@ -111,8 +104,15 @@ module Airbrake
       req
     end
 
+    def handle_rate_limit(parsed_resp)
+      return unless parsed_resp.key?('rate_limit_reset')
+
+      @rate_limit_reset = parsed_resp['rate_limit_reset']
+    end
+
     def add_to_backlog?(parsed_resp)
-      return false unless parsed_resp.key?('code')
+      return unless @backlog
+      return unless parsed_resp.key?('code')
 
       BACKLOGGABLE_STATUS_CODES.include?(parsed_resp['code'])
     end

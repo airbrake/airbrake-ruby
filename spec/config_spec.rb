@@ -29,6 +29,7 @@ RSpec.describe Airbrake::Config do
   its(:job_stats) { is_expected.to be(true) }
   its(:error_notifications) { is_expected.to be(true) }
   its(:remote_config) { is_expected.to be(true) }
+  its(:backlog) { is_expected.to be(true) }
 
   its(:remote_config_host) do
     is_expected.to eq('https://notifier-configs.airbrake.io')

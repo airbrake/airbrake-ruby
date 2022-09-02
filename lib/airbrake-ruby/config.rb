@@ -136,6 +136,12 @@ module Airbrake
     # @since v5.2.0
     attr_accessor :remote_config
 
+    # @return [Boolean] true if the library should keep a backlog of failed
+    #   notices or APM events and retry them after an interval, false otherwise
+    # @api public
+    # @since v6.2.0
+    attr_accessor :backlog
+
     class << self
       # @return [Config]
       attr_writer :instance
@@ -180,6 +186,7 @@ module Airbrake
       self.job_stats = true
       self.error_notifications = true
       self.remote_config = true
+      self.backlog = true
 
       merge(user_config)
     end
