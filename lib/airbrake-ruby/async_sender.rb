@@ -5,8 +5,6 @@ module Airbrake
   # @api private
   # @since v1.0.0
   class AsyncSender
-    include Loggable
-
     def initialize(method = :post, name = 'async-sender')
       @config = Airbrake::Config.instance
       @method = method
