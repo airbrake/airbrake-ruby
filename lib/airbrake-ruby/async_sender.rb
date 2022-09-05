@@ -7,7 +7,7 @@ module Airbrake
   class AsyncSender
     def initialize(method = :post, name = 'async-sender')
       @config = Airbrake::Config.instance
-      @method = method
+      @sync_sender = SyncSender.new(method)
       @name = name
     end
 
@@ -27,6 +27,7 @@ module Airbrake
 
     # @return [void]
     def close
+      @sync_sender.close
       thread_pool.close
     end
 
@@ -43,15 +44,12 @@ module Airbrake
     private
 
     def thread_pool
-      @thread_pool ||= begin
-        sender = SyncSender.new(@method)
-        ThreadPool.new(
-          name: @name,
-          worker_size: @config.workers,
-          queue_size: @config.queue_size,
-          block: proc { |args| sender.send(*args) },
-        )
-      end
+      @thread_pool ||= ThreadPool.new(
+        name: @name,
+        worker_size: @config.workers,
+        queue_size: @config.queue_size,
+        block: proc { |args| @sync_sender.send(*args) },
+      )
     end
   end
 end

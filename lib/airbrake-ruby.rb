@@ -18,9 +18,9 @@ require 'airbrake-ruby/remote_settings/settings_data'
 require 'airbrake-ruby/remote_settings'
 require 'airbrake-ruby/promise'
 require 'airbrake-ruby/thread_pool'
+require 'airbrake-ruby/response'
 require 'airbrake-ruby/sync_sender'
 require 'airbrake-ruby/async_sender'
-require 'airbrake-ruby/response'
 require 'airbrake-ruby/nested_exception'
 require 'airbrake-ruby/ignorable'
 require 'airbrake-ruby/inspectable'
@@ -59,6 +59,7 @@ require 'airbrake-ruby/monotonic_time'
 require 'airbrake-ruby/timed_trace'
 require 'airbrake-ruby/queue'
 require 'airbrake-ruby/context'
+require 'airbrake-ruby/backlog'
 
 # Airbrake is a thin wrapper around instances of the notifier classes (such as
 # notice, performance & deploy notifiers). It creates a way to access them via a

@@ -342,9 +342,24 @@ RSpec.describe Airbrake::NoticeNotifier do
   end
 
   describe "#close" do
+    let(:mock_async_sender) { instance_double(Airbrake::AsyncSender) }
+    let(:mock_sync_sender) { instance_double(Airbrake::SyncSender) }
+
+    before do
+      allow(Airbrake::AsyncSender).to receive(:new).and_return(mock_async_sender)
+      allow(Airbrake::SyncSender).to receive(:new).and_return(mock_sync_sender)
+      allow(mock_async_sender).to receive(:close)
+      allow(mock_sync_sender).to receive(:close)
+    end
+
     it "sends the close message to async sender" do
-      expect_any_instance_of(Airbrake::AsyncSender).to receive(:close)
       notice_notifier.close
+      expect(mock_async_sender).to have_received(:close)
+    end
+
+    it "sends the close message to sync sender" do
+      notice_notifier.close
+      expect(mock_sync_sender).to have_received(:close)
     end
   end
 

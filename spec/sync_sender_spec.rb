@@ -1,10 +1,13 @@
 RSpec.describe Airbrake::SyncSender do
   subject(:sync_sender) { described_class.new }
 
+  let(:mock_backlog) { instance_double(Airbrake::Backlog) }
+
   before do
     Airbrake::Config.instance = Airbrake::Config.new(
       project_id: 1, project_key: 'banana',
     )
+    allow(Airbrake::Backlog).to receive(:new).and_return(mock_backlog)
   end
 
   describe "#send" do
@@ -122,6 +125,7 @@ RSpec.describe Airbrake::SyncSender do
           body: '{"message":"IP is rate limited"}',
           headers: { 'X-RateLimit-Delay' => '1' },
         )
+        allow(mock_backlog).to receive(:<<)
       end
 
       # rubocop:disable RSpec/MultipleExpectations
@@ -163,6 +167,41 @@ RSpec.describe Airbrake::SyncSender do
         sender.send({}, promise)
         expect(a_request(:post, endpoint)).to have_been_made
       end
+    end
+
+    described_class::BACKLOGGABLE_STATUS_CODES.each do |status_code|
+      context "when the response code is backloggable" do
+        before do
+          allow(mock_backlog).to receive(:<<)
+          allow(Airbrake::Response).to receive(:parse).and_return('code' => status_code)
+        end
+
+        it "sends the data to the backlog when the response is #{status_code}" do
+          described_class.new(:post).send(1, promise)
+          allow(mock_backlog).to receive(:<<).with(1)
+        end
+      end
+    end
+
+    context "when the response code is not backloggable" do
+      before do
+        allow(mock_backlog).to receive(:<<)
+        allow(Airbrake::Response).to receive(:parse).and_return('code' => 999)
+      end
+
+      it "doesn't send the data to the backlog" do
+        described_class.new(:post).send(1, promise)
+        expect(mock_backlog).not_to have_received(:<<)
+      end
+    end
+  end
+
+  describe "#close" do
+    before { allow(mock_backlog).to receive(:close) }
+
+    it "closes the backlog" do
+      sync_sender.close
+      expect(mock_backlog).to have_received(:close)
     end
   end
 end
