@@ -3,6 +3,11 @@ Airbrake Ruby Changelog
 
 ### master
 
+### [v6.2.0][v6.2.0] (September 5, 2022)
+
+* Added the `backlog` option to the config, which enables or disables the
+  Backlog feature ([#702](https://github.com/airbrake/airbrake-ruby/pull/702))
+
 ### [v6.1.2][v6.1.2] (September 1, 2022)
 
 * Fixed `ArgumentError: invalid byte sequence in UTF-8` which could be raised
@@ -1130,3 +1135,4 @@ Features:
 [v6.1.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.0
 [v6.1.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.1
 [v6.1.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.2
+[v6.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.2.0
