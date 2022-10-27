@@ -82,24 +82,46 @@ module Airbrake
 
       private
 
-      def filter_hash(hash) # rubocop:disable Metrics/AbcSize
-        return hash unless hash.is_a?(Hash)
+      def filter_hash object
+        object = sanitize_hash object
 
-        hash_copy = hash.dup
-
-        hash.each_key do |key|
-          if should_filter?(key.to_s)
-            hash_copy[key] = FILTERED
-          elsif hash_copy[key].is_a?(Hash)
-            hash_copy[key] = filter_hash(hash_copy[key])
-          elsif hash[key].is_a?(Array)
-            hash_copy[key].each_with_index do |h, i|
-              hash_copy[key][i] = filter_hash(h)
-            end
+        case object
+        when Hash
+          object.each_with_object({}) do |(key, value), result|
+            result[key] = if should_filter? key.to_s
+                            FILTERED
+                          else
+                            filter_hash value
+                          end
           end
+        when Array
+          object.map { |e| filter_hash(e) }
+        else
+          object
+        end
+      end
+
+      def sanitize_hash object
+        # Preprocess any object (even of framework-specific classes) to sanitize and explicitly cast their values
+        # to hashes. It allows KeysFilter to filter them.
+
+        # Convert an ApplicationRecord object into its hash.
+        object = object.attributes if defined?(ApplicationRecord) && object.is_a?(ApplicationRecord)
+        # Convert an ApplicationRecord object into an array, which elements will be later converted to hashes.
+        object = object.to_a if defined?(ActiveRecord::Relation) && object.is_a?(ActiveRecord::Relation)
+        # Sets the ActionController::Parameters to true and avoids ActionController::UnfilteredParameters when
+        # converted to hashes.
+        object = object.permit! if defined?(ActionController::Parameters) && object.is_a?(ActionController::Parameters)
+
+        # Either way, try to cast it to a hash when the object is not a Hash but responds to a casting method.
+        begin
+          object = object.to_h if !object.is_a?(Hash) && !object.is_a?(Array) && object.respond_to?(:to_h)
+          object = object.to_hash if !object.is_a?(Hash) && !object.is_a?(Array) &&  object.respond_to?(:to_hash)
+        rescue StandardError
+          nil
         end
 
-        hash_copy
+        object
       end
 
       def filter_url_params(url)
