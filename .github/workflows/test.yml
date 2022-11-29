@@ -21,27 +21,27 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
 
-    - name: Rubocop lint
-      run: if [[ "$RUBY_ENGINE" == "ruby" ]]; then bundle exec rubocop; fi
+      - name: Rubocop lint
+        run: if [[ "$RUBY_ENGINE" == "ruby" ]]; then bundle exec rubocop; fi
 
-    # Disable for now because Ruby 3.2 + YARD don't work well.
-    # There's a YARD bug that has been fixed but not released yet:
-    #   * https://github.com/lsegal/yard/pull/1419
-    #
-    # - name: YARD lint
-    #   run: |
-    #     touch README # Workaround for "incorrect" anchor links in README.md
-    #     bundle exec yardoc --fail-on-warning --no-progress --readme=README
+      # Disable for now because Ruby 3.2 + YARD don't work well.
+      # There's a YARD bug that has been fixed but not released yet:
+      #   * https://github.com/lsegal/yard/pull/1419
+      #
+      # - name: YARD lint
+      #   run: |
+      #     touch README # Workaround for "incorrect" anchor links in README.md
+      #     bundle exec yardoc --fail-on-warning --no-progress --readme=README
 
-    - name: Display Ruby version
-      run: ruby -v
+      - name: Display Ruby version
+        run: ruby -v
 
-    - name: Test
-      run: bundle exec rake
+      - name: Test
+        run: bundle exec rake
