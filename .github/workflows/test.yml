@@ -25,14 +25,10 @@ jobs:
       - name: Rubocop lint
         run: if [[ "$RUBY_ENGINE" == "ruby" ]]; then bundle exec rubocop; fi
 
-      # Disable for now because Ruby 3.2 + YARD don't work well.
-      # There's a YARD bug that has been fixed but not released yet:
-      #   * https://github.com/lsegal/yard/pull/1419
-      #
-      # - name: YARD lint
-      #   run: |
-      #     touch README # Workaround for "incorrect" anchor links in README.md
-      #     bundle exec yardoc --fail-on-warning --no-progress --readme=README
+      - name: YARD lint
+        run: |
+          touch README # Workaround for "incorrect" anchor links in README.md
+          bundle exec yardoc --fail-on-warning --no-progress --readme=README
 
       - name: Display Ruby version
         run: ruby -v
