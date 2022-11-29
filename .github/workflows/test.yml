@@ -29,7 +29,7 @@ jobs:
         bundler-cache: true
 
     - name: Rubocop lint
-      run: bundle exec rubocop
+      run: if [[ "$RUBY_ENGINE" == "ruby" ]]; then bundle exec rubocop; fi
 
     # Disable for now because Ruby 3.2 + YARD don't work well.
     # There's a YARD bug that has been fixed but not released yet:
