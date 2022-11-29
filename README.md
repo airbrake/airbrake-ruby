@@ -1,5 +1,4 @@
-Airbrake Ruby
-=============
+# Airbrake Ruby
 
 ![Build Status](https://github.com/airbrake/airbrake-ruby/workflows/airbrake-ruby/badge.svg)
 [![Code Climate](https://codeclimate.com/github/airbrake/airbrake-ruby.svg)](https://codeclimate.com/github/airbrake/airbrake-ruby)
@@ -11,52 +10,49 @@ Airbrake Ruby
   <img src="https://airbrake-github-assets.s3.amazonaws.com/brand/airbrake-full-logo.png" width="200">
 </p>
 
-* [Airbrake README][airbrake-gem]
-* [Airbrake Ruby README](https://github.com/airbrake/airbrake-ruby)
-* [YARD API documentation][yard-api]
+- [Airbrake README][airbrake-gem]
+- [Airbrake Ruby README](https://github.com/airbrake/airbrake-ruby)
+- [YARD API documentation][yard-api]
 
-Introduction
-------------
+## Introduction
 
 _Airbrake Ruby_ is a plain Ruby notifier for [Airbrake][airbrake.io], the
 leading exception reporting service. Airbrake Ruby provides minimalist API that
 enables the ability to send _any_ Ruby exception to the Airbrake dashboard. The
 library is extremely lightweight and it perfectly suits plain Ruby applications.
 For apps that are built with _Rails_, _Sinatra_ or any other Rack-compliant web
-framework we offer the [`airbrake`][airbrake-gem] gem.  It has additional
+framework we offer the [`airbrake`][airbrake-gem] gem. It has additional
 features such as _reporting of any unhandled exceptions automatically_,
 integrations with Resque, Sidekiq, Delayed Job and many more.
 
-Key features
-------------
+## Key features
 
-* Simple, consistent and easy-to-use [library API](#api)
-* Awesome performance (check out our [benchmarks](#running-benchmarks))
-* [Asynchronous exception reporting](#asynchronous-airbrake-options)
-* [Promise support](#promise)
-* Flexible [configuration options](#configuration)
-* Support for [proxying](#proxy)
-* Support for [environments](#environment)
-* [Filters](#airbrakeadd_filter) support (filter out sensitive or unwanted data
+- Simple, consistent and easy-to-use [library API](#api)
+- Awesome performance (check out our [benchmarks](#running-benchmarks))
+- [Asynchronous exception reporting](#asynchronous-airbrake-options)
+- [Promise support](#promise)
+- Flexible [configuration options](#configuration)
+- Support for [proxying](#proxy)
+- Support for [environments](#environment)
+- [Filters](#airbrakeadd_filter) support (filter out sensitive or unwanted data
   that shouldn't be sent)
-* Ability to [ignore exceptions](#airbrakeadd_filter) based on their class,
+- Ability to [ignore exceptions](#airbrakeadd_filter) based on their class,
   backtrace or any other condition
-* Support for Java exceptions occurring in JRuby
-* SSL support (all communication with Airbrake is encrypted by default)
-* Support for fatal exception reporting (the ones that terminate your program)
-* Support for [custom exception attributes](#custom-exception-attributes)
-* [Severity](#setting-severity) support
-* Support for [code hunks](#code_hunks) (lines of code surrounding each
+- Support for Java exceptions occurring in JRuby
+- SSL support (all communication with Airbrake is encrypted by default)
+- Support for fatal exception reporting (the ones that terminate your program)
+- Support for [custom exception attributes](#custom-exception-attributes)
+- [Severity](#setting-severity) support
+- Support for [code hunks](#code_hunks) (lines of code surrounding each
   backtrace frame)
-* Ability to add [context](#airbrakemerge_context) to reported exceptions
-* [Dependency tracking](#airbrakefiltersdependencyfilter) support
-* Automatic and manual [deploy tracking](#airbrakenotify_deploy)
-* [Performance monitoring](#performance_stats) (APM) for web applications (route
+- Ability to add [context](#airbrakemerge_context) to reported exceptions
+- [Dependency tracking](#airbrakefiltersdependencyfilter) support
+- Automatic and manual [deploy tracking](#airbrakenotify_deploy)
+- [Performance monitoring](#performance_stats) (APM) for web applications (route
   statistics, SQL queries, Job execution statistics)
-* Last but not least, we follow [semantic versioning 2.0.0][semver2]
+- Last but not least, we follow [semantic versioning 2.0.0][semver2]
 
-Installation
-------------
+## Installation
 
 ### Bundler
 
@@ -74,8 +70,7 @@ Invoke the following command from your terminal:
 gem install airbrake-ruby
 ```
 
-Example
--------
+## Example
 
 This is the minimal example that you can use to test Airbrake Ruby with your
 project.
@@ -113,8 +108,7 @@ puts "\nAnother ZeroDivisionError was sent to Airbrake, but this time synchronou
      "See it at #{response['url']}"
 ```
 
-Configuration
--------------
+## Configuration
 
 #### project_id & project_key
 
@@ -334,7 +328,7 @@ Airbrake.configure do |c|
 end
 ```
 
-The Proc *must* return an Array consisting only of the elements, which are
+The Proc _must_ return an Array consisting only of the elements, which are
 considered to be valid for this option.
 
 #### allowlist_keys
@@ -393,7 +387,7 @@ Performance tab of your project. By default, it's enabled.
 
 The statistics is sent via:
 
-* [`Airbrake.notify_request`](#airbrakenotify_request)
+- [`Airbrake.notify_request`](#airbrakenotify_request)
 
 ```ruby
 Airbrake.configure do |c|
@@ -410,7 +404,7 @@ query collection. These are displayed on the Performance tab of your project. If
 
 The statistics is sent via:
 
-* [`Airbrake.notify_query`](#airbrakenotify_query)
+- [`Airbrake.notify_query`](#airbrakenotify_query)
 
 ```ruby
 Airbrake.configure do |c|
@@ -428,7 +422,7 @@ enabled.
 
 The statistics is sent via:
 
-* [`Airbrake.notify_queue`](#airbrakenotify_queue)
+- [`Airbrake.notify_queue`](#airbrakenotify_queue)
 
 ```
 Airbrake.configure do |c|
@@ -475,8 +469,9 @@ Airbrake.configure do |c|
 end
 ```
 
-Note: it is not recommended to disable this feature. It might negatively impact
-how your notifier works. Please use this option with caution.
+> **Note**
+> It is not recommended to disable this feature. It might negatively impact
+> how your notifier works. Please use this option with caution.
 
 #### backlog
 
@@ -521,8 +516,7 @@ Airbrake.configure do |c|
 end
 ```
 
-API
----
+## API
 
 ### Airbrake
 
@@ -536,11 +530,11 @@ Airbrake.notify('App crashed!')
 
 As the first parameter, accepts:
 
-* an `Exception` (will be sent directly)
-* any object that can be converted to String with `#to_s` (the information from
+- an `Exception` (will be sent directly)
+- any object that can be converted to String with `#to_s` (the information from
   the object will be used as the message of a `RuntimeException` that we build
   internally)
-* an `Airbrake::Notice`
+- an `Airbrake::Notice`
 
 As the second parameter, accepts a hash with additional data. That data will be
 displayed in the _Params_ tab in your project's dashboard.
@@ -562,7 +556,6 @@ end
 
 Returns an [`Airbrake::Promise`](#promise), which can be used to read Airbrake
 error ids.
-
 
 ##### Setting severity
 
@@ -658,7 +651,8 @@ Airbrake.add_filter(MyFilter.new)
 Airbrake.delete_filter(MyFilter)
 ```
 
-Note: This method cannot delete filters assigned via the Proc form.
+> **Note**
+> This method cannot delete filters assigned via the Proc form.
 
 ##### Optional filters
 
@@ -693,11 +687,11 @@ that is not table names or fields (e.g. column values and such).
 
 Accepts a parameter, which signifies SQL dialect being used. Supported dialects:
 
-* `:postgres`
-* `:mysql`
-* `:sqlite`
-* `:cassandra`
-* `:oracle`
+- `:postgres`
+- `:mysql`
+- `:sqlite`
+- `:cassandra`
+- `:oracle`
 
 ```ruby
 Airbrake.add_filter(Airbrake::Filters::SqlFilter.new(:postgres))
@@ -852,7 +846,6 @@ Airbrake.notify_request(
 )
 ```
 
-
 Optionally, you can attach information to the stash (`request_id` in this
 example).
 
@@ -998,9 +991,9 @@ Always returns a Hash with response from the server.
 Sends queue (worker) statistics to Airbrake. Supports groups (similar to
 [performance breakdowns](#airbrakenotify_performance_breakdown)).
 
-* `queue` - name of the queue (worker)
-* `error_count` - how many times this worker failed
-* `groups` - where the job spent its time
+- `queue` - name of the queue (worker)
+- `error_count` - how many times this worker failed
+- `groups` - where the job spent its time
 
 ```ruby
 Airbrake.notify_queue(
@@ -1089,11 +1082,11 @@ notice.ignored? #=> false
 
 Accesses a notice's payload, which can be read or filtered. Payload includes:
 
-* `:errors`
-* `:context`
-* `:environment`
-* `:session`
-* `:params`
+- `:errors`
+- `:context`
+- `:environment`
+- `:session`
+- `:params`
 
 ```ruby
 notice[:params][:my_param] = 'foobar'
@@ -1129,7 +1122,7 @@ promise is resolved whenever the Airbrake API successfully accepts your
 exception.
 
 Yields successful response containing the id of an error at Airbrake and URL to
-the error at Airbrake.  Returns `self`.
+the error at Airbrake. Returns `self`.
 
 ```rb
 Airbrake.notify('Oops').then { |response| puts response }
@@ -1179,8 +1172,9 @@ end
 Airbrake.notify(MyException.new)
 ```
 
-Note: you don't have to call `Airbrake.notify` manually to be able to benefit
-from this API. It should "just work".
+> **Note**
+> You don't have to call `Airbrake.notify` manually to be able to benefit
+> from this API. It should "just work".
 
 ### Benchmark
 
@@ -1224,8 +1218,7 @@ Airbrake.notify_performance_breakdown(
 
 See [full documentation][yard-api] for more examples.
 
-Additional notes
-----------------
+## Additional notes
 
 ### Exception limit
 
@@ -1268,25 +1261,22 @@ Every 10 minutes the notifier issues an HTTP GET request to fetch remote
 configuration. This might be undesirable while running tests. To suppress this
 HTTP call, you need to configure your [environment](#environment) to `test`.
 
-Supported Rubies
-----------------
+## Supported Rubies
 
-* CRuby >= 2.3.0
-* JRuby >= 9k
+- CRuby >= 2.3.0
+- JRuby >= 9k
 
-Contact
--------
+## Contact
 
 In case you have a problem, question or a bug report, feel free to:
 
-* [file an issue][issues]
-* [send us an email](mailto:support@airbrake.io)
-* [tweet at us][twitter]
-* chat with us (visit [airbrake.io][airbrake.io] and click on the round orange
+- [file an issue][issues]
+- [send us an email](mailto:support@airbrake.io)
+- [tweet at us][twitter]
+- chat with us (visit [airbrake.io][airbrake.io] and click on the round orange
   button in the bottom right corner)
 
-License
--------
+## License
 
 The project uses the MIT License. See LICENSE.md for details.
 
