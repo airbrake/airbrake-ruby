@@ -126,7 +126,7 @@ RSpec.describe Airbrake::Filters::SqlFilter do
       dialects: all_dialects,
     }, {
       # TODO: fix this example.
-      input: "SELECT * FROM table WHERE name='foo\'' AND color='blue'",
+      input: "SELECT * FROM table WHERE name='foo'' AND color='blue'",
       output: "Error: Airbrake::Query was not filtered",
       dialects: all_dialects,
     }, {

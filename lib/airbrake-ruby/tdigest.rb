@@ -79,7 +79,7 @@ module Airbrake
       end
       output += mean_arr
       # Variable length encoding of numbers
-      c_arr = @centroids.each_value.each_with_object([]) do |c, arr|
+      c_arr = @centroids.each_value.with_object([]) do |c, arr|
         k = 0
         n = c.n
         while n < 0 || n > 0x7f

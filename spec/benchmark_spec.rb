@@ -3,7 +3,7 @@ RSpec.describe Airbrake::Benchmark do
 
   describe ".measure" do
     it "returns measured performance time" do
-      expect(described_class.measure { '10' * 10 }).to be_kind_of(Numeric)
+      expect(described_class.measure { '10' * 10 }).to be_a(Numeric)
     end
   end
 

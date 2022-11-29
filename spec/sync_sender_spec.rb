@@ -178,7 +178,8 @@ RSpec.describe Airbrake::SyncSender do
 
         it "sends the data to the backlog when the response is #{status_code}" do
           described_class.new(:post).send(1, promise)
-          allow(mock_backlog).to receive(:<<).with(1)
+          expect(mock_backlog).to have_received(:<<)
+            .with([1, an_instance_of(URI::HTTPS)])
         end
       end
     end
