@@ -469,8 +469,9 @@ Airbrake.configure do |c|
 end
 ```
 
-Note: it is not recommended to disable this feature. It might negatively impact
-how your notifier works. Please use this option with caution.
+> **Note**
+> It is not recommended to disable this feature. It might negatively impact
+> how your notifier works. Please use this option with caution.
 
 #### backlog
 
@@ -650,7 +651,8 @@ Airbrake.add_filter(MyFilter.new)
 Airbrake.delete_filter(MyFilter)
 ```
 
-Note: This method cannot delete filters assigned via the Proc form.
+> **Note**
+> This method cannot delete filters assigned via the Proc form.
 
 ##### Optional filters
 
@@ -1170,8 +1172,9 @@ end
 Airbrake.notify(MyException.new)
 ```
 
-Note: you don't have to call `Airbrake.notify` manually to be able to benefit
-from this API. It should "just work".
+> **Note**
+> You don't have to call `Airbrake.notify` manually to be able to benefit
+> from this API. It should "just work".
 
 ### Benchmark
 
