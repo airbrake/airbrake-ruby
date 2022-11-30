@@ -303,6 +303,20 @@ Airbrake.notify('App crashed!', {
 #     credit_card: '[Filtered]' }
 ```
 
+> **Warning**
+> This option doesn't filter complex objects. Only `Hash` is supported. For
+> example, if you blocklist the `password` key and call `.notify` like this:
+>
+> ```ruby
+> Airbrake.notify('oops', {
+>   filterable_obj: { password: 's3kr3t' },
+>   non_filterable_obj: OpenStruct.new(password: 's3kr3t')
+> })
+> ```
+>
+> Only `filterable_obj`'s password will be filtered. The library won't serialize
+> or modify the OpenStruct object for you.
+
 ##### Using Procs to delay filters configuration
 
 If you cannot inline your keys (for example, they should be loaded from external
@@ -359,6 +373,20 @@ Airbrake.notify(StandardError.new('App crashed!'), {
 #     email: 'john@example.com',
 #     account_id: 42 }
 ```
+
+> **Warning**
+> This option doesn't filter complex objects. Only `Hash` is supported. For
+> example, if you blocklist the `password` key and call `.notify` like this:
+>
+> ```ruby
+> Airbrake.notify('oops', {
+>   filterable_obj: { password: 's3kr3t' },
+>   non_filterable_obj: OpenStruct.new(password: 's3kr3t')
+> })
+> ```
+>
+> Only `filterable_obj`'s password will be filtered. The library won't serialize
+> or modify the OpenStruct object for you.
 
 ##### Using Procs to delay filters configuration
 
