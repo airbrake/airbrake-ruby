@@ -186,4 +186,40 @@ RSpec.describe Airbrake::Config do
       expect(config.logger.level).to eq(Logger::WARN)
     end
   end
+
+  describe "#host" do
+    let(:output) { StringIO.new }
+
+    before { config.logger = Logger.new(output) }
+
+    it "prints a deprecation warning" do
+      expect { config.host }
+        .to change(output, :string)
+        .from('')
+        .to(/the 'host' option is deprecated/)
+    end
+
+    it "returns error host" do
+      config.error_host = 'http://whatever'
+      expect(config.host).to eq('http://whatever')
+    end
+  end
+
+  describe "#host=" do
+    let(:output) { StringIO.new }
+
+    before { config.logger = Logger.new(output) }
+
+    it "prints a deprecation warning" do
+      expect { config.host = 'http://whatever' }
+        .to change(output, :string)
+        .from('')
+        .to(/the 'host' option is deprecated/)
+    end
+
+    it "sets error host" do
+      config.host = 'http://whatever'
+      expect(config.error_host).to eq('http://whatever')
+    end
+  end
 end

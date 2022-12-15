@@ -2,6 +2,9 @@
 
 ### master
 
+- Deprecated the `host` option in favor of `error_host`
+  ([#711](https://github.com/airbrake/airbrake-ruby/pull/711))
+
 ### [v6.2.0][v6.2.0] (September 5, 2022)
 
 - Added the `backlog` option to the config, which enables or disables the
