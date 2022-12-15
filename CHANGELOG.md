@@ -12,8 +12,8 @@
 - Fixed `ArgumentError: invalid byte sequence in UTF-8` which could be raised
   during notifying exceptions with invalid characters in their messages
   ([#694](https://github.com/airbrake/airbrake-ruby/pull/694))
-- Fixed `NoMethodError: undefined method `split' for nil:NilClass`when the
-given exception sets its message to`nil`
+- Fixed `` NoMethodError: undefined method `split' for nil:NilClass`` when the
+  given exception sets its message to `nil`
   ([#698](https://github.com/airbrake/airbrake-ruby/pull/698))
 
 ### [v6.1.1][v6.1.1] (June 15, 2022)
