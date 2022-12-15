@@ -44,12 +44,8 @@ module Airbrake
     # @return [String] the host, which provides the API endpoint to which
     #   exceptions should be sent
     # @api public
-    attr_accessor :host
-
     # @since v5.0.0
-    alias error_host host
-    # @since v5.0.0
-    alias error_host= host=
+    attr_accessor :error_host
 
     # @return [String] the host, which provides the API endpoint to which
     #   APM data should be sent
@@ -163,8 +159,7 @@ module Airbrake
       self.logger = ::Logger.new(File::NULL).tap { |l| l.level = Logger::WARN }
       self.project_id = user_config[:project_id]
       self.project_key = user_config[:project_key]
-      self.error_host = 'https://api.airbrake.io'
-      self.apm_host = 'https://api.airbrake.io'
+      self.error_host = self.apm_host = 'https://api.airbrake.io'
       self.remote_config_host = 'https://notifier-configs.airbrake.io'
 
       self.ignore_environments = []
@@ -267,6 +262,19 @@ module Airbrake
       else
         promise
       end
+    end
+
+    HOST_DEPRECATION_MSG = "**Airbrake: the 'host' option is deprecated. Use " \
+      "'error_host' instead".freeze
+
+    def host
+      logger.warn(HOST_DEPRECATION_MSG)
+      @error_host
+    end
+
+    def host=(value)
+      logger.warn(HOST_DEPRECATION_MSG)
+      @error_host = value
     end
 
     private
