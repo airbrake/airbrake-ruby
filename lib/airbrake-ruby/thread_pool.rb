@@ -122,7 +122,6 @@ module Airbrake
 
     def spawn_workers
       @worker_size.times { @workers.add(spawn_worker) }
-      @workers.enclose
     end
 
     private
