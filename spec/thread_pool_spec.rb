@@ -180,9 +180,13 @@ RSpec.describe Airbrake::ThreadPool do
   describe "#spawn_workers" do
     after { thread_pool.close }
 
-    it "spawns an enclosed thread group" do
+    let(:worker_size) { 3 }
+
+    # We avoid enclosed thread groups since they cause issues for anyone using timeout 0.3.1
+    # More info: https://github.com/airbrake/airbrake-ruby/issues/713
+    it "spawns an unenclosed thread group" do
       expect(thread_pool.workers).to be_a(ThreadGroup)
-      expect(thread_pool.workers).to be_enclosed
+      expect(thread_pool.workers).not_to be_enclosed
     end
 
     it "spawns threads that are alive" do
@@ -190,7 +194,7 @@ RSpec.describe Airbrake::ThreadPool do
     end
 
     it "spawns exactly `workers_size` workers" do
-      expect(thread_pool.workers.list.size).to eq(worker_size)
+      expect(thread_pool.workers.list.size).to eq(3)
     end
   end
 end
