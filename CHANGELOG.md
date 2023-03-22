@@ -1146,3 +1146,4 @@ do ... end`) and the `Airbrake.add_filter` filters. Now the former is being
 [v6.1.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.1
 [v6.1.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.2
 [v6.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.2.0
+[v6.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.2.1
