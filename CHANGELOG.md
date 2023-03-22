@@ -2,8 +2,14 @@
 
 ### master
 
-- Deprecated the `host` option in favor of `error_host`
-  ([#711](https://github.com/airbrake/airbrake-ruby/pull/711))
+- No pending changes to be released
+
+### [v6.2.1][v6.2.1] (March 22, 2023)
+
+- Fixed ruby/timeout issue by avoiding `ThreadGroup#enclose` ([#714](https://github.com/airbrake/airbrake-ruby/pull/714))
+- Deprecated the `host` option in favor of `error_host` ([#711](https://github.com/airbrake/airbrake-ruby/pull/711))
+- Updated YARD dependency to work with most recent ruby ([#715](https://github.com/airbrake/airbrake-ruby/pull/715))
+- Improved a spec that was depending on the GitHub actions git setup ([#716](https://github.com/airbrake/airbrake-ruby/pull/716))
 
 ### [v6.2.0][v6.2.0] (September 5, 2022)
 
