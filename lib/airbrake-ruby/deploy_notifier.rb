@@ -27,7 +27,7 @@ module Airbrake
       @sender.send(
         deploy_info,
         promise,
-        URI.join(@config.host, "api/v4/projects/#{@config.project_id}/deploys"),
+        URI.join(@config.error_host, "api/v4/projects/#{@config.project_id}/deploys"),
       )
 
       promise
