@@ -4,6 +4,11 @@
 
 - No pending changes to be released
 
+### [v6.2.2][v6.2.2] (October 4, 2023)
+
+- Use `error_host` instead of `host` to avoid triggering a deprecation warning
+  with deployment tracking ([#721](https://github.com/airbrake/airbrake-ruby/pull/721))
+
 ### [v6.2.1][v6.2.1] (March 22, 2023)
 
 - Fixed ruby/timeout issue by avoiding `ThreadGroup#enclose` ([#714](https://github.com/airbrake/airbrake-ruby/pull/714))
@@ -1147,3 +1152,4 @@ do ... end`) and the `Airbrake.add_filter` filters. Now the former is being
 [v6.1.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.1.2
 [v6.2.0]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.2.0
 [v6.2.1]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.2.1
+[v6.2.2]: https://github.com/airbrake/airbrake-ruby/releases/tag/v6.2.2
