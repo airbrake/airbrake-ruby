@@ -1291,7 +1291,7 @@ HTTP call, you need to configure your [environment](#environment) to `test`.
 
 ## Supported Rubies
 
-- CRuby >= 2.3.0
+- CRuby >= 2.5.0
 - JRuby >= 9k
 
 ## Contact
