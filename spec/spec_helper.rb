@@ -13,6 +13,7 @@ require 'pathname'
 require 'webrick'
 require 'English'
 require 'base64'
+require 'ostruct'
 
 require 'helpers'
 
