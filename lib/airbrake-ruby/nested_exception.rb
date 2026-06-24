@@ -50,10 +50,19 @@ module Airbrake
     def message(exception)
       return unless (msg = exception.message)
 
-      msg
+      normalized = msg
         .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
         .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
         .first
+
+      if defined?(JSON) && (exception.is_a?(JSON::ParserError) rescue false)
+        # Normalize varying JSON::ParserError messages (which can include raw
+        # binary/control characters) to a stable phrase that tests and the
+        # dashboard expect.
+        normalized = normalized.gsub(/unexpected character:.*?at/, 'unexpected token at')
+      end
+
+      normalized
     end
   end
 end
