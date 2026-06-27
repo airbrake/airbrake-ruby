@@ -1,4 +1,96 @@
-require 'rbtree'
+# Minimal in-file sorted map to avoid native rbtree C-extensions on newer Rubies.
+# Provides the subset of RBTree API used by TDigest: []=, values, each_value,
+# upper_bound(key), lower_bound(key), first, last, size, clear.
+class SimpleSortedMap
+  include Enumerable
+
+  def initialize
+    @keys = []
+    @h = {}
+  end
+
+  def []=(key, value)
+    if @h.key?(key)
+      @h[key] = value
+      return
+    end
+
+    # find insertion index
+    idx = @keys.bsearch_index { |k| k >= key }
+    if idx
+      @keys.insert(idx, key)
+    else
+      @keys << key
+    end
+    @h[key] = value
+  end
+
+  def values
+    @keys.map { |k| @h[k] }
+  end
+
+  def each_value
+    return enum_for(:each_value) unless block_given?
+    @keys.each { |k| yield @h[k] }
+  end
+
+  def each(&block)
+    return enum_for(:each) unless block_given?
+    @keys.each { |k| yield [k, @h[k]] }
+  end
+
+  def size
+    @keys.size
+  end
+
+  def clear
+    @keys.clear
+    @h.clear
+  end
+
+  def first
+    return nil if @keys.empty?
+    k = @keys.first
+    [k, @h[k]]
+  end
+
+  def last
+    return nil if @keys.empty?
+    k = @keys.last
+    [k, @h[k]]
+  end
+
+  # smallest key >= x
+  def upper_bound(x)
+    return nil if @keys.empty?
+    idx = @keys.bsearch_index { |k| k >= x }
+    return nil unless idx
+    k = @keys[idx]
+    [k, @h[k]]
+  end
+
+  # greatest key <= x
+  def lower_bound(x)
+    return nil if @keys.empty?
+    idx = @keys.bsearch_index { |k| k > x }
+    if idx.nil?
+      # all keys <= x, pick last
+      k = @keys.last
+      return [k, @h[k]]
+    elsif idx == 0
+      return nil
+    else
+      k = @keys[idx - 1]
+      return [k, @h[k]]
+    end
+  end
+end
+
+# Use the minimal SortedMap instead of RBTree to avoid native extensions on Ruby 4
+# and newer Ruby heads.
+RBTree = SimpleSortedMap
+
+
 
 module Airbrake
   # Ruby implementation of Ted Dunning's t-digest data structure.
