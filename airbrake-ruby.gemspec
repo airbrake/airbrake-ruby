@@ -27,10 +27,16 @@ DESC
     'rubygems_mfa_required' => 'true',
   }
 
+  require 'rubygems' unless defined?(Gem)
+
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
   else
-    s.add_dependency 'rbtree3', '~> 0.6'
+    # The rbtree3 gem contains C extensions that may not build on Ruby 4 / ruby-head.
+    # Use the in-repo SimpleSortedMap replacement for Ruby 4+ to avoid native builds.
+    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4.0.0')
+      s.add_dependency 'rbtree3', '~> 0.6'
+    end
   end
 
   s.add_development_dependency 'rspec', '~> 3'
