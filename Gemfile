@@ -9,3 +9,5 @@ gem 'simplecov', '~> 0.16', require: false
 
 gem 'webrick', '~> 1.7' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.0')
 gem 'yard', '0.9.28'
+# ostruct was extracted from stdlib in Ruby 4; include it for docs/tools that require it
+gem 'ostruct'
