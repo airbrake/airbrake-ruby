@@ -14,3 +14,5 @@ gem 'yard', '0.9.28'
 gem 'ostruct'
 gem 'logger'
 gem 'rdoc', '< 7.0'
+# base64 was extracted from stdlib in Ruby 3.4+
+gem 'base64' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4.0')

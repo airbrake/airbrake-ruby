@@ -39,6 +39,11 @@ DESC
     end
   end
 
+  # base64 was extracted from stdlib in Ruby 3.4+; it's used by Stat for serialization
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4.0')
+    s.add_dependency 'base64'
+  end
+
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rspec-its', '~> 1.2'
   s.add_development_dependency 'rake', '~> 13'
