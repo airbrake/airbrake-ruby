@@ -46,7 +46,8 @@ DESC
   s.add_development_dependency 'webmock', '~> 3.8'
   s.add_development_dependency 'benchmark-ips', '~> 2'
   s.add_development_dependency 'yard', '~> 0.9'
-  # Ruby 4 removed some stdlib gems from default gems; ostruct and logger are required by yard templates.
+  # Ruby 4 removed some stdlib gems from default gems; ostruct, logger, and rdoc are required by yard templates.
   s.add_development_dependency 'ostruct'
   s.add_development_dependency 'logger'
+  s.add_development_dependency 'rdoc'
 end
