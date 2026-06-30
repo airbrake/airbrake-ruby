@@ -49,5 +49,6 @@ DESC
   # Ruby 4 removed some stdlib gems from default gems; ostruct, logger, and rdoc are required by yard templates.
   s.add_development_dependency 'ostruct'
   s.add_development_dependency 'logger'
-  s.add_development_dependency 'rdoc'
+  # Pin rdoc to a version compatible with yard 0.9.28 (newer rdoc changed the API)
+  s.add_development_dependency 'rdoc', '< 7.0'
 end
