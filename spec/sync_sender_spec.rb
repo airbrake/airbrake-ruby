@@ -204,5 +204,12 @@ RSpec.describe Airbrake::SyncSender do
       sync_sender.close
       expect(mock_backlog).to have_received(:close)
     end
+
+    it "doesn't error when config.backlog is false" do
+      Airbrake::Config.instance.merge(backlog: false)
+
+      sync_sender.close
+      expect(mock_backlog).not_to have_received(:close)
+    end
   end
 end
