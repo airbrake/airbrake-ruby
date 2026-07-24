@@ -27,6 +27,8 @@ DESC
     'rubygems_mfa_required' => 'true',
   }
 
+  s.add_dependency 'base64', '~> 0.1'
+
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
   else
