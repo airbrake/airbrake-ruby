@@ -22,16 +22,27 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Rubocop lint
-        run: if [[ "$RUBY_ENGINE" == "ruby" ]]; then bundle exec rubocop; fi
-
-      - name: YARD lint
-        run: |
-          touch README # Workaround for "incorrect" anchor links in README.md
-          bundle exec yardoc --fail-on-warning --no-progress --readme=README
-
       - name: Display Ruby version
         run: ruby -v
 
       - name: Test
         run: bundle exec rake
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+
+      - name: Rubocop lint
+        run: bundle exec rubocop
+
+      - name: YARD lint
+        run: |
+          touch README # Workaround for "incorrect" anchor links in README.md
+          bundle exec yardoc --fail-on-warning --no-progress --readme=README
