@@ -1,7 +1,3 @@
-require:
-  - rubocop-rake
-  - rubocop-rspec
-
 # Explanations of all possible options:
 #   https://github.com/bbatsov/rubocop/blob/master/config/default.yml
 AllCops:
