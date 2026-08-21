@@ -1,0 +1,127 @@
+inherit_mode:
+  override:
+    - RSpec
+    - Style/OpenStructUse
+
+inherit_from: []
+
+AllCops:
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  TargetRubyVersion: 2.5
+  Exclude:
+    - 'pkg/**/*'
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
+  NewCops: enable
+
+# HoundCI cannot load rubocop-rspec, so disable the entire namespace
+RSpec:
+  Enabled: false
+
+# HoundCI cannot load this cop (added after RuboCop 1.22.1)
+Style/OpenStructUse:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 25
+
+Layout/LineLength:
+  Max: 90
+
+Metrics/AbcSize:
+  Max: 20
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+Naming/FileName:
+  Exclude:
+    - 'lib/airbrake-ruby.rb'
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Naming/PredicateName:
+  Exclude:
+    - 'lib/airbrake-ruby/async_sender.rb'
+    - 'lib/airbrake-ruby/thread_pool.rb'
+
+Metrics/ClassLength:
+  Max: 120
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Style/NumericPredicate:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+Metrics/BlockLength:
+  CountComments: false
+  Max: 25
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - 'airbrake-ruby.gemspec'
+
+Layout/HeredocIndentation:
+  Enabled: false
+
+Gemspec/OrderedDependencies:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Naming/RescuedExceptionsVariableName:
+  Enabled: false
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: false
+

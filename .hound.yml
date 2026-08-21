@@ -1,3 +1,7 @@
-ruby:
-  version: 1.22.1
-  config_file: .rubocop.yml
+inherit_mode:
+  override:
+    - RSpec
+    - Style/OpenStructUse
+
+inherit_from: []
+
