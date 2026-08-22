@@ -1,6 +1,7 @@
-# Minimal in-file sorted map to avoid native rbtree C-extensions on newer Rubies.
-# Provides the subset of RBTree API used by TDigest: []=, values, each_value,
-# upper_bound(key), lower_bound(key), first, last, size, clear.
+# frozen_string_literal: true
+# Minimal in-file sorted map to avoid native rbtree C-extensions on newer
+# Rubies. Provides the subset of RBTree API used by TDigest: []=, values,
+# each_value, upper_bound(key), lower_bound(key), first, last, size, clear.
 class SimpleSortedMap
   include Enumerable
 
@@ -86,11 +87,9 @@ class SimpleSortedMap
   end
 end
 
-# Use the minimal SortedMap instead of RBTree to avoid native extensions on Ruby 4
-# and newer Ruby heads.
+# Use the minimal SortedMap instead of RBTree to avoid native extensions on Ruby
+# 4 and newer Ruby heads.
 RBTree = SimpleSortedMap
-
-
 
 module Airbrake
   # Ruby implementation of Ted Dunning's t-digest data structure.
