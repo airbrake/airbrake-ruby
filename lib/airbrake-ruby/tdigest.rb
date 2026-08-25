@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Minimal in-file sorted map to avoid native rbtree C-extensions on newer
 # Rubies. Provides the subset of RBTree API used by TDigest: []=, values,
 # each_value, upper_bound(key), lower_bound(key), first, last, size, clear.
@@ -32,11 +33,13 @@ class SimpleSortedMap
 
   def each_value
     return enum_for(:each_value) unless block_given?
+
     @keys.each { |k| yield @h[k] }
   end
 
-  def each(&block)
+  def each
     return enum_for(:each) unless block_given?
+
     @keys.each { |k| yield [k, @h[k]] }
   end
 
@@ -51,12 +54,14 @@ class SimpleSortedMap
 
   def first
     return nil if @keys.empty?
+
     k = @keys.first
     [k, @h[k]]
   end
 
   def last
     return nil if @keys.empty?
+
     k = @keys.last
     [k, @h[k]]
   end
@@ -64,8 +69,10 @@ class SimpleSortedMap
   # smallest key >= x
   def upper_bound(x)
     return nil if @keys.empty?
+
     idx = @keys.bsearch_index { |k| k >= x }
     return nil unless idx
+
     k = @keys[idx]
     [k, @h[k]]
   end
@@ -73,16 +80,17 @@ class SimpleSortedMap
   # greatest key <= x
   def lower_bound(x)
     return nil if @keys.empty?
+
     idx = @keys.bsearch_index { |k| k > x }
     if idx.nil?
       # all keys <= x, pick last
       k = @keys.last
-      return [k, @h[k]]
+      [k, @h[k]]
     elsif idx == 0
-      return nil
+      nil
     else
       k = @keys[idx - 1]
-      return [k, @h[k]]
+      [k, @h[k]]
     end
   end
 end

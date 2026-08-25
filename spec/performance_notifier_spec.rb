@@ -138,7 +138,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       perf_notifier.close
 
       expect(
-        a_request(:put, queues).with(body: %r{
+        a_request(:put, queues).with(body: /
           \A{"queues":\[{
             "queue":"emails",
             "errorCount":2,
@@ -161,7 +161,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
               }
             }
-        }\]}\z}x),
+        }\]}\z/x),
       ).to have_been_made
     end
 
@@ -352,7 +352,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
       perf_notifier.close
 
       expect(
-        a_request(:put, queues).with(body: %r{
+        a_request(:put, queues).with(body: /
           \A{"queues":\[{
             "queue":"emails",
             "errorCount":5,
@@ -375,7 +375,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAC"
               }
             }
-        }\]}\z}x),
+        }\]}\z/x),
       ).to have_been_made
     end
 

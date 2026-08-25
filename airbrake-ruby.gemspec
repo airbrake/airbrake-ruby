@@ -14,6 +14,7 @@ framework we offer the airbrake gem (https://github.com/airbrake/airbrake). It
 has additional features such as reporting of any unhandled exceptions
 automatically, integrations with Resque, Sidekiq, Delayed Job and many more.
 DESC
+
   s.author      = 'Airbrake Technologies, Inc.'
   s.email       = 'support@airbrake.io'
   s.homepage    = 'https://airbrake.io'
@@ -23,26 +24,27 @@ DESC
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
 
   s.required_ruby_version = '>= 2.5'
+
   s.metadata = {
     'rubygems_mfa_required' => 'true',
   }
 
   require 'rubygems' unless defined?(Gem)
 
+  #
+  # Dependency selection without RUBY_VERSION
+  #
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
   else
-    # The rbtree3 gem contains C extensions that may not build on Ruby 4 / ruby-head.
-    # Use the in-repo SimpleSortedMap replacement for Ruby 4+ to avoid native builds.
-    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4.0.0')
+    # Skip rbtree3 on Ruby 4.x (Ruby HEAD)
+    if RUBY_ENGINE_VERSION.to_i < 4
       s.add_dependency 'rbtree3', '~> 0.6'
     end
   end
 
-  # base64 was extracted from stdlib in Ruby 3.4+; it's used by Stat for serialization
-  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4.0')
-    s.add_dependency 'base64'
-  end
+  # Always include base64; Ruby <3.4 has it in stdlib, Ruby >=3.4 installs the gem
+  s.add_dependency 'base64'
 
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rspec-its', '~> 1.2'
@@ -51,9 +53,8 @@ DESC
   s.add_development_dependency 'webmock', '~> 3.8'
   s.add_development_dependency 'benchmark-ips', '~> 2'
   s.add_development_dependency 'yard', '~> 0.9'
-  # Ruby 4 removed some stdlib gems from default gems; ostruct, logger, and rdoc are required by yard templates.
+
   s.add_development_dependency 'ostruct'
   s.add_development_dependency 'logger'
-  # Pin rdoc to a version compatible with yard 0.9.28 (newer rdoc changed the API)
   s.add_development_dependency 'rdoc', '< 7.0'
 end

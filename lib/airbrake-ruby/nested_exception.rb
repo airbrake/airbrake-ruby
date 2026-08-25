@@ -51,16 +51,16 @@ module Airbrake
       return unless (msg = exception.message)
 
       processed = msg
-        .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
-        .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
-        .first
+                  .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
+                  .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
+                  .first
 
       # Normalize JSON::ParserError messages that changed wording in newer json
       # gems so tests and consumers relying on older phrasing behave
       # consistently.
       processed.gsub(
         /\Aunexpected character:.* at line \d+ column \d+\z/i,
-        'unexpected token at'
+        'unexpected token at',
       )
     end
   end
