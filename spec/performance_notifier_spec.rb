@@ -52,7 +52,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             "sum":60000.0,
             "sumsq":(?:3600000000\.0|3\.6E9),
             "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
-          }\]}\z}x)
+          }\]}\z}x),
       ).to have_been_made
     end
 
@@ -79,7 +79,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
             "sum":60000.0,
             "sumsq":(?:3600000000\.0|3\.6E9),
             "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
-          }\]}\z}x)
+          }\]}\z}x),
       ).to have_been_made
     end
 
@@ -121,7 +121,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
               }
             }
-        }\]}\z}x)
+        }\]}\z}x),
       ).to have_been_made
     end
 
@@ -138,10 +138,8 @@ RSpec.describe Airbrake::PerformanceNotifier do
       perf_notifier.close
 
       expect(
-        a_request(:put, queues).with(body: /
-          \A{"queues":
-
-\[{
+        a_request(:put, queues).with(body: %r{
+          \A{"queues":\[{
             "queue":"emails",
             "errorCount":2,
             "time":"2018-01-01T00:49:00\+00:00",
@@ -163,10 +161,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAB"
               }
             }
-        }\]
-
-}\z
-        /x)
+        }\]}\z}x),
       ).to have_been_made
     end
 
@@ -236,28 +231,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
         a_request(:put, routes).with(
           body: %r{\A
             {"routes":\[
-              {
-                "method":"GET",
-                "route":"/foo",
-                "statusCode":200,
-                "time":"2018-01-01T00:00:00\+00:00",
-                "count":1,
-                "sum":1000.0,
-                "sumsq":1000000.0,
-                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUR6AAAB"
-              },
-              {
-                "method":"GET",
-                "route":"/foo",
-                "statusCode":200,
-                "time":"2018-01-01T00:01:00\+00:00",
-                "count":1,
-                "sum":6000.0,
-                "sumsq":(?:36000000\.0|3\.6E7),
-                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUW7gAAB"
-              }
-            \]}
-          \z}x
+              {"method":"GET","route":"/foo","statusCode":200,
+               "time":"2018-01-01T00:00:00\+00:00","count":1,"sum":1000.0,
+               "sumsq":1000000.0,"tdigest":"AAAAAkA0AAAAAAAAAAAAAUR6AAAB"},
+              {"method":"GET","route":"/foo","statusCode":200,
+               "time":"2018-01-01T00:01:00\+00:00","count":1,"sum":6000.0,
+             "sumsq":(?:36000000\.0|3\.6E7),"tdigest":"AAAAAkA0AAAAAAAAAAAAAUW7gAAB"}\]}
+          \z}x,
         ),
       ).to have_been_made
     end
@@ -287,27 +267,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
         a_request(:put, routes).with(
           body: %r{\A
             {"routes":\[
-              {
-                "method":"GET",
-                "route":"/foo",
-                "statusCode":200,
-                "time":"2018-01-01T00:49:00\+00:00",
-                "count":1,
-                "sum":60000.0,
-                "sumsq":(?:3600000000\.0|3\.6E9),
-                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
-              },
-              {
-                "method":"POST",
-                "route":"/foo",
-                "statusCode":200,
-                "time":"2018-01-01T00:49:00\+00:00",
-                "count":1,"sum":60000.0,
-                "sumsq":(?:3600000000\.0|3\.6E9),
-                "tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"
-              }
-            \]}
-          \z}x
+              {"method":"GET","route":"/foo","statusCode":200,
+               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60000.0,
+             "sumsq":(?:3600000000\.0|3\.6E9),"tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"},
+              {"method":"POST","route":"/foo","statusCode":200,
+               "time":"2018-01-01T00:49:00\+00:00","count":1,"sum":60000.0,
+             "sumsq":(?:3600000000\.0|3\.6E9),"tdigest":"AAAAAkA0AAAAAAAAAAAAAUdqYAAB"}\]}
+          \z}x,
         ),
       ).to have_been_made
     end
@@ -381,15 +347,13 @@ RSpec.describe Airbrake::PerformanceNotifier do
           groups: { redis: 131, sql: 421 },
           timing: 60000,
           time: Time.new(2018, 1, 1, 0, 49, 0, 0),
-        )
+        ),
       )
       perf_notifier.close
 
       expect(
-        a_request(:put, queues).with(body: /
-          \A{"queues":
-
-\[{
+        a_request(:put, queues).with(body: %r{
+          \A{"queues":\[{
             "queue":"emails",
             "errorCount":5,
             "time":"2018-01-01T00:49:00\+00:00",
@@ -411,10 +375,7 @@ RSpec.describe Airbrake::PerformanceNotifier do
                 "tdigest":"AAAAAkA0AAAAAAAAAAAAAUPSgAAC"
               }
             }
-          }\]
-
-}\z
-        /x
+        }\]}\z}x),
       ).to have_been_made
     end
 
