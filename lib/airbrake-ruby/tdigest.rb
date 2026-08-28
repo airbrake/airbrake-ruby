@@ -1,8 +1,14 @@
 begin
-  # Prefer platform rbtree implementations if available (rbtree / rbtree-jruby).
-  # This avoids defining a Ruby-only fallback when a native/optimized gem is present.
+  # rbtree-jruby currently generates invalid bytecode on JRuby head.
+  raise LoadError, 'rbtree-jruby is disabled on JRuby' if RUBY_ENGINE == 'jruby'
+
+  # Prefer the native rbtree implementation on MRI when available.
   require 'rbtree'
-rescue LoadError
+rescue LoadError, StandardError => e
+  warn(
+    "rbtree unavailable or failed to load (#{e.class}): #{e.message}; " \
+      'using pure-Ruby fallback',
+  )
   # Minimal in-file sorted map to avoid native rbtree C-extensions on newer
   # Rubies. Provides the subset of RBTree API used by TDigest: []=, values,
   # each_value, upper_bound(key), lower_bound(key), first, last, size, clear.
@@ -35,11 +41,13 @@ rescue LoadError
 
     def each_value
       return enum_for(:each_value) unless block_given?
+
       @keys.each { |k| yield @h[k] }
     end
 
     def each
       return enum_for(:each) unless block_given?
+
       @keys.each { |k| yield [k, @h[k]] }
     end
 
@@ -54,12 +62,14 @@ rescue LoadError
 
     def first
       return nil if @keys.empty?
+
       k = @keys.first
       [k, @h[k]]
     end
 
     def last
       return nil if @keys.empty?
+
       k = @keys.last
       [k, @h[k]]
     end
@@ -67,8 +77,10 @@ rescue LoadError
     # smallest key >= x
     def upper_bound(x)
       return nil if @keys.empty?
+
       idx = @keys.bsearch_index { |k| k >= x }
       return nil unless idx
+
       k = @keys[idx]
       [k, @h[k]]
     end
@@ -76,6 +88,7 @@ rescue LoadError
     # greatest key <= x
     def lower_bound(x)
       return nil if @keys.empty?
+
       idx = @keys.bsearch_index { |k| k > x }
       if idx.nil?
         k = @keys.last

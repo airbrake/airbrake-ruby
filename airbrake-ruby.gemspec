@@ -32,16 +32,14 @@ DESC
 
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
-  else
+  elsif Gem::Version.new(Gem.ruby_version) < Gem::Version.new('4.0')
     # Only add rbtree3 for Ruby < 4.0 to avoid native extension builds on Ruby 4+
-    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('4.0')
-      s.add_dependency 'rbtree3', '~> 0.6'
-    end
+    s.add_dependency 'rbtree3', '~> 0.6'
   end
 
   # base64 was extracted from stdlib in Ruby 3.4; add it as a runtime dependency
   # for Ruby >= 3.4 where needed by Stat serialization
-  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.4')
+  if Gem::Version.new(Gem.ruby_version) >= Gem::Version.new('3.4')
     s.add_dependency 'base64'
   end
 
