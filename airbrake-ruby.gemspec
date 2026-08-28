@@ -36,11 +36,9 @@ DESC
   #
   if defined?(JRuby)
     s.add_dependency 'rbtree-jruby', '~> 0.2'
-  else
+  elsif RUBY_ENGINE_VERSION.to_i < 4
     # Skip rbtree3 on Ruby 4.x (Ruby HEAD)
-    if RUBY_ENGINE_VERSION.to_i < 4
-      s.add_dependency 'rbtree3', '~> 0.6'
-    end
+    s.add_dependency 'rbtree3', '~> 0.6'
   end
 
   # Always include base64; Ruby <3.4 has it in stdlib, Ruby >=3.4 installs the gem
