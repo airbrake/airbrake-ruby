@@ -1,8 +1,13 @@
-inherit_mode:
-  override:
-    - RSpec
-    - Style/OpenStructUse
+# Make HoundCI behave like local RuboCop, but without crashing on unsupported cops.
 
+require:
+  - rubocop-rspec
+
+inherit_mode:
+  merge:
+    - Exclude
+
+# DO NOT block inheritance; allow RuboCop to load the require section.
 inherit_from: []
 
 AllCops:
@@ -15,7 +20,7 @@ AllCops:
     - 'spec/fixtures/**/*'
   NewCops: enable
 
-# HoundCI cannot load rubocop-rspec, so disable the entire namespace
+# HoundCI cannot load rubocop-rspec, so disable the namespace
 RSpec:
   Enabled: false
 
@@ -124,4 +129,3 @@ Style/HashTransformValues:
 
 Layout/LineEndStringConcatenationIndentation:
   Enabled: false
-
