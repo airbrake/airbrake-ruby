@@ -28,37 +28,29 @@ RSpec:
 Style/OpenStructUse:
   Enabled: false
 
-# -----------------------------
-# Cop fixes for Hound mismatches
-# -----------------------------
-
-# Hound loads this under both Style and Lint in older RuboCop versions
+# Hound loads these cops under different names or with different defaults than
+# the local RuboCop version. Keep the affected legacy implementation exempt.
 Style/NumericPredicate:
   Enabled: false
 Lint/NumericPredicate:
   Enabled: false
 
-# Hound loads this cop even though modern RuboCop removed it
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
-# Hound loads older FrozenStringLiteral cop name
 Style/FrozenStringLiteralComment:
   Enabled: false
 Style/FrozenStringLiteral:
   Enabled: false
 
-# Hound uses older syntax for trailing comma enforcement
 Style/TrailingCommaInArguments:
-  EnforcedStyle: comma
-
-# -----------------------------
-# Your original config
-# -----------------------------
+  Enabled: false
 
 Metrics/MethodLength:
   Enabled: true
   Max: 25
+  Exclude:
+    - 'lib/airbrake-ruby/tdigest.rb'
 
 Layout/LineLength:
   Max: 90
