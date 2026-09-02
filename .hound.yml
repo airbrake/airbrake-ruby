@@ -1,7 +1,9 @@
+ruby:
+  config_file: .rubocop_hound.yml
+
 inherit_mode:
   override:
     - RSpec
     - Style/OpenStructUse
 
 inherit_from: []
-

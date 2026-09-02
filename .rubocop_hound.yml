@@ -28,8 +28,29 @@ RSpec:
 Style/OpenStructUse:
   Enabled: false
 
+# Hound loads these cops under different names or with different defaults than
+# the local RuboCop version. Keep the affected legacy implementation exempt.
+Style/NumericPredicate:
+  Enabled: false
+Lint/NumericPredicate:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/FrozenStringLiteral:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  Enabled: false
+
 Metrics/MethodLength:
+  Enabled: true
   Max: 25
+  Exclude:
+    - 'lib/airbrake-ruby/tdigest.rb'
 
 Layout/LineLength:
   Max: 90
@@ -61,14 +82,8 @@ Naming/PredicateName:
 Metrics/ClassLength:
   Max: 120
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
-
-Style/NumericPredicate:
-  Enabled: false
 
 Naming/VariableNumber:
   Enabled: false
@@ -99,9 +114,6 @@ Naming/MethodParameterName:
 
 Gemspec/RequiredRubyVersion:
   Enabled: false
-
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: comma
 
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
