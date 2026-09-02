@@ -28,7 +28,36 @@ RSpec:
 Style/OpenStructUse:
   Enabled: false
 
+# -----------------------------
+# Cop fixes for Hound mismatches
+# -----------------------------
+
+# Hound loads this under both Style and Lint in older RuboCop versions
+Style/NumericPredicate:
+  Enabled: false
+Lint/NumericPredicate:
+  Enabled: false
+
+# Hound loads this cop even though modern RuboCop removed it
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+# Hound loads older FrozenStringLiteral cop name
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/FrozenStringLiteral:
+  Enabled: false
+
+# Hound uses older syntax for trailing comma enforcement
+Style/TrailingCommaInArguments:
+  EnforcedStyle: comma
+
+# -----------------------------
+# Your original config
+# -----------------------------
+
 Metrics/MethodLength:
+  Enabled: true
   Max: 25
 
 Layout/LineLength:
@@ -61,14 +90,8 @@ Naming/PredicateName:
 Metrics/ClassLength:
   Max: 120
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
-
-Style/NumericPredicate:
-  Enabled: false
 
 Naming/VariableNumber:
   Enabled: false
@@ -99,9 +122,6 @@ Naming/MethodParameterName:
 
 Gemspec/RequiredRubyVersion:
   Enabled: false
-
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: comma
 
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
