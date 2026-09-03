@@ -22,7 +22,7 @@ DESC
   s.require_path = 'lib'
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
 
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 3.0'
   s.metadata = {
     'rubygems_mfa_required' => 'true',
   }
@@ -30,18 +30,11 @@ DESC
   # Ensure Gem is loaded for comparisons
   require 'rubygems' unless defined?(Gem)
 
-  if defined?(JRuby)
-    s.add_dependency 'rbtree-jruby', '~> 0.2'
-  elsif Gem::Version.new(Gem.ruby_version) < Gem::Version.new('4.0')
-    # Only add rbtree3 for Ruby < 4.0 to avoid native extension builds on Ruby 4+
-    s.add_dependency 'rbtree3', '~> 0.6'
-  end
-
-  # base64 was extracted from stdlib in Ruby 3.4; add it as a runtime dependency
-  # for Ruby >= 3.4 where needed by Stat serialization
-  if Gem::Version.new(Gem.ruby_version) >= Gem::Version.new('3.4')
-    s.add_dependency 'base64'
-  end
+  # These libraries were extracted from the standard library in newer Rubies.
+  # Declare them unconditionally so gem metadata is valid regardless of the
+  # Ruby version used to build the gem.
+  s.add_dependency 'base64'
+  s.add_dependency 'logger'
 
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rspec-its', '~> 1.2'

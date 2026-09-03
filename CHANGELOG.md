@@ -3,7 +3,7 @@
 ### master
 
 - Added Ruby 4.x compatibility:
-  - Replaced native `rbtree3` C extension with pure-Ruby `SimpleSortedMap` to support Ruby 4.0+ 
+  - Replaced native `rbtree3` C extension with pure-Ruby `SimpleSortedMap` to support Ruby 4.0+
   - Added compatibility for stdlib gems extracted from defaults: `base64` (runtime), `ostruct`, `logger`, `rdoc` (dev)
   - Pinned `rdoc` to < 7.0 for compatibility with `yard` 0.9.28
   - Normalized JSON::ParserError message wording for cross-version consistency
