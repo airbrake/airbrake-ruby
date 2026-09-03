@@ -1,8 +1,14 @@
-# Explanations of all possible options:
-#   https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+# Make HoundCI behave like local RuboCop, but without crashing on unsupported cops.
 
 require:
   - rubocop-rspec
+
+inherit_mode:
+  merge:
+    - Exclude
+
+# DO NOT block inheritance; allow RuboCop to load the require section.
+inherit_from: []
 
 AllCops:
   DisplayCopNames: true
@@ -14,17 +20,42 @@ AllCops:
     - 'spec/fixtures/**/*'
   NewCops: enable
 
+# HoundCI cannot load rubocop-rspec, so disable the namespace
+RSpec:
+  Enabled: false
+
+# HoundCI cannot load this cop (added after RuboCop 1.22.1)
+Style/OpenStructUse:
+  Enabled: false
+
+# Hound loads these cops under different names or with different defaults than
+# the local RuboCop version. Keep the affected legacy implementation exempt.
+Style/NumericPredicate:
+  Enabled: false
+Lint/NumericPredicate:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/FrozenStringLiteral:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  Enabled: false
+
 Metrics/MethodLength:
+  Enabled: true
   Max: 25
+  Exclude:
+    - 'lib/airbrake-ruby/tdigest.rb'
 
 Layout/LineLength:
   Max: 90
 
-# Details:
-#   http://c2.com/cgi/wiki?AbcMetric
 Metrics/AbcSize:
-  # The ABC size is a calculated magnitude, so this number can be a Fixnum or
-  # a Float.
   Max: 20
 
 Style/StringLiterals:
@@ -51,15 +82,8 @@ Naming/PredicateName:
 Metrics/ClassLength:
   Max: 120
 
-# TODO: enable this when Ruby 3.0 is out.
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
-
-Style/NumericPredicate:
-  Enabled: false
 
 Naming/VariableNumber:
   Enabled: false
@@ -91,9 +115,6 @@ Naming/MethodParameterName:
 Gemspec/RequiredRubyVersion:
   Enabled: false
 
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: comma
-
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
 
@@ -118,30 +139,5 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: true
 
-RSpec/ExampleLength:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Max: 2
-
-RSpec/ContextWording:
-  Enabled: false
-
-RSpec/FilePath:
-  Enabled: false
-
-RSpec/NestedGroups:
-  Enabled: false
-
-RSpec/MultipleMemoizedHelpers:
-  Max: 6
-
-RSpec/AnyInstance:
-  Enabled: false
-
 Layout/LineEndStringConcatenationIndentation:
   Enabled: false
-
-Style/OpenStructUse:
-  Exclude:
-    - 'spec/**/*'

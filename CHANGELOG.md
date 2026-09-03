@@ -2,7 +2,13 @@
 
 ### master
 
-- No pending changes to be released
+- Fix undefined method when calling '.close' on SyncSender when config.backlog is set to false.
+- Added Ruby 4.x compatibility:
+  - Replaced native `rbtree3` C extension with pure-Ruby `SimpleSortedMap` to support Ruby 4.0+
+  - Added compatibility for stdlib gems extracted from defaults: `base64` (runtime), `ostruct`, `logger`, `rdoc` (dev)
+  - Pinned `rdoc` to < 7.0 for compatibility with `yard` 0.9.28
+  - Normalized JSON::ParserError message wording for cross-version consistency
+  - Updated supported Ruby versions documentation to include Ruby 4.x
 
 ### [v6.2.2][v6.2.2] (October 4, 2023)
 

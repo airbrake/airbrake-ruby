@@ -1,4 +1,110 @@
-require 'rbtree'
+begin
+  # rbtree-jruby currently generates invalid bytecode on JRuby head.
+  raise LoadError, 'rbtree-jruby is disabled on JRuby' if RUBY_ENGINE == 'jruby'
+
+  # Prefer the native rbtree implementation on MRI when available.
+  require 'rbtree'
+rescue LoadError, StandardError => e
+  warn(
+    "rbtree unavailable or failed to load (#{e.class}): #{e.message}; " \
+      'using pure-Ruby fallback',
+  )
+  # Minimal in-file sorted map to avoid native rbtree C-extensions on newer
+  # Rubies. Provides the subset of RBTree API used by TDigest: []=, values,
+  # each_value, upper_bound(key), lower_bound(key), first, last, size, clear.
+  class SimpleSortedMap
+    include Enumerable
+
+    def initialize
+      @keys = []
+      @h = {}
+    end
+
+    def []=(key, value)
+      if @h.key?(key)
+        @h[key] = value
+        return
+      end
+
+      idx = @keys.bsearch_index { |k| k >= key }
+      if idx
+        @keys.insert(idx, key)
+      else
+        @keys << key
+      end
+      @h[key] = value
+    end
+
+    def values
+      @keys.map { |k| @h[k] }
+    end
+
+    def each_value
+      return enum_for(:each_value) unless block_given?
+
+      @keys.each { |k| yield @h[k] }
+    end
+
+    def each
+      return enum_for(:each) unless block_given?
+
+      @keys.each { |k| yield [k, @h[k]] }
+    end
+
+    def size
+      @keys.size
+    end
+
+    def clear
+      @keys.clear
+      @h.clear
+    end
+
+    def first
+      return nil if @keys.empty?
+
+      k = @keys.first
+      [k, @h[k]]
+    end
+
+    def last
+      return nil if @keys.empty?
+
+      k = @keys.last
+      [k, @h[k]]
+    end
+
+    # smallest key >= x
+    def upper_bound(x)
+      return nil if @keys.empty?
+
+      idx = @keys.bsearch_index { |k| k >= x }
+      return nil unless idx
+
+      k = @keys[idx]
+      [k, @h[k]]
+    end
+
+    # greatest key <= x
+    def lower_bound(x)
+      return nil if @keys.empty?
+
+      idx = @keys.bsearch_index { |k| k > x }
+      if idx.nil?
+        k = @keys.last
+        [k, @h[k]]
+      elsif idx == 0
+        nil
+      else
+        k = @keys[idx - 1]
+        [k, @h[k]]
+      end
+    end
+  end
+
+  # Only define RBTree constant if upstream gem didn't provide it
+  RBTree = SimpleSortedMap unless defined?(RBTree)
+end
 
 module Airbrake
   # Ruby implementation of Ted Dunning's t-digest data structure.

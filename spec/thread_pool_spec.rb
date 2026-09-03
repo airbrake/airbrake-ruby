@@ -182,7 +182,8 @@ RSpec.describe Airbrake::ThreadPool do
 
     let(:worker_size) { 3 }
 
-    # We avoid enclosed thread groups since they cause issues for anyone using timeout 0.3.1
+    # We avoid enclosed thread groups since they cause issues for anyone using
+    # timeout 0.3.1
     # More info: https://github.com/airbrake/airbrake-ruby/issues/713
     it "spawns an unenclosed thread group" do
       expect(thread_pool.workers).to be_a(ThreadGroup)
