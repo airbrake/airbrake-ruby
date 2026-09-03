@@ -1,0 +1,35 @@
+services:
+  ruby30:
+    image: ruby:3.0
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -lc "bundle install && bundle exec rake"
+
+  ruby31:
+    image: ruby:3.1
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -lc "bundle install && bundle exec rake"
+
+  ruby32:
+    image: ruby:3.2
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -lc "bundle install && bundle exec rake"
+
+  ruby33:
+    image: ruby:3.3
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -lc "bundle install && bundle exec rake"
+
+  jruby:
+    image: jruby:9.4-jdk
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -lc "bundle install && bundle exec rake"
