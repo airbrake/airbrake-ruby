@@ -5,12 +5,14 @@ begin
   # Prefer the native rbtree implementation on MRI when available.
   require 'rbtree'
 rescue LoadError, StandardError => e
-  warn(
-    "rbtree unavailable or failed to load (#{e.class}): #{e.message}; " \
-      'using pure-Ruby fallback',
-  ) unless e.is_a?(LoadError) &&
-            (e.message == 'rbtree-jruby is disabled on JRuby' ||
-             e.message == 'cannot load such file -- rbtree')
+  unless e.is_a?(LoadError) &&
+         (e.message == 'rbtree-jruby is disabled on JRuby' ||
+          e.message == 'cannot load such file -- rbtree')
+    warn(
+      "rbtree unavailable or failed to load (#{e.class}): #{e.message}; " \
+        'using pure-Ruby fallback',
+    )
+  end
   # Minimal in-file sorted map to avoid native rbtree C-extensions on newer
   # Rubies. Provides the subset of RBTree API used by TDigest: []=, values,
   # each_value, upper_bound(key), lower_bound(key), first, last, size, clear.
