@@ -204,5 +204,13 @@ RSpec.describe Airbrake::SyncSender do
       sync_sender.close
       expect(mock_backlog).to have_received(:close)
     end
+
+    context "when backlog is disabled" do
+      before { Airbrake::Config.instance.backlog = false }
+
+      it "does not raise an error" do
+        expect { sync_sender.close }.not_to raise_error
+      end
+    end
   end
 end
