@@ -66,7 +66,9 @@ module Airbrake
     # @return [void]
     # @since v6.2.0
     def close
-      @backlog&.close
+      return unless @backlog
+
+      @backlog.close
     end
 
     private
