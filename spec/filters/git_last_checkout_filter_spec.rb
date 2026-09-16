@@ -71,6 +71,7 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
         username = notice[:context][:lastCheckout][:username]
         expect(username).to eq(git_info.name)
         expect(username).not_to be_empty
+        expect(username).not_to be_nil
       end
     end
 
@@ -82,6 +83,7 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
     it "attaches last checkouted revision" do
       git_last_checkout_filter.call(notice)
       expect(notice[:context][:lastCheckout][:revision]).to eq(git_info.last_revision)
+      expect(notice[:context][:lastCheckout][:revision]).not_to be_empty
       expect(notice[:context][:lastCheckout][:revision].size).to eq(40)
     end
 
