@@ -22,7 +22,7 @@ DESC
   s.require_path = 'lib'
   s.files        = ['lib/airbrake-ruby.rb', *Dir.glob('lib/**/*')]
 
-  s.required_ruby_version = '>= 3.0'
+  s.required_ruby_version = '>= 2.5'
   s.metadata = {
     'rubygems_mfa_required' => 'true',
   }
