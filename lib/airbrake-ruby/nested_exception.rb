@@ -55,13 +55,15 @@ module Airbrake
                   .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
                   .first
 
-      # Normalize JSON::ParserError messages that changed wording in newer json
-      # gems so tests and consumers relying on older phrasing behave
-      # consistently.
-      processed.gsub(
-        /\Aunexpected character:.* at line \d+ column \d+\z/i,
-        'unexpected token at',
-      )
+      if exception.is_a?(JSON::ParserError)
+        # Normalize wording that changed in newer json gems.
+        processed.gsub(
+          /\Aunexpected character:.* at line \d+ column \d+\z/i,
+          'unexpected token at',
+        )
+      else
+        processed
+      end
     end
   end
 end
