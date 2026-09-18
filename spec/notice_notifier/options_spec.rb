@@ -122,6 +122,13 @@ RSpec.describe Airbrake::NoticeNotifier do
       end
 
       before do
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.6.0")
+          skip(
+            "We use Webmock 2, which doesn't support Ruby 2.6+. It's " \
+            "safe to run this test on 2.6+ once we upgrade to Webmock 3.5+",
+          )
+        end
+
         Airbrake::Config.instance.merge(
           proxy: proxy_params,
           host: "http://localhost:#{proxy.config[:Port]}",
@@ -139,12 +146,6 @@ RSpec.describe Airbrake::NoticeNotifier do
       after { proxy.stop }
 
       it "is being used if configured" do
-        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.6.0")
-          skip(
-            "We use Webmock 2, which doesn't support Ruby 2.6+. It's " \
-            "safe to run this test on 2.6+ once we upgrade to Webmock 3.5+",
-          )
-        end
         notice_notifier.notify_sync(ex)
 
         proxied_request = requests.pop(true)

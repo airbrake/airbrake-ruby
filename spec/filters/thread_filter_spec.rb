@@ -14,6 +14,13 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
     end.join
   end
 
+  def ruby_supports_nil_thread_variables?
+    Thread.new do
+      Thread.current.thread_variable_set(:airbrake_test, nil)
+      Thread.current.thread_variables.include?(:airbrake_test)
+    end.value
+  end
+
   describe "thread variables" do
     shared_examples "expected thread variable" do |var|
       it "attaches the thread variable" do
@@ -22,7 +29,12 @@ RSpec.describe Airbrake::Filters::ThreadFilter do
           thread_filter.call(notice)
         end
 
-        expect(notice[:params][:thread][:thread_variables][:bingo]).to eq(var)
+        thread_variables = notice[:params][:thread][:thread_variables]
+        if var.nil? && !ruby_supports_nil_thread_variables?
+          expect(thread_variables).to be_nil
+        else
+          expect(thread_variables[:bingo]).to eq(var)
+        end
       end
     end
 

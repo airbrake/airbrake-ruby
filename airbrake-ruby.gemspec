@@ -27,11 +27,14 @@ DESC
     'rubygems_mfa_required' => 'true',
   }
 
-  if defined?(JRuby)
-    s.add_dependency 'rbtree-jruby', '~> 0.2'
-  else
-    s.add_dependency 'rbtree3', '~> 0.6'
-  end
+  # Ensure Gem is loaded for comparisons
+  require 'rubygems' unless defined?(Gem)
+
+  # These libraries were extracted from the standard library in newer Rubies.
+  # Declare them unconditionally so gem metadata is valid regardless of the
+  # Ruby version used to build the gem.
+  s.add_dependency 'base64'
+  s.add_dependency 'logger'
 
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rspec-its', '~> 1.2'

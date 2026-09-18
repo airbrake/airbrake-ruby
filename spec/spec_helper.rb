@@ -3,6 +3,8 @@ SimpleCov.start if ENV['COVERAGE']
 
 require 'airbrake-ruby'
 
+require 'ostruct'
+
 require 'rspec/its'
 
 require 'webmock'

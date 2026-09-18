@@ -12,18 +12,20 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
     )
   end
   let(:line_one) do
-    "asdf2345 #{git_info.last_revision} #{git_info.name} <#{git_info.email}> 1679087797 -0700\tclone: from github.com:my_user/fun_repo.git"
+    "asdf2345 #{git_info.last_revision} #{git_info.name} <#{git_info.email}>"\
+    " 1679087797 -0700\tclone: from github.com:my_user/fun_repo.git"
   end
   let(:line_two) do
-    "#{git_info.last_revision} dfgh3456 #{git_info.name} <#{git_info.email}> 1679087824 -0700\tpush: moving from main to spike-5"
+    "#{git_info.last_revision} dfgh3456 #{git_info.name} <#{git_info.email}>"\
+    " 1679087824 -0700\tpush: moving from main to spike-5"
   end
 
   before do
     allow(File).to receive(:exists?).with(git_path).and_return(true)
     allow(File).to receive(:exists?).with(head_path).and_return(true)
     allow(File).to receive(:foreach).with(head_path)
-      .and_yield(line_one)
-      .and_yield(line_two)
+                                    .and_yield(line_one)
+                                    .and_yield(line_two)
   end
 
   context "when context/lastCheckout is defined" do
@@ -69,7 +71,6 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
         username = notice[:context][:lastCheckout][:username]
         expect(username).to eq(git_info.name)
         expect(username).not_to be_empty
-        expect(username).not_to be_nil
       end
     end
 
@@ -81,7 +82,6 @@ RSpec.describe Airbrake::Filters::GitLastCheckoutFilter do
     it "attaches last checkouted revision" do
       git_last_checkout_filter.call(notice)
       expect(notice[:context][:lastCheckout][:revision]).to eq(git_info.last_revision)
-      expect(notice[:context][:lastCheckout][:revision]).not_to be_empty
       expect(notice[:context][:lastCheckout][:revision].size).to eq(40)
     end
 

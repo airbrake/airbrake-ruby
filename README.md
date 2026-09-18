@@ -1291,7 +1291,8 @@ HTTP call, you need to configure your [environment](#environment) to `test`.
 
 ## Supported Rubies
 
-- CRuby >= 2.3.0
+- Supported and tested: CRuby >= 3.0.0 (including Ruby 4.x)
+- Older CRuby versions may still work, but are not officially supported or tested
 - JRuby >= 9k
 
 ## Contact

@@ -96,6 +96,16 @@ RSpec.describe Airbrake::NestedException do
     end
   end
 
+  context "when a non-JSON exception has a matching message" do
+    it "preserves the original message" do
+      exception = RuntimeError.new("unexpected character: bad at line 12 column 3")
+
+      expect(described_class.new(exception).as_json.first[:message]).to eq(
+        "unexpected character: bad at line 12 column 3",
+      )
+    end
+  end
+
   context "when the exception's message is nil" do
     subject(:exception) {  Class.new(StandardError) { def message; end }.new }
 

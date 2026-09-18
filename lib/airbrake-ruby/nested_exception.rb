@@ -50,10 +50,20 @@ module Airbrake
     def message(exception)
       return unless (msg = exception.message)
 
-      msg
-        .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
-        .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
-        .first
+      processed = msg
+                  .encode(Encoding::UTF_8, **ENCODING_OPTIONS)
+                  .split(RUBY_31_ERROR_HIGHLIGHTING_DIVIDER)
+                  .first
+
+      if exception.is_a?(JSON::ParserError)
+        # Normalize wording that changed in newer json gems.
+        processed.gsub(
+          /\Aunexpected character:.* at line \d+ column \d+\z/i,
+          'unexpected token at',
+        )
+      else
+        processed
+      end
     end
   end
 end
