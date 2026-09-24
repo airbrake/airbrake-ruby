@@ -70,6 +70,25 @@ Invoke the following command from your terminal:
 gem install airbrake-ruby
 ```
 
+## Integration smoke test
+
+The standalone integration app in `integration/` loads the local checkout,
+configures the notifier, and sends an exception and a message through the real
+HTTP notifier path to a local test server. It does not require Airbrake
+credentials or contact Airbrake. Rails integration is intentionally not
+included here because Rails support is provided by the separate `airbrake`
+gem.
+
+Run it locally with:
+
+```sh
+BUNDLE_GEMFILE=integration/Gemfile bundle install
+BUNDLE_GEMFILE=integration/Gemfile bundle exec ruby integration/smoke_test.rb
+```
+
+CI runs the smoke test separately from the unit tests on the same matrix:
+Ruby 3.0, 3.1, 3.2, 3.3, 3.4, 4.0, `head`, JRuby, and JRuby head.
+
 ## Example
 
 This is the minimal example that you can use to test Airbrake Ruby with your
